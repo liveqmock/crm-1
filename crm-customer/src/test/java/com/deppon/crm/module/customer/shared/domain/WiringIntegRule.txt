@@ -1,0 +1,13 @@
+fraction,ffraction,NUMERIC
+pointdesc,fpointdesc,VARCHAR
+number,fnumber,VARCHAR
+pointbegintime,fpointbegintime,DATE
+pointendtime,fpointendtime,DATE
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid,VARCHAR
+transporttype,ftransporttype,VARCHAR
+leadeptid,fleadeptid,VARCHAR
+arrdeptid,farrdeptid,VARCHAR

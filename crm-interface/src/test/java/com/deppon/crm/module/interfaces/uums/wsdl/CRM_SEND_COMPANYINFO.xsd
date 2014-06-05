@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/crm/inteface/domain/companymanagement"
+	xmlns:tns="http://www.deppon.com/crm/inteface/domain/companymanagement" elementFormDefault="qualified">
+	
+	<complexType name="SendCompanyInfoRequest">
+        <annotation>
+        	<documentation>
+        		UUMS负责统一维护公司IT系统的角色信息，需要将角色信息从UUMS系统同步至业务系统；
+        	</documentation>
+        </annotation>
+        <sequence>
+			<element name="companyInfo" type="tns:CompanyInfo" minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>子公司信息</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="CompanyInfo">
+		<sequence>
+			<element name="companyCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>公司编码</documentation>
+				</annotation>
+			</element>
+			<element name="companyName" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>公司名称</documentation>
+				</annotation>
+			</element>
+			<element name="shortName" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>公司简称</documentation>
+				</annotation>
+			</element>
+			<element name="companyStandCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>公司标准编码</documentation>
+				</annotation>
+			</element>
+			<element name="isHasAccount" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>是否建档</documentation>
+				</annotation>
+			</element>
+			<element name="linkMan1" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>联系人1</documentation>
+				</annotation>
+			</element>
+			<element name="fax1" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>传真1</documentation>
+				</annotation>
+			</element>
+			<element name="phone1" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>电话1</documentation>
+				</annotation>
+			</element>
+			<element name="zipCode" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>邮编</documentation>
+				</annotation>
+			</element>
+			<element name="postAddress" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>通讯地址</documentation>
+				</annotation>
+			</element>
+			<element name="saleAddress" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>营业地址</documentation>
+				</annotation>
+			</element>
+			<element name="briefintro" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>公司简介</documentation>
+				</annotation>
+			</element>
+			<element name="ownerShareRate" type="double" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>所有权份额</documentation>
+				</annotation>
+			</element>
+			<element name="isWorkingUnit" type="boolean" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>是否经营单位</documentation>
+				</annotation>
+			</element>
+			<element name="isSeal" type="boolean" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>是否封存</documentation>
+				</annotation>
+			</element>
+			<element name="legalPerson" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>法人代表</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-删除; </documentation>
+				</annotation>
+			</element>
+			<element name="changeDate" type="dateTime" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>变动时间 </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SendCompanyInfoResponse">
+		<sequence>
+			<element name="successCount" type="int" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>成功总数</documentation>
+				</annotation>
+			</element>
+			<element name="failedCount" type="int" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>失败总数</documentation>
+				</annotation>
+			</element>
+			<element name="processResult" type="tns:SendCompanyInfoProcessReult" minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>处理明细</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SendCompanyInfoProcessReult">
+		<sequence>
+			<element name="companyCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>公司编码</documentation>
+				</annotation>
+			</element>
+			<element name="result" type="boolean" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>处理结果，是否成功 [0: 失败, 1： 成功]</documentation>
+				</annotation>
+			</element>
+			<element name="reason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<element name="SendCompanyInfoRequest" type="tns:SendCompanyInfoRequest">
+	</element>
+
+	<element name="SendCompanyInfoResponse" type="tns:SendCompanyInfoResponse">
+	</element>
+
+</schema>

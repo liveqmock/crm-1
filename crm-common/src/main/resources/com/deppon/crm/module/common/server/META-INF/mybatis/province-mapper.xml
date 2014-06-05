@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Province">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="provinceMap" type="com.deppon.crm.module.common.shared.domain.Province">
+		<id property="fid" column="FID" jdbcType="DECIMAL"/>
+		<result property="id" column="FID"/>
+		<result property="name" column="FNAME"/>
+		<result property="number" column="FNUMBER"/>
+		<result property="pinyin" column="FPINYIN"/>
+		<result property="pyjm" column="FPYJM"/>
+		<result property="status" column="FSTATUS"/>
+		<result property="createUser" column="FCREATEUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="provinceID" column="FPROVINCEID"/>
+		 <!--  
+		<collection property="cityList" column="fid"
+			select="com.deppon.crm.module.common.shared.domain.City.queryCityByProvinceId" /> 
+			-->
+	</resultMap>
+	
+	<resultMap  id="baseProvinceMap" type="com.deppon.crm.module.common.shared.domain.Province">
+		<id property="fid" column="FID" jdbcType="DECIMAL"/>
+		<result property="id" column="FID"/>
+		<result property="name" column="FNAME"/>
+		<result property="number" column="FNUMBER"/>
+		<result property="pinyin" column="FPINYIN"/>
+		<result property="pyjm" column="FPYJM"/>
+		<result property="status" column="FSTATUS"/>
+		<result property="provinceID" column="FPROVINCEID"/>
+		<result property="createUser" column="FCREATEUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="lastModifyName" column="FEMPNAME"
+			javaType="String" jdbcType="VARCHAR"  />
+	</resultMap>
+	
+	<sql id="select_Province">
+		FID, 
+		FCREATETIME, 
+		FCREATEUSERID, 
+		FLASTUPDATETIME, 
+		FLASTMODIFYUSERID,
+		FSTATUS,
+		FNAME,
+		FNUMBER,
+		FPINYIN,
+		FPYJM,
+		FPROVINCEID
+	</sql>
+	
+	<insert id="insertProvince" parameterType="com.deppon.crm.module.common.shared.domain.Province" >
+  	 <selectKey keyProperty="fid" resultType="DECIMAL" order="BEFORE">
+			SELECT seq_id_province.nextval AS
+			fid FROM DUAL
+		</selectKey>
+    insert into T_CRM_PROVINCE (FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+      FLASTMODIFYUSERID, FSTATUS, FNAME, FNUMBER, FPINYIN, FPYJM,FPROVINCEID)
+    values (
+    #{fid,jdbcType=VARCHAR},
+    sysdate,
+    #{createUser,jdbcType=VARCHAR},
+    sysdate,
+    #{modifyUser,jdbcType=VARCHAR},
+    #{status,jdbcType=VARCHAR},
+    #{name,jdbcType=VARCHAR},
+    #{number,jdbcType=VARCHAR},
+    #{pinyin,jdbcType=VARCHAR},
+    #{pyjm,jdbcType=VARCHAR},
+    #{provinceID,jdbcType=VARCHAR}
+    )
+  </insert>
+  <select id="queryProvinceByNum" resultMap="baseProvinceMap">
+  		SELECT 
+  		<include refid="select_Province"/>
+  		FROM 
+  			T_CRM_PROVINCE PR 
+  		WHERE 
+  			FNUMBER=#{number,jdbcType=VARCHAR}
+  </select>
+  <update id="updateProvince" parameterType="com.deppon.crm.module.common.shared.domain.Province">
+	UPDATE T_CRM_PROVINCE SET
+		<if test="createDate != null and createDate != ''">
+			FCREATETIME=#{createDate,jdbcType=VARCHAR},
+		</if>
+		<if test="createUser != null and createUser != ''">
+			FCREATEUSERID=#{createUser,jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null and modifyUser != ''">
+			FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null and status != ''">
+			FSTATUS=#{status,jdbcType=VARCHAR},
+		</if>
+		<if test="name != null and name != ''">
+			FNAME=#{name,jdbcType=VARCHAR},
+		</if>
+		<if test="number != null and number != ''">
+			FNUMBER=#{number,jdbcType=VARCHAR},
+		</if>
+		<if test="pinyin != null and pinyin != ''">
+			FPINYIN=#{pinyin,jdbcType=VARCHAR},
+		</if>
+		<if test="pyjm != null and pyjm != ''">
+			FPYJM=#{pyjm,jdbcType=VARCHAR},
+		</if>
+		<if test="provinceID != null and provinceID != ''">
+			FPROVINCEID=#{provinceID,jdbcType=VARCHAR},
+		</if>
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{fid}
+	</update>
+  
+  <delete id="deleteProvince" parameterType="com.deppon.crm.module.common.shared.domain.Province">
+		DELETE FROM T_CRM_PROVINCE 
+        WHERE FID=#{fid}  
+	</delete>
+	
+  	<select id="searchProvincesByName" resultMap="baseProvinceMap" parameterType="com.deppon.crm.module.common.shared.domain.AreaSearchCondition">
+		SELECT
+		    P.FID, 
+			P.FCREATETIME, 
+			P.FCREATEUSERID, 
+			P.FLASTUPDATETIME, 
+			P.FLASTMODIFYUSERID,
+			P.FSTATUS,
+			P.FNAME,
+			P.FNUMBER,
+			P.FPINYIN,
+			P.FPYJM,
+			P.FPROVINCEID,
+		    E.FEMPNAME
+		FROM
+		 t_crm_province P 
+    LEFT JOIN T_ORG_EMPLOYEE E ON 
+      E.FID=P.FLASTMODIFYUSERID
+		WHERE 1=1 AND P.FSTATUS = 1 
+   		<if test="name != null and name != ''">
+			AND P.FNAME LIKE '%' || #{name,jdbcType=VARCHAR}  || '%'
+		</if>
+	</select>
+	<!-- 张斌
+	2014-4-10
+	=按照名字查询省份 -->
+    <select id="searchProvinceByName" resultMap="baseProvinceMap" parameterType="com.deppon.crm.module.common.shared.domain.AreaSearchCondition">
+		SELECT
+		    P.FID, 
+			P.FCREATETIME, 
+			P.FCREATEUSERID, 
+			P.FLASTUPDATETIME, 
+			P.FLASTMODIFYUSERID,
+			P.FSTATUS,
+			P.FNAME,
+			P.FNUMBER,
+			P.FPINYIN,
+			P.FPYJM,
+			P.FPROVINCEID
+		FROM
+		 t_crm_province P 
+		WHERE 1=1 AND P.FSTATUS = 1 
+   		<if test="name != null and name != ''">
+			AND P.FNAME = #{name,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="searchProvincesCountByName" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.common.shared.domain.AreaSearchCondition">
+		SELECT
+			count(*)
+		FROM
+		 t_crm_province P 
+	    LEFT JOIN T_ORG_EMPLOYEE E ON 
+	      E.FID=P.FLASTMODIFYUSERID
+			WHERE 1=1 AND P.FSTATUS = 1 
+   		<if test="name != null and name != ''">
+			AND P.FNAME LIKE '%' || #{name,jdbcType=VARCHAR}  || '%'
+		</if>
+	</select>
+	
+	<select id="queryProvinceByID" resultMap="provinceMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.Province">
+		SELECT
+		<include refid="select_Province" />
+		FROM
+		T_CRM_PROVINCE 
+		WHERE FID
+		= #{fid}
+	</select>
+	
+ 	<select id="getAllProvince"  resultMap="provinceMap">
+		select fid, fname, fnumber, fstatus, fpinyin, fpyjm
+		from t_crm_province where fstatus = 1  order by fpyjm
+	</select>
+	
+	<select id="getProvinceByCityId"  resultMap="provinceMap" parameterType="map">
+		select p.fid, p.fname, p.fnumber, p.fstatus, p.fpinyin, p.fpyjm
+		from t_crm_province p left join t_crm_city c on p.fid=c.fprovinceid 
+		where c.fid=#{cityId}
+	</select>
+</mapper>

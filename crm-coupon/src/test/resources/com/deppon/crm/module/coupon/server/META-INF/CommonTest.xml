@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="messageBundle" class="com.deppon.foss.framework.server.web.message.MessageBundle"></bean>
+
+	<bean id="todoWorkflowManager"
+		class="com.deppon.crm.module.common.server.manager.impl.TodoWorkflowManager">
+		<property name="todoWorkflowService" ref="todoWorkflowService" />
+	</bean>
+	<bean id="todoWorkflowDao" class="com.deppon.crm.module.common.server.dao.impl.TodoWorkflowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="todoWorkflowService" class="com.deppon.crm.module.common.server.service.impl.TodoWorkflowService">
+		<property name="todoWorkflowDao" ref="todoWorkflowDao"></property>
+	</bean>
+
+	<bean id="ladingstationDepartmentDao" class="com.deppon.crm.module.common.server.dao.impl.LadingstationDepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="ladingstationDepartmentService" class="com.deppon.crm.module.common.server.service.impl.LadingstationDepartmentService">
+		<property name="ladingstationDepartmentDao" ref="ladingstationDepartmentDao"></property>
+	</bean>
+	<bean id="ladingstationDepartmentManager" class="com.deppon.crm.module.common.server.manager.impl.LadingstationDepartmentManager">
+	 	<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService"></property>
+	</bean>
+
+<!--  	<bean id="performanceLog" -->
+<!-- 		class="com.deppon.foss.framework.server.components.logger.track.PerformanceLogBuffer"> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="exceptionLog"  -->
+<!-- 		class="com.deppon.foss.framework.server.components.logger.track.ExceptionLogBuffer"></bean> -->
+		
+</beans>

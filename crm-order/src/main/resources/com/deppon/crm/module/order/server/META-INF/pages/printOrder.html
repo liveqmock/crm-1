@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<!-- 		<title>订单打印页面</title> -->
+		<style type="text/css" media="all">
+		body,p{ padding:0; margin:0; }
+		body{
+			font-size:12px;
+		}
+		.wetFont{ font-weight:600; }
+		p{ background:#ccc;line-height:20px;height:20px; position:absolute;font-size:18px;text-align:center; }
+		.wrapper{
+			width:940px; height:560px;
+			position:relative;
+ 			
+			background: transparent url("../images/order/print/print.jpg") no-repeat -42px -32px;
+		}
+		input{
+			width:100px;height:22px;border:1px #f9a705 soli;border-radius:4px;
+			background:#f9a705;
+			position:absolute;top:580px;
+			font-size:14px; color:#333;font-weight:600;
+		}
+		.wrapRow{
+			font-size:14px;white-space:normal;word-wrap:break-word; word-break:normal;
+			line-height:14px;height:28px;position:relative; overflow:hidden;display:block;
+		}
+		</style>
+		<style type="text/css" media="print">
+		.wrapper,p{
+			background:none;
+			/*border:1px #000 solid;border-top:0;border-bottom:0;*/
+		}
+		input{
+			display:none;
+		}
+		</style>
+	</head>
+<body>
+ 	<div class="wrapper"  id="wrapper"><div style="position:relative;top:0px;left:0px">
+	<p style="left:152px;top:70px;width:260px;" id="contactName">托运人/公司</p>
+	<p style="left:152px;top:100px;width:112px;" id="contactMobile">联系方式</p>
+	<p style="left:320px;top:100px;width:140px;" id="shipperNumber">会员卡号</p>
+	<p style="left:122px;top:130px;width:324px;" id="contactProvince">地址</p>
+	<p style="left:152px;top:/*224*/209px;width:300px;" id="receiverCustName">收货人/公司</p>
+	<p style="left:152px;top:/*252*/241px;width:300px;" id="receiverCustMobile">联系方式</p>
+	<p style="left:/*124*/108px;top:/*282*/282px;width:60px;" id="receiverCustProvince">省前</p>	
+	<p style="left:186px;top:/*282*/282px;width:72px;" id="receiverCustCity">市前</p>
+	<p style="left:276px;top:/*282*/282px;width:72px;" id="receiverCustArea">区/县前</p>
+	<p style="left:80px;top:/*310*/310px;width:184px;height:28px;" id="receiverCustAddress">路前</p>
+	<!-- 保价声明价值 -->
+	<p style="left:178px;top:/*390*/355px;width:56px;" id="insuredAmount">保价声明</p>
+	<!-- 代收货款-->
+	<p style="left:178px;top:/*376*/383px;width:56px;" id="reciveLoanType">代收货款类型</p>
+	<p style="left:174px;top:/*350*/402px;width:56px;" id="reviceMoneyAmount">代收货款元</p>
+	
+	<p style="left:340px;top:/*364*/351px;width:90px;" id="transportMode" class="wetFont">运输方式</p>
+	<p style="left:325px;top:/*410*/404px;width:120px;" id="deliveryMode" class="wetFont">交货方式</p>
+	<p style="left:342px;top:/*448*/454px;width:90px;" id="paymentType" class="wetFont">付款方式</p>
+	<p style="left:322px;top:/*482*/493px;width:120px;overflow:visible;" id="returnBillType" class="wetFont">签收单</p>
+	<p style="left:/* 514 */530px;top:70px;width:120px;" id="orderNumber">网络订单号</p>
+	<p style="left:/* 496 */512px;top:100px;width:132px;" id="goodsName">货物品名</p>
+	<p style="left:/* 486 */496px;top:128px;width:148px;height:36px;" id="packing">包装包装包装包装包装包装包装包装包装包装包装包装包装包装包装包装包装包装包装包装</p>
+	<p style="left:/* 528 */536px;top:/* 180 */160px;width:132px;" id="transNote">储运注意事项储运注意事项储运注意事项储运注意事项储运储运注意事项储运注意事项储运注意事项储运注意事项储运注意事项储运注意事项储运注意事项储运注意事项储运注意事项</p>
+	<p style="left:/* 668 */680px;top:70px;width:128px;" id="goodsNumber">件数</p>
+	<p style="left:/* 668 */680px;top:102px;width:128px;" id="totalVolume">体积</p>
+	<p style="left:/* 672 */680px;top:130px;width:124px;" id="totalWeight">重量</p>
+	<p style="left:/* 714 */720px;top:/* 180 */162px;width:60px;" id="isReceiveGoods" class="wetFont" >是/否</p>
+	</div>
+	<input type="button" value="打印" style="left:240px;" onclick="window.printIt()" id="ipt1" />
+	<input type="button" value="关闭" style="left:520px;" onclick="window.closeWin()" id="ipt2" />
+	</div>
+	<script type="text/javascript">
+	var data = this.opener.printData;
+	if( typeof data != "undefined" ){	window.onload = loadData(); }
+	function loadData(){
+//		document.getElementById("contactName").innerHTML= '<span style="font-weight:600">'+data.contactName +'</span>/'+ data.shipperName ;			//托运人/公司
+		var sContactName = (data.contactName?data.contactName:'') +'/'+ (data.shipperName?data.shipperName:'');
+		if(sContactName.split('').length > 18) {
+			sContactName = '<span class="wrapRow">' + sContactName + '</span>';
+		};
+		document.getElementById("contactName").innerHTML= sContactName;
+		if( (typeof(data.contactMobile)!="object")&&(typeof(data.contactPhone)!="object") ){	//联系方式（托运人信息）
+			document.getElementById("contactMobile").innerHTML= '<span class="wrapRow" style="height:15px; display:block;">'+(data.contactMobile?data.contactMobile:'')+'</span><span class="wrapRow" >'+(data.contactPhone?data.contactPhone:'')+'</span> ';
+			document.getElementById("contactMobile").style.top = "98px";
+		}else if( (typeof(data.contactMobile)=="object")&& (typeof(data.contactPhone)!="object") ){
+			document.getElementById("contactMobile").innerHTML= (data.contactPhone?data.contactPhone:'');
+		}else if( (typeof(data.contactMobile)!="object")&& (typeof(data.contactPhone)=="object") ){
+			document.getElementById("contactMobile").innerHTML= (data.contactMobile?data.contactMobile:'');
+		}else{
+			document.getElementById("contactMobile").innerHTML= '';
+		};
+		document.getElementById("shipperNumber").innerHTML= data.shipperNumber?data.shipperNumber:'';		//会员卡	（会员卡号） 
+		var sContactProvince = (data.contactProvince?data.contactProvince:'')+(data.contactCity?data.contactCity:'')+(data.contactArea?data.contactArea:'') +(data.contactAddress?data.contactAddress:'') ;									//地址	（托运人信息） 
+		if(sContactProvince.split('').length > 36) {
+			sContactProvince = '<span class="wrapRow" style="top:0;height:42px;">' + sContactProvince + '</span>';
+		};
+		document.getElementById("contactProvince").innerHTML= sContactProvince;
+		// contactProvince		contactAddress		contactArea+contactCity
+		var sReceiverCustName = (data.receiverCustName?data.receiverCustName:'') + (data.receiverCustcompany?data.receiverCustcompany:"") ;
+		if(sReceiverCustName.split('').length > 16){
+			sReceiverCustName = '<span class="wrapRow">' + (data.receiverCustName?data.receiverCustName:'')+'/' + (data.receiverCustcompany?data.receiverCustcompany:'')+ '</span>';
+		}else{
+			sReceiverCustName = (data.receiverCustName?data.receiverCustName:'')+ '/' +(data.receiverCustcompany?data.receiverCustcompany:'');
+		};
+		document.getElementById("receiverCustName").innerHTML = sReceiverCustName;	//收货人/公司    receiverCustName/receiverCustcompany
+//		document.getElementById("receiverCustMobile").innerHTML= data.accepterPersonMobile?data.accepterPersonMobile:'' ;
+//		document.getElementById("receiverCustMobile").innerHTML= data.receiverCustMobile?data.receiverCustMobile:'' ;
+																					// 联系方式 == 收货人手机
+		document.getElementById("receiverCustMobile").innerHTML= '<span>'+(data.receiverCustMobile?data.receiverCustMobile:'')+"/"+(data.receiverCustPhone?data.receiverCustPhone:'')+'</span>';	//联系方式（托运人信息） 
+		document.getElementById("receiverCustProvince").innerHTML= data.receiverCustProvince?data.receiverCustProvince:'';		// 地址	收货地址
+		document.getElementById("receiverCustCity").innerHTML= data.receiverCustCity?data.receiverCustCity:'';				// 地址	收货地址
+		document.getElementById("receiverCustArea").innerHTML= data.receiverCustArea?data.receiverCustArea:'';				// 地址	收货地址
+		var sReceiverCustAddress = (data.receiverCustAddress?data.receiverCustAddress:'');					// 地址	收货地址省 receiverCustProvince 市 receiverCustCity 区县 receiverCustArea 路 receiverCustAddress
+		if(sReceiverCustAddress.split('').length > 18){
+			sReceiverCustAddress = '<span class="wrapRow" style="height:29px;">' + sReceiverCustAddress + '</span>';
+		};
+		document.getElementById("receiverCustAddress").innerHTML= sReceiverCustAddress;				// 地址	收货地址省 receiverCustProvince 市 receiverCustCity 区县 receiverCustArea 路 receiverCustAddress
+																									// 经确认，最长28个字
+		document.getElementById("reviceMoneyAmount").innerHTML= data.reviceMoneyAmount?data.reviceMoneyAmount:'';	
+		document.getElementById("insuredAmount").innerHTML= data.insuredAmount?data.insuredAmount:'';						// 保价声明价值
+		
+		document.getElementById("reciveLoanType").innerHTML = data.reciveLoanType?data.reciveLoanType:'';	// 代收货款		// 代收货款类型
+		// document.getElementById("户名").innerHTML= data.户名;
+		// document.getElementById("开户行").innerHTML= data.开户行;
+		// document.getElementById("收款账号").innerHTML= data.收款账号;
+		document.getElementById("transportMode").innerHTML=data.transportMode?data.transportMode:'';		//运输方式	 需要根据类型做判断
+		document.getElementById("deliveryMode").innerHTML=data.deliveryMode?data.deliveryMode:'';		// 交货方式
+		document.getElementById("paymentType").innerHTML=data.paymentType?data.paymentType:'';			// 付款方式
+		document.getElementById("returnBillType").innerHTML=data.returnBillType?data.returnBillType:'';	// 签收单	具备七种类型
+		document.getElementById("orderNumber").innerHTML= data.orderNumber?data.orderNumber:'' ;		//订单号	网络订单号
+//		document.getElementById("goodsName").innerHTML= data.goodsName;				//货物名称	货物品名
+		var sGoodsName = (data.goodsName?data.goodsName:'');											//货物名称	货物品名
+		if(sGoodsName.split('').length>7){
+			sGoodsName = '<span class="wrapRow">' + sGoodsName + '</span>';
+		};
+		document.getElementById("goodsName").innerHTML= sGoodsName;					//货物名称	货物品名
+		var sPacking = (data.packing?data.packing:'') ;
+		if( sPacking.split('').length > 8 ){
+			sPacking ='<span class="wrapRow" style="">' + sPacking + '</span>';
+		};
+		document.getElementById("packing").innerHTML = sPacking;					// 包装	经确认，最多放20个字
+//		document.getElementById("transNote").innerHTML= data.transNote; 			// 储运注意事项
+		var sTransNote = (data.transNote?data.transNote:'');
+		if(sTransNote.split('').length > 7) {
+			sTransNote = '<span class="wrapRow" style="top:0:height:42px;">' + sTransNote + '</span>';
+		};
+		document.getElementById("transNote").innerHTML= sTransNote; 				// 储运注意事项、、经确认这个最多只能24个字
+		document.getElementById("goodsNumber").innerHTML= data.goodsNumber?data.goodsNumber:'';			// 件数
+		document.getElementById("totalVolume").innerHTML= data.totalVolume?data.totalVolume:'';			//体积
+		document.getElementById("totalWeight").innerHTML= data.totalWeight?data.totalWeight:''; 		//重量
+		document.getElementById("isReceiveGoods").innerHTML=data.isReceiveGoods?data.isReceiveGoods:'';	//是否上门接货	上门接货
+		// window.location.reload;
+	};
+	function closeWin(){
+		window.opener=null;		
+		window.open("","_self"); 
+		window.close();	
+	};
+	function printIt(){
+ 		var newstr = document.getElementById("wrapper").innerHTML;
+ 		var oldstr = document.body.innerHTML;
+		document.body.innerHTML = newstr;
+		window.print();
+		document.body.innerHTML = oldstr;
+		window.closeWin();
+		return false;
+	};
+	function PageSetup_Null() {													// IE去除页头页尾
+		try {
+			var Wsh = new ActiveXObject("WScript.Shell");
+			HKEY_Key = "header";
+			Wsh.RegWrite(HKEY_Root + HKEY_Path + HKEY_Key, "");
+			HKEY_Key = "footer";
+			Wsh.RegWrite(HKEY_Root + HKEY_Path + HKEY_Key, "fuck");
+		} catch(e){ }
+	};PageSetup_Null();
+</script>
+</body>
+</html>

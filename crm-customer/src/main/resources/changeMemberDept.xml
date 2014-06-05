@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workflow PUBLIC "-//OpenSymphony Group//DTD OSWorkflow 2.8//EN" "http://www.opensymphony.com/osworkflow/workflow_2_8.dtd">
+<workflow>
+	<meta name="lastModified">Thu Apr 05 11:37:46 CST 2012</meta>
+	<meta name="created">Thu Apr 05 11:22:35 CST 2012</meta>
+	<meta name="generator">OSWOrkflow Designer</meta>
+
+	<initial-actions>
+		<action id="0" name="启动工作流---会员归属部门变更">
+			<pre-functions>
+				<function type="beanshell">
+					<arg name="script">
+						propertySet.setString("appId",transientVars.get("appId"));
+					</arg>
+				</function>
+				<function type="spring">
+					<arg name="bean.name">initChangeMemberDeptOnwer</arg>
+				</function>
+			</pre-functions>
+			<results>
+					<unconditional-result id="23" old-status="Finished"
+						status="Queued" step="1" display-name="提交" owner="${deptOwner}">
+					</unconditional-result>
+			</results>
+			<post-functions>
+				<function type="spring">
+					<arg name="bean.name">norMalToDoWorkOwnerFunction</arg>				
+				</function>
+				<function type="spring">
+					<arg name="bean.name">toDoWorkFunction</arg>
+					<arg name="isCleanToDoWork">false</arg>
+					<arg name="isCreateToDoWork">true</arg>
+				</function>
+				<function type="spring">
+					<arg name="bean.name">createWorkFlowFunction</arg>
+				</function>
+			</post-functions>
+		</action>
+	</initial-actions>
+	<steps>
+		<step id="1" name="会员归属部门变更审批">
+			<actions>
+				<action id="10" name="审批通过" view="审批通过">
+					<restrict-to>
+						<conditions type="AND">
+							<condition type="spring">
+								<arg name="bean.name">roleOnlyCondition</arg>
+							</condition>
+						</conditions>
+					</restrict-to>
+					<results>
+						<unconditional-result id="7" old-status="Finished"
+							status="Queued" step="2" display-name="会员归属部门变更审批通过" >
+						</unconditional-result>
+					</results>
+					<post-functions>
+						<function type="spring">
+							<arg name="bean.name">writeExaminRecordFunction</arg>
+							<arg name="rights">accountDate_rights</arg>
+							<arg name="examineResult">true</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">examineChangeMemberDeptFinishFunction</arg>
+							<arg name="examineResult">true</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">toDoWorkFunction</arg>
+							<arg name="isCleanToDoWork">true</arg>
+							<arg name="isCreateToDoWork">false</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">updateWorkFLowFunction</arg>
+							<arg name="workFlowStatus">AGREED</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">deleteCustLabelsFunction</arg>
+						</function>
+					</post-functions>
+				</action>
+				<action id="14" name="审批拒绝" view="审批拒绝">
+					<restrict-to>
+						<conditions type="AND">
+							<condition type="spring">
+								<arg name="bean.name">roleOnlyCondition</arg>
+							</condition>
+						</conditions>
+					</restrict-to>
+					<results>
+						<unconditional-result id="15" old-status="Finished"
+							status="Queued" step="2" display-name="会员归属部门变更审批拒绝">
+						</unconditional-result>
+					</results>
+					<post-functions>
+						<function type="spring">
+							<arg name="bean.name">writeExaminRecordFunction</arg>
+							<arg name="rights">accountDate_rights</arg>
+							<arg name="examineResult">false</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">examineChangeMemberDeptFinishFunction</arg>
+							<arg name="examineResult">false</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">toDoWorkFunction</arg>
+							<arg name="isCleanToDoWork">true</arg>
+							<arg name="isCreateToDoWork">false</arg>
+						</function>
+						<function type="spring">
+							<arg name="bean.name">updateWorkFLowFunction</arg>
+							<arg name="workFlowStatus">DISAGREE</arg>
+						</function>
+					</post-functions>
+				</action>
+			</actions>
+		</step>
+		<step id="2" name="清理">
+			<actions>
+				<action id="300" name="清理无效数据" auto="true">
+					<results>
+						<unconditional-result id="3001" old-status="Finished"
+							status="Queued" step="3" display-name="清理数据结束">
+						</unconditional-result>
+					</results>
+					<post-functions>
+						<function type="spring">
+							<arg name="bean.name">cleanPropertySetSetFunction</arg>
+							<arg name="cleanKeys">appId</arg>
+						</function>
+					</post-functions>
+				</action>			
+			</actions>
+		</step>
+		<step id="3" name="结束"></step>
+	</steps>
+</workflow>

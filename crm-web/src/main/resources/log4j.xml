@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+<!-- 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender"> -->
+<!-- 		<param name="Target" value="System.out"/> -->
+<!-- 		<layout class="org.apache.log4j.PatternLayout"> -->
+<!-- 			<param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" /> -->
+<!-- 		</layout> -->
+<!-- 	</appender> -->
+	<appender name="FileAp" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${jboss.server.log.dir}/crm.log"/>
+		<param name="Append" value="true"/>
+		<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd/MM/yy HH:mm:ss:sss z}] %5p %c{2}: %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="DATABASE" class="com.deppon.crm.module.frameworkimpl.server.log.CrmBufferedAppender"/>
+
+	<logger name="com.deppon" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="DATABASE" />
+	</logger>
+	 
+	<logger name="java.sql.Connection" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="FileAp" />
+	</logger>
+	<logger name="java.sql.PreparedStatement" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="FileAp" />
+	</logger>
+	<logger name="java.sql.ResultSet" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="FileAp" />
+	</logger>
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="DATABASE" />
+		<appender-ref ref="FileAp" />
+	</root>
+</log4j:configuration>

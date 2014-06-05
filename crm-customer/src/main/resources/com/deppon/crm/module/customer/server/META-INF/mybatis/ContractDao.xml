@@ -1,0 +1,2333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.Contract">
+
+	<sql id="username_column">
+		e1.fempname e1_fempname,
+		e2.fempname e2_fempname
+	</sql>
+
+	<sql id="joinEmployeeSql">
+		LEFT JOIN
+		t_org_employee e1 on e1.fid = CT.FCREATEUSERID
+		LEFT JOIN
+		t_org_employee e2 on e2.fid = CT.FLASTMODIFYUSERID
+	</sql>
+
+	<!-- 查看当前部门是否可以做出发 -->
+	<select id="queryIsLeave" resultType="String">
+		<![CDATA[
+				SELECT 
+					LS.FISLEAVE
+				FROM 
+					T_CRM_LADINGSTATION LS
+				WHERE FID = #{deptId}
+		]]>
+	</select>
+
+	<!-- 查看当前部门是否可以做到达 -->
+	<select id="queryIsArrive" resultType="String">
+		<![CDATA[
+				SELECT 
+					LS.FISARRIVE
+				FROM 
+					T_CRM_LADINGSTATION LS
+				WHERE FID = #{deptId}
+		]]>
+	</select>
+
+
+	<select id="getLogFileInfoBySourceId"
+		resultMap="com.deppon.crm.module.common.file.domain.FileInfo.FileInfoResultMap"
+		parameterType="string">
+		SELECT
+		<include
+			refid="com.deppon.crm.module.common.file.domain.FileInfo.FileInfoFields" />
+		FROM T_CRM_FILEINFO
+		<where>
+			FSOURCEID=#{sourceId}
+			<!-- 写死了，历史操作记录的 type为 ContractOperatorLog -->
+			AND FSOURCETYPE='CONTRACTOPERATORLOG'
+		</where>
+	</select>
+	
+	<select id="getContractFileInfoBySourceId"
+		resultMap="com.deppon.crm.module.common.file.domain.FileInfo.FileInfoResultMap"
+		parameterType="string">
+		SELECT
+		<include
+			refid="com.deppon.crm.module.common.file.domain.FileInfo.FileInfoFields" />
+		FROM T_CRM_FILEINFO
+		<where>
+			FSOURCEID=#{sourceId}
+			<!-- 写死了，合同 type为 CONTRACT -->
+			AND FSOURCETYPE='CONTRACT'
+		</where>
+	</select>
+
+
+	<!-- 合同的sql -->
+	<!-- 合同新增，同一客户两个合同创建时间不得超过1秒 -->
+	   <!-- 生效合同不能超过2个-->
+	<insert id="createContract"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contract">
+	<![CDATA[
+		INSERT INTO T_CUST_CONTRACT(FID,FPAYWAY,FARREARAMOUNT,FLINKMANNAME,FLINKMANPHONE,
+		FLINKMANMOBILE,FLINKMANADDRESS,FRECONDATE,FINVOICDATE,FRESULTDATE,FCONTRACTBEGINDATE,
+		FCONTRACTENDDATE,FAPPLICATION,FCUSTID,FDEPTID,FIDDISCOUNT,FCONTRACTSTATUS,
+		FCONTRACTSUBJECT,FREGICAPITAL,FBEFORECONTRACTNUM,FCONTRACTNUM,FGOODSNAME,
+		FCUSTCOMPANY,FCONTACTID,FPREFERENTIALTYPE,FCREATETIME,FCREATEUSERID,FDEBTDAYS,
+		FUSEABLEARREARAMOUNT,FIFFOREIGNGOODS,FDUNNINGDEPTCODE,FPRICEVERSIONDATE,
+		FEXPAYWAY,FEXPREFERENTIALTYPE,FEXPRICEVERSIONDATE)
+		SELECT 
+		#{id,jdbcType=NUMERIC},
+		#{payWay,jdbcType=NUMERIC},
+		#{arrearaMount,jdbcType=NUMERIC},
+		#{linkManName,jdbcType=VARCHAR},
+		#{linkManPhone,jdbcType=VARCHAR},
+		#{linkManMobile,jdbcType=VARCHAR},
+		#{linkManAddress,jdbcType=VARCHAR},
+		#{reconDate,jdbcType=NUMERIC},
+		#{invoicDate,jdbcType=NUMERIC},
+		#{resultDate,jdbcType=NUMERIC},
+		#{contractBeginDate,jdbcType=TIMESTAMP},
+		#{contractendDate,jdbcType=TIMESTAMP},
+		#{application,jdbcType=VARCHAR},
+		#{member.id,jdbcType=NUMERIC},
+		#{dept.id,jdbcType=NUMERIC},
+		#{iddisCount,jdbcType=NUMERIC},
+		#{contractStatus,jdbcType=VARCHAR},
+		#{contractSubject,jdbcType=VARCHAR},
+		#{regicapital,jdbcType=VARCHAR},
+		#{beforeContractNum,jdbcType=VARCHAR},
+		#{contractNum,jdbcType=VARCHAR},
+		#{goodsName,jdbcType=VARCHAR},
+		#{custCompany,jdbcType=VARCHAR},
+		#{contactId,jdbcType=VARCHAR},
+	    #{preferentialType,jdbcType=VARCHAR},		
+		#{createDate,jdbcType=TIMESTAMP},
+		#{createUser,jdbcType=VARCHAR},
+        #{debtDays,jdbcType=NUMERIC},
+		#{useableArrearAmount,jdbcType=NUMERIC},
+		#{ifForeignGoods,jdbcType=NUMERIC},
+		#{dunningDeptCode,jdbcType=VARCHAR},
+		#{priceVersionDate,jdbcType=TIMESTAMP},
+		#{exPayWay,jdbcType=VARCHAR},
+		#{exPreferentialType,jdbcType=VARCHAR},
+		#{exPriceVersionDate,jdbcType=TIMESTAMP}
+		FROM DUAL
+	   	WHERE 
+	    (SELECT NVL(MAX(CC.FCREATETIME),SYSDATE-2) FROM T_CUST_CONTRACT CC 
+     	 WHERE CC.FCUSTID =  #{member.id,jdbcType=NUMERIC} AND CC.FCONTRACTSTATUS <> 2) + 1/24/60/60 <= SYSDATE 
+	   		AND NOT EXISTS (SELECT 1 FROM T_CUST_CONTRACT C2 
+	                   WHERE C2.FCUSTID = #{member.id,jdbcType=NUMERIC} 
+	                   AND C2.FCONTRACTSTATUS = 0)
+	  		 AND (SELECT COUNT(*) 
+	           FROM T_CUST_CONTRACT C2 
+	           WHERE C2.FCUSTID = #{member.id,jdbcType=NUMERIC} 
+	           AND C2.FCONTRACTSTATUS = 1) <= 2
+	]]>
+	</insert>
+	
+<!-- 修改合同信息 -->
+	<update id="updateContract4Wait"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contract">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACT
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null ">
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+        <![CDATA[,FCONTRACTBEGINDATE=#{contractBeginDate,jdbcType=TIMESTAMP}]]>
+        <![CDATA[,FCONTRACTENDDATE=#{contractendDate,jdbcType=TIMESTAMP}]]>
+		<if test=" contractStatus != null ">
+             <![CDATA[,FCONTRACTSTATUS=#{contractStatus,jdbcType=VARCHAR}]]>
+		</if>
+        <![CDATA[		
+        	WHERE FID = #{id}
+        ]]>
+	</update>
+	<!-- 修改合同催款部门 -->
+	<update id="updateDuningDept" parameterType="map">
+		 <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACT
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test="ifForeignGoods != null">
+		 	<![CDATA[,FIFFOREIGNGOODS = #{ifForeignGoods,jdbcType=NUMERIC}]]>
+		</if>
+		<![CDATA[,FDUNNINGDEPTCODE = #{dunningDeptCode,jdbcType=VARCHAR}]]>
+			WHERE 
+				FID = #{contractId}
+	</update>
+		<!-- 修改合同价格版本时间 -->
+	<update id="modifyPriceVersionDate" parameterType="map">
+		 <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACT
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test="priceVersionDate != null">
+		 	<![CDATA[,fpriceVersionDate = #{priceVersionDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="exPriceVersionDate != null">
+		 	<![CDATA[,fexPriceVersionDate = #{exPriceVersionDate,jdbcType=TIMESTAMP}]]>
+		</if>
+			WHERE 
+				FID = #{contractId}
+	</update>
+	<!-- 修改合同信息 -->
+	<update id="updateContract"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contract">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACT
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null ">
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" payWay != null ">
+             <![CDATA[,FPAYWAY=#{payWay,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" arrearaMount != null ">
+             <![CDATA[,FARREARAMOUNT=#{arrearaMount,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" linkManName != null ">
+             <![CDATA[,FLINKMANNAME=#{linkManName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManPhone != null ">
+             <![CDATA[,FLINKMANPHONE=#{linkManPhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManMobile != null ">
+             <![CDATA[,FLINKMANMOBILE=#{linkManMobile,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManAddress != null ">
+             <![CDATA[,FLINKMANADDRESS=#{linkManAddress,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" reconDate != null ">
+             <![CDATA[,FRECONDATE=#{reconDate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" invoicDate != null ">
+             <![CDATA[,FINVOICDATE=#{invoicDate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" resultDate != null ">
+             <![CDATA[,FRESULTDATE=#{resultDate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contractBeginDate != null ">
+             <![CDATA[,FCONTRACTBEGINDATE=#{contractBeginDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" contractendDate != null ">
+             <![CDATA[,FCONTRACTENDDATE=#{contractendDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" application != null ">
+             <![CDATA[,FAPPLICATION=#{application,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" member != null and member.id != null ">
+             <![CDATA[,FCUSTID=#{member.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" dept != null and dept.id != null ">
+             <![CDATA[,FDEPTID=#{dept.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" iddisCount != null ">
+             <![CDATA[,FIDDISCOUNT=#{iddisCount,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contractStatus != null ">
+             <![CDATA[,FCONTRACTSTATUS=#{contractStatus,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contractSubject != null ">
+             <![CDATA[,FCONTRACTSUBJECT=#{contractSubject,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" regicapital != null ">
+             <![CDATA[,FREGICAPITAL=#{regicapital,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beforeContractNum != null ">
+             <![CDATA[,FBEFORECONTRACTNUM=#{beforeContractNum,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contractNum != null ">
+             <![CDATA[,FCONTRACTNUM=#{contractNum,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" goodsName != null ">
+             <![CDATA[,FGOODSNAME=#{goodsName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custCompany != null ">
+             <![CDATA[,FCUSTCOMPANY=#{custCompany,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactId != null ">
+             <![CDATA[,FCONTACTID=#{contactId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" preferentialType != null ">
+             <![CDATA[,FPREFERENTIALTYPE=#{preferentialType,jdbcType=VARCHAR}]]>
+		</if>
+		
+		<if test=" debtDays != null ">
+             <![CDATA[,fdebtDays=#{debtDays,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" useableArrearAmount != null ">
+             <![CDATA[,fuseableArrearaMount=#{useableArrearAmount,jdbcType=NUMERIC}]]>
+		</if>
+		<if test="priceVersionDate != null">
+		 	<![CDATA[,fpriceVersionDate = #{priceVersionDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="exPayWay != null">
+		 	<![CDATA[,FEXPAYWAY = #{exPayWay,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="exPreferentialType != null">
+		 	<![CDATA[,FEXPREFERENTIALTYPE = #{exPreferentialType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="exPriceVersionDate != null">
+		 	<![CDATA[,FEXPRICEVERSIONDATE = #{exPriceVersionDate,jdbcType=TIMESTAMP}]]>
+		</if>
+        <![CDATA[		
+        	WHERE FID = #{id}
+        ]]>
+	</update>
+
+	<!-- 合同操作记录的sql -->
+	<!-- 对合同的操作生成工作流保证同时只能有一个工作流是在审批中，防止并发SYSDATE -->
+	<insert id="insertContractOperatorLog"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog">
+		insert into t_cust_contractoperatorlog(
+		FID,FCREATETIME,FCREATEUSERID,
+		FCONTRACTID,FOPERATORTYPE,FWORKFLOWID,FPREVIOUSDEPTID,
+		FCHANGEDDEPTID,FOPERATORDEPTID,FAPPROVALMAN,FAPPROVALSTATE)
+		values( 
+		#{id,jdbcType=VARCHAR},
+		#{createDate,jdbcType=TIMESTAMP} ,#{createUser,jdbcType=VARCHAR},
+		#{contract.id,jdbcType=VARCHAR},#{operatorType,jdbcType=VARCHAR},
+		#{workflowId,jdbcType=VARCHAR},#{previousDept.id,jdbcType=VARCHAR},
+		#{changedDept.id,jdbcType=VARCHAR},#{operatorDept.id,jdbcType=VARCHAR},
+		#{approvalMan,jdbcType=VARCHAR},#{approvalState,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!-- 自动id生成器 -->
+	<select id="getSeqIdByTableName" parameterType="map" resultType="string"
+		flushCache="true">
+		SELECT SEQ_ID_${tableName}.NEXTVAL as id FROM DUAL
+	</select>
+	<!-- 自动id生成器合同操作日志序列防止缓存 -->
+	<select id="getSeqIdByTableName4Log" parameterType="map" resultType="string"
+		flushCache="true">
+		SELECT SEQ_ID_${tableName}.NEXTVAL as id FROM DUAL
+		where #{date} is not null
+	</select>
+
+	<!--合同查询列表 -->
+	<sql id="Contract_column">
+		CT.FID CT_FID,
+		CT.FCREATETIME CT_FCREATETIME,
+		CT.FCREATEUSERID CT_FCREATEUSERID,
+		CT.FLASTUPDATETIME
+		CT_FLASTUPDATETIME,
+		CT.FLASTMODIFYUSERID CT_FLASTMODIFYUSERID,
+		CT.FPAYWAY CT_FPAYWAY,
+		CT.FARREARAMOUNT CT_FARREARAMOUNT,
+		CT.FLINKMANNAME CT_FLINKMANNAME,
+		CT.FLINKMANPHONE CT_FLINKMANPHONE,
+		CT.FLINKMANMOBILE CT_FLINKMANMOBILE,
+		CT.FLINKMANADDRESS
+		CT_FLINKMANADDRESS,
+		CT.FRECONDATE CT_FRECONDATE,
+		CT.FINVOICDATE
+		CT_FINVOICDATE,
+		CT.FRESULTDATE CT_FRESULTDATE,
+		CT.FCONTRACTBEGINDATE
+		CT_FCONTRACTBEGINDATE,
+		CT.FCONTRACTENDDATE CT_FCONTRACTENDDATE,
+		CT.FAPPLICATION CT_FAPPLICATION,
+		CT.FCUSTID CT_FCUSTID,
+		CT.FDEPTID
+		CT_FDEPTID,
+		CT.FIDDISCOUNT CT_FIDDISCOUNT,
+		CT.FCONTRACTSTATUS
+		CT_FCONTRACTSTATUS,
+		CT.FCONTRACTSUBJECT CT_FCONTRACTSUBJECT,
+		CT.FREGICAPITAL CT_FREGICAPITAL,
+		CT.FBEFORECONTRACTNUM
+		CT_FBEFORECONTRACTNUM,
+		CT.FCONTRACTNUM CT_FCONTRACTNUM,
+		CT.FGOODSNAME
+		CT_FGOODSNAME,
+		CT.FCUSTCOMPANY CT_FCUSTCOMPANY,
+		CT.FCONTACTID
+		CT_FCONTACTID,
+		CT.FPREFERENTIALTYPE CT_FPREFERENTIALTYPE,
+	
+		CT.FDEBTDAYS CT_FDEBTDAYS,
+		CT.FUSEABLEARREARAMOUNT CT_FUSEABLEARREARAMOUNT,
+		CT.FIFFOREIGNGOODS CT_FIFFOREIGNGOODS,
+		CT.FDUNNINGDEPTCODE CT_FDUNNINGDEPTCODE,
+		CT.FPRICEVERSIONDATE CT_FPRICEVERSIONDATE，
+		
+		CT.FEXPAYWAY CT_FEXPAYWAY,
+		CT.FEXPREFERENTIALTYPE CT_FEXPREFERENTIALTYPE,
+		CT.FEXPRICEVERSIONDATE CT_FEXPRICEVERSIONDATE
+	</sql>
+
+	<!-- 合同基本信息 -->
+	<resultMap id="ContractBasicRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contract">
+		<id property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="createUser" column="E1_FEMPNAME" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="E2_FEMPNAME" />
+		<result property="payWay" column="CT_FPAYWAY" />
+		<result property="arrearaMount" column="CT_FARREARAMOUNT" />
+		<result property="linkManName" column="CT_FLINKMANNAME" />
+		<result property="linkManPhone" column="CT_FLINKMANPHONE" />
+		<result property="linkManMobile" column="CT_FLINKMANMOBILE" />
+		<result property="linkManAddress" column="CT_FLINKMANADDRESS" />
+		<result property="reconDate" column="CT_FRECONDATE" />
+		<result property="invoicDate" column="CT_FINVOICDATE" />
+		<result property="resultDate" column="CT_FRESULTDATE" />
+		<result property="contractBeginDate" column="CT_FCONTRACTBEGINDATE" />
+		<result property="contractendDate" column="CT_FCONTRACTENDDATE" />
+		<result property="application" column="CT_FAPPLICATION" />
+		<result property="iddisCount" column="CT_FIDDISCOUNT" />
+		<result property="contractStatus" column="CT_FCONTRACTSTATUS" />
+		<result property="contractSubject" column="CT_FCONTRACTSUBJECT" />
+		<result property="regicapital" column="CT_FREGICAPITAL" />
+		<result property="beforeContractNum" column="CT_FBEFORECONTRACTNUM" />
+		<result property="contractNum" column="CT_FCONTRACTNUM" />
+		<result property="goodsName" column="CT_FGOODSNAME" />
+		<result property="custCompany" column="CT_FCUSTCOMPANY" />
+		<result property="contactId" column="CT_FCONTACTID" />
+		<result property="preferentialType" column="CT_FPREFERENTIALTYPE" />
+		
+		<result property="ifForeignGoods" column="CT_FIFFOREIGNGOODS"/>
+		<result property="dunningDeptCode" column="CT_FDUNNINGDEPTCODE"/>
+		<result property="debtDays" column="CT_FDEBTDAYS" />
+		<result property="useableArrearAmount" column="CT_FUSEABLEARREARAMOUNT" />
+		<result property="priceVersionDate" column="CT_FPRICEVERSIONDATE"/>
+		
+		<result property="exPayWay" column="CT_FEXPAYWAY"/>
+		<result property="exPreferentialType" column="CT_FEXPREFERENTIALTYPE"/>
+		<result property="exPriceVersionDate" column="CT_FEXPRICEVERSIONDATE"/>
+		
+		<association property="dunningDeptName" column="CT_FDUNNINGDEPTCODE" select="queryDeptNameByCode" />
+		
+<!-- 		<association property="member" jdbcType="VARCHAR" column="CT_FCUSTID" -->
+<!-- 			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById" -->
+<!-- 			javaType="com.deppon.crm.module.customer.shared.domain.Member" /> -->
+		<association property="dept"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			column="CT_FDEPTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+	</resultMap>
+		<!-- 合同信息 -->
+	<resultMap id="ContractBaseRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contract"  extends="ContractBasicRM">
+		<association property="member" jdbcType="VARCHAR" column="CT_FCUSTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById"
+			javaType="com.deppon.crm.module.customer.shared.domain.Member" />
+<!-- 		<association property="dept" -->
+<!-- 			select="com.deppon.crm.module.organization.shared.domain.Department.getById" -->
+<!-- 			column="CT_FDEPTID" jdbcType="VARCHAR" -->
+<!-- 			javaType="com.deppon.crm.module.organization.shared.domain.Department" /> -->
+	</resultMap>
+	<!-- 合同管理查询结果 -->
+	<resultMap id="ContractListRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contract" extends="ContractBasicRM">
+<!-- 			<association property="preferential" column="CT_FID" -->
+<!-- 			select="selectPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" /> -->
+<!-- 		<association property="member" jdbcType="VARCHAR" column="CT_FCUSTID" -->
+<!-- 			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById" -->
+<!-- 			javaType="com.deppon.crm.module.customer.shared.domain.Member" /> -->
+<!-- 		<association property="dept" -->
+<!-- 			select="com.deppon.crm.module.organization.shared.domain.Department.getById" -->
+<!-- 			column="CT_FDEPTID" jdbcType="VARCHAR" -->
+<!-- 			javaType="com.deppon.crm.module.organization.shared.domain.Department" /> -->
+		<collection property="contractWorkflowList" column="CT_FID"
+			select="searchWorkFlowLogByListContractId"
+			ofType="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog" />
+<!-- 		<collection property="contractDepartList" column="CT_FID" -->
+<!-- 			select="searchContractDeptByContractId" ofType="com.deppon.crm.module.customer.shared.domain.ContractDept" /> -->
+	</resultMap>
+	<resultMap id="ContractRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contract" extends="ContractBaseRM">
+		<association property="preferential" column="CT_FID"
+			select="selectPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" />
+		<association property="exPreferential" column="CT_FID"
+			select="selectExPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" />
+		<collection property="contractWorkflowList" column="CT_FID"
+			select="searchWorkFlowLogByContractId"
+			ofType="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog" />
+		<collection property="contractDepartList" column="CT_FID"
+			select="searchContractDeptByContractId" ofType="com.deppon.crm.module.customer.shared.domain.ContractDept" />
+		<collection property="fileInfoList" column="CT_FID"
+			select="getContractFileInfoBySourceId" ofType="com.deppon.crm.module.common.file.domain.FileInfo" />
+		<collection property="contractTaxList" column="CT_FID"
+					select="selectContractTaxByContractId" ofType="com.deppon.crm.module.customer.shared.domain.ContractTax"/>
+	</resultMap>
+
+	<resultMap id="ContractWithAmountRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractDto">
+		<id property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="createUser" column="E1_FEMPNAME" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="E2_FEMPNAME" />
+		<result property="payWay" column="CT_FPAYWAY" />
+		<result property="arrearaMount" column="CT_FARREARAMOUNT" />
+		<result property="linkManName" column="CT_FLINKMANNAME" />
+		<result property="linkManPhone" column="CT_FLINKMANPHONE" />
+		<result property="linkManMobile" column="CT_FLINKMANMOBILE" />
+		<result property="linkManAddress" column="CT_FLINKMANADDRESS" />
+		<result property="reconDate" column="CT_FRECONDATE" />
+		<result property="invoicDate" column="CT_FINVOICDATE" />
+		<result property="resultDate" column="CT_FRESULTDATE" />
+		<result property="contractBeginDate" column="CT_FCONTRACTBEGINDATE" />
+		<result property="contractendDate" column="CT_FCONTRACTENDDATE" />
+		<result property="application" column="CT_FAPPLICATION" />
+		<result property="iddisCount" column="CT_FIDDISCOUNT" />
+		<result property="contractStatus" column="CT_FCONTRACTSTATUS" />
+		<result property="contractSubject" column="CT_FCONTRACTSUBJECT" />
+		<result property="regicapital" column="CT_FREGICAPITAL" />
+		<result property="beforeContractNum" column="CT_FBEFORECONTRACTNUM" />
+		<result property="contractNum" column="CT_FCONTRACTNUM" />
+		<result property="goodsName" column="CT_FGOODSNAME" />
+		<result property="custCompany" column="CT_FCUSTCOMPANY" />
+		<result property="contactId" column="CT_FCONTACTID" />
+		<result property="preferentialType" column="CT_FPREFERENTIALTYPE" />
+		<result property="debtDays" column="CT_FDEBTDAYS" />
+		<result property="useableArrearAmount" column="CT_FUSEABLEARREARAMOUNT" />
+		<result property="ifForeignGoods" column="CT_FIFFOREIGNGOODS"/>
+		<result property="dunningDeptCode" column="CT_FDUNNINGDEPTCODE"/>
+		
+		<result property="exPayWay" column="CT_FEXPAYWAY"/>
+		<result property="exPreferentialType" column="CT_FEXPREFERENTIALTYPE"/>
+		<result property="exPriceVersionDate" column="CT_FEXPRICEVERSIONDATE"/>
+		
+		<association property="dunningDeptName" column="CT_FDUNNINGDEPTCODE" select="queryDeptNameByCode" />
+		<association property="preferential" column="CT_FID"
+		select="selectPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" />
+		<association property="exPreferential" column="CT_FID"
+		select="selectExPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" />
+		<collection property="monthSums" select="queryMonthSumAmountByCustId" column="CT_FCUSTID"/>
+		<collection property="exMonthSums" select="queryExMonthSumAmountByCustId" column="CT_FCUSTID"/>
+		</resultMap>
+	<select id="queryDeptNameByCode" parameterType="string" resultType="string">
+		SELECT 
+			FDEPTNAME 
+		FROM 
+			T_ORG_DEPARTMENT  
+		WHERE 
+		FSTANDARDCODE = #{_parameter,jdbcType=VARCHAR}
+	</select>
+	<select id="queryMonthSumAmountByCustId" resultMap="CustMonthRM" parameterType="string">
+		SELECT 
+		<include refid="CustMonthSum_column"/>
+		<![CDATA[ 
+		 FROM T_CUST_CUSTMONTHSUM MS
+		 WHERE MS.FCUSTID=#{custId,jdbcType=VARCHAR}
+		 AND MS.FDATE>=TRUNC(ADD_MONTHS(SYSDATE,-3),'MM')
+		 AND MS.FDATE<=TRUNC(SYSDATE,'MM')-1
+		  ]]>
+	</select>
+	
+	<!--新增快递近三个月发货情况-->
+	<select id="queryExMonthSumAmountByCustId" resultMap="CustMonthRM" parameterType="string">
+		SELECT 
+		<include refid="CustMonthSum_column"/>
+		<![CDATA[ 
+		 FROM T_CUST_CUSTMONTHSUM_EXPRESS MS
+		 WHERE MS.FCUSTID=#{custId,jdbcType=VARCHAR}
+		 AND MS.FDATE>=TRUNC(ADD_MONTHS(SYSDATE,-3),'MM')
+		 AND MS.FDATE<=TRUNC(SYSDATE,'MM')-1
+		  ]]>
+	</select>
+	
+	<!-- //TODO mybatis的配置文件 有继承 重写的概念吗？ -->
+	<resultMap id="ContractRM_360"
+		type="com.deppon.crm.module.customer.shared.domain.Contract">
+		<id property="id" column="CT_FID" />
+		<result property="createUser" column="CT_FCREATEUSERID" />
+		<result property="modifyUser" column="CT_FLASTMODIFYUSERID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="payWay" column="CT_FPAYWAY" />
+		<result property="arrearaMount" column="CT_FARREARAMOUNT" />
+		<result property="linkManName" column="CT_FLINKMANNAME" />
+		<result property="linkManPhone" column="CT_FLINKMANPHONE" />
+		<result property="linkManMobile" column="CT_FLINKMANMOBILE" />
+		<result property="linkManAddress" column="CT_FLINKMANADDRESS" />
+		<result property="reconDate" column="CT_FRECONDATE" />
+		<result property="invoicDate" column="CT_FINVOICDATE" />
+		<result property="resultDate" column="CT_FRESULTDATE" />
+		<result property="contractBeginDate" column="CT_FCONTRACTBEGINDATE" />
+		<result property="contractendDate" column="CT_FCONTRACTENDDATE" />
+		<result property="application" column="CT_FAPPLICATION" />
+		<result property="iddisCount" column="CT_FIDDISCOUNT" />
+		<result property="contractStatus" column="CT_FCONTRACTSTATUS" />
+		<result property="contractSubject" column="CT_FCONTRACTSUBJECT" />
+		<result property="regicapital" column="CT_FREGICAPITAL" />
+		<result property="beforeContractNum" column="CT_FBEFORECONTRACTNUM" />
+		<result property="contractNum" column="CT_FCONTRACTNUM" />
+		<result property="goodsName" column="CT_FGOODSNAME" />
+		<result property="custCompany" column="CT_FCUSTCOMPANY" />
+		<result property="contactId" column="CT_FCONTACTID" />
+		
+		<result property="ifForeignGoods" column="CT_FIFFOREIGNGOODS"/>
+		<result property="dunningDeptCode" column="CT_FDUNNINGDEPTCODE"/>
+		<result property="debtDays" column="CT_FDEBTDAYS" />
+		<result property="useableArrearAmount" column="CT_FUSEABLEARREARAMOUNT" />
+		
+	    <result property="exPayWay" column="CT_FEXPAYWAY"/>
+		<result property="exPreferentialType" column="CT_FEXPREFERENTIALTYPE"/>
+		<result property="exPriceVersionDate" column="CT_FEXPRICEVERSIONDATE"/>
+		
+		<result property="preferentialType" column="CT_FPREFERENTIALTYPE" />
+		<result property="priceVersionDate" column="CT_FPRICEVERSIONDATE"/>
+		<association property="dunningDeptName" column="CT_FDUNNINGDEPTCODE" select="queryDeptNameByCode" />
+		<association property="member" jdbcType="VARCHAR" column="CT_FCUSTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById"
+			javaType="com.deppon.crm.module.customer.shared.domain.Member" />
+		<association property="preferential" column="CT_FID"
+			select="selectPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" />
+		<association property="exPreferential" column="CT_FID"
+			select="selectExPreferentialByContractId" javaType="com.deppon.crm.module.customer.shared.domain.Preferential" />
+		<association property="dept"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			column="CT_FDEPTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+		<collection property="contractTaxList" column="CT_FID"
+			select="selectContractTaxByContractId" ofType="com.deppon.crm.module.customer.shared.domain.ContractTax"/>
+	</resultMap>
+	<!-- 合同改签通过客户查询客户合同（包括合同部门） -->
+	<resultMap id="Contract360WithdeptRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contract" extends="ContractRM_360">
+		<collection property="contractDepartList" column="CT_FID"
+			select="searchContractDeptByContractId" ofType="com.deppon.crm.module.customer.shared.domain.ContractDept" />
+	</resultMap>
+	<!-- 合同全部信息查询 -->
+	<select id="selectContractAllById" resultMap="ContractRM"
+		parameterType="string">
+		<include refid="selectContractById" />
+	</select>
+	<!-- 合同全部信息查询 -->
+	<select id="queryContractAllInfoByCustId" resultMap="ContractRM"
+		parameterType="string">
+		SELECT
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		where CT.FCUSTID = #{custId}
+	</select>
+
+	<!-- 合同基本信息查询 -->
+	<select id="selectContractBaseInfoById" resultMap="ContractBaseRM"
+		parameterType="string">
+		<include refid="selectContractById" />
+	</select>
+	<!-- 合同基本信息查询 -->
+	<select id="queryUneffectContractIn30Days" resultMap="ContractBaseRM"
+		parameterType="integer">
+		SELECT 
+		<include refid="Contract_column"/>
+		FROM T_CUST_CONTRACT CT
+		WHERE CT.FCONTRACTENDDATE BETWEEN SYSDATE AND SYSDATE+#{day}
+		AND FCONTRACTSTATUS = 1
+	</select>
+
+	<!-- 根据穿日条件查询合同360信息 -->
+	<select id="queryContract_360ByCondition" resultMap="ContractRM_360">
+		<include refid="queryContract_360ByConditionBody" />
+	</select>
+	<!-- 合同改签通过客户查询客户合同（包括合同部门） -->
+	<select id="queryContractWithDeptByCondition" resultMap="Contract360WithdeptRM">
+		<include refid="queryContract_360ByConditionBody" />
+	</select>
+	<!-- 根据传入条件查询合同基本信息 -->
+	<select id="queryContractByCondition" resultMap="ContractListRM">
+		SELECT
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		<include refid="queryContractByCondition_bodySql" />
+		<include refid="orderByCreateDate" />
+	</select>
+
+	<sql id="CustMonthSum_column">
+		MS.FID MS_FID,
+		MS.FCUSTID MS_FCUSTID,
+		MS.MONTHMONERY MS_MONTHMONERY,
+		MS.FDATE MS_FDATE
+	</sql>
+	<!-- 客户发货金额RusultMap -->
+	<resultMap type="com.deppon.crm.module.customer.shared.domain.CustMonthSum"
+	id="CustMonthRM">
+	<result property="id" column="MS_FID" />
+	<result property="custId" column="MS_FCUSTID" />
+	<result property="amount" column="MS_MONTHMONERY" />
+	<result property="month" column="MS_FDATE" />
+</resultMap>
+	<select id="queryCustMonthAmountByCustId" resultMap="CustMonthRM" parameterType="map">
+		SELECT 
+		<include refid="CustMonthSum_column"/>
+		<![CDATA[ 
+		 FROM T_CUST_CUSTMONTHSUM MS
+		 WHERE MS.FCUSTID=#{custId,jdbcType=VARCHAR}
+		 AND MS.FDATE>=#{beginDate,jdbcType=DATE}
+		 AND MS.FDATE<#{endDate,jdbcType=TIMESTAMP}
+		  ]]>
+	</select>
+	
+	<select id="queryExCustMonthAmountByCustId" resultMap="CustMonthRM" parameterType="map">
+		SELECT 
+		<include refid="CustMonthSum_column"/>
+		<![CDATA[ 
+		 FROM T_CUST_CUSTMONTHSUM_EXPRESS MS
+		 WHERE MS.FCUSTID=#{custId,jdbcType=VARCHAR}
+		 AND MS.FDATE>=#{beginDate,jdbcType=DATE}
+		 AND MS.FDATE<#{endDate,jdbcType=TIMESTAMP}
+		  ]]>
+	</select>
+	
+	<!-- 根据传入条件查询合同基本信息 -->
+	<select id="queryEffectMonthSendContract" resultMap="ContractWithAmountRM" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractCondition">
+		SELECT
+		<include refid="Contract_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<where>
+		<if test="contractBeginDate != null and  contractBeginDate != ''">
+			<![CDATA[CT.FCONTRACTBEGINDATE <= #{contractBeginDate,jdbcType=TIMESTAMP}
+			 ]]>
+			 </if>
+			<if test="contractStatus != null and  contractStatus != ''">
+				<![CDATA[ AND CT.FCONTRACTSTATUS <> #{contractStatus,jdbcType=VARCHAR} ]]>
+			</if>
+			<if test="prefrentialType != null and prefrentialType != '' ">
+				<![CDATA[ AND (CT.FPREFERENTIALTYPE = #{prefrentialType,jdbcType=VARCHAR} ]]>
+			</if>
+			<if test="exPrefrentialType != null and exPrefrentialType != '' ">
+				<![CDATA[ OR CT.FEXPREFERENTIALTYPE = #{exPrefrentialType,jdbcType=VARCHAR}) ]]>
+			</if>
+		</where>
+	</select>
+
+	<sql id="orderByCreateDate">
+		ORDER BY CT.FCREATETIME DESC
+	</sql>
+   
+   <select id="searchInitContract" resultMap="ContractListRM">
+		SELECT 
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		<include refid="queryContractByCondition_Init" />
+		<include refid="orderByCreateDate" />
+	</select>
+	
+   <select id="countInitContract"  resultType="int">
+		SELECT 
+		COUNT(*)
+		<include refid="queryContractByCondition_Init" />
+	</select>
+	<sql id="queryContractByCondition_Init">
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CB
+		ON
+		CB.FID = CT.FCUSTID
+		<where>
+			<if test="deptId != null and deptId != ''">
+				AND CT.FDEPTID = #{deptId}
+			</if>
+			<if test="contractStatus != null and contractStatus != ''">
+				AND CT.FCONTRACTSTATUS = 1
+			</if>
+			AND SYSDATE + 30 &gt;= TRUNC(CT.FCONTRACTENDDATE)
+		</where>
+	</sql>
+	<!-- 根据传入条件查询合同 -->
+	<select id="queryContractCountByCondition" resultType="int">
+		SELECT
+		COUNT(distinct CT.FID)
+		<include refid="queryContractByCondition_bodySql" />
+	</select>
+
+	<select id="queryContractByContractDeptId" parameterType="list"
+		resultMap="ContractBaseRM">
+		SELECT
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		<where>
+			CT.FDEPTID in
+			<foreach collection="list" item="dept" open="(" close=")" separator=",">
+				#{dept}
+			</foreach>
+		</where>
+	</select>
+	<sql id="queryContract_360ByConditionBody">
+		SELECT
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CB
+		ON
+		CB.FID = CT.FCUSTID
+		<where>
+			CT.fcontractstatus != 2
+			<if test="deptIds != null and deptIds.size > 0">
+				AND CT.FDEPTID in
+				<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					#{dept}
+				</foreach>
+			</if>
+			<if test="custNumber != null and custNumber != ''">
+				<![CDATA[ AND CB.FCUSTNUMBER =#{custNumber} ]]>
+			</if>
+			<if test="custCompany != null and custCompany != ''">
+				<![CDATA[ AND CT.FCUSTCOMPANY =#{custCompany} ]]>
+			</if>
+			<if test="contractNum !=  null and contractNum != ''">
+				<![CDATA[ AND CT.FCONTRACTNUM =#{contractNum} ]]>
+			</if>
+			<if test="contactName !=  null and contactName != ''">
+				<![CDATA[ AND CT.FLINKMANNAME =#{contactName} ]]>
+			</if>
+			<if test="searchStartTime != null">
+				<![CDATA[ AND TRUNC(CT.FCREATETIME) >= #{searchStartTime} ]]>
+			</if>
+			<if test="searchEndTime != null">
+				<![CDATA[ AND TRUNC(CT.FCREATETIME) <= #{searchEndTime} ]]>
+			</if>
+			<if test="custId != null">
+				<![CDATA[ AND CT.FCUSTID = #{custId} ]]>
+			</if>
+			<if test="contractId != null">
+				<![CDATA[ AND CT.FID = #{contractId} ]]>
+			</if>
+		</where>
+		order by CT.FCREATETIME
+	</sql>
+	<sql id="queryContractByCondition_bodySql">
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CB
+		ON
+		CB.FID = CT.FCUSTID
+		<where>
+			<if test="deptIds != null and deptIds.size > 0">
+				AND CT.FDEPTID in
+				<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					#{dept}
+				</foreach>
+			</if>
+			<if test="custNumber != null and custNumber != ''">
+				<![CDATA[ AND CB.FCUSTNUMBER =#{custNumber} ]]>
+			</if>
+			<if test="custCompany != null and custCompany != ''">
+				<![CDATA[ AND CT.FCUSTCOMPANY like #{custCompany} ]]>
+			</if>
+			<if test="contractNum !=  null and contractNum != ''">
+				<![CDATA[ AND CT.FCONTRACTNUM =#{contractNum} ]]>
+			</if>
+			<if test="contactName !=  null and contactName != ''">
+				<![CDATA[ AND CT.FLINKMANNAME like #{contactName} ]]>
+			</if>
+			<if test="searchStartTime != null">
+				<![CDATA[ AND TRUNC(CT.FCREATETIME) >= #{searchStartTime} ]]>
+			</if>
+			<if test="searchEndTime != null">
+				<![CDATA[ AND TRUNC(CT.FCREATETIME) <= #{searchEndTime} ]]>
+			</if>
+			<!--新增合同状态的查询条件-->
+		
+			<if test="contractStatus != null and contractStatus != ''">
+				<choose>
+					<when test="contractStatus == 3">
+						<![CDATA[ AND TRUNC(CT.FCONTRACTSTATUS) = 1  AND TRUNC(CT.FCONTRACTBEGINDATE) > SYSDATE ]]>
+					</when>
+					<when test="contractStatus == 1">
+						<![CDATA[ AND TRUNC(CT.FCONTRACTSTATUS) = #{contractStatus}  AND TRUNC(CT.FCONTRACTBEGINDATE) < SYSDATE ]]>
+					</when>
+					<otherwise>
+						<![CDATA[ AND TRUNC(CT.FCONTRACTSTATUS) = #{contractStatus} ]]>
+					</otherwise>
+				</choose>
+			</if>
+			
+			<!--  <if test="contractStatus != null and contractStatus !='3'">
+				<![CDATA[ AND TRUNC(CT.FCONTRACTSTATUS) = #{contractStatus} ]]>
+			</if>
+			<if test="contractStatus != null and contractStatus ='3'">
+				<![CDATA[ AND TRUNC(CT.FCONTRACTSTATUS) = 1  ]]>
+				<![CDATA[ AND TRUNC(CT.FCONTRACTBEGINDATE) &gt; SYSDATE  ]]>
+			</if>-->
+			<!-- 生效时间查询 -->
+			<if test="contractBeginDate != null">
+				<![CDATA[ AND TRUNC(CT.FCONTRACTBEGINDATE) >= #{contractBeginDate} ]]>
+			</if>
+			<if test="contractendDate != null">
+				<![CDATA[ AND TRUNC(CT.FCONTRACTENDDATE) <= #{contractendDate} ]]>
+			</if>
+			<if test="custId != null">
+				<![CDATA[ AND CT.FCUSTID = #{custId} ]]>
+			</if>
+			<if test="contractId != null">
+				<![CDATA[ AND CT.FID = #{contractId} ]]>
+			</if>
+			
+			<if test="contractSubject != null and contractSubject != ''">
+				<![CDATA[ AND CT.fcontractsubject = #{contractSubject} ]]>
+			</if>
+			
+			
+<!-- 			) OR CT.FID IN (SELECT FCONTRACTID FROM T_CUST_CONTRACTDEPT  WHERE FISDEPT=0 AND  FDEPTID IN  -->
+<!-- 			<foreach collection="deptIds" item="dept" open="(" close=")"> -->
+<!-- 				#{dept} -->
+<!-- 			</foreach>) -->
+		</where>
+	</sql>
+
+	<sql id="selectContractById">
+		select
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		where CT.fid = #{id}
+	</sql>
+
+	<!-- 合同日志记录sql -->
+	<sql id="ContractOperatorLog_column">
+		LG.FID,
+		LG.FCREATETIME,
+		LG.FCREATEUSERID,
+		LG.FLASTUPDATETIME,
+		LG.FLASTMODIFYUSERID,
+		LG.FCONTRACTID,
+		LG.FOPERATORTYPE,
+		LG.FWORKFLOWID,
+		LG.FPREVIOUSDEPTID,
+		LG.FCHANGEDDEPTID,
+		LG.FOPERATORDEPTID,
+		LG.FAPPROVALMAN,
+		LG.FAPPROVALSTATE
+	</sql>
+
+	<resultMap id="ContractOperatorLogBasicRM"
+	type="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog">
+	<result property="id" column="FID" jdbcType="VARCHAR" />
+	<result property="createDate" column="FCREATETIME" jdbcType="TIMESTAMP" />
+	<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+	<result property="modifyDate" column="FLASTUPDATETIME"
+		jdbcType="TIMESTAMP" />
+	<result property="modifyUser" column="FLASTMODIFYUSERID"
+		jdbcType="VARCHAR" />
+	<result property="operatorType" column="FOPERATORTYPE"
+		jdbcType="VARCHAR" />
+	<result property="workflowId" column="FWORKFLOWID" jdbcType="VARCHAR" />
+	<result property="approvalMan" column="FAPPROVALMAN" jdbcType="VARCHAR" />
+	<result property="approvalState" column="FAPPROVALSTATE"
+		jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ContractOperatorLogBaseRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog">
+		<result property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="operatorType" column="FOPERATORTYPE"
+			jdbcType="VARCHAR" />
+		<result property="workflowId" column="FWORKFLOWID" jdbcType="VARCHAR" />
+		<result property="approvalMan" column="FAPPROVALMAN" jdbcType="VARCHAR" />
+		<result property="approvalState" column="FAPPROVALSTATE"
+			jdbcType="VARCHAR" />
+		<association property="changedDept"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			column="FCHANGEDDEPTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+		<association property="operatorDept"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			column="FOPERATORDEPTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+		<association property="previousDept"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			column="FPREVIOUSDEPTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+		<collection property="fileInfos" select="getLogFileInfoBySourceId"
+			column="FID" jdbcType="VARCHAR"></collection>
+	</resultMap>
+
+	<resultMap id="ContractOperatorLogRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog"
+		extends="ContractOperatorLogBaseRM">
+		<association property="contract" select="selectContractAllById"
+			column="FCONTRACTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.customer.shared.domain.Contract" />
+	</resultMap>
+	<resultMap id="BasicContractOperatorLogRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog"
+		extends="ContractOperatorLogBaseRM">
+		<association property="contract" select="selectContractAllById"
+			column="FCONTRACTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.customer.shared.domain.Contract" />
+	</resultMap>
+	<!-- 根据集合合同id查询合同操作日志仅提供给条件查询合同集合 -->
+	<select id="searchWorkFlowLogByListContractId" parameterType="string"
+		resultMap="ContractOperatorLogBasicRM">
+		SELECT
+		<include refid="ContractOperatorLog_column" />
+		FROM T_CUST_CONTRACTOPERATORLOG LG
+		WHERE
+		LG.FCREATETIME =
+		(SELECT MIN(T.FCREATETIME)
+		FROM T_CUST_CONTRACTOPERATORLOG T
+		WHERE T.FCONTRACTID = #{contractId,jdbcType=VARCHAR})
+		AND LG.FCONTRACTID = #{contractId,jdbcType=VARCHAR} 
+	</select>
+	<!-- 根据合同id查询合同部门 -->
+	<select id="searchWorkFlowLogByContractId" parameterType="string"
+		resultMap="ContractOperatorLogRM">
+		SELECT
+		<include refid="ContractOperatorLog_column" />
+		FROM T_CUST_CONTRACTOPERATORLOG LG
+		WHERE
+		FCONTRACTID=#{contractId,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 根据合同id查询合同部门 -->
+	<select id="searchContractOperatorLogByContractId"
+		parameterType="string" resultMap="ContractOperatorLogBaseRM">
+		SELECT
+		<include refid="ContractOperatorLog_column" />
+		FROM T_CUST_CONTRACTOPERATORLOG LG
+		WHERE
+		FCONTRACTID=#{contractId,jdbcType=VARCHAR}
+	</select>
+
+	<resultMap id="ContractOperatorLogBaseRM_FOR_OA_CRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog">
+		<result property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="operatorType" column="FOPERATORTYPE"
+			jdbcType="VARCHAR" />
+		<result property="workflowId" column="FWORKFLOWID" jdbcType="VARCHAR" />
+		<result property="approvalMan" column="FAPPROVALMAN" jdbcType="VARCHAR" />
+		<result property="approvalState" column="FAPPROVALSTATE" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ContractOperatorLogRM_FOR_OA_CRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog"
+		extends="ContractOperatorLogBaseRM_FOR_OA_CRM">
+		<association property="contract" select="selectContractBaseInfoById"
+			column="FCONTRACTID" jdbcType="VARCHAR"
+			javaType="com.deppon.crm.module.customer.shared.domain.Contract" />
+	</resultMap>
+	<!-- 根据时间查询合同操作记录-->
+	<select id="queryContractOperatorLogsForDate"
+		parameterType="map" resultMap="ContractOperatorLogRM_FOR_OA_CRM">
+		SELECT
+		<include refid="ContractOperatorLog_column" />
+		FROM T_CUST_CONTRACTOPERATORLOG LG
+		WHERE
+		FCREATETIME BETWEEN
+	    #{begin} AND #{end}
+	</select>
+
+	<!-- 查询合同操作记录 -->
+	<select id="searchContractOperatorLogs"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog"
+		resultMap="ContractOperatorLogRM">
+		SELECT
+		<include refid="ContractOperatorLog_column" />
+		FROM T_CUST_CONTRACTOPERATORLOG LG
+		<where>
+			<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=TIMESTAMP}]]>
+			</if>
+			<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=TIMESTAMP}]]>
+			</if>
+			<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contract != null  and contract.id != null  ">
+		<![CDATA[and FCONTRACTID=#{contract.id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" operatorType != null  and operatorType != ''  ">
+		<![CDATA[and FOPERATORTYPE=#{operatorType,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" workflowId != null  and workflowId != ''  ">
+		<![CDATA[and FWORKFLOWID=#{workflowId,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" previousDept != null  and previousDept.id != null  ">
+		<![CDATA[and FPREVIOUSDEPTID=#{previousDept.id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" changedDept != null  and changedDept.id != null  ">
+		<![CDATA[and FCHANGEDDEPTID=#{changedDept.id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" operatorDept != null  and operatorDept.id != null  ">
+		<![CDATA[and FOPERATORDEPTID=#{operatorDept.id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" approvalMan != null  and approvalMan != ''  ">
+		<![CDATA[and FAPPROVALMAN=#{approvalMan,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" approvalState != null  and approvalState != ''  ">
+		<![CDATA[and FAPPROVALSTATE=#{approvalState,jdbcType=VARCHAR}]]>
+			</if>
+		</where>
+	</select>
+
+	<!-- 修改历史操作记录 -->
+	<update id="updateContractOperatorLog"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractOperatorLog">
+		UPDATE
+		T_CUST_CONTRACTOPERATORLOG
+		SET FLASTUPDATETIME = sysdate
+		,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		<if test=" contract != null  and contract.id != null  ">
+		<![CDATA[,FCONTRACTID=#{contract.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" operatorType != null  and operatorType != ''  ">
+		<![CDATA[,FOPERATORTYPE=#{operatorType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workflowId != null  and workflowId != ''  ">
+		<![CDATA[,FWORKFLOWID=#{workflowId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" previousDept != null  and previousDept.id != null  ">
+		<![CDATA[,FPREVIOUSDEPTID=#{previousDept.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" changedDept != null  and changedDept.id != null  ">
+		<![CDATA[,FCHANGEDDEPTID=#{changedDept.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" operatorDept != null  and operatorDept.id != null  ">
+		<![CDATA[,FOPERATORDEPTID=#{operatorDept.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" approvalMan != null  and approvalMan != ''  ">
+		<![CDATA[,FAPPROVALMAN=#{approvalMan,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" approvalState != null  and approvalState != ''  ">
+		<![CDATA[,FAPPROVALSTATE=#{approvalState,jdbcType=VARCHAR}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+
+
+	<!-- 合同部门的sql语句 -->
+	<!-- 合同部门新增 -->
+	<insert id="createContractDept"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractDept">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select SEQ_ID_CONTRACTDEPT.nextval as id from dual
+		</selectKey>
+
+		insert into T_CUST_CONTRACTDEPT(
+		FID,FCREATETIME,FCREATEUSERID,
+		FCONTRACTID,FDEPTID,FBEGINTIME,FENDTIME,
+		FISDEPT,FSTATE)
+		values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{contract.id,jdbcType=VARCHAR},#{contractDept.id,jdbcType=VARCHAR},
+		#{boundTime,jdbcType=TIMESTAMP},#{removeTime,jdbcType=TIMESTAMP},
+		#{isDept,jdbcType=NUMERIC},
+		<!-- 合同部门的状态有历史原因，1 为生效， 0为失效 ，现在代码是 物理删除，逻辑删除 ，故 fstate永远为 1 -->
+		1
+		)
+	</insert>
+
+	<delete id="deleteContractDept" parameterType="string">
+		delete from
+		T_CUST_CONTRACTDEPT where fid = #{id}
+	</delete>
+
+	<update id="updateContractDept"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractDept">
+		UPDATE
+		T_CUST_CONTRACTDEPT
+		SET FLASTUPDATETIME = sysdate
+		,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		,FVERSIONNUMBER = (FVERSIONNUMBER+1)
+		<if test=" contract != null  and contract.id != null  ">
+		<![CDATA[,FCONTRACTID=#{contract.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contractDept != null  and contractDept.id != null  ">
+		<![CDATA[,FDEPTID=#{contractDept.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" boundTime != null  and boundTime != ''  ">
+		<![CDATA[,FBEGINTIME=#{boundTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" removeTime != null  and removeTime != ''  ">
+		<![CDATA[,FENDTIME=#{removeTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" state != null  ">
+		<![CDATA[,FSTATE=#{state,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" isDept != null  ">
+		<![CDATA[,FISDEPT=#{isDept,jdbcType=NUMERIC}]]>
+		</if>
+		WHERE FID = #{id}
+		AND FVERSIONNUMBER = #{versionNumber,jdbcType=NUMERIC}
+	</update>
+
+	<resultMap id="ContractDeptRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractDept">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="boundTime" column="FBEGINTIME" jdbcType="TIMESTAMP" />
+		<result property="removeTime" column="FENDTIME" jdbcType="TIMESTAMP" />
+		<result property="state" column="FSTATE" jdbcType="NUMERIC" />
+		<result property="isDept" column="FISDEPT" jdbcType="NUMERIC" />
+		<result property="versionNumber" column="FVERSIONNUMBER" jdbcType="NUMERIC" />
+		<association property="contract" column="FCONTRACTID"
+			jdbcType="VARCHAR" select="selectContractAllById"
+			javaType="com.deppon.crm.module.customer.shared.domain.Contract" />
+		<association property="contractDept" column="FDEPTID"
+			jdbcType="VARCHAR"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+	</resultMap>
+
+
+	<!-- 只有合同绑定部门的合同信息 -->
+	<resultMap id="ContractWithBoundDeptsRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contract" extends="ContractBasicRM">
+		<collection property="contractDepartList" column="CT_FID"
+			select="searchContractDeptByContractId" ofType="com.deppon.crm.module.customer.shared.domain.ContractDept" />
+	</resultMap>
+
+	<!-- 通过合同id查询合同客户所有的待生效合同s -->
+	<select id="queryWaitEffectContractByContractId" parameterType="string"
+		resultMap="ContractWithBoundDeptsRM">
+		SELECT
+		<include refid="Contract_column" />
+		FROM T_CUST_CONTRACT CT
+		WHERE CT.FCONTRACTSTATUS=1 AND
+		CT.FCONTRACTBEGINDATE>=SYSDATE AND
+		CT.FCUSTID=(SELECT FCUSTID FROM
+		T_CUST_CONTRACT WHERE FID=#{id})
+	</select>
+
+	<!-- 通同时间查询所有的待生效合同 -->
+	<select id="queryAllWaitEffectContractByTime" parameterType="date"
+		resultMap="ContractWithBoundDeptsRM">
+		SELECT
+		<include refid="Contract_column" />
+		FROM T_CUST_CONTRACT CT
+		WHERE CT.FCONTRACTSTATUS=1 AND
+		TRUNC(CT.FCONTRACTBEGINDATE)=TRUNC(#{date})
+	</select>
+	
+	<select id="getContractDeptByDeptId" parameterType="map" resultMap="ContractDeptRM">
+		SELECT
+		<include refid="ContractDept_column" />
+		FROM T_CUST_CONTRACTDEPT
+		WHERE FSTATE=1 
+		AND FCONTRACTID = #{contractId,jdbcType=VARCHAR}
+		AND FDEPTID = #{deptId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="searchContractDeptByContractId" parameterType="string"
+		resultMap="ContractDeptRM">
+		SELECT
+		<include refid="ContractDept_column" />
+		FROM T_CUST_CONTRACTDEPT
+		WHERE FCONTRACTID = #{contractid,jdbcType=VARCHAR}
+	</select>
+
+	<sql id="ContractDept_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCONTRACTID,
+		FDEPTID,
+		FBEGINTIME,
+		FENDTIME,
+		FSTATE,
+		FISDEPT,
+		FVERSIONNUMBER
+	</sql>
+	<!-- 税务标记   @author chenaichun-->
+	<insert id="insertContractTax"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractTax">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select SEQ_ID_CONTRACTTAX.nextval as id from dual 
+		</selectKey>
+		insert into T_CUST_CONTRACTTAX(
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCONTRACTID,
+		FINVOICETYPE,
+		SIGNCOMPANY,
+		FBEGINTIME,
+		FENDTIME
+		)
+		values(
+		#{id,jdbcType=VARCHAR},	
+		#{createDate,jdbcType=TIMESTAMP},
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=TIMESTAMP},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{contractId,jdbcType=VARCHAR},
+		#{invoiceType,jdbcType=VARCHAR},
+		#{signCompany,jdbcType=VARCHAR},
+		#{beginTime,jdbcType=TIMESTAMP},
+		#{endTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<!-- 查询正在使用的发票标记信息-->
+	<select id="selectContractTaxByContractId" parameterType="string"
+		resultMap="ContractTaxRM">
+		SELECT
+		<include refid="ContractTax_column" />
+		FROM T_CUST_CONTRACTTAX 
+		WHERE  FCONTRACTID = #{contractId,jdbcType=VARCHAR}
+	</select>
+	<!-- 修改发票标记 -->
+	<update id="updateContractTax"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractTax">
+		UPDATE
+		T_CUST_CONTRACTTAX
+		SET FLASTUPDATETIME = sysdate
+		,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		<if test=" invoiceType != null  and invoiceType != ''  ">
+		<![CDATA[,FINVOICETYPE=#{invoiceType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" signCompany != null  and signCompany != ''  ">
+		<![CDATA[,SIGNCOMPANY=#{signCompany,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beginTime != null  and beginTime != ''  ">
+		<![CDATA[,FBEGINTIME=#{beginTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" endTime != null  and endTime != ''  ">
+		<![CDATA[,FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+	<delete id="deleteContractTax" parameterType="string">
+		DELETE T_CUST_CONTRACTTAX WHERE FID=#{id,jdbcType=VARCHAR}
+	</delete>
+	<resultMap id="ContractTaxRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractTax">
+		<result property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="contractId" column="FCONTRACTID" jdbcType="VARCHAR" />
+		<result property="invoiceType" column="FINVOICETYPE" 	jdbcType="VARCHAR" />
+	    <result property="signCompany" column="SIGNCOMPANY" 	jdbcType="VARCHAR" />
+		<result property="beginTime" column="FBEGINTIME" 	jdbcType="TIMESTAMP" />
+		<result property="endTime" column="FENDTIME" 	jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="ContractTax_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCONTRACTID,
+		FINVOICETYPE,
+		SIGNCOMPANY,
+		FBEGINTIME,
+		FENDTIME
+	</sql>
+	
+	<!-- 合同优惠信息sql -->
+	<insert id="insertPreferential"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Preferential">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select SEQ_ID_PREFERENTIAL.nextval as id from dual
+		</selectKey>
+		insert into T_CUST_PREFERENTIAL(
+		FID,FCREATETIME,FCREATEUSERID,
+		FBEGINTIME,FENDTIME,
+		FLASTUPDATETIME,FCONTRACTID,FCHARGEREBATE,
+		FAGENTGATHRATE,FINSUREDPRICERATE,
+		FRECEIVEPRICERATE,FDELIVERYPRICERATE
+		,FSTATUS,FPREFERTYPE
+		)
+		values(
+		#{id,jdbcType=VARCHAR},	#{createDate,jdbcType=TIMESTAMP},
+		#{createUser,jdbcType=VARCHAR},#{beginTime,jdbcType=TIMESTAMP},
+		#{endTime,jdbcType=TIMESTAMP},#{modifyDate,jdbcType=TIMESTAMP},
+		#{contractId,jdbcType=VARCHAR},#{chargeRebate,jdbcType=NUMERIC},
+		#{agentgathRate,jdbcType=NUMERIC},#{insuredPriceRate,jdbcType=NUMERIC},
+		#{receivePriceRate,jdbcType=NUMERIC},#{deliveryPriceRate,jdbcType=NUMERIC}
+		,#{status,jdbcType=VARCHAR},#{preferType,jdbcType=VARCHAR})
+	</insert>
+	<delete id="deletePreferentialByContractId" parameterType="string">
+		DELETE T_CUST_PREFERENTIAL WHERE FCONTRACTID=#{contractId,jdbcType=VARCHAR}
+	</delete>
+	<resultMap id="PreferentialRM"
+		type="com.deppon.crm.module.customer.shared.domain.Preferential">
+		<result property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="TIMESTAMP" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="contractId" column="FCONTRACTID" jdbcType="VARCHAR" />
+		<result property="chargeRebate" column="FCHARGEREBATE"
+			jdbcType="NUMERIC" />
+		<result property="agentgathRate" column="FAGENTGATHRATE"
+			jdbcType="NUMERIC" />
+		<result property="insuredPriceRate" column="FINSUREDPRICERATE"
+			jdbcType="NUMERIC" />
+		<result property="receivePriceRate" column="FRECEIVEPRICERATE"
+			jdbcType="NUMERIC" />
+		<result property="deliveryPriceRate" column="FDELIVERYPRICERATE"
+			jdbcType="NUMERIC" />
+		<result property="status" column="FSTATUS" 	jdbcType="VARCHAR" />
+		<result property="beginTime" column="FBEGINTIME" 	jdbcType="TIMESTAMP" />
+		<result property="endTime" column="FENDTIME" 	jdbcType="TIMESTAMP" />
+		<result property="preferType" column="FPREFERTYPE" 	jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Preferential_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCONTRACTID,
+		NVL(FCHARGEREBATE,1) FCHARGEREBATE,
+		NVL(FAGENTGATHRATE,1) FAGENTGATHRATE,
+		NVL(FINSUREDPRICERATE,1) FINSUREDPRICERATE,
+		FRECEIVEPRICERATE,
+		NVL(FDELIVERYPRICERATE,1) FDELIVERYPRICERATE,
+		FBEGINTIME,
+		FENDTIME,
+		FSTATUS,
+		FPREFERTYPE
+	</sql>
+
+	<select id="selectPreferentialByContractId" parameterType="string"
+		resultMap="PreferentialRM">
+		SELECT
+		<include refid="Preferential_column" />
+		FROM T_CUST_PREFERENTIAL 
+		WHERE  FCONTRACTID = #{contractid}
+		 AND  FSTATUS='1'
+		 AND FPREFERTYPE='LTT'
+	</select>
+	
+	<select id="selectExPreferentialByContractId" parameterType="string"
+		resultMap="PreferentialRM">
+		SELECT
+		<include refid="Preferential_column" />
+		FROM T_CUST_PREFERENTIAL 
+		WHERE  FCONTRACTID = #{contractid}
+		 AND  FSTATUS='1'
+		 AND FPREFERTYPE='EXPRESS'
+	</select>
+
+	<!-- 查询客户除本月外的近三个月的发货情况 -->
+	<select id="getDeliverMoneyByCondtion" parameterType="map"
+		resultType="map">
+		SELECT
+		SUM(NVL(T.FFPREPAYAMOUNT,0))
+		+ SUM(NVL(T.FARRIVEDAOUNT,0))
+		-
+		SUM(NVL(T.FREFUNDRABATE,0))
+		- SUM(NVL(T.FAGENTRECEIVEPAY,0))
+		"DELIVERMONEY",
+		T.FYEAR "YEAR",
+		T.FMONTH "MONTH"
+		FROM
+		T_CRM_CUSTANALYSEBYDAY T WHERE T.FCANALYSETYPE = 1
+		AND TO_DATE(T.FYEAR || '-' || T.FMONTH || '-' || T.FDAY, 'YYYY-MM-DD') BETWEEN
+	    TRUNC(#{beginDate}) AND #{endDate}
+		AND T.FCUSTID = #{custId}
+		GROUP BY
+		T.FYEAR,T.FMONTH
+		ORDER BY T.FYEAR,T.FMONTH
+	</select>
+	
+	<!-- 查询客户除本月外的近三个月的发货情况 -->
+	<select id="getExDeliverMoneyByCondtion" parameterType="map"
+		resultType="map">
+		SELECT
+		SUM(NVL(T.FFPREPAYAMOUNT,0))
+		+ SUM(NVL(T.FARRIVEDAOUNT,0))
+		-
+		SUM(NVL(T.FREFUNDRABATE,0))
+		- SUM(NVL(T.FAGENTRECEIVEPAY,0))
+		"DELIVERMONEY",
+		T.FYEAR "YEAR",
+		T.FMONTH "MONTH"
+		FROM
+		T_CRM_CUSTANALYSEBYDAY_EXPRESS T WHERE T.FCANALYSETYPE = 1
+		AND TO_DATE(T.FYEAR || '-' || T.FMONTH || '-' || T.FDAY, 'YYYY-MM-DD') BETWEEN
+	    TRUNC(#{beginDate}) AND #{endDate}
+		AND T.FCUSTID = #{custId}
+		GROUP BY
+		T.FYEAR,T.FMONTH
+		ORDER BY T.FYEAR,T.FMONTH
+	</select>
+
+	<!-- 删除合同部门 -->
+	<select id="queryContractDeptIdsByContractIdAndDeptId"
+		parameterType="map" resultType="string">
+		SELECT FID FROM
+		T_CUST_CONTRACTDEPT
+		WHERE FCONTRACTID=#{contractId} AND
+		FDEPTID=#{deptId}
+	</select>
+
+	<delete id="deleteContractDeptByIds" parameterType="map">
+		delete
+		T_CUST_CONTRACTDEPT WHERE FCONTRACTID=#{contractId} AND
+		FDEPTID=#{deptId}
+	</delete>
+
+	<!-- 作废过期合同 -->
+	<update id="cancelTimeOutContract" parameterType="map">
+		<![CDATA[
+		UPDATE T_CUST_CONTRACT 
+		SET FCONTRACTSTATUS=#{status},
+		FLASTUPDATETIME = sysdate
+		WHERE trunc(FCONTRACTENDDATE)<trunc(sysdate)	AND FCONTRACTSTATUS = 1
+		]]>
+	</update>
+	<!-- 生效待生效合同 -->
+	<update id="effectContract" parameterType="map">
+		<![CDATA[
+		UPDATE T_CUST_CONTRACT 
+		SET FCONTRACTSTATUS=#{status},
+		FLASTUPDATETIME = sysdate
+		WHERE FCONTRACTBEGINDATE<=sysdate	AND FCONTRACTSTATUS = 3
+		]]>
+	</update>
+
+	<select id="getcancelTimeOutContractIds" parameterType="map"
+		resultType="string">
+			<![CDATA[
+			select fid from T_CUST_CONTRACT WHERE trunc(FCONTRACTENDDATE)<trunc(sysdate)	AND FCONTRACTSTATUS = 1
+			]]>
+
+	</select>
+	<select id="getWaitEffectContractIds" parameterType="map"
+		resultType="string">
+			<![CDATA[
+			select fid from T_CUST_CONTRACT WHERE trunc(FCONTRACTBEGINDATE)=trunc(sysdate)	AND FCONTRACTSTATUS = 1
+			]]>
+
+	</select>
+	<select id="getContractDeptByEffectContractIds" parameterType="list"
+		resultType="string">
+			<![CDATA[
+			select fid from T_CUST_CONTRACTDEPT WHERE FCONTRACTID IN
+			]]>
+			<foreach collection="list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+
+	</select>
+
+	<delete id="deleteContractById" parameterType="string">
+		DELETE
+		T_CUST_CONTRACT WHERE FID=#{id}
+	</delete>
+	<delete id="batchDeletedContract" parameterType="list">
+		DELETE
+		T_CUST_CONTRACT WHERE FID in 
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+	<insert id="insertDeletedContractId" parameterType="String">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_DELETEDCONTRACTID.nextval AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CUST_DELETEDCONTRACTID
+		(FID,FCONTRACTID)
+		VALUES(#{id},#{contractId,jdbcType=VARCHAR})
+	</insert>
+	
+
+	<!-- 通用权限，查询合同月结天数-全部 -->
+	<select id="searchContractMonthendDays" 
+		resultMap="ContractMonthendDayBasicRM" parameterType="string">
+		SELECT
+		<include refid="ContractMonthendDay_column" />
+		,
+		<include refid="username_column" />
+		FROM T_CUST_CONTRACTMONTHENDDAY CT
+		<include refid="joinEmployeeSql" />
+		<where>
+		 1=1
+             <![CDATA[ and CT.FSTATUS=#{status} ]]>
+		</where>
+	 
+	</select>
+	<!-- 通用权限，通过名字 去 查询合同月结天数-->
+	<select id="searchContractMonthendDayByName"
+		resultMap="ContractMonthendDayBasicRM">
+		SELECT
+		<include refid="ContractMonthendDay_column" />
+		,
+		<include refid="username_column" />
+		FROM T_CUST_CONTRACTMONTHENDDAY CT
+		<include refid="joinEmployeeSql" />
+		<where>
+			CT.FSTATUS='1' AND CT.FCONTRACTDEBTDAYNAME = #{contractMonthEndDayName}
+	 </where>
+	 
+	</select>
+	<!--通用权限 通过ID查询合同月结天数  -->
+	<select id="getContractMonthendDayById"
+		resultMap="ContractMonthendDayBasicRM">
+		SELECT
+		<include refid="ContractMonthendDay_column" />
+		,
+		<include refid="username_column" />
+		FROM T_CUST_CONTRACTMONTHENDDAY CT
+		<include refid="joinEmployeeSql" />
+		<where>
+			CT.FID = #{id}
+	 </where>
+	</select>
+	
+	<!-- 通过ID查询合同欠款天数  -->
+	<select id="getContractDebtDayById"
+		resultMap="ContractDebtDayBasicRM">
+		SELECT
+		<include refid="ContractDebtDay_column" />,
+		E.FEMPNAME E_FEMPNAME
+		FROM T_CUST_CONTRACTDEBTDAY CT
+		LEFT join t_org_employee E
+		ON E.FID = CT.FLASTMODIFYUSERID
+		<where>
+			CT.FID = #{id}
+	 </where>
+	</select>
+	
+	<!-- 通过客户编码查询合同欠款天数  -->
+	<select id="getContractDebtByCustNum"
+		resultMap="ContractDebtDayBasicRM">
+		SELECT
+		<include refid="ContractDebtDay_column" />,
+		E.FEMPNAME E_FEMPNAME
+		FROM T_CUST_CONTRACTDEBTDAY CT
+		LEFT join t_org_employee E
+		ON E.FID = CT.FLASTMODIFYUSERID
+		<where>
+			CT.FCUSTNUM = #{custNum}
+	 </where>
+	</select>
+		<!-- 查看需要代码提醒的客户信息，客户已用额度小于可使用额度 -->
+	<select id="getCustInfoForArreaAmoutMessage" resultType="map">
+	SELECT 
+		DISTINCT CU.FCUSTNUMBER CUST,CC.FDEPTID DEPART
+ 		FROM T_CUST_CONTRACTDEBTDAY CD
+ 		INNER JOIN T_CUST_CUSTBASEDATA CU
+ 		ON CD.FCUSTNUM = CU.FCUSTNUMBER
+ 		INNER JOIN T_CUST_CONTRACT CO
+ 		ON CO.FCUSTID = CU.FID
+ 		INNER JOIN T_CUST_CONTRACTDEPT CC
+ 		ON CC.FCONTRACTID = CO.FID
+ 		<![CDATA[
+ 		WHERE (CO.FPAYWAY = 'MONTH_END' OR CO.FEXPAYWAY='MONTH_END')
+       		AND CO.FCONTRACTSTATUS = '1' 
+       		AND CO.FCONTRACTBEGINDATE <= SYSDATE
+       		AND CC.FSTATE = '1'
+       		AND CD.FUSEDAMOUNT >= 0
+       		AND (CO.FUSEABLEARREARAMOUNT-CD.FUSEDAMOUNT) < 0.2*CO.FUSEABLEARREARAMOUNT
+       		]]>
+     </select>  
+     
+	<!-- 得到 合同欠款天数中的  合同欠款剩余天数都为同一天 的数据 -->
+	<select id="getContractDebtsForOneDay"
+		resultMap="ContractDebtDayBasicRM" parameterType="int">
+		SELECT
+		<include refid="ContractDebtDay_column" />,
+		E.FEMPNAME E_FEMPNAME
+		FROM T_CUST_CONTRACTDEBTDAY CT
+		LEFT join t_org_employee E
+		ON E.FID = CT.FLASTMODIFYUSERID
+		WHERE CT.FREMAINDAYS = #{remainDays}
+	</select>
+	
+		<!--修改某一个特定的合同的合同月结天数-->
+	<update id="updateContractDebtDayById"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contract">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACT
+		]]>
+			SET FLASTUPDATETIME = sysdate
+		
+			<if test=" debtDays != null ">
+              <![CDATA[,FDEBTDAYS=#{debtDays,jdbcType=NUMERIC}]]>
+		    </if>
+		    <if test=" useableArrearAmount != null ">
+              <![CDATA[,FUSEABLEARREARAMOUNT=#{useableArrearAmount,jdbcType=NUMERIC}]]>
+		    </if>		
+        	WHERE FID = #{id}
+	</update>
+	
+	
+			<!--修改带生效和没有业务操作的合同月结天数-->
+	<update id="updateOperationContractMonthDay"
+		parameterType="map">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACT
+		]]>
+			SET FLASTUPDATETIME = SYSDATE
+            ,FDEBTDAYS=#{newday}
+		    <![CDATA[
+        	WHERE FID IN (SELECT T.FID
+                 FROM T_CUST_CONTRACT T
+                INNER JOIN T_CUST_CUSTBASEDATA CU
+                   ON CU.FID = T.FCUSTID
+                 LEFT JOIN T_CUST_CONTRACTDEBTDAY CO
+                   ON CO.FCUSTNUM = CU.FCUSTNUMBER
+                WHERE (T.FPAYWAY = 'MONTH_END' OR T.FEXPAYWAY='MONTH_END')
+                  AND T.FCONTRACTSTATUS <> '2'
+                  AND CO.FCUSTNUM IS NULL
+                  AND T.FDEBTDAYS = #{oldDay}
+               UNION 
+               SELECT T.FID
+                 FROM T_CUST_CONTRACT T
+                INNER JOIN T_CUST_CUSTBASEDATA CU
+                   ON CU.FID = T.FCUSTID         
+                WHERE (T.FPAYWAY = 'MONTH_END' OR T.FEXPAYWAY='MONTH_END')
+                  AND T.FCONTRACTSTATUS = 1
+                  AND T.FCONTRACTENDDATE > SYSDATE
+                  AND T.FDEBTDAYS = #{oldDay})
+                  ]]>
+	</update>
+	<!--修改合同欠款天数 -->
+	<update id="updateContractDebtDay"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractDebtDay">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACTDEBTDAY
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null and modifyUser != '' ">
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" usedAmount != null">
+             <![CDATA[,FUSEDAMOUNT=#{usedAmount,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" remainDays != null ">
+             <![CDATA[,FREMAINDAYS=#{remainDays,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" longestDebtDate != null ">
+             <![CDATA[,FLONGESTDEBTDATE=#{longestDebtDate,jdbcType=DATE}]]>
+		</if>
+        <![CDATA[		
+        	WHERE FID = #{id}
+        ]]>
+	</update>
+	
+	<update id="updateAllContractDebt"
+		parameterType="int">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACTDEBTDAY
+			SET 
+				FLASTUPDATETIME = sysdate,
+				FREMAINDAYS = FREMAINDAYS - 1
+		]]>
+        <![CDATA[		
+        	WHERE FREMAINDAYS > #{day}
+        ]]>
+	</update>
+	
+	<!-- 修改合同月结天数信息 -->
+	<update id="updateContractMonthEnd"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractMonthendDay">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CONTRACTMONTHENDDAY
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null ">
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" defaultDebtDays != null ">
+             <![CDATA[,FDEFAULTDEBTDAYS=#{defaultDebtDays,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contractDebtDayName != null ">
+             <![CDATA[,FCONTRACTDEBTDAYNAME=#{contractDebtDayName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" status != null ">
+             <![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		</if>
+        <![CDATA[		
+        	WHERE FID = #{id}
+        ]]>
+	</update>
+	
+		<!-- 删除合同月结天数信息 -->
+	<delete id="deleteCommonContractDebtDay"
+		parameterType="string">
+	    <![CDATA[
+	    	delete from
+				T_CUST_CONTRACTMONTHENDDAY
+		]]>
+        <![CDATA[		
+        	WHERE fstatus = #{status}
+        ]]>
+	</delete>
+	
+		<insert id='saveCommonContractDebtDay'
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractMonthendDay">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select SEQ_ID_CONTRACTMONTHENDDAY .Nextval as id from dual
+		</selectKey>
+		insert into 
+			T_CUST_CONTRACTMONTHENDDAY 
+		(FID,
+  		 FCREATETIME, FCREATEUSERID,FLASTUPDATETIME,
+   		 FLASTMODIFYUSERID,FDEFAULTDEBTDAYS,FCONTRACTDEBTDAYNAME,FSTATUS)
+		values(
+			#{id,jdbcType=VARCHAR},
+			sysdate,
+			#{createUser,jdbcType=NUMERIC},
+			#{modifyDate,jdbcType=TIMESTAMP},
+			#{modifyUser,jdbcType=NUMERIC},
+			#{defaultDebtDays,jdbcType=NUMERIC},
+			#{contractDebtDayName,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 修改合同月结天数信息 -->
+	<update id="updatePreferential"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Preferential">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_PREFERENTIAL
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null  and modifyUser != '' ">
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" chargeRebate != null  and chargeRebate != '' ">
+             <![CDATA[,FCHARGEREBATE=#{chargeRebate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" agentgathRate != null  and agentgathRate != '' ">
+             <![CDATA[,FAGENTGATHRATE=#{agentgathRate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" insuredPriceRate != null  and insuredPriceRate != '' ">
+             <![CDATA[,FINSUREDPRICERATE=#{insuredPriceRate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" receivePriceRate != '' ">
+             <![CDATA[,FRECEIVEPRICERATE=#{receivePriceRate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" deliveryPriceRate != null  and deliveryPriceRate != '' ">
+             <![CDATA[,FDELIVERYPRICERATE=#{deliveryPriceRate,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" status != null  and status != '' ">
+             <![CDATA[,FSTATUS=#{status,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" beginTime != null  and beginTime != '' ">
+             <![CDATA[,FBEGINTIME=#{beginTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" endTime != null  and endTime != '' ">
+             <![CDATA[,FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+		</if>
+        <![CDATA[		
+        	WHERE FID = #{id}
+        ]]>
+	</update>
+	
+	<!-- 通同合同月结天数查询同类型的月结合同     有业务操作的  除无效外 -->
+	<select id="getContractByDebtDay" parameterType="int"
+		resultMap="ContractBasicRM_FORDEBTDAY">
+		<![CDATA[
+		SELECT DISTINCT
+		]]>
+		<include refid="Contract_column"/>,
+		<include refid="username_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		inner join t_cust_custbasedata cu
+         on cu.fid = CT.fcustid
+        inner join T_CUST_CONTRACTDEBTDAY co
+            on co.fcustnum = cu.fcustnumber
+		<![CDATA[
+		WHERE CT.FCONTRACTSTATUS <> '2' AND (CT.FPAYWAY = 'MONTH_END' OR CT.FEXPAYWAY = 'MONTH_END')
+			  AND CT.FDEBTDAYS = #{debtDay}
+		]]>
+	</select>
+	
+	<!-- 通用权限 合同月结天数基本信息 -->
+	<resultMap id="ContractMonthendDayBasicRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractMonthendDay">
+		<id property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="createUser" column="E1_FEMPNAME" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="E2_FEMPNAME" />
+		<result property="defaultDebtDays" column="CT_FDEFAULTDEBTDAYS" />
+		<result property="contractDebtDayName" column="CT_FCONTRACTDEBTDAYNAME" />
+		<result property="status" column="CT_FSTATUS" />
+	</resultMap>
+	
+	<!--合同月结天数 通用权限 -->
+	<sql id="ContractMonthendDay_column">
+		CT.FID CT_FID,
+		CT.FCREATETIME CT_FCREATETIME,
+		CT.FCREATEUSERID CT_FCREATEUSERID,
+		CT.FLASTUPDATETIME CT_FLASTUPDATETIME,
+		CT.FLASTMODIFYUSERID CT_FLASTMODIFYUSERID,
+		CT.FDEFAULTDEBTDAYS CT_FDEFAULTDEBTDAYS,
+		CT.FCONTRACTDEBTDAYNAME CT_FCONTRACTDEBTDAYNAME,
+		CT.FSTATUS CT_FSTATUS
+	</sql>
+	
+	<!--合同欠款天数  基本信息-->
+	<resultMap id="ContractDebtDayBasicRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractDebtDay">
+		<id property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="E_FEMPNAME" />
+		<result property="longestDebtDate" column="CT_FLONGESTDEBTDATE" />
+		<result property="custNum" column="CT_FCUSTNUM" />
+		<result property="custName" column="CT_FCUSTNAME" />
+		<result property="usedAmount" column="CT_FUSEDAMOUNT" />
+		<result property="remainDays" column="CT_FREMAINDAYS" />
+	</resultMap>
+	
+	<!--合同欠款天数-->
+	<sql id="ContractDebtDay_column">
+		CT.FID CT_FID,
+		CT.FCREATETIME CT_FCREATETIME,
+		CT.FLASTUPDATETIME CT_FLASTUPDATETIME,
+		CT.FLASTMODIFYUSERID CT_FLASTMODIFYUSERID,
+		CT.FCUSTNUM CT_FCUSTNUM,
+		CT.FCUSTNAME CT_FCUSTNAME,
+		CT.FUSEDAMOUNT CT_FUSEDAMOUNT,
+		CT.FLONGESTDEBTDATE CT_FLONGESTDEBTDATE,
+		CT.FREMAINDAYS CT_FREMAINDAYS
+	</sql>
+	
+		<!-- 合同基本信息 -->
+	<resultMap id="ContractBasicRM_FORDEBTDAY"
+		type="com.deppon.crm.module.customer.shared.domain.Contract">
+		<id property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="createUser" column="E1_FEMPNAME" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="E2_FEMPNAME" />
+		<result property="payWay" column="CT_FPAYWAY" />
+		<result property="arrearaMount" column="CT_FARREARAMOUNT" />
+		<result property="linkManName" column="CT_FLINKMANNAME" />
+		<result property="linkManPhone" column="CT_FLINKMANPHONE" />
+		<result property="linkManMobile" column="CT_FLINKMANMOBILE" />
+		<result property="linkManAddress" column="CT_FLINKMANADDRESS" />
+		<result property="reconDate" column="CT_FRECONDATE" />
+		<result property="invoicDate" column="CT_FINVOICDATE" />
+		<result property="resultDate" column="CT_FRESULTDATE" />
+		<result property="contractBeginDate" column="CT_FCONTRACTBEGINDATE" />
+		<result property="contractendDate" column="CT_FCONTRACTENDDATE" />
+		<result property="application" column="CT_FAPPLICATION" />
+		<result property="iddisCount" column="CT_FIDDISCOUNT" />
+		<result property="contractStatus" column="CT_FCONTRACTSTATUS" />
+		<result property="contractSubject" column="CT_FCONTRACTSUBJECT" />
+		<result property="regicapital" column="CT_FREGICAPITAL" />
+		<result property="beforeContractNum" column="CT_FBEFORECONTRACTNUM" />
+		<result property="contractNum" column="CT_FCONTRACTNUM" />
+		<result property="goodsName" column="CT_FGOODSNAME" />
+		<result property="custCompany" column="CT_FCUSTCOMPANY" />
+		<result property="contactId" column="CT_FCONTACTID" />
+		<result property="preferentialType" column="CT_FPREFERENTIALTYPE" />
+		
+		<result property="debtDays" column="CT_FDEBTDAYS" />
+		<result property="useableArrearAmount" column="CT_FUSEABLEARREARAMOUNT" />
+		<result property="ifForeignGoods" column="CT_FIFFOREIGNGOODS"/>
+		<result property="dunningDeptCode" column="CT_FDUNNINGDEPTCODE"/>
+		
+		<result property="exPayWay" column="CT_FEXPAYWAY"/>
+		<result property="exPreferentialType" column="CT_FEXPREFERENTIALTYPE"/>
+		<result property="exPriceVersionDate" column="CT_FEXPRICEVERSIONDATE"/>
+		
+		<association property="dunningDeptName" column="CT_FDUNNINGDEPTCODE" select="queryDeptNameByCode" />
+		<association property="member" jdbcType="VARCHAR" column="CT_FCUSTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberByIdForContractDebtDay"
+			javaType="com.deppon.crm.module.customer.shared.domain.Member" />
+	</resultMap>
+	<!-- 合同的基本信息 -->
+	<select id="getContractsBasicInfoByCustNum" resultMap="ContractBasicRM_FORDEBTDAY" parameterType="string">
+		SELECT
+		<include refid="Contract_column" />
+		,
+		<include refid="username_column" />
+		FROM
+		T_CUST_CONTRACT CT
+		<include refid="joinEmployeeSql" />
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CB
+		ON
+		CB.FID = CT.FCUSTID
+		where CB.FCUSTNUMBER = #{custNum}
+	</select>
+	
+	<insert id="saveContractDebt"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractDebtDay">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select Seq_Id_Contractdebtday.Nextval as id from dual
+		</selectKey>
+		insert into 
+			t_cust_contractdebtday 
+		(FID, FCREATETIME, 
+			FCUSTNUM, FCUSTNAME, 
+			FUSEDAMOUNT, FLONGESTDEBTDATE, 
+			FREMAINDAYS)
+		values(
+			#{id,jdbcType=VARCHAR},sysdate,
+			#{custNum,jdbcType=VARCHAR},#{custName,jdbcType=VARCHAR},
+			#{usedAmount,jdbcType=NUMERIC},#{longestDebtDate,jdbcType=TIMESTAMP},
+			#{remainDays,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<insert id="addPrefrentialDeal" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal">
+		INSERT INTO
+			T_CUST_DEALS
+			(FID,FCREATEUSERID,
+			FCREATETIME,FMODIFYUSERID,
+			FLASTUPDATETIME,FNUMBER,
+			FBEGINTIME,FENDTIME,
+			FNAME,FSTATUS,FPREFERTYPE)
+		values(
+			#{id,jdbcType=NUMERIC},#{createUser,jdbcType=NUMERIC},
+			#{createDate,jdbcType=TIMESTAMP},#{modifyUser,jdbcType=NUMERIC},
+			sysdate,#{dealNumber,jdbcType=VARCHAR},
+			#{beginTime,jdbcType=TIMESTAMP},#{endTime,jdbcType=TIMESTAMP},
+			#{dealName,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
+			#{preferType,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="addPrefrentialDealItem"
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDealItem">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select seq_id_dealitem.nextval as id from dual
+		</selectKey>
+		INSERT INTO
+			T_CUST_DEALSITEM
+			(FID,FCREATEUSERID,
+			FCREATETIME,FMODIFYUSERID,
+			FLASTUPDATETIME,FDEALID,
+			FDEGREE,FMINMONEY,
+			FMAXMONEY,FRATE,FDESCRIPTION)
+		values(	
+			#{id,jdbcType=NUMERIC},#{createUser,jdbcType=NUMERIC},
+			sysdate,#{modifyUser,jdbcType=NUMERIC},
+			#{modifyDate,jdbcType=TIMESTAMP},#{dealId,jdbcType=VARCHAR},
+			#{degree,jdbcType=VARCHAR},#{minAmount,jdbcType=NUMERIC},
+			#{maxAmount,jdbcType=NUMERIC},#{rate,jdbcType=NUMERIC},
+			#{itemDesc,jdbcType=VARCHAR}
+		)
+	</insert>
+	<select id="queryPrefrentialDeal" resultMap="queryPrefrentialDealRM" parameterType="string">
+		select
+		<include refid="PrefrentialDeal_column"/>,
+		<include refid="PrefrentialDealItem_column"/>
+		FROM 
+		T_CUST_DEALS DEAL,T_CUST_DEALSITEM ITEM
+		WHERE DEAL.FID = ITEM.FDEALID
+		AND
+		<if test=" _parameter != null and _parameter != '' ">
+             <![CDATA[DEAL.FID=#{_parameter,jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	<select id="searchPrefrentialDeal" resultMap="queryPrefrentialDealRM">
+		SELECT 
+		DEAL.FID DEAL_ID,
+		E1.FEMPNAME DEAL_FCREATEUSERID,
+		DEAL.FCREATETIME DEAL_FCREATETIME,
+		E2.FEMPNAME DEAL_FMODIFYUSERID,
+		DEAL.FLASTUPDATETIME DEAL_FLASTUPDATETIME,
+		DEAL.FNUMBER DEAL_FNUMBER,
+		DEAL.FBEGINTIME DEAL_FBEGINTIME,
+		DEAL.FENDTIME DEAL_FENDTIME,
+		DEAL.FNAME DEAL_FNAME,
+		DEAL.FSTATUS DEAL_FSTATUS,
+		DEAL.FPREFERTYPE DEAL_FPREFERTYPE
+		FROM 
+		T_CUST_DEALS DEAL
+		LEFT JOIN
+		T_ORG_EMPLOYEE E1 ON E1.FID = DEAL.FCREATEUSERID
+		LEFT JOIN 
+		T_ORG_EMPLOYEE E2 ON E2.FID = DEAL.FMODIFYUSERID
+		<where>
+			<if test="preferType != null">
+				DEAL.FPREFERTYPE=#{preferType,jdbcType=VARCHAR}
+			</if>
+			<if test="dealName != null">
+				AND DEAL.FNAME LIKE '%'||#{dealName,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="status != null">
+				AND DEAL.FSTATUS=#{status,jdbcType=VARCHAR}
+			</if>
+		</where>
+		ORDER BY DEAL.FSTATUS
+	</select>
+	<update id="endPrefrential" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal">
+		 <![CDATA[
+	    	UPDATE
+				T_CUST_DEALS
+			SET 
+		]]>
+			<![CDATA[FLASTUPDATETIME=#{modifyDate,jdbcType=TIMESTAMP}]]>
+			<![CDATA[,FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+            <![CDATA[,FMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+            <![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>  
+	        <![CDATA[		
+	        	WHERE FID = #{id,jdbcType=NUMERIC}
+	        ]]>
+	</update>
+	<update id="endEffectiveDeal" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal">
+		<![CDATA[
+	    	UPDATE
+				T_CUST_DEALS
+			SET 
+		]]>	
+			<![CDATA[FLASTUPDATETIME=#{modifyDate,jdbcType=TIMESTAMP}]]>
+			<![CDATA[,FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+            <![CDATA[,FMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+            <![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+        <![CDATA[		
+        	WHERE FID = #{id,jdbcType=VARCHAR} 
+        ]]>
+	</update>
+	<update id="modifyPrefrentialDeal" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal">
+		 <![CDATA[
+	    	UPDATE
+				T_CUST_DEALS
+			SET 
+		]]>	
+			 <![CDATA[FLASTUPDATETIME=#{modifyDate,jdbcType=VARCHAR}]]>
+             <![CDATA[,FMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+             <![CDATA[,FBEGINTIME=#{beginTime,jdbcType=TIMESTAMP}]]>
+             <![CDATA[,FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+             <![CDATA[,FNAME=#{dealName,jdbcType=VARCHAR}]]>
+        <if test="status !=null and status != '' ">
+			 <![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+        </if>
+        <![CDATA[		
+        	WHERE FID = #{id,jdbcType=NUMERIC}
+        ]]>
+	</update>
+	<update id="modifyPrefrentialDealItem" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDealItem">
+		<![CDATA[
+	    	UPDATE
+				T_CUST_DEALSITEM
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+             <![CDATA[,FMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+             <![CDATA[,FMINMONEY=#{minAmount,jdbcType=NUMERIC}]]>
+             <![CDATA[,FMAXMONEY=#{maxAmount,jdbcType=NUMERIC}]]>
+             <![CDATA[,FRATE=#{rate,jdbcType=NUMERIC}]]>
+        <if test="itemDesc !=null">
+             <![CDATA[,FDESCRIPTION=#{itemDesc,jdbcType=VARCHAR}]]>
+        </if>
+        <![CDATA[		
+        	WHERE FID = #{id,jdbcType=NUMERIC}
+        ]]>
+	</update>
+	<delete id="deletePrefrentialDeal" 
+		parameterType="string">
+			<![CDATA[
+	    	DELETE
+				FROM T_CUST_DEALS
+		]]>
+			WHERE
+             <![CDATA[FID=#{_parameter,jdbcType=NUMERIC}]]>
+	</delete>
+	<delete id="deletePrefrentialDealItem" 
+		parameterType="string">
+	    	DELETE
+				FROM T_CUST_DEALSITEM
+			WHERE
+             <![CDATA[FDEALID=#{_parameter,jdbcType=NUMERIC}]]>
+	</delete>
+	<update id="activePrefrentialDeal" 
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal">
+	    	UPDATE
+				 T_CUST_DEALS
+			SET	
+			<![CDATA[FLASTUPDATETIME=#{modifyDate,jdbcType=TIMESTAMP}]]>
+			<![CDATA[,FBEGINTIME=#{beginTime,jdbcType=TIMESTAMP}]]>
+			<![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+			<![CDATA[,FMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			WHERE
+            <![CDATA[FID=#{id,jdbcType=NUMERIC}]]>
+	</update>
+	<select id="getEffectPrefrentialDeal" resultMap="queryPrefrentialDealRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal">
+		SELECT 
+		<include refid="PrefrentialDeal_column"/>,
+		<include refid="PrefrentialDealItem_column"/>
+		FROM 
+		T_CUST_DEALS DEAL,T_CUST_DEALSITEM ITEM
+		WHERE 
+		DEAL.FID = ITEM.FDEALID 
+		<if test=" id != null and id != '' ">
+             <![CDATA[AND DEAL.FID=#{id,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" dealNumber != null and dealNumber != '' ">
+             <![CDATA[AND FNUMBER=#{dealNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" status != null and status != '' ">
+             <![CDATA[AND FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" dealName != null and dealName != '' ">
+             <![CDATA[AND FNAME=#{dealName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beginTime != null and beginTime != '' ">
+             <![CDATA[AND FBEGINTIME=#{beginTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" endTime != null and endTime != '' ">
+             <![CDATA[AND FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test=" preferType != null and preferType != '' ">
+             <![CDATA[AND FPREFERTYPE=#{preferType,jdbcType=VARCHAR}]]>
+		</if>
+	</select>
+	<select id="countPrefrentialDeal" resultType="int">
+		<![CDATA[
+			SELECT  
+				COUNT(DISTINCT DEAL.FID)
+			FROM
+				T_CUST_DEALS DEAL
+		]]>
+		<where>
+			<if test="preferType != null">
+				DEAL.FPREFERTYPE=#{preferType,jdbcType=VARCHAR}
+			</if>
+			<if test="dealName != null">
+				AND DEAL.FNAME LIKE '%'||#{dealName,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="status != null">
+				AND DEAL.FSTATUS=#{status,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<resultMap type="com.deppon.crm.module.customer.shared.domain.PrefrentialDeal" 
+		id="queryPrefrentialDealRM">
+		<id property="id" column="DEAL_ID" />
+		<result property="createUser" column="DEAL_FCREATEUSERID" />
+		<result property="createDate" column="DEAL_FCREATETIME" />
+		<result property="modifyUser" column="DEAL_FMODIFYUSERID" />
+		<result property="modifyDate" column="DEAL_FLASTUPDATETIME" />
+		<result property="dealNumber" column="DEAL_FNUMBER" />
+		<result property="beginTime" column="DEAL_FBEGINTIME" />
+		<result property="endTime" column="DEAL_FENDTIME" />
+		<result property="dealName" column="DEAL_FNAME" />
+		<result property="status" column="DEAL_FSTATUS" />
+		<result property="preferType" column="DEAL_FPREFERTYPE" />
+		<association property="dealItems" 
+			resultMap="queryPrefrentialDealItemRM"></association>
+	</resultMap>
+	<resultMap type="com.deppon.crm.module.customer.shared.domain.PrefrentialDealItem"
+		 id="queryPrefrentialDealItemRM">
+		 <id property="id" column="ITEM_FID"/>
+		 <result property="degree" column="ITEM_FDEGREE" />
+		 <result property="minAmount" column="ITEM_FMINMONEY" />
+		 <result property="maxAmount" column="ITEM_FMAXMONEY" />
+		 <result property="rate" column="ITEM_FRATE" />
+		 <result property="itemDesc" column="ITEM_FDESCRIPTION" />
+		 <result property="dealId" column="ITEM_FDEALID" />
+		 <result property="createDate" column="ITEM_FCREATETIME" />
+		 <result property="createUser" column="ITEM_FCREATEUSERID" />
+		 <result property="modifyDate" column="ITEM_FLASTUPDATETIME" />
+		 <result property="modifyUser" column="ITEM_FMODIFYUSERID" />
+		 </resultMap>
+	<!--新月发月送优惠方案-->
+	<sql id="PrefrentialDeal_column">
+		DEAL.FID DEAL_ID,
+		DEAL.FCREATEUSERID DEAL_FCREATEUSERID,
+		DEAL.FCREATETIME DEAL_FCREATETIME,
+		DEAL.FMODIFYUSERID DEAL_FMODIFYUSERID,
+		DEAL.FLASTUPDATETIME DEAL_FLASTUPDATETIME,
+		DEAL.FNUMBER DEAL_FNUMBER,
+		DEAL.FBEGINTIME DEAL_FBEGINTIME,
+		DEAL.FENDTIME DEAL_FENDTIME,
+		DEAL.FNAME DEAL_FNAME,
+		DEAL.FSTATUS DEAL_FSTATUS,
+		DEAL.FPREFERTYPE DEAL_FPREFERTYPE
+	</sql>
+	<!-- 优惠方案元素表 -->
+	<sql id="PrefrentialDealItem_column">
+		ITEM.FID ITEM_FID,
+		ITEM.FCREATEUSERID ITEM_FCREATEUSERID,
+		ITEM.FCREATETIME ITEM_FCREATETIME,
+		ITEM.FMODIFYUSERID ITEM_FMODIFYUSERID,
+		ITEM.FLASTUPDATETIME ITEM_FLASTUPDATETIME,
+		ITEM.FDEALID ITEM_FDEALID,
+		ITEM.FDEGREE ITEM_FDEGREE,
+		ITEM.FMINMONEY ITEM_FMINMONEY,
+		ITEM.FMAXMONEY ITEM_FMAXMONEY,
+		ITEM.FRATE ITEM_FRATE,
+		ITEM.FDESCRIPTION ITEM_FDESCRIPTION
+	</sql>
+</mapper>	
+	

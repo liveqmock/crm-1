@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ <wsdl:definitions targetNamespace="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" xmlns:intf="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="urn:client.financeforcrmfacade" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <!-- 
+WSDL created by Apache Axis version: #axisVersion#
+Built on #today#
+
+  --> 
+ <wsdl:types>
+ <schema targetNamespace="urn:client.financeforcrmfacade" xmlns="http://www.w3.org/2001/XMLSchema">
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/" /> 
+ <complexType name="WSInvokeException">
+  <sequence /> 
+  </complexType>
+  </schema>
+  </wsdl:types>
+ <wsdl:message name="callCreateOnLinePaymentWorkFlowResponse">
+  <wsdl:part name="callCreateOnLinePaymentWorkFlowReturn" type="xsd:string" /> 
+  </wsdl:message>
+ <wsdl:message name="callCreateOnLinePaymentWorkFlowRequest">
+  <wsdl:part name="paramonline" type="xsd:string" /> 
+  </wsdl:message>
+ <wsdl:message name="WSInvokeException">
+  <wsdl:part name="fault" type="tns1:WSInvokeException" /> 
+  </wsdl:message>
+ <wsdl:message name="callCreateCommonPaymentWorkFlowResponse">
+  <wsdl:part name="callCreateCommonPaymentWorkFlowReturn" type="xsd:string" /> 
+  </wsdl:message>
+ <wsdl:message name="callCreateCommonPaymentWorkFlowRequest">
+  <wsdl:part name="paramcommon" type="xsd:string" /> 
+  </wsdl:message>
+ <wsdl:portType name="WSFinanceForCrmFacadeSrvProxy">
+ <wsdl:operation name="callCreateCommonPaymentWorkFlow" parameterOrder="paramcommon">
+  <wsdl:input message="impl:callCreateCommonPaymentWorkFlowRequest" name="callCreateCommonPaymentWorkFlowRequest" /> 
+  <wsdl:output message="impl:callCreateCommonPaymentWorkFlowResponse" name="callCreateCommonPaymentWorkFlowResponse" /> 
+  <wsdl:fault message="impl:WSInvokeException" name="WSInvokeException" /> 
+  </wsdl:operation>
+ <wsdl:operation name="callCreateOnLinePaymentWorkFlow" parameterOrder="paramonline">
+  <wsdl:input message="impl:callCreateOnLinePaymentWorkFlowRequest" name="callCreateOnLinePaymentWorkFlowRequest" /> 
+  <wsdl:output message="impl:callCreateOnLinePaymentWorkFlowResponse" name="callCreateOnLinePaymentWorkFlowResponse" /> 
+  <wsdl:fault message="impl:WSInvokeException" name="WSInvokeException" /> 
+  </wsdl:operation>
+  </wsdl:portType>
+ <wsdl:binding name="WSFinanceForCrmFacadeSoapBinding" type="impl:WSFinanceForCrmFacadeSrvProxy">
+  <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" /> 
+ <wsdl:operation name="callCreateCommonPaymentWorkFlow">
+  <wsdlsoap:operation soapAction="" /> 
+ <wsdl:input name="callCreateCommonPaymentWorkFlowRequest">
+  <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservice.app.custom.eas.kingdee.com" use="encoded" /> 
+  </wsdl:input>
+ <wsdl:output name="callCreateCommonPaymentWorkFlowResponse">
+  <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" use="encoded" /> 
+  </wsdl:output>
+ <wsdl:fault name="WSInvokeException">
+  <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="WSInvokeException" namespace="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" use="encoded" /> 
+  </wsdl:fault>
+  </wsdl:operation>
+ <wsdl:operation name="callCreateOnLinePaymentWorkFlow">
+  <wsdlsoap:operation soapAction="" /> 
+ <wsdl:input name="callCreateOnLinePaymentWorkFlowRequest">
+  <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservice.app.custom.eas.kingdee.com" use="encoded" /> 
+  </wsdl:input>
+ <wsdl:output name="callCreateOnLinePaymentWorkFlowResponse">
+  <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" use="encoded" /> 
+  </wsdl:output>
+ <wsdl:fault name="WSInvokeException">
+  <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="WSInvokeException" namespace="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" use="encoded" /> 
+  </wsdl:fault>
+  </wsdl:operation>
+  </wsdl:binding>
+ <wsdl:service name="WSFinanceForCrmFacadeSrvProxyService">
+ <wsdl:port binding="impl:WSFinanceForCrmFacadeSoapBinding" name="WSFinanceForCrmFacade">
+  <wsdlsoap:address location="http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade" /> 
+  </wsdl:port>
+  </wsdl:service>
+  </wsdl:definitions>

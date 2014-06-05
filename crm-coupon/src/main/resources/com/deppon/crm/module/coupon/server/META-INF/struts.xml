@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<constant name="struts.multipart.saveDir" value="/misc/crmfile/temp"></constant>
+	<package name="coupon" namespace="/coupon" extends="crm-default">     
+	       
+	    <!-- 营销计划新增页面-->
+        <action name="couponAdd" >
+			<result name="success">couponAdd.html</result>
+	    </action>
+	    
+	    <!-- 保存营销计划-->
+		<action name="saveCoupon" class="couponAction" method="saveCoupon">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询营销计划-->
+		<action name="searchMarketPlan" class="listCouponAction" method="searchMarketPlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询营销计划详情-->
+		<action name="searchMarketDetail" class="listCouponAction" method="searchMarketDetail">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 终止营销计划-->
+		<action name="stopMarketPlan" class="couponAction" method="stopMarketPlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 删除营销计划-->
+		<action name="deleteMarketPlan" class="couponAction" method="deleteMarketPlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 启用营销计划-->
+		<action name="startMarketPlan" class="couponAction" method="startMarketPlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 更新营销计划-->
+		<action name="updateMarketPlan" class="couponAction" method="updateMarketPlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 查询发到货部门-->
+		<action name="searchStartEndGoodDept" class="listCouponAction" method="searchStartEndGoodDept">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 查询走货部门-->
+		<action name="searchWalkGoodDept" class="listCouponAction" method="searchWalkGoodDept">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 查询部门-->
+		<action name="searchDeptByDeptName" class="listCouponAction" method="searchDeptByDeptName">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查看使用规则-->
+		<action name="searchCouponRuleByMarketPlanId" class="listCouponAction" method="searchCouponRuleByMarketPlanId">
+			<result name="success" type="json"></result>
+		</action>
+		
+	    <!-- 营销计划管理页面-->
+        <action name="couponManage" >
+			<result name="success">marketPlanManage.html</result>
+	    </action>
+	    
+	    <!-- 根据营销计划ID查询短信发券页面中优惠券的基本信息-->
+		<action name="searchSendCouponVOByMPI" class="listCouponAction" method="searchSendCouponVOByMPI">
+			<result name="success" type="json"></result>
+		</action>
+	    
+	    <!-- 短信发券页面批量处理手机号：根据传入的参数不同，实现批量导入手机号、清除无效号码或删除重复手机号码-->
+		<action name="batchHandleTelephones" class="couponAction" method="batchHandleTelephones">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 短信发券：模板下载-->
+		<action name="exportTemplateOfSendCoupon" class="couponAction" method="exportTemplateOfSendCoupon">
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;filename="template.xlsx"</param>  
+			</result>
+		</action>
+		
+		<!-- 批量导入excel手机号码文件,限制上传文件最大为10M-->
+		<action name="uploadFile" class="couponAction" method="uploadFile">
+			<result name="success" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="error" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+			<interceptor-ref name="fileUpload">
+                <param name="maximumSize">10485760</param> 
+            </interceptor-ref>
+            <interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<!-- 短信发券页面，单击发送按钮，将发送的手机号写入优惠券信息中-->
+		<action name="sendCouponByCellphones" class="couponAction" method="sendCouponByCellphones">
+			<result name="success" type="json"></result>
+		</action>
+	 
+	    <!-- 优惠券查询页面-->
+        <action name="couponList" >
+			<result name="success">couponList.html</result>
+	    </action>
+	    
+	    <!-- 优惠券查询-->
+		<action name="searchCouponByCondition" class="listCouponAction" method="searchCouponByCondition">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 优惠券查询：导出全部，返回一个Excel报表文件-->
+		<action name="creatCouponReportExcel" class="couponAction" method="creatCouponReportExcel">
+			<result name="success" type="json">
+			</result>
+		</action>   
+		<action name="exportCouponReportExcel" class="couponAction" method="exportCouponReportExcel">
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;filename="report.xlsx"</param>  
+			</result>
+		</action>
+		
+		<action name="deleteCouponReportExcel" class="couponAction" method="deleteCouponReportExcel">
+			<result name="success" type="json">
+			</result>
+		</action>  
+		<!-- 优惠券查询：重发短信-->
+		<action name="reSendCouponMsg" class="couponAction" method="reSendCouponMsg">
+			<result name="success" type="json"></result>
+		</action>  
+	</package>
+</struts>

@@ -1,0 +1,41 @@
+<html>
+<body class="tabcontentpadding">
+<div id="workflowCanvas" style="position:relative;height:566px;width:508px;">
+<img src="../images/recompense/recompense.png" border=0/>
+</div>
+<script type="text/javascript" src="../scripts/workflow/wz_jsgraphics.js"></script>
+<script type="text/javascript" src="../scripts/workflow/xmlextras.js"></script>
+<script type="text/javascript">
+var currentStepIds = [200];
+
+var xmlHttp = XmlHttp.create();
+var async = true;
+xmlHttp.open("GET", "../images/recompense/recompense.lyt", async);
+xmlHttp.onreadystatechange = function () {
+    if (xmlHttp.readyState == 4){
+        //set up graphics
+        var jg = new jsGraphics("workflowCanvas");
+        jg.setColor("#ff0000");
+        jg.setStroke(3);
+        var xAdjust = 2;
+        var yAdjust = -10;
+        var widthAdjust = 3;
+        var heightAdjust = 2;
+        
+        //parsing xml and paint;
+        var cells = xmlHttp.responseXML.getElementsByTagName("cell");
+        for(var i = 0; i < currentStepIds.length; i++){
+            for(var n = 0; n < cells.length; n++){
+                var cell = cells[n];
+                if(cell.getAttribute("type") == "StepCell" && currentStepIds[i] == parseInt(cell.getAttribute("id"))){
+                    jg.drawRect(parseInt(cell.getAttribute("x")) + xAdjust, parseInt(cell.getAttribute("y")) + yAdjust, parseInt(cell.getAttribute("width")) + widthAdjust, parseInt(cell.getAttribute("height")) + heightAdjust);
+                }
+            }
+        }
+        jg.paint();
+    }
+};
+xmlHttp.send(null);    
+</script>
+</body>
+</html>

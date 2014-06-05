@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.client.shared.domain.WaitCustomerLog">
+	<resultMap id="t_crm_cmdtbsRM"
+		type="com.deppon.crm.module.client.sync.domain.WaitCustomerLogInfo">
+		<result property="FID" column="FID" />
+		<result property="TRANSACTION_NO" column="TRANSACTION_NO" />
+		<result property="CUSTOMER_NO" column="CUSTOMER_NO" />
+		<result property="CRATE_TIME" column="CRATE_TIME" />
+		<result property="FINISH_TIME" column="FINISH_TIME" />
+		<result property="HANDLE_TYPE" column="HANDLE_TYPE" />
+		<result property="STATUS" column="STATUS" />
+		<result property="TARGET" column="TARGET" />
+		<result property="ERROR_CODE" column="ERROR_CODE" />
+		<result property="ERR_DESC" column="ERR_DESC" />
+		<result property="ERR_NUMBER" column="ERR_NUMBER" />
+		<result property="ERR_TIME" column="ERR_TIME" />
+		<result property="PATTERN" column="PATTERN" />
+		<result property="ERR_SYS" column="ERR_SYS" />
+	</resultMap>
+	<resultMap id="t_crm_cmdtbsdRM"
+		type="com.deppon.crm.module.client.sync.domain.WaitCustomerLogInfoDetail">
+		<result property="FID" column="FID" />
+		<result property="TRANSACTION_NO" column="TRANSACTION_NO" />
+		<result property="TABLE_NAME" column="TABLE_NAME" />
+		<result property="TABLE_KEYWORD" column="TABLE_KEYWORD" />
+		<result property="OPERATION_FLG" column="OPERATION_FLG" />	
+	</resultMap>
+ 	<resultMap id="TransactionNoRM"
+		type="com.deppon.crm.module.client.sync.domain.TransactionNoInfo">
+		<result property="TRANSACTION_NO" column="id" />
+	</resultMap>
+	<sql id="t_crm_cmdtbs_Base_Column_List" >
+	    <![CDATA[
+	    t_crm_cmdtbs.FID, t_crm_cmdtbs.TRANSACTION_NO, t_crm_cmdtbs.CUSTOMER_NO, 
+	    t_crm_cmdtbs.CRATE_TIME, t_crm_cmdtbs.FINISH_TIME, t_crm_cmdtbs.HANDLE_TYPE, 
+    	t_crm_cmdtbs.STATUS, t_crm_cmdtbs.TARGET, 
+    	t_crm_cmdtbs.ERROR_CODE, t_crm_cmdtbs.ERR_DESC, t_crm_cmdtbs.ERR_TIME, t_crm_cmdtbs.PATTERN,
+    	t_crm_cmdtbs.ERR_NUMBER,t_crm_cmdtbs.ERR_SYS
+    	]]>
+  	</sql>
+  	<sql id="t_crm_cmdtbsd_Base_Column_List" >
+	    <![CDATA[
+	     t_crm_cmdtbsd.FID, t_crm_cmdtbsd.TRANSACTION_NO, t_crm_cmdtbsd.TABLE_NAME, t_crm_cmdtbsd.TABLE_KEYWORD, 
+	     t_crm_cmdtbsd.OPERATION_FLG
+    	]]>
+  	</sql>
+	<!-- 获取事务序号 -->
+	<select id="getTransactionNo" resultMap="TransactionNoRM">
+		<![CDATA[
+			select to_char(sysdate, 'yyyymmdd') || LPAD(SEQ_ID_CRM_CMDTBS_TRAN.nextval, 14,'0') as id 
+			from dual
+		]]>
+	</select>
+	<!-- 插入客户主数据待发送列表 -->
+	<insert id="insert_crm_cmdtbs"
+		parameterType="com.deppon.crm.module.client.sync.domain.WaitCustomerLogInfo">
+		<selectKey keyProperty="FID" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CRM_CMDTBS.nextval as fid FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO t_crm_cmdtbs (
+			  "FID",
+			  "FCREATETIME",
+			  "FCREATEUSERID",
+			  "FLASTUPDATETIME", 
+			  "FLASTMODIFYUSERID",
+			  "TRANSACTION_NO",
+			  "CUSTOMER_NO",
+			  "CRATE_TIME",
+			  "FINISH_TIME",
+			  "HANDLE_TYPE",
+			  "STATUS",
+			  "TARGET",
+			  "ERROR_CODE",  
+			  "ERR_DESC",
+			  "ERR_TIME",
+			  "PATTERN",
+			  "ERR_NUMBER"
+			)
+			VALUES (
+			#{FID,jdbcType=NUMERIC},
+			sysdate,
+			null,
+			sysdate,
+			null,
+
+			#{TRANSACTION_NO,jdbcType=VARCHAR},
+			#{CUSTOMER_NO,jdbcType=VARCHAR},
+			sysdate,
+			null,
+			'N',
+			'U',
+			'ALL',
+			null,
+			null,
+			null,
+			#{PATTERN,jdbcType=VARCHAR},
+			0
+			)
+	]]>
+	</insert>
+	
+	<!-- 客户主数据待发送明细表 -->
+	<insert id="insert_crm_cmdtbsd"
+		parameterType="com.deppon.crm.module.client.sync.domain.WaitCustomerLogInfoDetail">
+		<selectKey keyProperty="FID" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CRM_CMDTBSD.nextval as fid FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO t_crm_cmdtbsd
+				(fid, 
+				fcreatetime, 
+				fcreateuserid, 
+				flastupdatetime, 
+				flastmodifyuserid, 
+				transaction_no, 
+				table_name, 
+				table_keyword, 
+				operation_flg)
+			values
+				(#{FID,jdbcType=NUMERIC}, 
+				sysdate, 
+				null, 
+				sysdate, 
+				null, 
+				
+				#{TRANSACTION_NO, jdbcType=VARCHAR}, 
+				#{TABLE_NAME, jdbcType=VARCHAR}, 
+				#{TABLE_KEYWORD, jdbcType=NUMERIC}, 
+				'I')
+	]]>
+	</insert>
+	
+	<!-- 获取待发送记录列表  wmm 无论什么状态下 最多发送 50 次 -->
+	<select id="getWaitingSendDatas" resultMap="t_crm_cmdtbsRM" parameterType="java.lang.String" >
+	    select 
+	    <include refid="t_crm_cmdtbs_Base_Column_List" />
+	    from t_crm_cmdtbs
+	    where STATUS = 'U' 
+      <![CDATA[ 
+         AND err_number < 50 
+         AND (HANDLE_TYPE ='N'  
+           or (HANDLE_TYPE='A' and flastupdatetime < sysdate-(err_number*10)/24/60)
+        )
+	  AND rowNum<=800 order by transaction_no
+	    ]]>
+	</select>
+	<!-- 获取待发送记录状态 -->
+	<select id="getWaitingSendStatus" resultMap="t_crm_cmdtbsRM" parameterType="java.lang.String" >
+	    select 
+	     <include refid="t_crm_cmdtbs_Base_Column_List" />
+	    from t_crm_cmdtbs
+	    where t_crm_cmdtbs.FID = #{FID,jdbcType=DECIMAL}
+	</select>
+	<!-- 获取待发送记录明细 -->
+	<select id="getWaitingSendDetails" resultMap="t_crm_cmdtbsdRM" parameterType="java.lang.String" >
+	    select 
+	    <include refid="t_crm_cmdtbsd_Base_Column_List" />
+	    from t_crm_cmdtbs
+		join t_crm_cmdtbsd on t_crm_cmdtbsd.transaction_no = t_crm_cmdtbs.transaction_no
+	    where t_crm_cmdtbs.FID = #{FID,jdbcType=DECIMAL}
+	</select>
+	
+	<!-- 更新标记为发送中 -->
+	<update id="updateSendingFlg" parameterType="java.lang.String" >
+	    update t_crm_cmdtbs
+	    set STATUS = 'P',
+	    flastupdatetime = sysdate
+	    where FID = #{FID,jdbcType=DECIMAL}
+	</update>
+	<!-- 更新标记为成功  -->
+	<update id="updateSuccessFlg" parameterType="com.deppon.crm.module.client.sync.domain.WaitCustomerLogInfo">
+	    update t_crm_cmdtbs
+	    set STATUS = 'D', FINISH_TIME = sysdate,
+	    flastupdatetime = sysdate,
+	    "DATA" = #{DATA,jdbcType=LONGVARCHAR,javaType=java.lang.String}
+	    where FID = #{FID,jdbcType=DECIMAL}
+	</update>
+	<!-- 更新标记为失败 -->
+	<update id="updateFailFlg" parameterType="com.deppon.crm.module.client.sync.domain.WaitCustomerLogInfoDetail" >
+	    update t_crm_cmdtbs
+	    set STATUS = 'U',
+	   	ERROR_CODE = #{ERROR_CODE,jdbcType=VARCHAR},
+	    ERR_DESC = #{ERR_DESC,jdbcType=VARCHAR},
+	    ERR_TIME = sysdate,
+	    ERR_NUMBER = ERR_NUMBER + 1,
+	    HANDLE_TYPE = #{HANDLE_TYPE,jdbcType=CHAR},
+	    ERR_SYS = #{ERR_SYS,jdbcType=NUMERIC},
+	    flastupdatetime = sysdate
+	    where FID = #{FID,jdbcType=DECIMAL}
+	</update>
+</mapper>

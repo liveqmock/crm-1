@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.organization.shared.domain.Employee">
+     
+     <!-- 员工表返回的结果集，多表联查，连接部门表 -->
+	<resultMap id="employeeResultMap"
+		type="com.deppon.crm.module.organization.shared.domain.Employee">
+		<id property="id" column="MASTER_ID" />
+		<result property="empCode" column="MASTER_EMPCODE"/>
+		<result property="empName" column="MASTER_EMPNAME"/>
+		<result property="gender" column="MASTER_GENDER"/>
+		<result property="position" column="MASTER_POSITION"/>
+		<result property="birthdate" column="MASTER_BIRTHDATE"/>
+		<result property="status" column="MASTER_STATUS"/>
+		<result property="inDate" column="MASTER_INDATE"/>
+		<result property="outDate" column="MASTER_OUTDATE"/>
+		<result property="offerTel" column="MASTER_OTEL"/>
+		<result property="offerAddress" column="MASTER_OADDRESS"/>
+		<result property="offerZipCode" column="MASTER_OZIPCODE"/>
+		<result property="offerEmail" column="MASTER_OEMAIL"/>
+		<result property="mobileNumber" column="MASTER_MOBILENO"/>
+		<result property="homeTel" column="MASTER_HTEL"/>
+		<result property="homeAddress" column="MASTER_HADDRESS"/>
+		<result property="homeZipCode" column="MASTER_HZIPCODE"/>
+		<result property="personEmail" column="MASTER_PEMAIL"/>
+		<result property="workExp" column="MASTER_WORKEXP"/>
+		<result property="remark" column="MASTER_REMARK"/>
+		<result property="createUser" column="MASTER_CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<association property="deptId" column="ENTRY_0_ID" 
+			javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="ENTRY_0_ID" />
+			<result property="deptCode" column="ENTRY_0_DEPTCODE"/>
+			<result property="deptName" column="ENTRY_0_DEPTNAME"/>
+			<result property="principal" column="ENTRY_0_PRINCIPAL"/>
+			<result property="phone" column="ENTRY_0_PHONE"/>
+			<result property="fax" column="ENTRY_0_FAX"/>
+			<result property="parentCode" column="ENTRY_0_PARENTID"/>
+			<result property="companyName" column="ENTRY_0_COMPANYNAME"/>
+			<result property="zipCode" column="ENTRY_0_ZIPCODE"/>
+			<result property="address" column="ENTRY_0_ADDRESS"/>
+			<result property="status" column="ENTRY_0_STATUS"/>
+			<result property="validDate" column="ENTRY_0_VALIDDATE"/>
+			<result property="invalidDate" column="ENTRY_0_INVALIDDATE"/>
+			<result property="displayOrder" column="ENTRY_0_DISPLAYORDER"/>
+			<result property="deptLevel" column="ENTRY_0_DEPTLEVEL"/>
+			<result property="deptDesc" column="ENTRY_0_DEPTDESC"/>
+			<result property="deptSeq" column="ENTRY_0_DEPTSEQ"/>
+			<result property="createUser" column="ENTRY_0_CREATEUSER" javaType="String"
+				jdbcType="VARCHAR" />
+			<result property="createDate" column="ENTRY_0_CREATEDATE" javaType="Date"
+				jdbcType="TIMESTAMP" />
+			<result property="modifyUser" column="ENTRY_0_MODIFYUSER" javaType="String"
+				jdbcType="VARCHAR" />
+			<result property="modifyDate" column="ENTRY_0_MODIFYDATE" javaType="Date"
+				jdbcType="TIMESTAMP" />
+		</association>
+	</resultMap>
+
+    <!-- 多表联查，操作的字段 -->
+	<sql id="select_param">
+		MASTER.FID AS MASTER_ID,
+		ENTRY_0.FID AS ENTRY_0_ID,
+		ENTRY_0.FDEPTCODE AS ENTRY_0_DEPTCODE, 
+		ENTRY_0.FDEPTNAME AS ENTRY_0_DEPTNAME,
+		ENTRY_0.FPRINCIPAL AS ENTRY_0_PRINCIPAL,
+		ENTRY_0.FPHONE AS ENTRY_0_PHONE,
+		ENTRY_0.FFAX AS ENTRY_0_FAX,
+		ENTRY_0.FPARENTID AS ENTRY_0_PARENTID,
+		ENTRY_0.FZIPCODE AS ENTRY_0_ZIPCODE,
+		ENTRY_0.FADDRESS AS ENTRY_0_ADDRESS,
+		ENTRY_0.FSTATUS AS ENTRY_0_STATUS,
+		ENTRY_0.FVALIDDATE AS ENTRY_0_VALIDDATE,
+		ENTRY_0.FINVALIDDATE AS ENTRY_0_INVALIDDATE,
+		ENTRY_0.FDISPLAYORDER AS ENTRY_0_DISPLAYORDER,
+		ENTRY_0.FDEPTLEVEL AS ENTRY_0_DEPTLEVEL,
+		ENTRY_0.FDEPTDESC AS ENTRY_0_DEPTDESC,
+		ENTRY_0.FDEPTSEQ AS ENTRY_0_DEPTSEQ,
+		ENTRY_0.FCREATEUSERID AS ENTRY_0_CREATEUSER,
+		ENTRY_0.FCREATETIME AS ENTRY_0_CREATEDATE,
+		ENTRY_0.FLASTMODIFYUSERID AS ENTRY_0_MODIFYUSER,
+		ENTRY_0.FLASTUPDATETIME AS ENTRY_0_MODIFYDATE,
+		MASTER.FEMPCODE AS MASTER_EMPCODE,
+		MASTER.FEMPNAME AS MASTER_EMPNAME,
+		MASTER.FGENDER AS MASTER_GENDER,
+		MASTER.FPOSITION AS MASTER_POSITION,
+		MASTER.FBIRTHDATE AS MASTER_BIRTHDATE,
+		MASTER.FSTATUS AS MASTER_STATUS,
+		MASTER.FINDATE AS MASTER_INDATE,
+		MASTER.FOUTDATE AS MASTER_OUTDATE,
+		MASTER.FOTEL AS MASTER_OTEL,
+		MASTER.FOADDRESS AS MASTER_OADDRESS,
+		MASTER.FOZIPCODE AS MASTER_OZIPCODE,
+		MASTER.FOEMAIL AS MASTER_OEMAIL,
+		MASTER.FMOBILENO AS MASTER_MOBILENO,
+		MASTER.FHTEL AS MASTER_HTEL,
+		MASTER.FHADDRESS AS MASTER_HADDRESS,
+		MASTER.FHZIPCODE AS MASTER_HZIPCODE,
+		MASTER.FPEMAIL AS MASTER_PEMAIL,
+		MASTER.FWORKEXP AS MASTER_WORKEXP,
+		MASTER.FREMARK AS MASTER_REMARK,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE
+	</sql>
+	
+	<sql id="select_employee_param">
+		MASTER.FID AS MASTER_ID,		
+		MASTER.FEMPCODE AS MASTER_EMPCODE,
+		MASTER.FEMPNAME AS MASTER_EMPNAME,
+		MASTER.FGENDER AS MASTER_GENDER,
+		MASTER.FPOSITION AS MASTER_POSITION,
+		MASTER.FBIRTHDATE AS MASTER_BIRTHDATE,
+		MASTER.FSTATUS AS MASTER_STATUS,
+		MASTER.FINDATE AS MASTER_INDATE,
+		MASTER.FOUTDATE AS MASTER_OUTDATE,
+		MASTER.FOTEL AS MASTER_OTEL,
+		MASTER.FOADDRESS AS MASTER_OADDRESS,
+		MASTER.FOZIPCODE AS MASTER_OZIPCODE,
+		MASTER.FOEMAIL AS MASTER_OEMAIL,
+		MASTER.FMOBILENO AS MASTER_MOBILENO,
+		MASTER.FHTEL AS MASTER_HTEL,
+		MASTER.FHADDRESS AS MASTER_HADDRESS,
+		MASTER.FHZIPCODE AS MASTER_HZIPCODE,
+		MASTER.FPEMAIL AS MASTER_PEMAIL,
+		MASTER.FWORKEXP AS MASTER_WORKEXP,
+		MASTER.FREMARK AS MASTER_REMARK,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE
+	</sql>
+	
+	<!-- 单表操作的字段 -->
+	<sql id="insert_param">
+		FID,
+<!-- 		DEPTCODE,-->	
+    	FDEPTID,
+		FEMPCODE,
+		FEMPNAME,
+		FGENDER,
+		FBIRTHDATE,
+		FSTATUS,
+		FINDATE,
+		FOUTDATE,
+		FOTEL,
+		FOADDRESS,
+		FOZIPCODE,
+		FOEMAIL,
+		FMOBILENO,
+		FHTEL,
+		FHADDRESS,
+		FHZIPCODE,
+		FPEMAIL,
+		FWORKEXP,
+		FREMARK,
+		FCREATEUSERID,
+		FCREATETIME,
+		FLASTMODIFYUSERID,
+		FLASTUPDATETIME
+	</sql>
+	<update id="update" parameterType="com.deppon.crm.module.organization.shared.domain.Employee">
+		<![CDATA[UPDATE T_ORG_EMPLOYEE]]>
+		<set>
+			FID=#{id},
+			DEPTCODE=#{deptId.deptCode},
+			FDEPTID=#{deptId.id},
+			FEMPCODE=#{empCode},
+			FEMPNAME=#{empName},
+			FGENDER=#{gender},
+			FBIRTHDATE=	#{birthdate},
+			FSTATUS=#{status},
+			FINDATE=#{inDate},
+			FOUTDATE=#{outDate},
+			FOTEL=#{offerTel},
+			FOADDRESS=#{offerAddress},
+			FOZIPCODE=#{offerZipCode},
+			FOEMAIL=#{offerEmail},
+			FMOBILENO=#{mobileNumber},
+			FHTEL=#{homeTel},
+			FHADDRESS=#{homeAddress},
+			FHZIPCODE=#{homeZipCode},
+			FPEMAIL=#{personEmail},
+			FWORKEXP=#{workExp},
+			FREMARK=#{remark},
+			FCREATEUSERID='1',
+			FCREATETIME=#{createDate},
+			FLASTMODIFYUSERID='1',
+			FLASTUPDATETIME	=sysdate
+		</set>
+	</update>
+	<!-- 根据条件查询符合条件的员工个数-->
+	<select id="count" resultType="Long"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Employee">
+		<!--
+		<![CDATA[
+			SELECT count(*)
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.DEPTCODE = ENTRY_0.ID
+		]]>
+		 -->
+		<![CDATA[
+			SELECT count(*)
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID
+		]]> 
+		<where>
+			<if test="deptId!=null and deptId.id!=null and deptId.id!=''">
+				<!-- 
+				AND MASTER.DEPTID = #{deptId.deptCode}
+				-->
+				AND MASTER.FDEPTID = #{deptId.id}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND MASTER.FEMPCODE LIKE #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND MASTER.FEMPNAME LIKE #{empName}
+			</if>
+			<if test="gender!=null">
+				AND MASTER.FGENDER = #{gender}
+		    </if>
+		    <if test="position!=null and position!=''">
+				AND MASTER.FPOSITION LIKE #{position}
+			</if>
+			<if test="birthdate!=null and createDate!=null">
+				AND MASTER.FBIRTHDATE &lt;= #{createDate}
+				AND MASTER.FBIRTHDATE >= #{birthdate}
+		    </if>
+		    <if test="birthdate!=null and createDate==null">
+				AND MASTER.FBIRTHDATE >= #{birthdate}
+		    </if>
+		    <if test="birthdate==null and createDate!=null">
+				AND MASTER.FBIRTHDATE &lt;= #{createDate}
+		    </if>
+			<if test="status!=null">
+				AND MASTER.FSTATUS = #{status}
+		    </if>
+			<if test="inDate!=null and outDate!=null">
+			    AND MASTER.FINDATE &lt;= #{outDate}
+				AND MASTER.FINDATE >= #{inDate}
+		    </if>
+		    <if test="inDate==null and outDate!=null">
+			    AND MASTER.FINDATE &lt;= #{outDate}	
+		    </if>
+		      <if test="inDate!=null and outDate==null">
+				AND MASTER.FINDATE >= #{inDate}
+		    </if>
+			<if test="offerTel!=null and offerTel!=''">
+				AND MASTER.FOTEL LIKE #{offerTel}
+			</if>		
+			<if test="mobileNumber!=null and mobileNumber!=''">
+				AND MASTER.FMOBILENO LIKE #{mobileNumber}
+			</if>
+			<if test="createUser!=null and createUser!=''">
+				AND ENTRY_0.FDEPTNAME LIKE #{createUser}
+			</if>
+		</where>
+		<![CDATA[
+			ORDER BY  MASTER.FLASTUPDATETIME
+		]]>
+	</select>
+	
+	 <!-- 根据条件查询符合条件的员工信息 -->
+     <select id="getAll" resultMap="employeeResultMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Employee">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<!--
+		<![CDATA[
+			FROM   T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.DEPTCODE = ENTRY_0.ID
+		]]>
+		-->
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID
+		]]> 
+		<where>
+			<if test="deptId!=null and deptId.id!=null and deptId.id!=''">
+				<!-- 
+				AND MASTER.DEPTCODE = #{deptId.id}
+				-->
+				AND MASTER.FDEPTID = #{deptId.id}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND MASTER.FEMPCODE LIKE #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND MASTER.FEMPNAME LIKE #{empName}
+			</if>
+			<if test="gender!=null">
+				AND MASTER.FGENDER = #{gender}
+		    </if>
+		    <if test="position!=null and position!=''">
+				AND MASTER.FPOSITION LIKE #{position}
+			</if>
+			<if test="birthdate!=null and createDate!=null">
+				AND MASTER.FBIRTHDATE &lt;= #{createDate}
+				AND MASTER.FBIRTHDATE >= #{birthdate}
+		    </if>
+		    <if test="birthdate!=null and createDate==null">
+				AND MASTER.FBIRTHDATE >= #{birthdate}
+		    </if>
+		    <if test="birthdate==null and createDate!=null">
+				AND MASTER.FBIRTHDATE &lt;= #{createDate}
+		    </if>
+			<if test="status!=null">
+				AND MASTER.FSTATUS = #{status}
+		    </if>
+			<if test="inDate!=null and outDate!=null">
+			    AND MASTER.FINDATE &lt;= #{outDate}
+				AND MASTER.FINDATE >= #{inDate}
+		    </if>
+		    <if test="inDate==null and outDate!=null">
+			    AND MASTER.FINDATE &lt;= #{outDate}
+				
+		    </if>
+		      <if test="inDate!=null and outDate==null">
+				AND MASTER.FINDATE >= #{inDate}
+				
+		    </if>
+			<if test="offerTel!=null and offerTel!=''">
+				AND MASTER.FOTEL LIKE #{offerTel}
+			</if>		
+			<if test="createUser!=null and createUser!=''">
+				AND ENTRY_0.FDEPTNAME LIKE #{createUser}
+			</if>
+			<if test="mobileNumber!=null and mobileNumber!=''">
+				AND MASTER.FMOBILENO LIKE #{mobileNumber}
+			</if>
+		</where>
+		<![CDATA[
+			ORDER BY  MASTER.FLASTUPDATETIME
+		]]>
+	</select>	
+	<select id="getAllEmployeesByDeptId" resultMap="employeeResultMap" 
+		parameterType="com.deppon.crm.module.organization.shared.domain.Employee">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_employee_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER			
+		]]> 
+		<where>		
+			<!-- 
+			AND MASTER.DEPTCODE = #{deptId.id}
+			-->
+			AND MASTER.FDEPTID = #{deptId.id}
+			AND MASTER.FSTATUS = 1
+		</where>
+		<![CDATA[
+			ORDER BY  MASTER.FLASTUPDATETIME
+		]]>
+	</select>
+	
+	<select id="getAllEmployeesByDeptmentId" resultMap="employeeResultMap" 
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_employee_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER			
+		]]> 
+		<where>		
+			<!-- 
+			AND MASTER.DEPTCODE = #{deptId.id}
+			-->
+			AND MASTER.FDEPTID = #{deptId}
+			AND MASTER.FSTATUS = 1
+		</where>
+		<![CDATA[
+			ORDER BY  MASTER.FLASTUPDATETIME
+		]]>
+	</select>
+	
+	<select id="getEmployeesByCode" resultMap="employeeResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_employee_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER			
+		]]>
+		<where>
+			AND MASTER.fempcode = #{empCode} and rownum =1
+		</where>
+	</select>	
+	
+	<!-- 根据员工ID查询员工信息 -->
+	 <select id="getEmpById" resultMap="employeeResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID WHERE MASTER.FID=#{id}
+		]]> 
+	</select>
+	
+	<!-- 根据员工ID查询员工信息 -->
+	 <select id="getEmpByCode" resultMap="employeeResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID WHERE MASTER.FEMPCODE=#{code}
+		]]> 
+	</select>
+	
+	
+	<!-- 根据查询条件查询员工信息 -->
+	 <select id="searchEmpByCondition" resultMap="employeeResultMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.SearchEmpAndDeptCondition">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID
+		]]> 
+		<where>
+		    <if test="empCode!=null and empCode!=''">
+				AND MASTER.FEMPCODE LIKE #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND MASTER.FEMPNAME LIKE #{empName}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				AND ENTRY_0.FDEPTNAME LIKE #{deptName}
+			</if>
+			AND MASTER.FSTATUS = 1
+		</where>
+	</select>
+	<!-- 根据查询条件查询员工信个数-->
+	<select id="countEmpByCondition" resultType="Long"
+		parameterType="com.deppon.crm.module.organization.shared.domain.SearchEmpAndDeptCondition">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID
+		]]> 
+		<where>
+		    <if test="empCode!=null and empCode!=''">
+				AND MASTER.FEMPCODE LIKE #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND MASTER.FEMPNAME LIKE #{empName}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				AND ENTRY_0.FDEPTNAME LIKE #{deptName}
+			</if>
+			AND MASTER.FSTATUS = 1
+		</where>
+	</select>	
+	<!-- 作废员工 -->
+	<update id="deleteByCode" parameterType="string">
+		<![CDATA[UPDATE T_ORG_EMPLOYEE]]>
+		<set>
+			FSTATUS='0',FOUTDATE=SYSDATE,FLASTUPDATETIME=SYSDATE
+		</set>
+		<where>
+			FEMPCODE=#{empCode}
+		</where>
+	</update>	
+	<!-- 返聘 -->
+	<update id="reuseByCode" parameterType="string">
+		<![CDATA[UPDATE T_ORG_EMPLOYEE]]>
+		<set>
+			FSTATUS='1',FINDATE=SYSDATE,FLASTUPDATETIME=SYSDATE
+		</set>
+		<where>
+			empCode=#{empCode}
+		</where>
+	</update>
+	<!-- 员工同步-->	
+	<select id="syncEmp" parameterType="map">
+	 {call syncEmp.syncEmp(#{empCode,mode=IN,jdbcType=VARCHAR},#{changeType,mode=IN,jdbcType=VARCHAR},#{position,mode=IN,jdbcType=VARCHAR},#{orgId,mode=IN,jdbcType=VARCHAR})}  
+	</select>
+	
+	<!-- 根据部门编号查询有效员工 -->
+	<select id="getAllEmployeeByDeptCode" resultMap="employeeResultMap"
+			parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM  T_ORG_EMPLOYEE MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_0
+				ON MASTER.FDEPTID = ENTRY_0.FID
+			where ENTRY_0.fdeptcode = #{deptCode} 
+				and MASTER.fstatus = 1 
+				and ENTRY_0.fstatus = 1 
+				and ENTRY_0.fstandardcode is not null 
+		]]> 
+	</select>	
+</mapper>

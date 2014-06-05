@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+ 	<!-- OA -->
+	<jaxws:client id="oaTaskService" serviceClass="com.deppon.oa.task.TaskService"
+		address="http://192.168.17.25/portal/TaskService" ></jaxws:client>
+	<jaxws:client id="oaErrorService" serviceClass="com.deppon.oa.error.ErrorService" 
+		address="http://192.168.17.133:8080/dipApp/ErrorService"></jaxws:client>
+	<jaxws:client id="oaQueryWorkFlowStateServiceWs" serviceClass="com.deppon.oa.workflow.QueryWorkFlowStateService"
+		address="http://192.168.17.133:8080/dipApp/QueryWorkFlowStateService"></jaxws:client>	
+	<!-- ERP -->
+	<jaxws:client id="erp2CrmService" serviceClass="com.deppon.erp.waybill.IErp2CrmService" 
+		address="http://192.168.17.203:8080/eas2fin/services/erp2crmService"></jaxws:client>
+	<jaxws:client id="erp2CrmCustAndOrderService" serviceClass="com.deppon.erp.custAndOrder.IOrderAndCustService" 
+		address="http://192.168.17.203:8080/eas2fin/services/orderAndCustService"></jaxws:client>
+	
+	<!-- ESB服务 -->
+	<jaxws:client id="esb2ebmStatus" serviceClass="com.deppon.esb.ws.ESBService" 
+		address="http://192.168.17.142:8080/esb/webservice/crm2ebm/updateorderstate">
+	</jaxws:client>
+	<jaxws:client id="esb2erpAppointCar" serviceClass="com.deppon.esb.ws.ESBService" 
+		address="http://192.168.17.142:8080/esb/webservice/recgoodbill"></jaxws:client>
+	<jaxws:client id="esb2oaWorkFlow" serviceClass="com.deppon.esb.ws.ESBService" 
+		address="http://192.168.17.142:8080/esb/webservice/workflow/apply"></jaxws:client>
+		
+	<!-- 数据同步接口service -->
+	<jaxws:client id="syncDataServiceWs" serviceClass="com.deppon.esb.ws.ESBService" 
+		address="http://192.168.17.142:8080/esb/webservice/data/syncService"></jaxws:client>
+
+	<!-- 结算 -->
+	<jaxws:client id="depClaimsBillService" serviceClass="com.deppon.erp.payment.DepClaimsBillService"
+	address="http://192.168.17.203:8080/eas2fin/services/DepClaimsBillService"/>
+	
+	<!-- 网厅 -->	
+	<jaxws:client id="bhoUserWebService" serviceClass="com.deppon.bho.customer.IUserWebServices" 
+	 	address="http://192.168.17.55/webWsPro/webservice/userforCutNubmer"></jaxws:client>
+	 	
+	<!--后勤 -->
+	<jaxws:client id="lmsApplyGiftService" serviceClass="com.deppon.lms.workflow.IApplyGiftService" 
+		address="http://192.168.15.58:8080/eos-default/IApplyGiftService">
+	</jaxws:client>
+	
+	<!-- 报表 -->
+	<jaxws:client id="biCrmCusStaByNum" serviceClass="com.deppon.bi.leave.CRMCusStaByNum"
+		address="http://180.153.16.25:8080/biApp/CRM_CusStaByNumService">
+	</jaxws:client>
+	<jaxws:client id="biCrmCusArrStaByNum" serviceClass="com.deppon.bi.arrived.CRMCusArrStaByNum"
+		address="http://180.153.16.25:8080/biApp/CRM_CusArrStaByNumService">
+	</jaxws:client>
+	
+	<!-- 电子地图 -->
+	<jaxws:client id="map2CrmServiceWs" serviceClass="com.deppon.map.baidu.IMap2CrmService"
+		address="http://192.168.17.104:8080/dpbaidumap/crm/map2crm"></jaxws:client>
+
+	<!-- 呼叫中心 -->
+	<jaxws:client id="ccComplaintServiceWs" serviceClass="com.deppon.cc.complaint.ReceiveWorkOrderIdServicePortType"
+		address="http://192.168.14.47:8080/hollycrm/services/receiveWorkOrderIdService"></jaxws:client>
+		
+	<!-- 电商 -->
+	<jaxws:client id="ebmQueryOrderStatusServiceWs" serviceClass="com.deppon.ebm.QueryOrderStatusService"
+		address="http://192.168.17.251:8251/alibaba/webservice/queryOrderStatusService"></jaxws:client>
+</beans>

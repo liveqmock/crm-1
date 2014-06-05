@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<import resource="./planScheduleDaoBean.xml"/>
+	<import resource="./planScheduleServiceBean.xml"/>
+	<import resource="./marketAssessBean.xml"/>
+	<import resource="./RegionPartitionBean.xml"/>
+	<import resource="./VisualMarketingBean.xml"/>
+	<import resource="./MessageSendBean.xml"/>
+	<import resource="./ClientBaseBean.xml"/>
+	<!-- <import resource="./ClientBaseBean.xml"/> -->
+	<import resource="./MarketActivityBean.xml"/>
+	<import resource="./businessOpportunityBean.xml"/>
+	<import resource="./questionnaireBean.xml"/>
+	<import resource="./questionBean.xml"/>
+	<import resource="./WarnLostCustBean.xml"/>
+	<!-- <import resource="./planScheduleTimer.xml"/> -->
+	<!-- 开发计划Action层配置 -->
+	<bean id="developPlanAction"
+		class="com.deppon.crm.module.marketing.server.action.DevelopPlanAction" scope="prototype">
+		<property name="planManager" ref="planManager" />
+		<property name="userManager" ref="userManager" />
+	</bean>
+	
+	<!-- 开发日程 Action层配置 -->
+	<bean id="developScheduleAction"
+		class="com.deppon.crm.module.marketing.server.action.DevelopScheduleAction" scope="prototype">
+		<property name="scheduleManager" ref="scheduleManager" />
+		<property name="planManager" ref="planManager" />
+	</bean>
+	
+	<!-- 监控开发 Action层配置 -->
+	<bean id="monitorPlanAction"
+		class="com.deppon.crm.module.marketing.server.action.MonitorPlanAction" scope="prototype">
+		<property name="monitorPlanManager" ref="monitorPlanManager" />
+	</bean>
+	<!-- 回访 -->
+	<bean id="returnVisitAction" 
+		class="com.deppon.crm.module.marketing.server.action.ReturnVisitAction" scope="prototype">
+		<property name="returnVisitManager" ref="returnVisitManager"></property>
+		<!-- 流失预警manager -->
+		<property name="warnLostCustManager" ref="warnLostCustManagerImp"></property>
+	</bean>
+	
+	<!-- 客户分组Action-->
+	<bean id="customerGroupAction" 
+		class="com.deppon.crm.module.marketing.server.action.CustomerGroupAction" scope="prototype">
+		<property name="customerGroupManager" ref="customerGroupManager"></property>
+	</bean>
+	<!-- 地图 -->
+	<bean id="mapAction" 
+		class="com.deppon.crm.module.marketing.server.action.MapAction" scope="prototype">
+		<property name="manager" ref="mapManager"></property>
+	</bean>
+	<!--发到货周期表-->
+	<bean id="cycleAction" 
+		class="com.deppon.crm.module.marketing.server.action.CycleAction" scope="prototype">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="manager" ref="cycleManager"></property>
+		<property name="groupManager" ref="customerGroupManager"></property>
+		<property name="planManager" ref="planManager"></property>
+		<property name="scheduleManager" ref="scheduleManager"></property>
+	</bean>
+	
+	<!-- 客户来电Action-->
+	<bean id="marketRecordAction" 
+		class="com.deppon.crm.module.marketing.server.action.MarketRecordAction" scope="prototype">
+		<property name="customerCallManager" ref="customerCallManager"></property>
+	</bean>
+	
+	<!--商机管理Action-->
+	<bean id="businessOpportunityAction" 
+		class="com.deppon.crm.module.marketing.server.action.BusinessOpportunityAction" scope="prototype">
+		<property name="businessOpportunityManager" ref="businessOpportunityManager"></property>
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+	<!--商机客户查询Action-->
+	<bean id="boCustomerAction" 
+		class="com.deppon.crm.module.marketing.server.action.BoCustomerAction" scope="prototype">
+		<property name="boCustomerManager" ref="boCustomerManager"></property>
+	</bean>
+	
+	<!-- <bean id="instanceid"
+		class="com.deppon.foss.framework.server.components.scheduling.IdFactoryBean"></bean>
+	 <bean id="scheduler1" class="com.deppon.crm.module.marketing.server.utils.LocalSchedulerFactoryBean">
+		<property name="instanceId" ref="instanceid"></property>
+		<property name="dataSource" ref="dataSource"></property>
+	</bean> -->
+	
+	<!-- 营销效果评估Action-->
+	<bean id="effectEvaluationAction" 
+		class="com.deppon.crm.module.marketing.server.action.EffectEvaluationAction" scope="prototype">
+		<property name="marketAssessManager" ref="marketAssessManagerImpl"></property>
+	</bean>
+	<!-- 区域划分 -->
+	<bean id="listRegionPartitionAction" scope="prototype" 
+		class="com.deppon.crm.module.marketing.server.action.ListRegionPartitionAction">
+		<property name="regionPartitionManager" ref="regionPartitionManager"></property>
+	</bean>
+	
+	<!-- 营销短信action-->
+	<bean id="messageSendAction" scope="prototype" 
+		class="com.deppon.crm.module.marketing.server.action.MessageSendAction">
+		<property name="messageSendManager" ref="messageSendManager"></property>
+	</bean>
+	<!--市场推广活动action  -->
+	<bean id="activityOperateAction" scope="prototype" 
+		class="com.deppon.crm.module.marketing.server.action.ActivityOperateAction">
+		<property name="marketActivityManager" ref="marketActivityManager"></property>
+		<property name="clientBaseManager" ref="clientBaseManager"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="searchDeptAndEmployeeManager" ref="searchDeptAndEmployeeManager" />
+	</bean>
+	<!-- 问题管理 action -->
+     <bean id="questionAction" scope="prototype" 
+    	class="com.deppon.crm.module.marketing.server.action.QuestionAction">
+    	<property name="questionManager" ref="questionManagerImpl"></property>
+    	<property name="warnLostCustManagerImp" ref="warnLostCustManagerImp"></property>
+    	
+    </bean>
+    
+    	<!-- 开发阶段管理中，客户信息维护 action -->
+     <bean id="memberExtendAction" scope="prototype" 
+    	class="com.deppon.crm.module.marketing.server.action.MemberExtendAction">
+    	<property name="memberManager" ref="memberManager"></property>
+    	<property name="alterMemberManager" ref="alterMemberManager"></property>
+    	<property name="scheduleManager" ref="scheduleManager" />
+    </bean>
+</beans>
+

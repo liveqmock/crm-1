@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.LoginToken">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="TokenMap" type="com.deppon.crm.module.common.shared.domain.HardWareToken">
+		<result property="id" column="FID" jdbcType="VARCHAR" javaType="String"/>
+		<result property="token" column="FTOKEN" jdbcType="VARCHAR" javaType="String"/>
+		<result property="expireTime" column="FEXPIRETIME" jdbcType="VARCHAR" javaType="Date"/>
+		<result property="isUsed" column="FISUSED" jdbcType="VARCHAR" javaType="java.lang.Boolean" />
+	</resultMap>
+	
+ 	<select id="getTokenByToken" parameterType="String" resultMap="TokenMap">
+		SELECT C.FID, C.FTOKEN, C.FEXPIRETIME, C.FISUSED FROM T_CRM_LOGINTOKEN C
+		WHERE  C.FTOKEN = #{token} 
+    </select>    
+    
+ 	<select id="getTokenById" parameterType="String" resultMap="TokenMap">
+		SELECT C.FID, C.FTOKEN, C.FEXPIRETIME, C.FISUSED FROM T_CRM_LOGINTOKEN C
+		WHERE C.FID = #{id}
+    </select>    
+    
+    <update id="updTokenInfo" parameterType="com.deppon.crm.module.common.shared.domain.HardWareToken" >
+    	UPDATE T_CRM_LOGINTOKEN 
+    	SET FTOKEN = #{token},
+    		FEXPIRETIME = #{expireTime},
+    		FISUSED = #{isUsed}
+    	WHERE FTOKEN = #{token}
+    </update>
+    
+    <insert id="saveTokenInfo" parameterType="com.deppon.crm.module.common.shared.domain.HardWareToken" >
+ 		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_LOGINTOKEN.NEXTVAL as id FROM DUAL
+			]]>
+		</selectKey>
+		INSERT INTO T_CRM_LOGINTOKEN
+		  (FID,
+		   FCREATETIME,
+		   FCREATEUSERID,
+		   FLASTUPDATETIME,
+		   FLASTMODIFYUSERID,
+		   FTOKEN,
+		   FEXPIRETIME,
+		   FISUSED) VALUES
+		  (#{id}, SYSDATE, 1, SYSDATE, 1, 
+		  	#{token}, #{expireTime}, #{isUsed})
+    </insert>
+</mapper>

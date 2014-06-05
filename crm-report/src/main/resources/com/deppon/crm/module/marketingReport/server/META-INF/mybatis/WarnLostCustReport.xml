@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketingReport.shared.domain.WarnLostCustPub">
+	<!-- 查询客户群营销活动报表 -->
+	<resultMap id="WarnLostCustDaily"
+		type="com.deppon.crm.module.report.shared.domain.WarnLostCustDaily">
+		<result column="fdeptid" property="deptId" jdbcType="VARCHAR" />
+		<result column="CARDENAME" property="cadreName" jdbcType="VARCHAR" />
+		<result column="CARRERNAME" property="careerDeptName" jdbcType="VARCHAR" />
+		<result column="BIGAREANAME" property="bigAreaName" jdbcType="VARCHAR" />
+		<result column="AREANAME" property="areaName" jdbcType="VARCHAR" />
+		<result column="DEPTNAME" property="deptName" jdbcType="VARCHAR" />
+		<!-- 所有流失预警客户总数 -->
+		<result column="TOTAL" property="warnLostCount" jdbcType="NUMERIC" />
+		<result column="EXPRESSCOUNT" property="expressWarnLostCount" jdbcType="NUMERIC" />
+		<result column="LTTCOUNT" property="lTTWarnLostCount" jdbcType="NUMERIC" />
+		<!-- 流失后预警 -->
+		<result column="LTTLOSTAFTERWARNCOUNT" property="lTTlostAfterWarnCustCount"
+		jdbcType="NUMERIC" />
+		<result column="EXPRESSLOSTAFTERWARNCOUNT" property="expresslostAfterWarnCustCount" jdbcType="NUMERIC" />
+		<result column="LOSTAFTERWARNTOTAL" property="lostAfterWarnCustCount"
+			jdbcType="NUMERIC" />
+		<result column="LOSTPRE" property="lostAfterWarnPre"
+			jdbcType="NUMERIC" />
+		<result column="LTTLOSTPRE" property="lTTlostAfterWarnCustPercentage"
+			jdbcType="NUMERIC" />
+		<result column="EXPRESSLOSTPRE" property="expresslostAfterWarnCustPercentage"
+			jdbcType="NUMERIC" />
+		<!-- 回访客户总数 -->
+		<result column="EXPRESSRTCOUNT" property="erpressReturnVisitWarnLostCount"
+			jdbcType="NUMERIC" />
+		<result column="LTTRTCOUNT" property="lTTReturnVisitWarnLostCount"
+			jdbcType="NUMERIC" />
+		<result column="RTCOUNT" property="returnVisitWarnLostCount"
+			jdbcType="NUMERIC" />
+		<result column="RTPRE" property="warnLostRTPercentage"
+			jdbcType="NUMERIC" />
+		<result column="EXPRESSRTPRE" property="expressWarnLostRTPercentage"
+			jdbcType="NUMERIC" />
+		<result column="LTTRTPRE" property="lTTWarnLostRTPercentage"
+			jdbcType="NUMERIC" />
+	</resultMap>
+	<!-- <resultMap id="WarnLostCustMonthly" type="com.deppon.crm.module.report.shared.domain.WarnLostCustMonthly">
+		<result column="fdeptid" property="deptId" jdbcType="VARCHAR" />
+		<result column="CADRENAME" property="cadreName" jdbcType="VARCHAR" />
+		<result column="CAREERNAME" property="careerDeptName" jdbcType="VARCHAR" />
+		<result column="BIGAREANAME" property="bigAreaName" jdbcType="VARCHAR" />
+		<result column="AREANAME" property="areaName" jdbcType="VARCHAR" />
+		<result column="DEPTNAME" property="deptName" jdbcType="VARCHAR" />
+		所有流失预警客户总数
+		流失
+		<result column="TOTALSENDLAST" property="totalCustMonthBeforeLastSend"
+			jdbcType="NUMERIC" />
+		<result column="EXPRESSOFLASTSENDCOUNT" property="expressCustMonthBeforeLastSend"
+			jdbcType="NUMERIC" />
+		<result column="LTTOFOFLASTSENDCOUNT" property="lTTCustMonthBeforeLastSend"
+			jdbcType="NUMERIC" />
+		<result column="TOTALLOST" property="lostCust" jdbcType="NUMERIC" />		
+		<result column="EXPRESSLOSTCOUNT" property="expressLostCust"
+			jdbcType="NUMERIC" />
+		<result column="LTTLOSTCOUNT" property="lTTLostCust" jdbcType="NUMERIC" />
+		<result column="EXPRESSLOSTPRE" property="expressLostPercentage"
+			jdbcType="NUMERIC" />
+		<result column="LOSTPRE" property="lostPercentage" jdbcType="NUMERIC" />
+		<result column="LTTLOSTPRE" property="lTTLostPercentage"
+			jdbcType="NUMERIC" />						           
+    </resultMap> -->
+	<select id="getReportWarnLostByDaily" parameterType="Map" resultMap="WarnLostCustDaily">
+    with tbase as (SELECT  CUST.FID FCUSTD,
+                CUST.FCUSTCATEGORY FCUSTCATEGORY,
+                decode(SC.FSTATUS,30,1,0) FSTATUS, <!-- 1表示有回访 -->
+                1 num,
+                decode(LOST.fwarnstatus, 'LOST', 1, 0) WARChange, <!--1表示流失 -->
+                CUST.FDEPTID
+         from T_CUST_WARNLOG LOST
+          LEFT JOIN T_CUST_SCHEDULE SC ON SC.FCOMEFROMID=LOST.FID AND SC.FCOMEFROMID=LOST.FID
+          AND SC.FCOMFROM='WARN_LOST'  
+          <![CDATA[  AND 
+	          TRUNC(SC.FLASTUPDATETIME) >= #{BeginTime,jdbcType=DATE}
+	          AND  TRUNC(SC.FLASTUPDATETIME) <= #{EndTime,jdbcType=DATE}
+          ]]>  
+         JOIN T_CUST_CUSTBASEDATA CUST ON CUST.FCUSTNUMBER = LOST.FCUSTNUMBER AND CUST.FCUSTSTATUS=0
+         <if test="level=='dep'">
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FID= #{deptid,jdbcType=NUMERIC}
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='area'">
+           JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=#{deptid,jdbcType=NUMERIC} AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='bigarea'">
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=#{deptid,jdbcType=NUMERIC}
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='carrer'">
+            JOIN T_ORG_DEPARTMENT BIGAREA ON BIGAREA.FPARENTID=#{deptid,jdbcType=NUMERIC}
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=BIGAREA.FID
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID 
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+           <if test="level=='card'">
+            JOIN T_ORG_DEPARTMENT CARRER ON CARRER.FPARENTID=#{deptid,jdbcType=NUMERIC}
+            JOIN T_ORG_DEPARTMENT BIGAREA ON BIGAREA.FPARENTID=CARRER.FID
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=BIGAREA.FID
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID 
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+         <![CDATA[
+         WHERE LOST.FCREATETIME >= #{BeginTime,jdbcType=DATE}
+              AND TRUNC(LOST.FCREATETIME) <= #{EndTime,jdbcType=DATE}
+           ]]>       
+           <!-- 非全国查，进行部门匹配 否则 不进行部门匹配直接查所有的时间段内的预警客户 -->
+          <!--  <if test="deptid!='104'">
+             AND CUST.FDEPTID IN (
+                   select  fid from (SELECT  fid,fdeptname,fstatus
+                     FROM T_ORG_DEPARTMENT
+                    START WITH FID =  #{deptid,jdbcType=NUMERIC}
+                   CONNECT BY PRIOR fid = fparentid
+                          ) where  FDEPTNAME LIKE '%营业部' and fstatus=1)
+           </if> -->
+        ) ,
+    theRT as(
+      select FCUSTCATEGORY FCUSTCATEGORY, fstatus fstatus, sum(num) ts,fdeptid,WARChange
+        from tbase
+       group by rollup(fdeptid,FCUSTCATEGORY, fstatus,WARChange) having  (fstatus =1 or fstatus is null) and (WARChange=1 or WARChange is null)
+   ),
+   theRTfinal as(
+       SELECT   
+        NVL(max(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and WARChange is null and fstatus is null  then
+                ts  end),0) EXPRESS,
+               NVL(max(case
+               WHEN FCUSTCATEGORY = 'EL' and WARChange is null  and fstatus is null then
+                ts  end),0) EL,<!--零担快递客户数量 -->
+             NVL(max(case
+               WHEN FCUSTCATEGORY = 'LTT'  and WARChange is null  and fstatus is null then
+                ts
+             end),0) LTT,<!-- 零担客户 -->
+              NVL(max(case
+               WHEN WARChange =1  then
+                ts  end),0) LostAfterWarnTotal,<!--  所有的预警后流失客户数量 -->
+            NVL(max(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and WARChange =1  then
+                ts  end),0) EXPRESSLostAfterWarn,<!--快递客户预警后流失客户数量 -->
+            NVL(max(case
+               WHEN FCUSTCATEGORY = 'LTT'  and WARChange =1 then
+                ts
+             end),0) LTTLostAfterWarn, <!--  零担客户预警后流失客户数量 -->
+              NVL(max(case
+               WHEN FCUSTCATEGORY = 'EL'  and WARChange =1 then
+                ts
+             end),0) ELLostAfterWarn,<!-- 零担快递客户预警后流失客户数量 -->
+         NVL(max(case
+               WHEN  fstatus =1  then
+                ts  end),0) RTTotal,<!-- 所有的回访数据 -->
+       NVL(max(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and fstatus =1  then
+                ts  end),0) EXPRESSRT,
+            NVL(max(case
+               WHEN FCUSTCATEGORY = 'LTT'  and fstatus =1 then
+                ts
+             end),0) LTTRT,
+              NVL(max(case
+               WHEN FCUSTCATEGORY = 'EL'  and fstatus =1 then
+                ts
+             end),0) ELRT,
+              NVL(max(case
+               WHEN FCUSTCATEGORY is null  and fstatus is null and WARChange is null then
+                ts end),0) total,
+                fdeptid fdeptid
+           FROM  theRT
+           group by fdeptid HAVING  fdeptid IS NOT NULL
+   ),
+ theRes as(
+   select   RT.EXPRESS + RT.EL EXPRESSCount, 
+            RT.LTT + RT.EL LTTCount,
+            RT.LostAfterWarnTotal LostAfterWarnTotal,
+            RT.EXPRESSLostAfterWarn +RT.ELLostAfterWarn EXPRESSLostAfterWarnCount, 
+            RT.EXPRESSLostAfterWarn +RT.LTTLostAfterWarn + RT.ELLostAfterWarn LostAfterWarnCount, 
+            RT.ELLostAfterWarn + RT.LTTLostAfterWarn LTTLostAfterWarnCount, 
+            RT.EXPRESSRT + RT.ELRT EXPRESSRTCount, 
+            RT.LTTRT + RT.ELRT LTTRTCount,
+            RT.ELRT + RT.LTTRT + RT.EXPRESSRT RTCOUNT, 
+            RT.total total ,
+            RT.FDEPTID FDEPTID
+            from theRTfinal   RT)
+ select 
+        DEPTNAME,
+        AREANAME,
+        BIGAREANAME,
+        CARRERNAME,
+        CARDENAME,
+ theRes.RTCOUNT RTCOUNT,<!-- 预警客户回访总数 -->
+        theRes.TOTAL TOTAL,<!-- 预警客户总数 -->
+        TRUNC(DECODE(theRes.TOTAL,0,0,theRes.RTCOUNT/theRes.TOTAL),4)*100 RTPRE,<!--预警客户回访率 -->
+        theRes.LTTRTCOUNT LTTRTCOUNT,<!--零担类预警客户回访数 -->
+        theRes.LTTCOUNT LTTCOUNT,<!-- 零担类预警客户总数 -->
+        TRUNC(DECODE(theRes.LTTCOUNT,0,0,theRes.LTTRTCOUNT/theRes.LTTCOUNT),4)*100 LTTRTPRE,<!--零担类预警客户回访率 -->
+        theRes.EXPRESSCOUNT EXPRESSCOUNT,<!-- 快递类预警客户总数 -->
+        theRes.EXPRESSRTCOUNT EXPRESSRTCOUNT,<!--快递类预警客户回访数 -->
+        TRUNC(DECODE(theRes.EXPRESSCOUNT,0,0,TheRes.EXPRESSRTCOUNT/theRes.EXPRESSCOUNT),4)*100 EXPRESSRTPRE,<!-- 快递类预警客户回访率 -->
+        
+        theRes.LOSTAFTERWARNTOTAL LOSTAFTERWARNTOTAL,<!--预警后流失客户数 -->
+        <!--theRes.TOTAL TOTAL, 预警客户总数 -->
+        TRUNC(DECODE(0,0,theRes.LOSTAFTERWARNTOTAL/theRes.TOTAL),2)*100 LOSTPRE,<!-- 预警客户流失率 -->
+        
+        theRes.EXPRESSLOSTAFTERWARNCOUNT EXPRESSLOSTAFTERWARNCOUNT,<!--预警后流失快递客户数 -->
+        --theRes.EXPRESSCOUNT EXPRESSCOUNT,<!--快递类预警客户总数 -->
+        TRUNC(DECODE(theRes.EXPRESSCOUNT,0,0,theRes.EXPRESSLOSTAFTERWARNCOUNT/theRes.EXPRESSCOUNT),4)*100 EXPRESSLOSTPRE,<!-- 预警快递客户流失率 -->
+        
+       theRes.LTTLOSTAFTERWARNCOUNT LTTLOSTAFTERWARNCOUNT,<!--预警后流失零担客户数 -->
+       <!--theRes.LTTCOUNT LTTCOUNT,零担类预警客户总数 -->
+       TRUNC(DECODE(theRes.LTTCOUNT,0,0,theRes.LTTLOSTAFTERWARNCOUNT/theRes.LTTCOUNT),4)*100 LTTLOSTPRE<!--预警零担客户流失率 -->
+  from ( 
+  select 
+        DEP.FDEPTNAME  DEPTNAME,
+        AREA.FDEPTNAME AREANAME,
+        BIGAREA.FDEPTNAME BIGAREANAME,
+        CARRER.FDEPTNAME CARRERNAME,
+        CARDE.FDEPTNAME  CARDENAME,
+        EXPRESSCount,
+        LTTCount,
+        LostAfterWarnTotal,
+        EXPRESSLostAfterWarnCount,
+        LostAfterWarnCount,
+        LTTLostAfterWarnCount,
+        EXPRESSRTCount,
+        LTTRTCount,
+        RTCOUNT,
+        total,
+        fdeptid
+        from theRes
+        LEFT JOIN T_ORG_DEPARTMENT DEP ON DEP.FID=fdeptid
+        LEFT JOIN T_ORG_DEPARTMENT AREA ON DEP.FPARENTID=AREA.FID
+        LEFT JOIN T_ORG_DEPARTMENT BIGAREA ON AREA.FPARENTID=BIGAREA.FID
+        LEFT JOIN T_ORG_DEPARTMENT CARRER ON BIGAREA.FPARENTID=CARRER.FID
+        LEFT JOIN T_ORG_DEPARTMENT CARDE ON CARRER.FPARENTID=CARDE.FID
+ )theRes
+</select>
+<select id="getReportWarnLostByDailyCount" parameterType="Map" resultType="int">
+   SELECT COUNT(COUNT(LOST.FDEPTSTANDARDCODE ))
+         from T_CUST_WARNLOG LOST
+         JOIN T_CUST_CUSTBASEDATA CUST ON CUST.FCUSTNUMBER = LOST.FCUSTNUMBER  AND CUST.FCUSTSTATUS=0
+         <if test="level=='dep'">
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FID= #{deptid,jdbcType=NUMERIC}
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='area'">
+           JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=#{deptid,jdbcType=NUMERIC} AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='bigarea'">
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=#{deptid,jdbcType=NUMERIC}
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='carrer'">
+            JOIN T_ORG_DEPARTMENT BIGAREA ON BIGAREA.FPARENTID=#{deptid,jdbcType=NUMERIC}
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=BIGAREA.FID
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID 
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+           <if test="level=='card'">
+            JOIN T_ORG_DEPARTMENT CARRER ON CARRER.FPARENTID=#{deptid,jdbcType=NUMERIC}
+            JOIN T_ORG_DEPARTMENT BIGAREA ON BIGAREA.FPARENTID=CARRER.FID
+            JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=BIGAREA.FID
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID 
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+            AND DEPT.FSTATUS=1
+         </if>
+         <![CDATA[
+         WHERE LOST.FCREATETIME >= #{BeginTime,jdbcType=DATE}
+              AND LOST.FCREATETIME < #{EndTime,jdbcType=DATE}
+           ]]>   
+           GROUP BY LOST.FDEPTSTANDARDCODE 
+</select>
+<select id="getReportWarnLostByDailyTotal" parameterType="Map" resultMap="WarnLostCustDaily">
+    with tbase as (SELECT  CUST.FID FCUSTD,
+                CUST.FCUSTCATEGORY FCUSTCATEGORY,
+                 decode(SC.FSTATUS,30,1,0) FSTATUS, <!-- 1表示有回访 -->
+                1 num,
+                decode(LOST.fwarnstatus, 'LOST', 1, 0) WARChange, <!--1表示流失 -->
+                CUST.FDEPTID
+         from T_CUST_WARNLOG LOST
+         LEFT JOIN T_CUST_SCHEDULE SC ON SC.FCOMEFROMID=LOST.FID AND SC.FCOMFROM='WARN_LOST' AND SC.FCOMEFROMID=LOST.FID
+          <![CDATA[  AND 
+	          SC.FLASTUPDATETIME >= #{BeginTime,jdbcType=DATE}
+	          AND  SC.FLASTUPDATETIME <= #{EndTime,jdbcType=DATE}+1
+          ]]>  
+         JOIN T_CUST_CUSTBASEDATA CUST ON CUST.FCUSTNUMBER = LOST.FCUSTNUMBER  
+         <if test="level=='dep'">
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FID= #{deptid,jdbcType=NUMERIC}
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='area'">
+           JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=#{deptid,jdbcType=NUMERIC} AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='bigarea'">
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=#{deptid,jdbcType=NUMERIC}
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+          <if test="level=='carrer'">
+            JOIN T_ORG_DEPARTMENT BIGAREA ON BIGAREA.FPARENTID=#{deptid,jdbcType=NUMERIC}
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=BIGAREA.FID
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID 
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+           <if test="level=='card'">
+            JOIN T_ORG_DEPARTMENT CARRER ON CARRER.FPARENTID=#{deptid,jdbcType=NUMERIC}
+            JOIN T_ORG_DEPARTMENT BIGAREA ON BIGAREA.FPARENTID=CARRER.FID
+          JOIN T_ORG_DEPARTMENT AREA ON AREA.FPARENTID=BIGAREA.FID
+            JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FPARENTID=AREA.FID 
+            AND DEPT.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+          AND DEPT.FSTATUS=1
+         </if>
+         <![CDATA[
+         WHERE LOST.FCREATETIME >= #{BeginTime,jdbcType=DATE}
+              AND LOST.FCREATETIME <= #{EndTime,jdbcType=DATE}+1
+           ]]>    
+         <!-- 非全国查，进行部门匹配 否则 不进行部门匹配直接查所有的时间段内的预警客户 -->
+          <!--  <if test="deptid!='104'">
+             AND CUST.FDEPTID IN (
+                   select  fid from (SELECT  fid,fdeptname,fstatus
+                     FROM T_ORG_DEPARTMENT
+                    START WITH FID =  #{deptid,jdbcType=NUMERIC}
+                   CONNECT BY PRIOR fid = fparentid
+                          ) where  FDEPTNAME LIKE '%营业部' and fstatus=1)
+           </if> -->
+        ) ,
+    theRT as(
+      select FCUSTCATEGORY FCUSTCATEGORY, fstatus fstatus, sum(num) ts,fdeptid,WARChange
+        from tbase
+       group by rollup(fdeptid,FCUSTCATEGORY, fstatus,WARChange) having  (fstatus =1 or fstatus is null) and (WARChange=1 or WARChange is null)
+   ),
+   theRTfinal as(
+       SELECT   
+        NVL(sum(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and WARChange is null and fstatus is null  then
+                ts  end),0) EXPRESS,
+               NVL(sum(case
+               WHEN FCUSTCATEGORY = 'EL' and WARChange is null  and fstatus is null then
+                ts  end),0) EL,<!--零担快递客户数量 -->
+             NVL(sum(case
+               WHEN FCUSTCATEGORY = 'LTT'  and WARChange is null  and fstatus is null then
+                ts
+             end),0) LTT,<!-- 零担客户 -->
+              NVL(sum(case
+               WHEN WARChange =1  then
+                ts  end),0) LostAfterWarnTotal,<!--  所有的预警后流失客户数量 -->
+            NVL(sum(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and WARChange =1  then
+                ts  end),0) EXPRESSLostAfterWarn,<!--快递客户预警后流失客户数量 -->
+            NVL(sum(case
+               WHEN FCUSTCATEGORY = 'LTT'  and WARChange =1 then
+                ts
+             end),0) LTTLostAfterWarn, <!--  零担客户预警后流失客户数量 -->
+              NVL(sum(case
+               WHEN FCUSTCATEGORY = 'EL'  and WARChange =1 then
+                ts
+             end),0) ELLostAfterWarn,<!-- 零担快递客户预警后流失客户数量 -->
+         NVL(sum(case
+               WHEN  fstatus =1  then
+                ts  end),0) RTTotal,<!-- 所有的回访数据 -->
+       NVL(sum(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and fstatus =1  then
+                ts  end),0) EXPRESSRT,
+            NVL(sum(case
+               WHEN FCUSTCATEGORY = 'LTT'  and fstatus =1 then
+                ts
+             end),0) LTTRT,
+              NVL(sum(case
+               WHEN FCUSTCATEGORY = 'EL'  and fstatus =1 then
+                ts
+             end),0) ELRT,
+              NVL(sum(case
+               WHEN FCUSTCATEGORY is null  and fstatus is null and WARChange is null then
+                ts end),0) total,
+                fdeptid fdeptid
+           FROM  theRT
+           group by fdeptid HAVING  fdeptid IS NOT NULL
+   ),
+ theRes as(
+   select   RT.EXPRESS + RT.EL EXPRESSCount, 
+            RT.LTT + RT.EL LTTCount,
+            RT.LostAfterWarnTotal LostAfterWarnTotal,
+            RT.EXPRESSLostAfterWarn +RT.ELLostAfterWarn EXPRESSLostAfterWarnCount, 
+            RT.EXPRESSLostAfterWarn +RT.LTTLostAfterWarn + RT.ELLostAfterWarn LostAfterWarnCount, 
+            RT.ELLostAfterWarn + RT.LTTLostAfterWarn LTTLostAfterWarnCount, 
+            RT.EXPRESSRT + RT.ELRT EXPRESSRTCount, 
+            RT.LTTRT + RT.ELRT LTTRTCount,
+            RT.ELRT + RT.LTTRT + RT.EXPRESSRT RTCOUNT, 
+            RT.total total ,
+            RT.FDEPTID FDEPTID
+            from theRTfinal   RT)
+ select 
+        DEPTNAME,
+        AREANAME,
+        BIGAREANAME,
+        CARRERNAME,
+        CARDENAME,
+ theRes.RTCOUNT RTCOUNT,<!-- 预警客户回访总数 -->
+        theRes.TOTAL TOTAL,<!-- 预警客户总数 -->
+        TRUNC(DECODE(theRes.TOTAL,0,0,theRes.RTCOUNT/theRes.TOTAL),4)*100 RTPRE,<!--预警客户回访率 -->
+        theRes.LTTRTCOUNT LTTRTCOUNT,<!--零担类预警客户回访数 -->
+        theRes.LTTCOUNT LTTCOUNT,<!-- 零担类预警客户总数 -->
+        TRUNC(DECODE(theRes.LTTCOUNT,0,0,theRes.LTTRTCOUNT/theRes.LTTCOUNT),4)*100 LTTRTPRE,<!--零担类预警客户回访率 -->
+        theRes.EXPRESSCOUNT EXPRESSCOUNT,<!-- 快递类预警客户总数 -->
+        theRes.EXPRESSRTCOUNT EXPRESSRTCOUNT,<!--快递类预警客户回访数 -->
+        TRUNC(DECODE(theRes.EXPRESSCOUNT,0,0,TheRes.EXPRESSRTCOUNT/theRes.EXPRESSCOUNT),4)*100 EXPRESSRTPRE,<!-- 快递类预警客户回访率 -->
+        
+        theRes.LOSTAFTERWARNTOTAL LOSTAFTERWARNTOTAL,<!--预警后流失客户数 -->
+        <!--theRes.TOTAL TOTAL, 预警客户总数 -->
+        TRUNC(DECODE(0,0,theRes.LOSTAFTERWARNTOTAL/theRes.TOTAL),4)*100 LOSTPRE,<!-- 预警客户流失率 -->
+        
+        theRes.EXPRESSLOSTAFTERWARNCOUNT EXPRESSLOSTAFTERWARNCOUNT,<!--预警后流失快递客户数 -->
+        --theRes.EXPRESSCOUNT EXPRESSCOUNT,<!--快递类预警客户总数 -->
+        TRUNC(DECODE(theRes.EXPRESSCOUNT,0,0,theRes.EXPRESSLOSTAFTERWARNCOUNT/theRes.EXPRESSCOUNT),4)*100 EXPRESSLOSTPRE,<!-- 预警快递客户流失率 -->
+        
+       theRes.LTTLOSTAFTERWARNCOUNT LTTLOSTAFTERWARNCOUNT,<!--预警后流失零担客户数 -->
+       <!--theRes.LTTCOUNT LTTCOUNT,零担类预警客户总数 -->
+       TRUNC(DECODE(theRes.LTTCOUNT,0,0,theRes.LTTLOSTAFTERWARNCOUNT/theRes.LTTCOUNT),4)*100 LTTLOSTPRE<!--预警零担客户流失率 -->
+  from ( 
+	 select '' DEPTNAME,
+	        '' AREANAME,
+	        '' BIGAREANAME,
+	        '' CARRERNAME,
+	        '' CARDENAME,
+	        sum(EXPRESSCount) EXPRESSCount,
+	        sum(LTTCount) LTTCount,
+	        sum(LostAfterWarnTotal) LostAfterWarnTotal,
+	        sum(EXPRESSLostAfterWarnCount) EXPRESSLostAfterWarnCount,
+	        sum(LostAfterWarnCount) LostAfterWarnCount,
+	        sum(LTTLostAfterWarnCount) LTTLostAfterWarnCount,
+	        sum(EXPRESSRTCount) EXPRESSRTCount,
+	        sum(LTTRTCount) LTTRTCount,
+	        sum(RTCOUNT) RTCOUNT,
+	        sum(total) total,
+	        #{deptid,jdbcType=NUMERIC} fdeptid
+	   from theRes
+ )theRes
+</select>
+<!-- <select id="getReportWarnLostByMonthly" parameterType="Map" resultMap="WarnLostCustMonthly">
+   with tTotalSendLLS as(
+      select cust.fid, cust.fcustcategory, res.*,1 flag
+        from t_cust_custbasedata cust,
+             (SELECT distinct fcustnumber, fdeptid
+                FROM t_crm_custanalysebyday cly
+                <![CDATA[
+				  WHERE cly.fanalyseday >trunc(add_months(#{BeginTime,jdbcType=DATE}, -4), 'mm')
+	              AND cly.fanalyseday <=trunc(add_months(#{EndTime,jdbcType=DATE}, -3), 'mm') 
+	              AND cly.fdeptid=#{deptid,jdbcType=NUMERIC}
+	          ]]>
+              union
+              SELECT distinct fcustnumber, TO_NUMBER(fdeptid)
+                FROM t_crm_custanalysebyday_express cly
+                  <![CDATA[
+				  WHERE cly.fanalyseday >trunc(add_months(#{BeginTime,jdbcType=DATE}, -4), 'mm')
+	              AND cly.fanalyseday <=trunc(add_months(#{EndTime,jdbcType=DATE}, -3), 'mm') 
+	              AND cly.fdeptid=#{deptid,jdbcType=NUMERIC}
+	          ]]>) res
+           where res.fcustnumber = cust.fcustnumber
+ ),
+   tTotalSendRT as
+   ( select cust.fid, cust.fcustcategory, res.*,1 flag
+       from t_cust_custbasedata cust,
+            (SELECT distinct fcustnumber, fdeptid
+               FROM t_crm_custanalysebyday cly
+               <![CDATA[
+				  WHERE cly.fanalyseday <= trunc(#{BeginTime,jdbcType=DATE}, 'mm')
+	              AND cly.fanalyseday >trunc(add_months(#{BeginTime,jdbcType=DATE}, -3), 'mm')
+	              AND cly.fdeptid=#{deptid,jdbcType=NUMERIC}
+	          ]]>
+            union
+             	SELECT distinct fcustnumber, TO_NUMBER(fdeptid)
+               FROM t_crm_custanalysebyday_express cly
+              <![CDATA[
+				  WHERE cly.fanalyseday <= trunc(#{BeginTime,jdbcType=DATE}, 'mm')
+	              AND cly.fanalyseday >trunc(add_months(#{BeginTime,jdbcType=DATE}, -3), 'mm')
+	              AND cly.fdeptid=#{deptid,jdbcType=NUMERIC}
+	          ]]>) res
+      where res.fcustnumber = cust.fcustnumber
+   ),
+   tlostCustTotalTj as(
+      select FCUSTCATEGORY FCUSTCATEGORY, d flag, sum(num) ts
+        from (
+             select ls.*,decode(rt.fid,null,0,1) d,1 num from tTotalSendLLS  ls
+             left join tTotalSendRT rt on rt.fid=ls.fid
+        )
+       group by rollup(FCUSTCATEGORY, d) having  d =0 or d is null
+   ),
+   tlostCustTotalfinal as(
+   SELECT  NVL(max(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and flag is null  then
+                ts  end),0) EXPRESSOFLASTSEND,
+             NVL(max(case
+               WHEN FCUSTCATEGORY = 'LTT'  and flag is null then
+                ts
+             end),0) LTTOFOFLASTSEND,
+            NVL(max(case
+               WHEN FCUSTCATEGORY = 'EL' and flag is null  then
+                ts  end),0) ELOFLASTSEND,
+            NVL(max(case
+               WHEN FCUSTCATEGORY = 'EXPRESS' and flag =0  then
+                ts  end),0) EXPRESSlost,
+           NVL( max(case
+               WHEN FCUSTCATEGORY = 'LTT'  and flag =0 then
+                ts
+             end),0) LTTLost,
+             NVL( max(case
+               WHEN FCUSTCATEGORY = 'EL'  and flag =0 then
+                ts
+             end),0) ELLost,
+              max(case
+               WHEN FCUSTCATEGORY is null  and flag is null then
+                ts end) totalLost
+           FROM  tlostCustTotalTj
+   ),
+   deptInfo as 
+   (
+   select max(case
+                when rownum = 5 then
+                 fdeptname
+              end) CADRENAME,
+          max(case
+                when rownum = 4 then
+                 fdeptname
+              end) CAREERName,
+          max(case
+                when rownum = 3 then
+                 fdeptname
+              end) bigAreaName,
+          max(case
+                when rownum = 2 then
+                 fdeptname
+              end) areaName,
+          max(case
+                when rownum = 1 then
+                 fdeptname
+              end) deptName
+     from t_org_department
+    start with fid = 11469
+   connect by prior fparentid = fid
+          and fdeptlevel >= 3
+    order by fdeptlevel asc)
+   select info.*,
+          res.*,
+          trunc(decode(res.totalSENDLAST,
+                       0,
+                       0,
+                       res.totalLost / res.totalSENDLAST),
+                2)*100 lostPre,
+          trunc(decode(RES.EXPRESSOFLASTSENDCount,
+                       0,
+                       0,
+                       RES.EXPRESSlostCount / RES.EXPRESSOFLASTSENDCount),
+                2)*100 EXPRESSLOSTPRE,
+          trunc(decode(RES.LTTOFOFLASTSENDCount,
+                       0,
+                       0,
+                       RES.LTTLostCount / RES.LTTOFOFLASTSENDCount),
+                2)*100 LTTLOSTPRE
+     from (select
+            lostCust.EXPRESSOFLASTSEND + lostCust.ELOFLASTSEND EXPRESSOFLASTSENDCount, 
+            lostCust.LTTOFOFLASTSEND + lostCust.ELOFLASTSEND LTTOFOFLASTSENDCount, 
+            lostCust.EXPRESSlost + lostCust.ELLost EXPRESSlostCount, 
+            lostCust.LTTLost + lostCust.ELLost LTTLostCount, 
+            lostCust.ELLost + lostCust.EXPRESSlost + lostCust.LTTLost totalLost, 
+            lostCust.totalLost totalSENDLAST
+             from tlostCustTotalfinal  lostCust) res, deptInfo info
+	</select> -->
+	<select id="selectDeptsBydeptid" parameterType="String" resultType="String">
+		select fid
+  			from (select fid,fdeptname,fstatus
+          from t_org_department
+         start with fid = #{deptid,jdbcType=VARCHAR}
+        connect by prior fid = fparentid) res
+ 		where res.fdeptname like '%营业部' and fstatus=1
+	</select>
+</mapper>

@@ -1,0 +1,16 @@
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid ,VARCHAR
+belongDeptId,fbelongDeptId,VARCHAR
+currentlevel,fcurrentlevel,VARCHAR
+remark,fremark,VARCHAR
+status,fstatus,VARCHAR
+belongdeptName,fbelongdeptName,VARCHAR
+custName,fcustName,VARCHAR
+contactName,fcontactName,VARCHAR
+contactPhone,fcontactPhone,VARCHAR
+contactTel,fcontactTel,VARCHAR
+targetLevel,ftargetLevel,VARCHAR
+statisticsTime,fstatisticsTime,VARCHAR

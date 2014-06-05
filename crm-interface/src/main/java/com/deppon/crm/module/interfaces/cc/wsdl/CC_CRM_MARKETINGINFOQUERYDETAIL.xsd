@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/crm/inteface/cc/domain">
+
+    <complexType name="MarketingInfoQueryDetailResponse">
+    	<annotation>
+    		<documentation></documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="customerNeed" type="tns:CustomerNeed"
+    			minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                	<documentation>客户需求</documentation>
+                </annotation>
+    		</element>
+    		<element name="GoodsPotential" type="tns:GoodsPotential"
+    			minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                	<documentation>发货潜力</documentation>
+                </annotation>
+    		</element>
+    		<element name="questionnaire" type="tns:Questionnaire" minOccurs="0" maxOccurs="unbounded">
+    			<annotation>
+    				<documentation>问卷</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="MarketingInfoQueryDetailRequest">
+        <annotation>
+        	<documentation></documentation>
+        </annotation>
+        <sequence>
+        	<element name="custId" type="string">
+        		<annotation>
+        			<documentation>客户Id</documentation>
+        		</annotation>
+        	</element>
+        	<element name="recallId" type="string">
+        		<annotation>
+        			<documentation>回访Id</documentation>
+        		</annotation></element>
+        </sequence>
+    </complexType>
+
+    <complexType name="CustomerNeed">
+    	<annotation>
+    		<documentation>客户需求</documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="needsType" type="string">
+    			<annotation>
+    				<documentation>需求分类（EFFICIENCY：时效 SAFETY：安全 SERVICE：服务 INCREMENT_SERVICE：增值服务 PRICE：价格 OTHER：其它）
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="needsAndQuestion" type="string">
+    			<annotation>
+    				<documentation>需求及问题</documentation>
+    			</annotation></element>
+    		<element name="solution" type="string">
+    			<annotation>
+    				<documentation>解决办法</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="GoodsPotential">
+    	<annotation>
+    		<documentation>走货潜力</documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="startCity" type="string">
+    			<annotation>
+    				<documentation>始发城市</documentation>
+    			</annotation>
+    		</element>
+    		<element name="startCityCode" type="string">
+    			<annotation>
+    				<documentation>出发城市编码</documentation>
+    			</annotation></element>
+    		<element name="arrivalCity" type="string">
+    			<annotation>
+    				<documentation>到达城市</documentation>
+    			</annotation>
+    		</element>
+    		<element name="arrivalCityCode" type="string">
+    			<annotation>
+    				<documentation>到达城市编码</documentation>
+    			</annotation></element>
+    		<element name="potential" type="string">
+    			<annotation>
+    				<documentation>货量潜力
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="coLogCompany" type="string">
+    			<annotation>
+    				<documentation>HUAYU：天地华宇 JIAJI：佳吉 XINBANG：新邦 SHUNFENG：顺丰 OTHER：其他 SHENTONG：申通 YUANTONG：圆通 HUITONG：汇通 ZHONGTONG：中通 YUNDA：韵达 TIANTIAN：天天快递 ZHAIJISONG：宅急送</documentation>
+    			</annotation>
+    		</element>
+    		<element name="ifhasLine" type="boolean">
+    			<annotation>
+    				<documentation>是否已有线路</documentation>
+    			</annotation>
+    		</element>
+    		<element name="colIntention" type="string">
+    			<annotation>
+    				<documentation>合作意向：HIGH：高；MIDDLE：中；LOW：低；</documentation>
+    			</annotation>
+    		</element>
+    		<element name="ifOurCarriage" type="boolean"
+    			minOccurs="1">
+    			<annotation>
+    				<documentation>是否适合我司承运</documentation>
+    			</annotation>
+    		</element>
+    		<element name="remark" type="string">
+    			<annotation>
+    				<documentation>备注</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+
+
+    <element name="marketingInfoQueryDetailRequest" type="tns:MarketingInfoQueryDetailRequest"></element>
+
+    <element name="marketingInfoQueryDetailResponse" type="tns:MarketingInfoQueryDetailResponse"></element>
+
+
+
+
+
+
+    <complexType name="Questionnaire">
+    	<sequence>
+    		<element name="number" type="string">
+    			<annotation>
+    				<documentation>问卷编号</documentation>
+    			</annotation></element>
+    		<element name="name" type="string">
+    			<annotation>
+    				<documentation>问卷名称</documentation>
+    			</annotation></element>
+    		<element name="usingRange" type="string">
+    			<annotation>
+    				<documentation>适用范围</documentation>
+    			</annotation></element>
+    		<element name="effectiveDate" type="dateTime">
+    			<annotation>
+    				<documentation>生效日期</documentation>
+    			</annotation></element>
+    		<element name="expiryDate" type="dateTime">
+    			<annotation>
+    				<documentation>失效日期</documentation>
+    			</annotation></element>
+    		<element name="useTimes" type="int">
+    			<annotation>
+    				<documentation>采用次数</documentation>
+    			</annotation></element>
+    		<element name="instructions" type="string">
+    			<annotation>
+    				<documentation>问卷说明</documentation>
+    			</annotation></element>
+    		<element name="state" type="string">
+    			<annotation>
+    				<documentation>问卷状态
+WAITINGVALID : 待生效
+VALID : 生效
+USING: 使用中
+OVERDUE: 过期
+</documentation>
+    			</annotation></element>
+    		<element name="createTime" type="dateTime">
+    			<annotation>
+    				<documentation>创建时间</documentation>
+    			</annotation></element>
+    		<element name="creator" type="string">
+    			<annotation>
+    				<documentation>创建人</documentation>
+    			</annotation></element>
+    		<element name="lastModifyTime" type="dateTime">
+    			<annotation>
+    				<documentation>最后修改时间</documentation>
+    			</annotation></element>
+    		<element name="modifier" type="string">
+    			<annotation>
+    				<documentation>修改人</documentation>
+    			</annotation></element>
+    		<element name="questionDetails" type="tns:QuestionDetail" minOccurs="0" maxOccurs="unbounded">
+    			<annotation>
+    				<documentation>问题明细</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="QuestionDetail">
+    	<sequence>
+    		<element name="sequence" type="string">
+    			<annotation>
+    				<documentation>问题序号</documentation>
+    			</annotation></element>
+    		<element name="description" type="string">
+    			<annotation>
+    				<documentation>问题描述</documentation>
+    			</annotation></element>
+    		<element name="type" type="string">
+    			<annotation>
+    				<documentation>问题类型
+单选:RADIO
+多选:MULTIPLE_CHOICE
+简答:QUESTION_ANSWER
+</documentation>
+    			</annotation></element>
+    		<element name="itemInfos" type="tns:ItemInfo" minOccurs="0" maxOccurs="unbounded">
+    			<annotation>
+    				<documentation>选项信息</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ItemInfo">
+    	<sequence>
+    		<element name="sequence" type="string">
+    			<annotation>
+    				<documentation>序号</documentation>
+    			</annotation></element>
+    		<element name="content" type="string">
+    			<annotation>
+    				<documentation>选项内容</documentation>
+    			</annotation></element>
+    		<element name="ifchoosed" type="boolean">
+    			<annotation>
+    				<documentation>是否被选中</documentation>
+    			</annotation></element>
+    		<element name="remark" type="string">
+    			<annotation>
+    				<documentation>答案备注</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+</schema>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.FeedAttach">
+	<resultMap id="feedAttachMap"
+		type="com.deppon.crm.module.duty.shared.domain.FeedAttach">
+		<id column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FFEEDID" property="feedId" jdbcType="VARCHAR" />
+		<result column="FATTACHPATH" property="attachPath" jdbcType="VARCHAR" />
+		<result column="FATTACHNAME" property="attachName" jdbcType="VARCHAR" />
+		<result column="FDESCRIBE" property="describe" jdbcType="VARCHAR" />	
+	</resultMap>
+	
+	<sql id="FeedAttach_Column_List" >
+      FID
+      ,FFEEDID
+      ,FATTACHPATH
+      ,FATTACHNAME
+      ,FDESCRIBE
+    </sql>
+    <!--根据条件查询对象 -->
+	<select id="searchFeedAttach" parameterType="com.deppon.crm.module.duty.shared.domain.FeedAttach" 
+		resultMap="feedAttachMap">
+		SELECT  
+    	<include refid="FeedAttach_Column_List" />
+    		FROM T_CUST_FEEDATTACH 
+    	<where>
+	    	<if test="id!=null">
+	    		FID = #{id}
+	    	</if>         
+	   		<if test="feedId!=null and feedId!=''"> 
+				AND FFEEDID  = #{feedId}        
+	  		</if>  
+	  		<if test="attachPath!=null and attachPath!=''"> 
+				AND FATTACHPATH  = #{attachPath}        
+	  		</if>      
+	  		<if test="attachName!=null and attachName!=''"> 
+				AND FATTACHNAME = #{attachName}        
+	  		</if>  
+	  		<if test="describe!=null and describe!=''"> 
+				AND FDESCRIBE = #{describe}        
+	  		</if>   
+  		</where> 
+	</select>
+	
+   <!--查询单个对象 -->
+  <select id="selectFeedAttachByPrimaryKey" resultMap="feedAttachMap" parameterType="java.lang.Long" >
+  	select 
+    <include refid="FeedAttach_Column_List" />
+    from T_CUST_FEEDATTACH
+    where FID = #{id}
+  </select>
+  <!--修改附件信息 -->
+  <update id="updateFeedAttach" parameterType="com.deppon.crm.module.duty.shared.domain.FeedAttach" >
+     update T_CUST_FEEDATTACH
+    <set>
+      <if test="feedId != null" >
+        FFEEDID = #{feedId},
+      </if>
+      <if test="attachPath != null" >
+        FATTACHPATH = #{attachPath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachName != null" >
+        FATTACHNAME = #{attachName,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null" >
+        FDESCRIBE = #{describe,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FID = #{id}
+  </update>
+  <!--插入附件信息 -->
+   <insert id="insertFeedAttach" parameterType="com.deppon.crm.module.duty.shared.domain.FeedAttach">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_ID_CUST_FEEDATTACH.nextval AS
+				id FROM DUAL
+		</selectKey>
+				INSERT INTO T_CUST_FEEDATTACH
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+			  <if test="feedId != null" >
+				FFEEDID,
+			  </if>
+			  <if test="attachPath != null" >
+				FATTACHPATH,
+			  </if>
+			  <if test="attachName != null" >
+				FATTACHNAME,
+			  </if>
+			  <if test="describe != null" >
+				FDESCRIBE,
+			  </if>
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+				#{id},
+			  <if test="feedId != null" >
+				#{feedId},
+			  </if>
+			  <if test="attachPath != null" >
+				#{attachPath},
+			  </if>
+			  <if test="attachName != null" >
+				#{attachName},
+			  </if>
+			  <if test="describe != null" >
+				#{describe},
+			  </if>
+	    </trim>
+  </insert>
+  <!-- 批量删除方案信息 -->
+  <delete id="deleteFeedAttachs" parameterType="map">
+  		DELETE FROM T_CUST_FEEDATTACH
+  		<![CDATA[WHERE FID IN ]]>
+		<foreach collection="ids" open="(" close=")" separator=","
+				item="id">
+		<![CDATA[	#{id}  ]]>
+		</foreach>
+  </delete>
+  
+    <!-- 批量删除根据责任ID -->
+  <delete id="deleteFeedAttachsByFeedId" parameterType="map">
+  		DELETE FROM T_CUST_FEEDATTACH
+  	     where FFEEDID = #{feedId}
+  </delete>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="planDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.PlanDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="scheduleDao" class="com.deppon.crm.module.marketing.server.dao.impl.ScheduleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+		
+	<bean id="returnVisitDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.ReturnVisitDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="mapDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.MapDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="customerGroupDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.CustomerGroupDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="monitorPlanDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.MonitorPlanDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="cycleDao" class="com.deppon.crm.module.marketing.server.dao.impl.CycleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id = "providerFor360Dao" class="com.deppon.crm.module.marketing.server.dao.impl.ProviderFor360Dao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+</beans>

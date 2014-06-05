@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.crm.module.scheduler.server.dao.impl.SchedulingControlDao">
+
+	<!-- 定时任务调度控制映射 -->
+	<resultMap id="SchedulingControlResultMap" type="com.deppon.crm.module.scheduler.shared.domain.SchedulingControl">
+		<id property="id" column="FID" />
+		<result property="tableName" column="FTABLENAME" />
+		<result property="reportTime" column="FREPORTTIME" />
+		<result property="buzDate" column="FBUZDATE" />
+		<result property="crmTime" column="FCRMTIME" />
+		<result property="crmEndTime" column="FCRMENDTIME" />
+		<result property="state" column="FSTATE" />
+	</resultMap>
+
+	<!-- 调度控制表字段 -->
+	<sql id="SchedulingControlFields">
+		FID,FTABLENAME,FREPORTTIME,FBUZDATE,FCRMTIME,FCRMENDTIME,FSTATE
+	</sql>
+
+	<!-- 查询需要执行的记录集合 -->
+	<select id="searchNeedExecuteList" resultMap="SchedulingControlResultMap">
+		SELECT
+		<include refid="SchedulingControlFields" />
+		FROM T_CRM_SCHEDULINGCONTROL
+		WHERE (FCRMTIME
+		       IS NULL OR FSTATE='0') AND 
+		       FTABLENAME NOT IN 
+		       ('T_CRM_WAYBILLCLIENT','T_CRM_DISPERSECLIENT','T_CRM_NOTMEMBERTOMEMBER','T_CRM_MEMBERFALL','T_CRM_MEMBERUPGRADE')
+	</select>
+	<select id="searchNeedExecuteListByTableName" resultMap="SchedulingControlResultMap" parameterType="string">
+		SELECT
+		<include refid="SchedulingControlFields" />
+		FROM T_CRM_SCHEDULINGCONTROL
+		WHERE (FCRMTIME
+		       IS NULL OR FSTATE='0') AND 
+		       FTABLENAME =#{tabelName}	
+   </select>
+
+	<!-- 根据条件查询 -->
+	<select id="searchListByCondition" parameterType="map"
+		resultMap="SchedulingControlResultMap">
+		SELECT
+		<include refid="SchedulingControlFields" />
+		FROM T_CRM_SCHEDULINGCONTROL
+		<where>
+			1=1
+			<if test=" sc.tableName != null and sc.tableName != '' ">
+				AND FTABLENAME=#{sc.tableName}
+			</if>
+			<if test="sc.reportTime !=null ">
+				AND FREPORTTIME>=#{sc.reportTime}
+			</if>
+			<if test="reportTime1 !=null ">
+				AND FREPORTTIME &lt;=#{reportTime1}
+			</if>
+			<if test="sc.buzDate !=null ">
+				AND FBUZDATE>=#{sc.buzDate}
+			</if>
+			<if test="buzDate1 !=null ">
+				AND FBUZDATE &lt;=#{buzDate1}
+			</if>
+			<if test="sc.crmTime!=null ">
+				AND FCRMTIME>=#{sc.crmTime}
+			</if>
+			<if test="sc.crmEndTime!=null">
+				AND FCRMENDTIME &lt;=#{sc.crmEndTime}
+			</if>
+			<if test="sc.state!=null and state!='' ">
+				AND FSTATE=#{sc.state}
+			</if>
+		</where>
+		ORDER BY FSTATE desc,FBUZDATE
+	</select>
+
+	<!-- 根据条件更新 -->
+	<update id="update" parameterType="com.deppon.crm.module.scheduler.shared.domain.SchedulingControl">
+		UPDATE T_CRM_SCHEDULINGCONTROL
+		<set>
+			<if test="crmTime!=null">
+				FCRMTIME=#{crmTime},
+			</if>
+			<if test="crmEndTime!=null">
+				FCRMENDTIME=#{crmEndTime},
+			</if>
+			<if test="state!=null">
+				FSTATE=#{state},
+			</if>
+		</set>
+		WHERE FID=#{id}
+	</update>
+
+	<!-- 根据key获得value -->
+	<select id="searchValueByKey" parameterType="string" resultType="string">
+		select FVALUE from T_CRM_SCHEDULINGCONTROLKV where FKEY=#{fkey}
+	</select>
+	<select id="searchValues" resultType="map">
+		select FKEY,FVALUE from T_CRM_SCHEDULINGCONTROLKV
+	</select>
+
+</mapper>

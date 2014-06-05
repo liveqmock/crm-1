@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+	<!-- 服务类 -->
+	<bean id="complaintTimer" class="com.deppon.crm.module.scheduler.server.manager.TimerComplaint">
+		<property name="complaintManager" ref="complaintManager"></property>
+	</bean>
+
+	<!-- 扫描工单，将超过处理时限的工单设置为已到期 -->
+	<bean id="complaintTimerJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="complaintTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="callComplaintTimer"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="complaintTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="complaintTimerJob" />
+		<property name="cronExpression">
+			<value> 0 0/5 * * * ? </value>
+		</property>
+	</bean>
+
+	<!-- 工单待办事宜汇总调度 -->
+	<bean id="complaintTimerTODOJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="complaintTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="callComplaintToDoTimer"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="complaintTODOTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="complaintTimerTODOJob" />
+		<property name="cronExpression">
+			<value> 0 0/5 * * * ? </value>
+		</property>
+	</bean>
+
+	<!-- 工单模块之 OA 提醒 begin -->
+	<bean id="complaintOATimerJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="complaintTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="complaint_OA_msg_timer"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="complaintOATrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="complaintOATimerJob" />
+		<property name="cronExpression">
+			<value> 0 0/5 * * * ? </value>
+		</property>
+	</bean>
+	<!-- 工单模块之 OA 提醒 end -->
+	
+	<!-- 工单短信提醒定时器  -->
+	<bean id="complaintSmsTimerJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="complaintTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="smsMessageJob"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="complaintSmsTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="complaintSmsTimerJob" />
+		<property name="cronExpression">
+			<value> 0 0/3 * * * ? </value>
+		</property>
+	</bean>
+	
+</beans>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.ExamineRecord">
+
+	<insert id="saveExamineRecord" parameterType="com.deppon.crm.module.customer.shared.domain.ExamineRecord" >
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_examineRecord.nextval as id FROM DUAL
+		</selectKey>
+		insert into t_cust_examineRecord(
+		FID,FCREATETIME,FCREATEUSERID,
+		FLASTUPDATETIME,FLASTMODIFYUSERID,FOPINION,FRESULT,
+		FRIGHTS,FDISPOSEUSERID,FWORKFLOWID)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		sysdate,#{modifyUser,jdbcType=VARCHAR},
+		#{opinion,jdbcType=VARCHAR},#{result,jdbcType=NUMERIC},
+		#{rights,jdbcType=VARCHAR},#{disposeUserId,jdbcType=VARCHAR},
+		#{workFlowId,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<select id="getDeptIdAndRoleIdByWorkflowId" resultType="map" parameterType="long">
+		select t.fdeptid "deptId",
+		d.fdeptName "deptName",
+		t.froleid "roleId",
+		r.froleName "roleName" 
+		from t_crm_todoworkflow t 
+		join t_auth_role r on r.fid = t.froleId
+		join t_org_department d on d.fid = t.fdeptId
+		join t_cust_workflow w on t.fworkflowid = w.fworkflowid
+		where w.fworkflowid = #{workflowId}
+		and w.fstatus in ('UNAPPROVED','APPROVING')
+		and t.ftodoflag = 'TODO'
+	</select>
+	
+	<select id="getApproverByWorkflowId" resultType="map"
+		parameterType="long">
+		select distinct e.fempcode empcode,e.fempname empname
+		from t_org_employee e
+		join t_auth_user u on u.fempcode = e.fempcode
+		join t_auth_userrole r on r.fuserid = u.fid
+		join t_crm_todoworkflow t on t.fdeptid = e.fdeptid and
+		t.froleid = r.froleid and
+		t.ftodoflag = 'TODO'
+		where t.fdeptid = #{deptId} and t.froleid = #{roleId}
+	</select>
+	
+	<select id="getExamineRecordByWorkflowId" resultMap="ExamineRecordRM" parameterType="long">
+		SELECT <include refid="ExamineRecord_column"/>
+		FROM T_CUST_EXAMINERECORD ER
+		LEFT JOIN T_ORG_EMPLOYEE  EMP
+		ON ER.FCREATEUSERID=EMP.FID
+		WHERE FWORKFLOWID = #{WORKFLOWID}
+	</select>
+	
+	<resultMap id="ExamineRecordRM"
+	 type="com.deppon.crm.module.customer.shared.domain.ExamineRecord">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="opinion" column="FOPINION" jdbcType = "VARCHAR" />
+		<result property="result" column="FRESULT" jdbcType = "NUMERIC" />
+		<result property="rights" column="FRIGHTS" jdbcType = "VARCHAR" ></result>
+		<result property="disposeUserId" column="FDISPOSEUSERID" jdbcType = "VARCHAR" />
+		<result property="workFlowId" column="FWORKFLOWID" jdbcType = "NUMERIC" ></result>
+	</resultMap>
+	<sql id="ExamineRecord_column">
+		ER.FID FID,
+		ER.FCREATETIME FCREATETIME,
+		ER.FCREATEUSERID FCREATEUSERID,
+		ER.FLASTUPDATETIME FLASTUPDATETIME,
+		ER.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+		ER.FOPINION FOPINION,
+		ER.FRESULT FRESULT,
+		ER.FRIGHTS FRIGHTS,
+		EMP.FEMPNAME FDISPOSEUSERID,
+		ER.FWORKFLOWID FWORKFLOWID
+	</sql>
+	
+</mapper>

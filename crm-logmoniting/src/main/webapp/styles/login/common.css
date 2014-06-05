@@ -1,0 +1,729 @@
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+
+.topMenuA {
+	font-size: 14px;
+	color: #D1D7DA;
+}
+
+.topMenuB {
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+}
+.bottomBg {
+	background-image: url(../images/puc_bottom_bg.jpg);
+	background-repeat: no-repeat;
+	height: 43px;
+	background-position: left;
+	text-indent: 60px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #999999;
+}
+.infoAreaBg {
+	background-color: #F1F1F1;
+}
+.infoLeftBg {
+	background-image: url(../images/puc_left.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+.button_functionA {
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+	font-family: Arial;
+}
+.button_functionB {
+	font-size: 12px;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+.button_popupfunction {
+	font-size: 12px;
+	color: #062C42;
+	text-decoration: none;
+	font-family: Arial;
+}
+.button_popupfunction a:link {
+	font-size: 12px;
+	color: #062C42;
+	text-decoration: none;
+	font-family: Arial;
+}
+.button_popupfunction a:visited {
+	font-size: 12px;
+	color: #062C42;
+	text-decoration: none;
+	font-family: Arial;
+}
+.button_popupfunction a:hover {
+	font-size: 12px;
+	color: #062C42;
+	text-decoration: none;
+	font-family: Arial;
+}
+.button_popupfunction a:active {
+	font-size: 12px;
+	color: #062C42;
+	text-decoration: none;
+	font-family: Arial;
+}
+
+.listButtonA {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.listButtonA a:link {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.listButtonA a:visited {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.listButtonA a:hover {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.listButtonA a:active {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+
+.fontBlack12 {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+}
+.fontBlack12B {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	font-weight: bold;
+}
+.listArrangeCount {
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	width: 25px;
+}
+.listTitleBg {
+	line-height: 23px;
+	background-image: url(../images/puc_listTitleBg.jpg);
+	background-repeat: repeat-x;
+	BORDER-TOP: #E3F7FF 1px solid;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+}
+.listLeftBg {
+	background-image: url(../images/puc_listLeftBg.jpg);
+	background-repeat: repeat-y;
+	text-align: center;
+}
+.listArrange_a {
+	background-color: #FFFFFF;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listArrange_b {
+	background-color: #EEF1F8;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listArrange_c {
+	background-color: #FFFFBB;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listArrange_d {
+	background-color: #DFE8F6;
+	border-bottom-width: 1px;
+	border-bottom-style: dotted;
+	border-bottom-color: #C2D5EF;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #DCDCDC;
+	border-left-color: #DCDCDC;
+}
+.listArrange_e {
+	background-color: #DFE8F6;
+	line-height: 25px;
+}
+.listArrange_NoticeRed {
+	background-color: #FF9696;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listArrange_NoticeYellow {
+	background-color: #FFE7AE;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listArrange_NoticeBlue {
+	background-color: #C4D2FE;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listArrange_NoticeGreen {
+	background-color: #CAFFBF;
+	BORDER-LEFT: white 1px solid;
+	padding-left: 5px;
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	line-height: 25px;
+}
+.listImportantFont {
+	font-family: Arial;
+	font-size: 12px;
+	color: #1A66B3;
+}
+.formTitleName {
+	font-family: Arial;
+	font-size: 12px;
+	line-height: 28px;
+	color: #000000;
+	text-decoration: none;
+	text-indent: 15px;
+}
+.formTitleNameBold {
+	font-family: Arial;
+	font-size: 12px;
+	line-height: 28px;
+	color: #333333;
+	text-decoration: none;
+	text-indent: 15px;
+	font-weight: bold;
+}
+.formTextareaRead {
+	font-size: 12px;
+	color: #000000;
+	background-color: #F7F7FA;
+	border: 1px dashed #F7F7FA;
+	width: 160px;
+	font-family: Arial;
+}
+.formTextareaReadCount {
+	font-size: 12px;
+	color: #FF6600;
+	background-color: #D4DBE6;
+	border: 1px dashed #D4DBE6;
+	width: 84px;
+	font-family: Arial;
+	font-weight: bold;
+}
+.formTextareaEdit {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 160px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaSearch {
+	font-family: Arial;
+	font-size: 12px;
+	color: #999999;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 130px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaEditSize {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 84px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaBigEdit {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 623px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaBigEditPopup {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 240px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaBigEditNotice {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 350px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+
+.formTextareaEditAddress {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 160px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaEditTel_country {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 50px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaEditTel_number {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 100px;
+	background-image: url(../images/puc_textAreaBg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+}
+.formTextareaLogin {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	width: 180px;
+	background-image: url(../images/Login_userinfobg.jpg);
+	background-repeat: no-repeat;
+	background-position: left top;
+	text-indent: 2px;
+	border: 1px solid #959595;
+}
+.formTextareaLogin2 {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	width: 180px;
+	text-indent: 2px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #434C4E;
+	border-right-color: #FFFFFF;
+	border-bottom-color: #FFFFFF;
+	border-left-color: #434C4E;
+}
+.LoginbottomText {
+	font-family: Arial;
+	font-size: 13px;
+	color: #999999;
+}
+.MainbottomText {
+	font-family: Arial;
+	font-size: 13px;
+}
+.LoginAttInfo {
+	font-family: Arial;
+	font-size: 12px;
+	color: #008DD5;
+	text-decoration: none;
+	line-height: 25px;
+}
+
+
+.topSearchTextarea {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	width: 160px;
+	text-indent: 2px;
+	background-color: #F1F1F1;
+	border: 1px solid #ffffff;
+}
+.BigTitleName {
+	font-family: Arial;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	text-decoration: none;
+}
+
+
+
+
+.formDroplistBorder {
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #999999;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #999999;
+	width: 160px;
+}
+.popup_TitleName {
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	padding-top: 6px;
+}
+.listButtonBg {
+	background-color: #CCCCCC;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #AFAFAF;
+	border-left-color: #AFAFAF;
+	padding-left: 7px;
+	height: 25px;
+}
+.noticeLeftBg {
+	background-image: url(../images/NoticeLeftBg.jpg);
+	background-repeat: repeat-y;
+	background-position: right;
+}
+.tabCurrentFont {
+	font-family: Arial;
+	font-size: 12px;
+	font-weight: bold;
+	color: #1A66B3;
+}
+.tabFont {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.tabFont a:link {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.tabFont a:visited {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.tabFont a:hover {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+.tabFont a:active {
+	font-family: Arial;
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+
+.home_CommFunction {
+	font-family: Arial;
+	font-size: 12px;
+	line-height: 25px;
+	color: #1A66B3;
+	text-decoration: none;
+}
+.homeUndo {
+	font-size: 12px;
+	font-weight: bold;
+	color: #FF6600;
+	text-decoration: none;
+	line-height: 25px;
+}
+.homeQA_line1 {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	background-color: #FFFFFF;
+	border-bottom-width: 1px;
+	border-bottom-style: dotted;
+	border-bottom-color: #CCCCCC;
+	line-height: 20px;
+	text-indent: 4px;
+}
+.homeQA_line2 {
+	font-family: Arial;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	background-color: #DFE8F6;
+	border-bottom-width: 1px;
+	border-bottom-style: dotted;
+	border-bottom-color: #CCCCCC;
+	line-height: 20px;
+	text-indent: 4px;
+}
+.homeQA_ok {
+	font-size: 12px;
+	color: #FF0000;
+}
+.homeLinkTitle {
+	font-family: Arial;
+	font-size: 12px;
+	color: #999999;
+	text-decoration: none;
+}
+.homeLinkName {
+	font-family: Arial;
+	font-size: 12px;
+	font-weight: bold;
+	color: #3A99DB;
+	text-decoration: none;
+}
+.homeTopSearchName {
+	font-family: Arial;
+	font-size: 12px;
+	color: #0099FF;
+	text-decoration: none;
+	padding-top: 3px;
+}
+
+
+.topLink {
+	font-family: Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+	background-image: url(../images/puc_top_logo.jpg);
+	background-repeat: no-repeat;
+	background-position: right;
+}
+.topLinkFont {
+	font-family: Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.topLinkFont a:link {
+	font-family: Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.topLinkFont a:visited {
+	font-family: Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.topLinkFont a:hover {
+	font-family: Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.topLinkFont a:active {
+	font-family: Arial;
+	font-size: 12px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+.boxBorder {
+	border: 1px solid #AFAFAF;
+	padding: 4px;
+}
+.topLineBg {
+	background-image: url(../images/top_Linebg.jpg);
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+
+.noticeTabIframe {
+	height: 540px;
+}
+a:link {
+}
+a:visited {
+}
+a:hover {
+}
+a:active {
+}

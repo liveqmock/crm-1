@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+	<!-- 服务类 -->
+	<bean id="planScheduleTimer11" class="com.deppon.crm.module.scheduler.server.manager.PlanScheduleTimer">
+		<property name="planManager" ref="planManager"></property>
+		<property name="scheduleManager" ref="scheduleManager" />
+	</bean>
+
+	<!-- 计划/日程状态变更 -->
+	<bean id="processPlanScheduleStatusJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<property name="repeate" value="false"></property>
+		<property name="multiNodeExecute" value="false"></property>
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="serviceBean" value-ref="planScheduleTimer11"></entry>
+				<entry key="methodName" value="processPlanScheduleStatus"></entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="processPlanScheduleStatusTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="processPlanScheduleStatusJob" />
+		<property name="cronExpression">
+			<value> 0 0 3-5 * * ? </value>
+		</property>
+	</bean>
+
+	<!-- 营销模块-计划/日程数据统计调度任务 -->
+	<bean id="processMarketingTODOJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="planScheduleTimer11"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="processMarketingTODO"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="processMarketingTODOTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="processMarketingTODOJob" />
+		<property name="cronExpression">
+			<value> 0 0 1,13 * * ? </value>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.deppon.com/crm/inteface/cc/domain">
+	<complexType name="UpdateCallCenterCustomerRequest">
+		<sequence>
+			<element name="custNumber" type="string" minOccurs="1">
+				<annotation>
+					<documentation>客户编码</documentation>
+				</annotation>
+			</element>
+			<element name="custType" type="string">
+				<annotation>
+					<documentation>
+						客户类型： ENTERPRISE 企业 PERSONAL 个人
+
+					</documentation>
+				</annotation>
+			</element>
+			<element name="ifBigCustomer" type="boolean">
+				<annotation>
+					<documentation>是否大客户</documentation>
+				</annotation>
+			</element>
+			<element name="custName" type="string">
+				<annotation>
+					<documentation>客户名称</documentation>
+				</annotation>
+			</element>
+			<element name="custDegree" type="string">
+				<annotation>
+					<documentation>
+						客户等级 NORMAL 普通客户 GOLD 黄金客户 PLATINUM 铂金客户 DIAMOND
+						钻石客户
+					</documentation>
+				</annotation>
+			</element>
+			<element name="stdeptcode" type="string">
+				<annotation>
+					<documentation>部门标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="ifvalid" type="boolean">
+				<annotation>
+					<documentation>是否有效</documentation>
+				</annotation>
+			</element>
+			<element name="createTime" type="dateTime"></element>
+			<element name="lastUpdateTime" type="dateTime"></element>
+			<element name="pickAddress" type="string">
+				<annotation>
+					<documentation>接货地址</documentation></annotation></element>
+			<element name="custCategory" type="string">
+				<annotation>
+					<documentation>客户类别 
+LTT 零担 
+EXPRESS 快递 
+EL 零担快递
+		</documentation></annotation></element>
+			<element name="externalSysID" type="string">
+				<annotation>
+					<documentation>外系统ID</documentation>
+				</annotation>
+			</element>
+			<element name="linkmanInfos" type="tns:LinkmanInfoUpdate"
+				minOccurs="0" maxOccurs="unbounded">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="UpdateCallCenterCustomerResponse">
+		<sequence>
+			<element name="ifSuccess" type="string">
+				<annotation>
+					<documentation>是否发送成功</documentation>
+				</annotation>
+			</element>
+			<element name="errorMsg" type="string">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<element name="updateCallCenterCustomerRequest" type="tns:UpdateCallCenterCustomerRequest"></element>
+
+	<element name="updateCallCenterCustomerResponse" type="tns:UpdateCallCenterCustomerResponse"></element>
+
+	<complexType name="LinkmanInfoUpdate">
+		<sequence>
+			<element name="name" type="string">
+				<annotation>
+					<documentation>来电人姓名</documentation>
+				</annotation>
+			</element>
+			<element name="cellphone" type="string">
+				<annotation>
+					<documentation>手机号码</documentation>
+				</annotation>
+			</element>
+			<element name="email" type="string">
+				<annotation>
+					<documentation>电子邮件</documentation>
+				</annotation>
+			</element>
+			<element name="fax" type="string">
+				<annotation>
+					<documentation>传真号码</documentation>
+				</annotation>
+			</element>
+			<element name="address" type="string">
+				<annotation>
+					<documentation>接货地址</documentation>
+				</annotation>
+			</element>
+			<element name="telephone" type="string">
+				<annotation>
+					<documentation>固定电话</documentation>
+				</annotation>
+			</element>
+			<element name="crmid" type="string">
+				<annotation>
+					<documentation>crm联系人id</documentation>
+				</annotation></element>
+		</sequence>
+	</complexType>
+</schema>

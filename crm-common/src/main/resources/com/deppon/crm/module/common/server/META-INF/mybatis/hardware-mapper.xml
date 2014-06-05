@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Hardware">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="HardwardMap" type="com.deppon.crm.module.common.shared.domain.HardWareInfo">
+		<result property="id" column="id" jdbcType="VARCHAR" javaType="String"/>
+		<result property="HostName" column="HOSTNAME" jdbcType="VARCHAR" javaType="String"/>
+		<result property="CPUNumber" column="CPUNUMBER" jdbcType="VARCHAR" javaType="String"/>
+		<result property="MACAddress" column="MACADDRESS" jdbcType="VARCHAR" javaType="String"/>
+		<result property="falg" column="FALG" jdbcType="VARCHAR" javaType="java.lang.Boolean" />
+	</resultMap>
+	
+ 	<select id="getHardwardInfo" parameterType="com.deppon.crm.module.common.shared.domain.HardWareInfo" resultMap="HardwardMap">
+		SELECT C.ID, C.HOSTNAME, C.CPUNUMBER, C.MACADDRESS, C.FALG FROM OA_CHECKLOGIN C
+		<where >
+			1=1
+			<if test="HostName != null and HostName != ''">
+				AND C.HOSTNAME = #{HostName}
+			</if>
+			
+			<if test="MACAddress != null and MACAddress != ''">
+				AND C.MACADDRESS = #{MACAddress}
+			</if>
+			
+		</where>
+    </select>    
+    <!-- 查询所有的硬件信息 -->
+    <select id="getAllHardwardInfo"  parameterType="com.deppon.crm.module.common.shared.domain.HardWareInfo" fetchSize="200" resultMap="HardwardMap">
+        SELECT C.ID, C.HOSTNAME, C.CPUNUMBER, C.MACADDRESS, C.FALG FROM OA_CHECKLOGIN C
+    </select>
+    
+    <!-- 查询表中最后一次修改时间 -->
+    <select id="getLastModifyTime" resultType="date">
+        SELECT MAX(REGDATE) FROM OA_CHECKLOGIN
+    </select>
+</mapper>

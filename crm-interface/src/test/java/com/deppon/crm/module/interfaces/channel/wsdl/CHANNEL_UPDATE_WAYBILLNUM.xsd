@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/esb/inteface/domain/crm" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/esb/inteface/domain/crm">
+
+    <element name="updateWayBillNumResponse" type="tns:UpdateWayBillNumResponse"></element>
+
+
+    <complexType name="UpdateWayBillNumRequest">
+    	<sequence>
+    		<element name="channelNumber" type="string">
+    			<annotation>
+    				<documentation>渠道单号</documentation>
+    			</annotation></element>
+    		<element name="waybilNumber" type="string">
+    			<annotation>
+    				<documentation>运单单号</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+    
+    <element name="updateWayBillNumRequest" type="tns:UpdateWayBillNumRequest"></element>
+
+    <complexType name="UpdateWayBillNumResponse">
+    	<sequence>
+    		<element name="result" type="boolean">
+    			<annotation>
+    				<documentation>是否成功,true：成功,false：失败</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+</schema>

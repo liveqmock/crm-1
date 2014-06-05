@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.customer.shared.domain.base.GoodTradeMapping">
+	<!-- 大客户准入or退出列表RM -->
+	<resultMap id="goodTradeMappingRM"
+		type="com.deppon.crm.module.customer.shared.domain.base.GoodTradeMapping">
+		<result property="id" column="FID" />
+		<result property="articleName" column="FARTICLENAME" />
+		<result property="delayaccounting" column="FDELAYACCOUNTING" />
+		<result property="firstTradeCode" column="FFIRSTTRADECODE" />
+		<result property="secondTradeCode" column="FSECONDTRADECODE" />
+		<result property="associatedPersonId" column="FASSOCIATEDPERSONID" />
+		<result property="associatedPerson" column="FASSOCIATEDPERSONNAME" />
+		<result property="associatedTime" column="FASSOCIATEDTIME" />
+		<result property="associatedStatus" column="FASSOCIATEDSTATUS" />
+		<result property="remark" column="FREMARK" />
+	</resultMap> 
+	<sql id="goodTradeMapping_column">
+		GT.FID ,
+		GT.FARTICLENAME ,
+		GT.FDELAYACCOUNTING ,
+		GT.FFIRSTTRADECODE ,
+		GT.FSECONDTRADECODE ,
+		GT.FASSOCIATEDPERSONID ,
+		EM.FEMPNAME FASSOCIATEDPERSONNAME,
+		GT.FASSOCIATEDTIME ,
+		GT.FASSOCIATEDSTATUS ,
+		GT.FCREATETIME ,
+		GT.FCREATEUSERID ,
+		GT.FLASTMODIFYTIME ,
+		GT.FLASTMODIFYUSERID ,
+		GT.FREMARK 
+	</sql>
+	
+	<!-- 查询-->
+	<select id="searchGoodTradeMappingByCondition" resultMap="goodTradeMappingRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.base.GoodTradeMappingSearchCondition">
+		SELECT
+		<include refid="goodTradeMapping_column" />
+		FROM T_SECONDTRADE_ARTICLE  GT
+		LEFT JOIN T_ORG_EMPLOYEE EM
+		ON	GT.FASSOCIATEDPERSONID=EM.FID
+		where 1=1 
+		<if test="articleName != null and articleName != '' ">
+			<![CDATA[ 
+				AND GT.FARTICLENAME like '%'||#{articleName}||'%'
+			]]>
+		</if>
+		<if test="firstTradeCode != null and firstTradeCode != '' ">
+			<![CDATA[
+				AND GT.FFIRSTTRADECODE = #{firstTradeCode} 
+			]]>
+		</if>
+		<if test="secondTradeCode != null and secondTradeCode != '' ">
+			<![CDATA[ 
+				AND GT.FSECONDTRADECODE = #{secondTradeCode}  
+			]]>
+		</if>
+		<if test="associatedStatus != null and associatedStatus != '' ">
+			<![CDATA[
+				AND GT.FASSOCIATEDSTATUS =#{associatedStatus}
+				]]>
+		</if>
+	</select>
+	<!-- 查询-->
+	<select id="countGoodTradeMappingByCondition" resultType="int"
+		parameterType="com.deppon.crm.module.customer.shared.domain.base.GoodTradeMappingSearchCondition">
+		SELECT
+		count(1)
+		FROM T_SECONDTRADE_ARTICLE GT
+		LEFT JOIN T_ORG_EMPLOYEE EM
+		ON	GT.FASSOCIATEDPERSONID=EM.FID
+		where 1=1
+		<if test="articleName != null and articleName != '' ">
+			<![CDATA[ 
+				AND GT.FARTICLENAME like '%'||#{articleName}||'%'
+			]]>
+		</if>
+		<if test="firstTradeCode != null and firstTradeCode != '' ">
+			<![CDATA[
+				AND GT.FFIRSTTRADECODE = #{firstTradeCode} 
+			]]>
+		</if>
+		<if test="secondTradeCode != null and secondTradeCode != '' ">
+			<![CDATA[ 
+				AND GT.FSECONDTRADECODE = #{secondTradeCode}  
+			]]>
+		</if>
+		<if test="associatedStatus != null and associatedStatus != '' ">
+			<![CDATA[
+				AND GT.FASSOCIATEDSTATUS =#{associatedStatus}
+				]]>
+		</if>
+		<if test="associatedStatus != null and associatedStatus != '' ">
+			<![CDATA[
+				AND GT.FASSOCIATEDSTATUS =#{associatedStatus}
+				]]>
+		</if>
+	</select>
+	
+	
+	<update id="updateGoodTradeMapping"
+		parameterType="com.deppon.crm.module.customer.shared.domain.base.GoodTradeMapping">
+		update T_SECONDTRADE_ARTICLE GT set
+		<if test="null != firstTradeCode and '' != firstTradeCode">
+			GT.FFIRSTTRADECODE=#{firstTradeCode,jdbcType=VARCHAR},
+		</if>
+		<if test="null != secondTradeCode and '' != secondTradeCode">
+			GT.FSECONDTRADECODE=#{secondTradeCode,jdbcType=VARCHAR},
+		</if>
+		<if test="null != associatedPersonId and '' != associatedPersonId">
+			GT.FASSOCIATEDPERSONID=#{associatedPersonId,jdbcType=VARCHAR},
+		</if>
+		<if test="null != associatedTime and '' != associatedTime">
+			GT.FASSOCIATEDTIME=#{associatedTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="null != associatedStatus and '' != associatedStatus">
+			GT.FASSOCIATEDSTATUS=#{associatedStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="null != remark and '' != remark">
+			GT.FREMARK=#{remark,jdbcType=VARCHAR},
+		</if>
+		<if test="null != modifyDate and '' != modifyDate">
+			GT.FLASTMODIFYTIME=#{modifyDate,jdbcType=TIMESTAMP},
+		</if>
+		<if test="null != modifyUser and '' != modifyUser">
+			GT.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		</if>
+		where GT.FID=#{id,jdbcType=VARCHAR}
+	</update>
+	
+</mapper>

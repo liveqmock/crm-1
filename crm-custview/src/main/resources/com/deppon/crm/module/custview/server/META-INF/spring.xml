@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/jms
+	http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+	http://www.springframework.org/schema/context     
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<bean id="memberViewAction" scope="prototype"
+		class="com.deppon.crm.module.custview.server.action.MemberViewAction">
+		<property name="member360ViewManager" ref="member360ViewManager" />
+	</bean>
+	<bean id="custViewDownLoadAction" scope="prototype"
+		class="com.deppon.crm.module.custview.server.action.FileDownLoadAction">
+		<property name="member360ViewManager" ref="member360ViewManager" />
+	</bean>
+
+	<bean id="statisticsDao" class="com.deppon.crm.module.custview.server.dao.impl.StatisticsDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="statisticsService" class="com.deppon.crm.module.custview.server.service.impl.StatisticsService">
+		<property name="statisticsDao" ref="statisticsDao" />
+	</bean>
+
+	<bean id="member360ViewManager" class="com.deppon.crm.module.custview.server.manager.impl.Member360ViewManager">
+		<property name="statisticsService" ref="statisticsService" />
+		<property name="userService" ref="userService" />
+		<property name="areaAddressManager" ref="areaAddressManager" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="alterMemberManager" ref="alterMemberManager" />
+		<property name="memberManager" ref="memberManager" />
+		<property name="integralManager" ref="integralManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="complaintManager" ref="complaintManager" />
+		<property name="contractManager" ref="contractManager" />
+		<property name="orderManager" ref="orderManager" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="providerFor360Manager" ref="providerFor360Manager" />
+		<property name="custCreditManager" ref="custCreditManager" />
+		<property name="warnLostCustManager" ref="warnLostCustManagerImp" />
+		<property name="waybillOperateImpl" ref="waybillOperate" />
+		<property name="boManager" ref="businessOpportunityManager" />
+			</bean>
+	<!-- 接口的JMS配置 -->
+	<bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+<!-- 		<property name="transportType"> -->
+<!-- 			<util:constant static-field="com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="queueManager" value="QM_APP" /> -->
+<!-- 		<property name="hostName" value="192.168.17.141" /> -->
+<!-- 		<property name="channel" value="CRM.CLIENT" /> -->
+<!-- 		<property name="port" value="2428" /> -->
+	</bean>
+</beans>
+

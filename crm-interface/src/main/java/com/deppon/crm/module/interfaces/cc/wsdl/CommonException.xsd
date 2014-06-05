@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/esb/exception"
+	xmlns:tns="http://www.deppon.com/esb/exception" elementFormDefault="qualified">
+
+	<complexType name="CommonExceptionInfo">
+		<sequence>
+			<element name="exceptioncode" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>异常的编码，ESB本身产生的异常编码格式为：ESB+nnnnnn,例如:ESB000001表示服务编码不存在</documentation>
+				</annotation>
+			</element>
+			<element name="exceptiontype" minOccurs="1" type="string" maxOccurs="1">
+				<annotation>
+					<documentation>异常的类型,默认是业务异常:SystemException(系统异常)、BusinessException(业务异常)</documentation>
+				</annotation>
+			</element>
+			<element name="message" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>异常消息，用于显示给最终用户</documentation>
+				</annotation>
+			</element>
+
+			<element name="createdTime" type="dateTime" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>异常发生时间</documentation>
+				</annotation>
+			</element>
+
+			<element name="detailedInfo" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>异常的详细消息，用于系统管理员诊断</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+
+
+	<element name="commonExceptionInfo" type="tns:CommonExceptionInfo"></element>
+
+</schema>

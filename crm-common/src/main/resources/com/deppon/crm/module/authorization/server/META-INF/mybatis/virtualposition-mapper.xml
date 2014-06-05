@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.VirtualPosition">
+  <resultMap id="BaseResultMap" type="com.deppon.crm.module.authorization.shared.domain.VirtualPosition" >
+    <id column="FID" property="id" jdbcType="VARCHAR" />
+    <result column="FVIRTUALPOSITIONNAME" property="virtualPositionName" jdbcType="VARCHAR" />
+    <result column="FDESC" property="desc" jdbcType="VARCHAR" />
+    <result column="FCREATEUSERID" property="createUser" jdbcType="VARCHAR" />
+    <result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="FUPDATEUSERID" property="modifyUser" jdbcType="VARCHAR" />
+    <result column="FUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <!-- 虚拟岗位角色ResultMap -->
+  <resultMap id="VirtualPositionRole" type="com.deppon.crm.module.authorization.shared.domain.VirtualPositionRole" >
+    <id column="FID" property="id" jdbcType="VARCHAR" />
+    <result column="FVPID" property="vpId" jdbcType="VARCHAR" />
+    <result column="FROLEID" property="roleId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- 虚拟岗位与标准岗位映射关系  -->
+  <resultMap id="VirtualMapStandard_ResultMap" type="com.deppon.crm.module.authorization.shared.domain.VirtualMapEhrPosition" >
+    <id column="FID" property="fid" jdbcType="VARCHAR" />
+    <result column="FVPID" property="vpid" jdbcType="VARCHAR" />
+    <result column="FSPID" property="spid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- 配合虚拟岗位角色的ResultMap -->
+  <resultMap id="VO_ResultMap" type="String" >
+  	<result column="frolename"/>
+  </resultMap>
+  
+  <!-- 虚拟岗位角色查询结果Vo -->
+  <resultMap id="VirtualRoleVO_ResultMap" type="com.deppon.crm.module.authorization.shared.domain.VirtualPositionRoleVo" >
+    <id column="fid" property="virtualPositionId" jdbcType="VARCHAR" />
+    <result column="fvirtualpositionname" property="virtualPositionName" jdbcType="VARCHAR" />
+    <result column = "fdesc" property="virtualPositionDesc" jdbcType="VARCHAR"/>
+    <result column="froleDesc" property="roleDesc" jdbcType="VARCHAR"/>
+<!--     <collection property="roles" resultMap="VO_ResultMap"/> -->
+  </resultMap>
+  
+  <sql id="VirtualMapStandard_Base_Column_List" >
+    FID, FVPID, FSPID
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    FID, FVIRTUALPOSITIONNAME, FDESC, FCREATEUSERID, FCREATETIME, FUPDATEUSERID, FUPDATETIME
+  </sql>
+  
+  <sql id="VirtualPositionRole_Base_Column_List" >
+    FID,FVPID,FROLEID
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_CRM_VIRTUALPOSTION
+    where fid = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_CRM_VIRTUALPOSTION
+    where fid = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualPosition" >
+  	<selectKey order="BEFORE" keyProperty="id" resultType="String">
+  		SELECT SEQ_VIRTUALPOSITION.NEXTVAL AS id FROM DUAL  
+  	</selectKey>
+    insert into T_CRM_VIRTUALPOSTION (FID, FVIRTUALPOSITIONNAME, FDESC, 
+      FCREATEUSERID, FCREATETIME, FUPDATEUSERID, 
+      FUPDATETIME)
+    values (#{id}, #{virtualPositionName,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{modifyUser,jdbcType=VARCHAR}, 
+      #{modifyDate,jdbcType=TIMESTAMP})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualPosition" >
+    update T_CRM_VIRTUALPOSTION
+    <set >
+      <if test="virtualPositionName != null and virtualPositionName!=''" >
+        FVIRTUALPOSITIONNAME = #{virtualPositionName,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null and desc!=''" >
+        FDESC = #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null and createUser!=''" >
+        FCREATEUSERID = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        FCREATETIME = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUser != null and modifyUser!=''" >
+        FUPDATEUSERID = #{modifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyDate != null" >
+        FUPDATETIME = sysdate,
+      </if>
+    </set>
+    where fid = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 更新虚拟岗位 -->
+  <update id="updateByPrimaryKey" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualPosition" >
+    update T_CRM_VIRTUALPOSTION
+    set FVIRTUALPOSITIONNAME = #{virtualPositionName,jdbcType=VARCHAR},
+      FDESC = #{desc,jdbcType=VARCHAR},
+      <!-- 
+	      FCREATEUSERID = #{createUser,jdbcType=VARCHAR},
+	      FCREATETIME = #{createDate,jdbcType=TIMESTAMP}, 
+      -->
+      FUPDATEUSERID = #{modifyUser,jdbcType=VARCHAR},
+      FUPDATETIME = sysdate
+    where fid = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 查询所有虚拟岗位名称 -->
+  <select id="isExistVirtualPositionName" parameterType="Map" resultType="int">
+  		 SELECT COUNT(1) 
+  		 	FROM T_CRM_VIRTUALPOSTION  
+  		 	WHERE FVIRTUALPOSITIONNAME = #{positionName,jdbcType=VARCHAR}
+  		 	<if test="vpId!=null and vpId!=''">
+  		 		<![CDATA[
+  		 		and fid <> #{vpId,jdbcType=VARCHAR}
+  		 		]]>
+  		 	</if>
+  </select>
+  
+  <!-- 根据虚拟岗位id查询对应的角色 -->
+  <select id="getRolesByVpId" parameterType="String" resultMap="VirtualPositionRole">
+  		SELECT 
+  		<include refid="VirtualPositionRole_Base_Column_List"/>
+  		 FROM T_CRM_VIRTUALPOSITIONROLE
+  		 WHERE FVPID = #{vpId,jdbcType=VARCHAR}
+  </select>
+  <!--  虚拟岗位查询 -->
+  <select id="queryVirtualPosition" parameterType="Map" resultMap="BaseResultMap">
+  	select vp.fid,
+       	   vp.fvirtualpositionname,
+           vp.fdesc,
+           vp.fcreateuserid,
+           vp.fcreatetime,
+           vp.fupdateuserid,
+           vp.fupdatetime
+  from t_crm_virtualpostion vp
+	  <if test="positionName!=null and positionName!=''">
+	  	  where vp.fvirtualpositionname like '%'||#{positionName,jdbcType=VARCHAR}||'%'
+	  </if>
+	  <if test="ehrPositionName!=null and ehrPositionName!=''">
+<!-- 		  join t_crm_virtualstandardposition vsp -->
+<!-- 		    on vp.fid = vsp.fvpid -->
+<!-- 		  join t_uums_ehrposition e -->
+<!-- 		    on vsp.fspid = e.pkehrposition  -->
+		   where vp.fid in (select vp1.fid
+                    from t_crm_virtualpostion vp1
+                    join t_crm_virtualstandardposition vsp1
+                      on vp1.fid = vsp1.fvpid
+                    join t_uums_ehrposition e1
+                      on vsp1.fspid = e1.pkehrposition
+                   where e1.jobname like '%'||#{ehrPositionName,jdbcType=VARCHAR}||'%')
+	  </if>
+	  order by vp.fid desc
+  </select>
+  
+  <!-- 虚拟岗位查询统计 -->
+  <select id="countVirtualPosition" parameterType="Map" resultType="int">
+  	 select count(1)
+  	   from t_crm_virtualpostion vp
+	  <if test="positionName!=null and positionName!=''">
+	  	where vp.fvirtualpositionname like '%'||#{positionName,jdbcType=VARCHAR}||'%'
+	  </if>
+	  <if test="ehrPositionName!=null and ehrPositionName!=''">
+<!-- 		  join t_crm_virtualstandardposition vsp -->
+<!-- 		    on vp.fid = vsp.fvpid -->
+<!-- 		  join t_uums_ehrposition e -->
+<!-- 		    on vsp.fspid = e.pkehrposition  -->
+		   where vp.fid in (select vp1.fid
+                    from t_crm_virtualpostion vp1
+                    join t_crm_virtualstandardposition vsp1
+                      on vp1.fid = vsp1.fvpid
+                    join t_uums_ehrposition e1
+                      on vsp1.fspid = e1.pkehrposition
+                   where e1.jobname like '%'||#{ehrPositionName,jdbcType=VARCHAR}||'%')
+	  </if>
+  </select>
+  
+  <!-- 删除虚拟岗位与标准岗位的映射关系 -->
+  <delete id="deleteVirtualMapStandard" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualMapEhrPosition">
+  	 delete from t_crm_virtualstandardPosition where fvpid = #{vpid,jdbcType=VARCHAR} and fspid = #{spid,jdbcType=VARCHAR} 
+  </delete>
+  <!-- 新增虚拟岗位与标准岗位的映射关系 -->
+  <insert id="addVirtualMapStandard" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualMapEhrPosition">
+  	<selectKey keyProperty="id" order="BEFORE" resultType="String">
+  		SELECT SEQ_VIRTUALPOSITION.NEXTVAL AS id FROM DUAL
+  	</selectKey>
+      insert into T_CRM_VIRTUALSTANDARDPOSITION (FID, FVPID, FSPID)
+      values (#{id}, #{vpid,jdbcType=VARCHAR}, #{spid,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 查询虚拟岗位及对应的角色 -->
+  <select id="queryVirPositionRole" parameterType="Map" resultMap="VirtualRoleVO_ResultMap">
+  	select vp.fid, vp.fvirtualpositionname,vp.fdesc,wmsys.wm_concat(r.frolename) froleDesc
+          from t_crm_virtualpostion vp
+          join t_crm_virtualpositionrole vr
+            on vp.fid = vr.fvpid
+          join t_auth_role r
+            on r.fid = vr.froleid
+    <if test="virtualPositionName!=null and virtualPositionName!=''">
+    	<where>
+    		 vp.fvirtualpositionname like '%'||#{virtualPositionName,jdbcType=VARCHAR}||'%'
+    	</where>
+    </if>
+    <if test="roleName!=null and roleName!=''">
+    	<where>
+    		vp.fid in (select vpr.fvpid
+                    from t_crm_virtualpositionrole vpr
+                   where vpr.froleid in
+                         (select tar.fid
+                            from t_auth_role tar
+                           where tar.frolename like '%'||#{roleName,jdbcType=VARCHAR}||'%'))
+    	</where>
+    </if>
+    group by vp.fid, vp.fvirtualpositionname,vp.fdesc 
+    order by vp.fid desc
+  </select>
+  
+  <!-- 查询虚拟岗位及对应的角色  -->
+  <select id="countQueryVirPositionRole" parameterType="Map" resultType="int">
+  	 select count(1)
+  	        from (
+  	          	select distinct vp.fvirtualpositionname
+          from t_crm_virtualpostion vp
+          join t_crm_virtualpositionrole vr
+            on vp.fid = vr.fvpid
+          join t_auth_role r
+            on r.fid = vr.froleid
+	    <if test="virtualPositionName!=null and virtualPositionName!=''">
+	    	<where>
+	    		 vp.fvirtualpositionname like '%'||#{virtualPositionName,jdbcType=VARCHAR}||'%'
+	    	</where>
+	    </if>
+    <if test="roleName!=null and roleName!=''">
+    	<where>
+    		vp.fid in (select vpr.fvpid
+                    from t_crm_virtualpositionrole vpr
+                   where vpr.froleid in
+                         (select tar.fid
+                            from t_auth_role tar
+                           where tar.frolename like '%'||#{roleName,jdbcType=VARCHAR}||'%'))
+    	</where>
+    </if>
+  	)
+  </select>
+  
+  <!-- 根据虚拟岗位名称模糊查询  默认全部查询 -->
+  <select id="queryVirtualPositionByName" parameterType="String" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List"/>
+  	from t_crm_virtualpostion where 1=1
+  	<if test="virtualPositionName!=null and virtualPositionName!=''">
+  		and	fvirtualpositionname like '%'||#{virtualPositionName,jdbcType=VARCHAR}||'%'
+  	</if>
+  	   and fid not in (select fvpid from t_crm_virtualpositionrole t)
+  	   order by fid desc
+  </select>
+  
+  <!-- 根据虚拟岗位名称模糊查询  默认全部查询计数 -->
+  <select id="countQueryVirtualPositionByName" parameterType="String" resultType="int">
+  	select count(1) from t_crm_virtualpostion where 1=1
+  	<if test="virtualPositionName!=null and virtualPositionName!=''">
+  		and	fvirtualpositionname like '%'||#{virtualPositionName,jdbcType=VARCHAR}||'%'
+  	</if>  	  	   
+  	and fid not in (select fvpid from t_crm_virtualpositionrole t)
+  </select>
+  
+  <!-- 通过虚拟岗位对应关系查询角色 -->
+  <select id="queryVirtualPositonRoleByvpId" parameterType="String" resultMap="VirtualPositionRole">
+  	select
+  	<include refid="VirtualPositionRole_Base_Column_List"/>
+  	from t_crm_virtualpositionrole
+  	where fvpid = #{virtualPositionId,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 删除虚拟岗位角色 -->
+  <delete id="deleteVirtualPostionRole" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualPositionRole">
+  	delete from t_crm_virtualpositionrole where fvpid = #{vpId,jdbcType=VARCHAR} and froleid = #{roleId,jdbcType=VARCHAR}
+  </delete>
+  
+  <!-- 新增岗位角色 -->
+  <insert id="addVirtualPostionRole" parameterType="com.deppon.crm.module.authorization.shared.domain.VirtualPositionRole">
+  	  	<selectKey order="BEFORE" keyProperty="id" resultType="String">
+  		SELECT SEQ_VIRTUALPOSITION.NEXTVAL AS id FROM DUAL  
+  	</selectKey>
+    insert into t_crm_virtualpositionrole
+    (fid, fvpid, froleid)
+    values
+   (#{id}, #{vpId,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 人员角色刷新 -->
+  <select id="refreshUserRole" statementType="CALLABLE">
+  	<![CDATA[
+      {call SP_REFRESHUSERROLE(#{virtualPositionId,mode=IN,jdbcType=VARCHAR},#{result,mode=OUT,jdbcType=VARCHAR})}
+	]]>
+  </select>
+</mapper>

@@ -1,0 +1,88 @@
+ //大客户Model
+Ext.define('KeycustomerModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'deptId'//所属部门ID
+		},{name:'deptName'//所属部门名字
+		},{name:'custId'//客户id
+		},{name:'sumAmount'//近三个月发货金额之和
+		},{name:'amountOfSignMent'//近三个月发货金额之和
+		},{name:'creditTimes'//信用预警次数
+		},{name:'type'//类型 表示列表的类型 ---in为准入 out 为退出
+		},{name:'status'//状态 1 无效 0有效
+		},{name:'contactNum'//联系人编码
+		},{name:'contactName'// 联系人姓名
+		},{name:'customerNum'//客户编码
+		},{name:'customerName'//客户名称
+		},{name:'custDegree'//客户等级
+		},{name:'id'//主键
+		},{name:'createDate'//创建日期
+		},{name:'createUser'//创建人
+		},{name:'modifyDate'//修改日期
+		},{name:'modifyUser'//修改人
+		}
+	]
+});
+//准入和退出查询model
+Ext.define('KeycustomerSearchConditionModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'belongDept'//归属部门ID
+		},{name:'custNum'//客户编码
+		},{name:'custName'//客户名称
+		},{name:'contactName'//联系人名字
+		},{name:'contactNum'//联系人编码
+		},{name:'approvalStatus'//审批状态
+		},{name:'startDate'//开始时间
+		},{name:'endDate'//结束时间
+		},{name:'limit'//每页条数
+		},{name:'start'//起始页
+		},{name:'type'//
+		}
+	]
+});
+//准入、准出工作流model
+Ext.define('KeycustomerWorkflowInfoModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'busino'//客户工作流号
+		},{name:'deptId'//客户归属部门
+		},{name:'deptName'//客户归属部门名字
+		},{name:'custId'//客户ID
+		},{name:'amountOfConsignment'//客户近三月发货金额
+		},{name:'custPotential'//次月发货潜力
+		},{name:'applicationReason'//准入\退出申请理由
+		},{name:'isSpecialKeyCustomer'//是否特殊大客户
+		},{name:'workFlowType'//工作流类型
+		},{name:'status'//工作流状态
+		},{name:'approvalSuggestin'//审批意见
+		},{name:'approvalTime'//审批完成时间
+		},{name:'lastApprover'//最后审批人姓名
+		},{name:'creditTimes'//客户信用预警次数
+		},{name:'contactNum'//联系人编码
+		},{name:'customerNum'//客户编码
+		},{name:'contactName'//联系人姓名
+		},{name:'customerName'//客户名称
+		},{name:'custDegree'//客户等级
+		},{name:'cooperate'//意愿程度
+		},{name:'id'//主键
+		},{name:'createDate'//创建日期
+		},{name:'createUser'//创建人
+		},{name:'modifyDate'//修改日期
+		},{name:'modifyUser'//修改人
+		}
+	]
+});
+//大客户工作流管理中的条件校验
+Ext.define('KeyStatusV0Model',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'fisKeyCutomer'//是否存在大客户标记
+		},{name:'fisapproved'//是否存在审批中的工作流中
+		},{name:'fisListIn'//是否存在于有效的准入列表中
+		},{name:'fisListOut'//是否存在于有效的退出列表中
+		},{name:'fisAmountAchieve'//当前统计周期内是否满足联系3个月大于10000
+		},{name:'amountOfSignMent'//
+		}
+	]
+});

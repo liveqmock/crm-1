@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/crm/inteface/cc/domain">
+
+    <complexType name="MarketingInfo">
+    	<annotation>
+    		<documentation></documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="planningTopic" type="string">
+    			<annotation>
+    				<documentation>计划主题</documentation>
+    			</annotation>
+    		</element>
+    		<element name="marketingMode" type="string">
+    			<annotation>
+    				<documentation>
+    					营销方式（VISIT：上门拜访 PHONE：电话回访）
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="marketingType" type="string">
+    			<annotation>
+    				<documentation>营销类型（1.问卷 2.客户需求、走货潜力）</documentation>
+    			</annotation></element>
+    		<element name="recallId" type="string">
+    			<annotation>
+    				<documentation>回访Id</documentation>
+    			</annotation>
+    		</element>
+    		<element name="custId" type="string">
+    			<annotation>
+    				<documentation>客户Id</documentation>
+    			</annotation>
+    		</element>
+    		<element name="linkMan" type="string">
+    			<annotation>
+    				<documentation>联系人名称</documentation>
+    			</annotation>
+    		</element>
+    		<element name="marketingPerson" type="string">
+    			<annotation>
+    				<documentation>营销人名称</documentation>
+    			</annotation>
+    		</element>
+    		<element name="marketingTime" type="dateTime">
+    			<annotation>
+    				<documentation>营销时间</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="MarketingInfoQueryRequest">
+        <annotation>
+        	<documentation></documentation>
+        </annotation>
+        <sequence>
+        	<element name="custNumber" type="string">
+        		<annotation>
+        			<documentation>客户编码</documentation>
+        		</annotation>
+        	</element>
+        	<element name="start" type="int">
+        		<annotation>
+        			<documentation>从那条开始</documentation>
+        		</annotation></element>
+        	<element name="limit" type="int">
+        		<annotation>
+        			<documentation>传多少条</documentation>
+        		</annotation></element>
+        </sequence>
+    </complexType>
+    
+    <complexType name="MarketingInfoQueryResponse">
+    	<sequence>
+    		<element name="marketInfos" type="tns:MarketingInfo"
+    			minOccurs="0" maxOccurs="unbounded">
+    		</element>
+    		<element name="count" type="int"></element>
+    	</sequence>
+    </complexType>
+
+    <element name="marketingInfoQueryResponse" type="tns:MarketingInfoQueryResponse"></element>
+    <element name="marketingInfoQueryRequest" type="tns:MarketingInfoQueryRequest"></element>
+
+</schema>

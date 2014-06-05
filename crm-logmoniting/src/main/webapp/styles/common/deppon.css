@@ -1,0 +1,664 @@
+﻿@charset "utf-8";
+/*all*/
+.margin-t{ margin-top:10px}
+.x-btn{ background-image:url(../../images/common/deppon/bg_BtnNor.gif); background-repeat:repeat-x; background-position:left center;  border:1px solid #ca7e59; padding: 2px 10px; }
+.x-btn-over{ background-image:url(../../images/common/deppon/bg_BtnMouo.gif); background-repeat:repeat-x; background-position:left center;  border:1px solid #ca7e59; padding: 2px 10px}
+.x-btn-pressed{ background-image:url(../../images/common/deppon/bg_BtnMoud.gif); background-repeat:repeat-x; background-position:left center;  border:1px solid #ca7e59;  padding: 2px 10px}
+.x-btn-disabled{ background-image:url(../../images/common/deppon/bg_BtnDis.gif); background-repeat:repeat-x; background-position:left center;   border:1px solid #a3a3a3;   padding: 2px 10px}
+.x-btn-disabled .x-btn-inner{font-size:12px;color: #999}
+.x-btn-default-small .x-btn-inner{ font-size:12px;color: #373C64}
+.x-btn-default-toolbar-small .x-btn-inner{font-size:12px;color: #373C64}
+/*操作按钮*/
+.btn table .x-panel-body-default{background-color:transparent}
+.x-toolbar-footer{ margin-top:0; padding:0 0 4px 6px}
+.x-fieldset-header{ font-size:12px;color: #373C64; font-weight:bold}
+.x-form-item-label{ text-align:right}
+.x-form-item-body .x-form-display-field{ float:right;margin-right:5px}
+.x-toolbar-default{background-image:none !important}
+.x-panel-header-text-default{font-size:12px !important}
+.x-toolbar .x-toolbar-text{font-size:12px !important}
+.x-grid-header-ct .x-column-header ,.x-grid-cell-inner{font-size:12px}
+
+.x-window-header-body .x-box-inner ,.x-message-box .x-window-header-body .x-box-inner{height: 20px !important;}
+.x-window .x-tool{top:0px !important; margin-left:-5px !important;}
+.x-window .x-tool .x-tool-close{ background-image: url(../../images/common/deppon/popdel.png); width: 20px ; height: 20px ;}
+.x-window .x-tool-over .x-tool-close{ background-image: url(../../images/common/deppon/popdelover.png) !important; background-position:0 0; width: 20px ; height: 20px ;}
+.x-window-body-default{border: 0 !important;}
+.x-window-default ,.x-window-header-default-top{background-color: #fff;}
+.x-window.x-docked-top{border-bottom-width: 1px !important;}
+.x-window .x-toolbar-footer{border-top: 1px solid #A9A9A9 !important;}
+.x-message-box .x-toolbar-footer{border-top: 0 !important;}
+/*ie btn*/
+.x-btn-mc .x-btn-inner{ padding-left:10px; padding-right:10px}
+
+/* banner */
+.banner{ background-image:url(../../images/common/deppon/banner.png) !important; background-position:left top  !important; background-repeat:no-repeat  !important; margin: 0 auto;}
+.banner .logininfor div{background-image:none;background-color:transparent}
+.whole{background-image:url(../../images/common/deppon/bg_whole.png); background-repeat: repeat;}
+.logininfor{width:600px; border:0; background-image:none !important;background-color:transparent;  }
+.logininfor x-panel-body,.logininfor .x-panel-body-default{ border:0; background-image:none;background-color:transparent}
+.logininfor .x-toolbar{ font-size:12px;text-align:right;line-height:20px; padding:0;padding-right:10px;background-image:none !important; border:0; }
+.logininfor .x-box-inner{text-align:right;line-height:20px}
+.logininfor .x-btn{ border:0; padding:0 2px}
+.logininfor .x-btn-over .x-box-inner{ color:#f60 !important}
+.logininfor .x-btn .x-btn-center{ height:20px}
+.logininfor .x-frame-tl{ display:none}
+.logininfor .x-frame-tc{ display:none}
+.logininfor .x-frame-tr{ display:none}
+.logininfor .x-frame-ml{ display:none}
+.logininfor .x-btn-default-toolbar-small-over-mc{ background-image:none}
+.logininfor .x-frame-mr{ display:none}
+.logininfor .x-frame-bl{ display:none}
+.logininfor .x-frame-bc{ display:none}
+.logininfor .x-frame-br{ display:none}
+
+/* foot */
+.foot{ text-align:center; line-height:20px; }
+.foot .x-toolbar-text{color:#999}
+
+/*Menu*/
+#Menu .x-panel-body,#Menu .x-panel-body-default{ border:0; background-image:none;background-color:transparent}
+#Menu .x-panel-default{ background:transparent}
+#Menu .x-tab-bar{ background-image:none; background-color:transparent}
+#Menu .x-tab-bar-top .x-tab-bar-body{ border:0; padding:0; height:25px}
+#Menu .x-tab-bar-strip{ border:0}
+#Menu .x-tab{ height:25px; background-image:url(../../images/common/deppon/bg_NavNo_L.png); background-position:left bottom; background-repeat:no-repeat; border:0 !important;-moz-box-shadow:none}
+#Menu .x-tab em{ height:25px; line-height:25px; background-image:url(../../images/common/deppon/bg_NavNo_R.png); background-position:right bottom; background-repeat:no-repeat; padding:0 20px;-moz-box-shadow:none;-webkit-box-shadow:none}
+#Menu .x-tab-default-top{-webkit-box-shadow:none;box-shadow:none;}
+#Menu .x-tab-default-top{ padding:0}
+#Menu .x-tab button{ font-size:14px; line-height:25px; padding:2px 0 0 0; height:25px}
+#Menu .x-tab button span{ height:25px; line-height:25px} 
+#Menu .x-tab-active{  background-image:url(../../images/common/deppon/bg_NavMd_L.png); }
+#Menu .x-tab-active em{ background-image:url(../../images/common/deppon/bg_NavMd_R.png); }
+#Menu .x-tab-active button{color:#fff}
+#Menu .x-box-inner{ border:0; background-image:none !important;background-color:transparent !important}
+#Menu .x-tab-over{  background-image:url(../../images/common/deppon/bg_NavMo_L.png); }
+#Menu .x-tab-over em{ background-image:url(../../images/common/deppon/bg_NavMo_R.png); }
+#Menu .x-tab-over button{color:#fff}
+#Menu .x-tab-close-btn{ top:8px; right:7px}
+#Menu .x-tab-bar{ padding-left:280px; margin-bottom:14px; padding-top:18px}
+
+.x-border-layout-ct{ background:transparent}
+/* 收缩条背景色白色变灰色 */
+.x-splitter{ background:#f1f1f1} 
+/*Tree*/
+.lefttreepanel .x-panel-header{ display:none}
+
+#treeIDlayout .x-panel-body-default,#treeID .x-panel-body-default,#treeID2 .x-panel-body-default{ border:0}
+#treeID .x-grid-view,#treeID2 .x-grid-view{ background-image:url(../../images/common/deppon/nav_bg.png);background-position:left center; background-repeat:repeat-y; }
+#treeID .x-tree-elbow-end-plus,#treeID .x-tree-expander{ display:none}
+#treeID .x-grid-row .x-grid-cell,#treeID .x-grid-row-selected .x-grid-cell,#treeID .x-grid-row-selected .x-grid-rowwrap-div{ background-color:transparent}
+#treeID .x-grid-tree-node-expanded .x-tree-icon-parent,#treeID .x-tree-icon-parent{ display:none}
+#treeID .x-grid-tree-node-expanded .x-grid-cell-inner{ height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px }
+#treeID .x-grid-cell-inner{height:34px; font-size:14px; color:#373c64 ;font-weight:bold; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat }
+#treeID img{ display:none}
+
+#treeID .x-grid-body{background-color:#373c64; padding-top:5px}
+#treeID .x-grid-tree-node-expanded .x-grid-cell-inner{ background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat}
+
+/*nav*/
+#treeID .nav .x-grid-cell-inner{  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat}
+#treeID .x-grid-row-over .nav .x-grid-cell-inner{ cursor:default}
+#treeID .x-grid-row-selected .nav .x-grid-cell-inner , #treeID .x-grid-row-focused .nav .x-grid-cell-inner{  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat}
+
+/*homepage_nav*/
+#treeID .homepage_nav .x-grid-cell-inner{  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/normal-nav.png); background-position:left center; background-repeat:no-repeat}
+#treeID .x-grid-row-over .homepage_nav .x-grid-cell-inner{ cursor:default}
+#treeID .x-grid-row-selected .homepage_nav .x-grid-cell-inner ,#treeID .x-grid-row-focused .homepage_nav .x-grid-cell-inner{  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/normal-nav.png); background-position:left center; background-repeat:no-repeat}
+
+/*nav_sub*/
+#treeID .nav_sub .x-grid-cell-inner{height:31px; line-height:31px; font-size:14px ;font-weight:normal !important; background-image:url(../../images/common/deppon/nav_sub.png);background-position:left center; background-repeat:no-repeat; color:#fff ; text-indent:38px }
+#treeID .x-grid-row-over .nav_sub  .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_hover.png)}
+#treeID .x-grid-row-selected  .nav_sub  .x-grid-cell-inner,#treeID .x-grid-row-focused .nav_sub .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_now.png); font-weight:bold}
+/*nav_sub_more*/
+#treeID .nav_sub_more .x-grid-cell-inner{height:31px; line-height:31px; font-size:14px ;font-weight:normal !important; background-image:url(../../images/common/deppon/nav_sub_more.png);background-position:left center; background-repeat:no-repeat; color:#fff ; text-indent:38px }
+#treeID .x-grid-row-over .nav_sub_more  .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_more_hover.png)}
+#treeID .x-grid-row-selected  .nav_sub_more  .x-grid-cell-inner,#treeID .x-grid-row-focused .nav_sub_more .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_more_now.png); font-weight:bold}
+
+/*nav_sub_sub*/
+#treeID .nav_sub_sub .x-grid-cell-inner{height:31px; line-height:31px; font-size:12px ;font-weight:normal !important; color:#e7e7e7; background-image:url(../../images/common/deppon/nav_sub_sub.png);background-position:left center; background-repeat:no-repeat; text-indent:55px }
+#treeID .x-grid-row-over .nav_sub_sub .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_sub_hover.png)}
+#treeID .x-grid-row-selected .nav_sub_sub  .x-grid-cell-inner,#treeID .x-grid-row-focused .nav_sub_sub .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_sub_now.png); font-weight:bold}
+
+#setpic{width:13px;height:13px;display:block !important;position:absolute;left:145px;top:10px;cursor:pointer}
+#treeID2 .x-tree-elbow-end-plus,#treeID2 .x-tree-expander{ display:none}
+#treeID2 .x-grid-row .x-grid-cell,#treeID2 .x-grid-row-selected .x-grid-cell,#treeID .x-grid-row-selected .x-grid-rowwrap-div{ background-color:transparent}
+#treeID2 .x-grid-tree-node-expanded .x-tree-icon-parent,#treeID2 .x-tree-icon-parent{ display:none}
+#treeID2 .x-grid-tree-node-expanded .x-grid-cell-inner{ height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px }
+#treeID2 .x-grid-cell-inner{height:31px; line-height:31px; font-size:14px ; background-image:url(../../images/common/deppon/nav_sub.png);background-position:left center; background-repeat:no-repeat; color:#fff ; text-indent:38px }
+#treeID2 img{ display:none}
+#treeID2 .x-grid-row-over .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_hover.png)}
+#treeID2 .x-grid-row-selected .x-grid-cell-inner,#treeID2 .x-grid-row-focused .x-grid-cell-inner{background-image:url(../../images/common/deppon/nav_sub_now.png); font-weight:bold}
+#treeID2 .x-grid-body{background-color:#373c64; padding-top:5px}
+#treeID2 .x-grid-tree-node-expanded .x-grid-cell-inner{ background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat}
+#treeID2 .ggg .x-grid-cell-inner{ background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat;  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px }
+
+/*treeID2下的nav*/
+#treeID2 .nav .x-grid-cell-inner{  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat}
+#treeID2 .x-grid-row-over .nav .x-grid-cell-inner{ cursor:default}
+#treeID .x-grid-row-selected .nav .x-grid-cell-inner , #treeID2 .x-grid-row-focused .nav .x-grid-cell-inner{  height:34px; font-size:14px; font-weight:bold; color:#373c64 ; line-height:34px; text-indent:30px ;background-image:url(../../images/common/deppon/nav.png); background-position:left center; background-repeat:no-repeat}
+
+#treelayoutID-body{background-color:#373c64; }
+#treelayoutID .x-panel-header,.x-panel-header-default-left{ display:none !important}
+
+/*针对绑定及解绑联系人编码模块所单独设置的样式*/
+.tab_panel .noborder_tab_panel .x-panel-body{border:0px !important;}
+.noborder_tab_panel .x-fieldset{padding:5px !important;margin-top:10px;}
+.tab_panel .noborder_tab_panel  .x-form-readonly input{background-image:none !important;border:0px !important}
+#boundnumber .x-tab button .x-tab-inner{width:370px !important;}
+.x-panel-header-default-top,.x-panel-header-default{box-shadow:none !important}
+.boundtextstyle .x-form-readonly input{background-image:none !important;font-size:14px;font-weight:bold;color:red;cursor:hand;}
+
+/*tab_panel*/
+.tab_panel{ border:#898993; margin-bottom:2px;border-width:1px !important} 
+.tab_panel{ border:#898993; margin-bottom:5px !important; border-width:1px !important; margin-top:2.5px !important}
+.tab_panel .x-tab-bar{ background-color:#f1f1f1}
+.tab_panel .x-tab-bar .x-tab{margin-left:-2px !important}
+.tab_panel .x-tab-bar-top .x-tab-bar-body{border:0; padding:0;background-image:url(../../images/common/deppon/bg_PsBarn.png); background-repeat:repeat-x; background-position:left bottom; }
+.tab_panel .x-tab-bar-body{ background-color:#f1f1f1}
+.tab_panel .x-tab-default{ height:25px;background-image:url(../../images/common/deppon/bg_TabNormal_Ln.png); background-repeat:no-repeat; background-position:left center; -moz-box-shadow:none; -webkit-box-shadow:none;border:0 !important; padding:0}
+.tab_panel .x-tab-default em{ height:25px !important; padding:0 15px;background-image:url(../../images/common/deppon/bg_TabNormal_Rn.png); background-repeat:no-repeat; background-position:right center}
+.tab_panel .x-tab-active{background-image:url(../../images/common/deppon/bg_TabMod_Ln.png);border:0 !important; padding:0}
+.tab_panel .x-tab-active em{background-image:url(../../images/common/deppon/bg_TabMod_Rn.png);border:0 !important}
+.tab_panel .x-tab button{height:25px; line-height:25px}
+.tab_panel .x-tab-inner{ height:25px; line-height:25px;font-size:12px; color:#373C64; font-weight: normal}
+.tab_panel .x-tab-active em span{font-weight: bold}
+.tab_panel .x-panel-body{ border-color:#B5B8C8; border-width:0 1px 1px 1px !important}
+.tab_panel_content{padding:5px 10px 5px 10px}
+.tab_panel_content .x-panel-body{border-color:#B5B8C8;border-width:0 !important}
+/*页签关闭图片*/
+.x-tab-close-btn{background-image:url(../../images/common/deppon/tab-default-close.gif) !important;top:2px; right:2px; height:15px !important;width:15px !important; }
+.x-tab-close-btn:hover{background-image:url(../../images/common/deppon/tab-default-close-hover.gif) !important; }
+
+/*tab_content*/
+.tab_content{ border:#898993; margin-bottom:2px;}
+.tab_content .x-tab-bar{ background-color:#f1f1f1}
+.tab_content .x-tab-bar .x-tab{margin-left:-2px !important}
+.tab_content .x-tab-bar-top .x-tab-bar-body{height:30px;border:0; padding:0;background-image:url(../../images/common/deppon/bg_PsBar.png); background-repeat:repeat-x; background-position:left bottom; }
+.tab_content .x-tab-bar-body{ background-color:#f1f1f1}
+.tab_content .x-tab-default{ height:30px;background-image:url(../../images/common/deppon/bg_TabNormal_L.png); background-repeat:no-repeat; background-position:left center; -moz-box-shadow:none; -webkit-box-shadow:none;border:0 !important; padding:0}
+.tab_content .x-tab-default em{ height:30px !important; padding:0 20px;background-image:url(../../images/common/deppon/bg_TabNormal_R.png); background-repeat:no-repeat; background-position:right center}
+.tab_content .x-tab-active{background-image:url(../../images/common/deppon/bg_TabMod_L.png);border:0 !important; padding:0}
+.tab_content .x-tab-active em{background-image:url(../../images/common/deppon/bg_TabMod_R.png);border:0 !important}
+.tab_content .x-tab button{height:30px; line-height:30px}
+.tab_content .x-tab-inner{ height:30px; line-height:30px;font-size:12px; font-weight:bold; color:#373C64}
+.tab_content .x-panel-body-default{ border-color:#898993; border-width:0 0 1px 1px}
+
+.tabcontentpadding{padding:10px !important;verflow-x:hidden !important; background-image: none !important;}
+/*homepage_tab_content*/
+.homepage_tab_content{ border:#898993; margin-bottom:2px}
+.homepage_tab_content .x-panel-body-default{background-color:#f1f1f1}
+.homepage_tab_content .x-tab-bar{ background-color:#f1f1f1}
+.homepage_tab_content .x-tab-bar .x-tab{margin-left:-2px !important}
+.homepage_tab_content .x-tab-bar-top .x-tab-bar-body{height:30px;border:0; padding:0;background-image:url(../../images/common/deppon/bg_PsBar.png); background-repeat:repeat-x; background-position:left bottom; }
+.homepage_tab_content .x-tab-bar-body{ background-color:#f1f1f1}
+.homepage_tab_content .x-tab-default{ height:30px;background-image:url(../../images/common/deppon/bg_TabNormal_L.png); background-repeat:no-repeat; background-position:left center; -moz-box-shadow:none; -webkit-box-shadow:none;border:0 !important; padding:0}
+.homepage_tab_content .x-tab-default em{ height:30px !important; padding:0 20px;background-image:url(../../images/common/deppon/bg_TabNormal_R.png); background-repeat:no-repeat; background-position:right center}
+.homepage_tab_content .x-tab-active{background-image:url(../../images/common/deppon/bg_TabMod_L.png);border:0 !important; padding:0}
+.homepage_tab_content .x-tab-active em{background-image:url(../../images/common/deppon/bg_TabMod_R.png);border:0 !important}
+.homepage_tab_content .x-tab button{height:30px; line-height:30px}
+.homepage_tab_content .x-tab-inner{ height:30px; line-height:30px;font-size:12px; font-weight:bold; color:#373C64}
+.homepage_tab_content .x-panel-body-default{ border-color:#898993; border-width:0 0 1px 1px}
+
+
+/*searchresultgrid*/
+.tab_panel .searchresultgrid .x-panel-body{ border:1px solid #898993 !important}
+.searchresultgrid .x-grid-header-ct .x-column-header{ background-image:url(../../images/common/deppon/bg_ListTitle.gif);  background-repeat:repeat-x;background-position:left center;background-color:#f1f1f1;font-size:13px;font-weight:bold;color:#373C64;border-color:#878998;text-align:center;}
+.searchresultgrid .x-grid-header-ct .x-column-header .x-column-header-inner{line-height:26px;}
+.searchresultgrid.x-grid-body {	border:1px;	border-color:#878998 !important;}
+.searchresultgrid .x-grid .x-panel-body-default {	padding:0;	border-width:1px !important;}
+.searchresultgrid .x-grid-row {font-size:13px;}
+.searchresultgrid .x-grid-cell-special .x-grid-cell-inner {text-align: center !important;}
+.searchresultgrid .x-grid-group-title {font-weight:normal;color:black;}
+.searchresultgrid .x-grid.x-panel-body-default {	border:1px solid #898993 !important}
+.searchresultgrid .x-toolbar-docked-top {	background-position:-500px top;}
+.searchresultgrid .x-toolbar-docked-top .x-btn {	margin-right:10px;}
+.searchresultgrid .x-grid-cell-inner {font-size:13px;}
+.searchresultgrid .x-grid-header-ct {	border-color:#878998;}
+.searchresultgrid .x-panel-header-text-default {color:#373C64;}
+.searchresultgrid .x-grid-row .x-grid-cell {border-bottom-color:#ccc !important;}
+.searchresultgrid .x-grid-row-over .x-grid-cell, .x-grid-row-over .x-grid-rowwrap-div {border-top:0 !important;}
+.searchresultgrid .x-grid-rowwrap-div ,.x-grid-row-over .x-grid-rowwrap-div{vertical-align:middle;border-bottom:1px solid #ccc;border-top:0px;}
+.searchresultgrid .x-grid-table .x-grid-row .x-grid-cell {border-top:0 !important;}
+.searchresultgrid .x-grid-table .x-grid-cell{	height:25px;}
+.searchresultgrid .x-grid-table .x-grid-rowbody .x-panel ,.x-grid-table .x-panel-body-default-framed{	border:2px dashed #FCAF19;margin:5px;}
+.searchresultgrid .x-panel-default-framed{padding:5px 5px 5px 5px !important;	}
+.searchresultgrid .x-docked-top{border-bottom-width: 1px !important;}
+.x-panel .x-grid-body{border-top: 0 !important;}
+
+/*可复制grid内容css*/
+.x-grid-cell, .x-grid-row, .x-selectable, .x-selectable *{-moz-user-select: -moz-all !important;-khtml-user-select: text! important ;-webkit-user-select: text! important ;   }
+
+/*popup_grid */
+.popup_grid{}
+.popup_grid .x-panel-body-default{ border:1px solid #B5B8C8 !important}
+.popup_grid .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.popup_grid .x-grid-header-ct{ border-color:#B5B8C8; }
+.popup_grid .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#B5B8C8;text-align:center}
+.popup_grid .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.popup_grid .x-grid-body{border-color:#B5B8C8}
+.popup_grid .x-grid-cell-inner{font-size:12px}
+.popup_grid .x-panel-header-default{background-image:none; background:none;border-width:0px;border-top:0px} 	
+.popup_grid .x-panel-header-text-default{color:#373C64}
+
+/*popupinner_grid */
+.popupinner_grid{}
+.popupinner_grid .x-panel-body-default{ border:1px solid #B5B8C8 !important}
+.popupinner_grid .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.popupinner_grid .x-grid-header-ct{ border-color:#B5B8C8; }
+.popupinner_grid .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#B5B8C8;text-align:center}
+.popupinner_grid .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.popupinner_grid .x-grid-body{border-color:#B5B8C8}
+.popupinner_grid .x-panel-header-default{background-image:none; background:none;border-width:0px;border-top:0px} 	
+.popupinner_grid .x-panel-header-text-default{font-weight:normal;color:#373C64}
+
+/*表格序号居中,内容居左*/
+.x-grid-cell-special .x-grid-cell-inner{text-align: center !important}
+.searchresultgrid .x-grid-row .x-grid-cell-special,.popup_grid .x-grid-row .x-grid-cell-special{border-left:0px;border-right:0px}
+
+/*toolsbar*/
+.toolsbar{ border:0}
+.toolsbar .x-panel-body-default{ border:0}
+.toolsbarleft{margin-top:5px; height:31px}
+.toolsbarleft .x-box-inner{  border:0;background-image:url(../../images/common/deppon/bg_ListBtn.png);  background-repeat:no-repeat; background-position:right top; border-left:1px solid #898993}
+.toolsbarright{margin-bottom:5px;height:31px}
+.toolsbarright .x-box-inner{ border:0;background-image:url(../../images/common/deppon/bg_SearchBtn.png);  background-repeat:no-repeat; background-position:left top;border-right:1px solid #898993}
+
+/*popup*/
+.x-window-header .x-window-header-text{font-size:12px; font-weight:bold; color:#373C64}
+.x-toolbar-footer{ margin-top:0; padding:4px 0 4px 6px}
+.x-window-body{ padding:10px; background-color:#fff}
+
+/*poptoolsbar*/
+.poptoolsbar{ border:0}
+.poptoolsbar .x-panel-body-default{ border:0}
+.poptoolsbarleft{margin-top:5px; height:31px}
+.poptoolsbarleft .x-box-inner{  border:0; border-left:1px solid #898993}
+.poptoolsbarright{margin-bottom:5px;height:31px}
+.poptoolsbarright .x-box-inner{ border:0;border-right:1px solid #898993}
+.poptoolsbarleft .x-box-inner,.poptoolsbarright .x-box-inner{border:0}
+
+/*弹窗中缩小后的分页按钮*/.x-boundlist
+.popup .pagingtoolbar .x-box-inner ,.x-boundlist .x-box-inner{height:18px}
+.popup .pagingtoolbar .x-btn ,.x-boundlist .x-btn{  padding: 1px 3px; }
+.popup .pagingtoolbar .x-btn-over ,.x-boundlist .x-btn-over{ padding: 1px 3px}
+.popup .pagingtoolbar .x-btn-pressed ,.x-boundlist .x-btn-pressed{ padding: 1px 3px}
+.popup .pagingtoolbar .x-btn-disabled ,.x-boundlist .x-btn-disabled{ padding: 1px 3px}
+
+/*弹窗里的操作按钮*/
+.poptool_button{border:0 !important; height:38px}
+.poptool_button .x-panel-body .x-box-inner{height:33px !important}	
+.popup_button .x-box-inner{height:36px; color:#FF0000}
+
+/*grid_lackleftright */
+.grid_lackleftright .x-panel-body-default{ border:1px solid #B5B8C8 !important;border-left:0px !important;border-right:0px !important}
+.grid_lackleftright .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.grid_lackleftright .x-grid-header-ct{ border-color:#B5B8C8; }
+.grid_lackleftright .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#B5B8C8;text-align:center}
+.grid_lackleftright .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.grid_lackleftright .x-grid-body{border-color:#B5B8C8}
+.grid_lackleftright .x-grid-row .x-grid-cell .x-grid-cell-inner{padding:3px 6px 2px; height:21px;}
+
+/*grid_lackright*/
+.grid_lackright .x-panel-body-default{border:1px solid #B5B8C8 !important; border-left: 1px solid #B5B8C8 !important;}
+.grid_lackright .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.grid_lackright .x-grid-header-ct{ border-color:#B5B8C8; }
+.grid_lackright .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#B5B8C8;text-align:center；}
+.grid_lackright .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.grid_lackright .x-grid-body{border-color:#B5B8C8}
+.grid_lackright .x-grid-row .x-grid-cell .x-grid-cell-inner{padding:3px 6px 2px; height:21px;}
+/*实时创建会员界面中的表格*/
+.inner_grid{}
+.inner_grid .x-panel-body-default{ border:1px solid #B5B8C8 !important;padding-top:0px;padding-left:0px}
+.inner_grid .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.inner_grid .x-grid-header-ct{ border-color:#B5B8C8; }
+.inner_grid .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#B5B8C8}
+.inner_grid .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.inner_grid .x-grid-body{border-color:#B5B8C8}
+
+/*代表标题的表格中标题的样式*/
+.titledisplayfield{padding-top:8px}
+.titledisplayfield .x-form-item-body .x-form-display-field{float:left;font-size:12px; font-weight:bold;color:#373C64}
+
+/*Panel*/
+.formpanel{ border:1px solid #CECECE; background-color:#f1f1f1}  
+.formpanel .x-panel-body-default{background-color:#f1f1f1}
+.formpanel .x-table-layout-ct{ padding:10px;border:0}
+
+/*panel*/
+.notitleformPanel{ padding-top:5px}
+.notitleformPanel .x-panel-body-default{ border:0px}
+
+/*form_fieldset*/
+.form_fieldset{ border:0;margin-bottom:2.5px}
+.form_fieldset .x-fieldset{ padding:0; border:0; padding-bottom:20px;margin-bottom:0}
+.form_fieldset .x-fieldset-body{ padding:10px; background-color:#f1f1f1; border:1px solid #cecece}
+.form_fieldset legend{ height:20px;line-height:20px}
+.form_fieldset .x-panel-body-default , .popup_form_feildset .x-panel-body-default , .nomal_feildset .x-panel-body-default{background-color:transparent}
+
+.nomal_feildset .x-panel-body-default{ border:0 !important}
+.nomal_feildset .x-table-layout{ margin-top:5px}
+
+/*normalpanel */
+.normalpanel .x-panel-body-default{ }
+.normalpanel .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.normalpanel .x-grid-header-ct{ border-color:#B5B8C8; }
+.normalpanel .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border:1px !important;border-color:#B5B8C8;text-align:center}
+.normalpanel .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.normalpanel .x-grid-body{border-color:#B5B8C8}
+.normalpanel .x-panel-header-default{background-image:none; background:none;border-width:0px !important;border-top:0px} 	
+.normalpanel .x-panel-header-text-default{font-weight:bold;color:#373C64}
+
+/*文本框*/
+.popup_form_feildset .x-panel-body-default{ border:0}
+
+.noborderform{ border:0}
+.noborderform .x-panel-body-default{ border:0}
+.noborderformpanel-btn{ margin-left:20px; margin-top:-5px}
+.padding .x-panel-body{ background-color:transparent}
+
+/*rightfieldset*/
+.rightfieldset{border:0}
+.rightfieldset .x-btn{margin-top:5px}
+.rightfieldset .x-btn x-btn-default-small x-noicon x-btn-noicon{width:30px}
+
+/*包括一个标题容器和一个表格容器的panel样式*/
+.titlegridpanel
+.lefttitlepanel{margin-top:5px; height:31px}   x-box-inner
+.lefttitlepanel .x-box-inner{  border:0; border-left:1px solid #898993}
+.lefttitlepanel .x-box-inner , .rightbtnpanel .x-box-inner{border:0}
+.rightbtnpanel{margin-bottom:5px;height:31px}
+.rightbtnpanel .x-box-inner{ border:0;border-right:0px solid #898993}
+
+/* 存放textareafield的panel*/
+.textareapanel .x-field-default{ margin-bottom:0}
+
+/*没标题有背景色的formpanel*/
+.notitlebgroundformpanel .x-panel-body{ border:1}
+.notitlebgroundformpanel{ border:1px solid #B5B8C8}
+.notitlebgroundformpanel .x-panel-body-default{ padding-top:4px;padding-bottom:0px; border:0; background-color:#f1f1f1}
+
+/*simpsearchpanel 简易查询容器（无背景无边框）*/
+.simpsearchpanel .x-panel-body{ border:0px}
+.simpsearchpanel .x-panel-body-default{ padding:5px; border:0}
+.simpsearchpanel .x-form-item{margin-bottom:0px}
+
+/*simpbgroundsearchpanel  简易查询容器（有背景有边框）*/
+.simpbgroundsearchpanel .x-panel-body{ border:1}
+.simpbgroundsearchpanel{ border:1px solid #B5B8C8}
+.simpbgroundsearchpanel .x-panel-body-default{ padding:5px; border:0; background-color:#f1f1f1}
+.simpbgroundsearchpanel .x-form-item{margin-bottom:0px}
+
+/*manage待办事宜*/
+.manage .x-btn-inner span{color:red; font-weight:bolder}
+.menu_point{ margin-bottom:2px;background-image:url(../images/deppon/menu_point.gif) !important}
+#menu-onready .x-menu-item-text span{color:red}
+#menu-onready .x-menu-item-icon{left:15px}
+
+/* 2012-04-10  新增实时校验模块样式*/
+.titlepanel .x-form-item-body .x-form-display-field{float:left;font-size:12px; font-weight:bold;color:#373C64}
+.titlepanel .x-panel-body-default{border-width:0px;border-bottom:0px}
+
+.bottompanel .x-panel-body-default{background-color:#f1f1f1;margin-buttom:10px;padding-top:10px;padding-left:10px}
+.verifypanel{border:0;margin:0px 0px 5px 0px}
+
+.disfield{float:right}
+
+.veribtn{float:right;margin-right:5px}
+.resultfield .x-form-text, .resultfield .textarea.x-form-field{text-align:center;font-size:24px;font-weight:bold;color:#F00}
+
+/*按钮居中*/
+.leftdisplayfield .x-form-item-body .x-form-display-field{ float: left}
+.operbtnformpanel .x-panel-body{ border:1}
+.operbtnformpanel{ border:1px solid #B5B8C8;background-color:#f1f1f1}
+.operbtnformpanel .x-panel-body-default{ padding:5px; border:0; background-color:#f1f1f1}
+
+/*省份城市控件*/
+.x-window-body-default {border:1px solid #CECECE; background:none}
+.x-tab-default-top{box-shadow:none;}
+.provincepanel { height:235px !important; font:"Courier New", Courier, monospace, "微软雅黑";}
+.provincepanel ,.provincepanel .x-window-header{background-color:#e9e9e9; border:1px solid #CECECE;}
+.provincepanel .x-tab-bar-top .x-tab-bar-body{padding: 4px 0 0px;}
+.provincepanel .x-window-body{ padding:0px;}
+.provincepanel .x-window-header-body .x-box-inner{height: 15px !important;}
+.provincepanel .x-tool{margin-left: 0px !important;}
+.provincepanel .x-tool .x-tool-close{background-image:url(../../images/common/deppon/tab-default-close.gif) !important;}
+.provincepanel .x-tool-close:hover{background-image:url(../../images/common/deppon/tab-default-close-hover.gif) !important;}
+.provincepanel.x-tab-default-top{border:1px solid #CECECE}
+.provincepanel .x-tab .x-tab-inner{font-size:13px;color:#000; font-weight:normal;}
+.provincepanel .x-window-body .x-panel .x-tab-bar-body ,.provincepanel .x-window-body .x-panel .x-panel-body-default{ background-color: #fff !important;}
+.provincepanel .x-panel-body-default .x-panel-body-default{border: 0px;}
+.provincepanel .x-tab{border-right:1px solid #CECECE; padding: 3px 5px; margin-left:2px;}
+.provincepanel .x-tab-over,.provincepanel .x-tab-active{background-color:#faaf19 !important; background-image:none; border:1px solid #CA7E59; padding: 3px 5px;}
+.provincepanel .x-btn{ background-image:none; border:0; padding: 2px 10px; border-radius:0px;}
+.provincepanel .x-btn-over{background-color:#faaf19 !important;}
+.provincepanel .x-btn-default-small	{background-color: #fff;}
+
+/*客户开发与维护日程管理*/
+.market  .x-form-item-body .x-form-display-field{ float:left;margin-right:5px}
+.market  .x-panel-body-default{ border:1px solid #898993}
+.market  .x-toolbar-docked-top{ height:31px; border-left:1px solid #898993 !important;background-image:url(../../images/common/deppon/bg_SearchBtn.png);  background-repeat:no-repeat; background-position:left top; background-color:#f1f1f1}
+.market  .x-grid-header-ct{ border-color:#878998; }
+.market  .x-grid-header-ct .x-column-header{background-image:url(../../images/common/deppon/bg_ListTitle.gif);  background-repeat:repeat-x; background-position:left center; background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#878998;text-align:center}
+.market  .x-grid-row-editor{ margin-left:23px}
+.market .x-panel-with-col-lines .x-grid-row .x-grid-cell{border-right-width: 0px;}
+.x-panel-with-col-lines .x-grid-row .x-grid-cell{border-right-width: 0px;}
+
+.market .x-grid-header-ct .x-column-header .x-column-header-inner{line-height:26px;}
+.market.x-grid-body {border:1px;border-color:#878998 !important;}
+.market .x-grid .x-panel-body-default {	padding:0;	border-width:1px !important;}
+.market .x-grid-row {font-size:13px;}
+.market .x-grid-cell-special .x-grid-cell-inner {text-align: center !important;}
+.market .x-grid-group-title {font-weight:normal;color:black;}
+.market .x-grid.x-panel-body-default {	border:1px solid #898993 !important}
+.market .x-toolbar-docked-top {	background-position:-500px top;}
+.market .x-toolbar-docked-top .x-btn {	margin-right:10px;}
+.market .x-grid-cell-inner {font-size:13px;}
+.market .x-grid-header-ct {	border-color:#878998;}
+.market .x-panel-header-text-default {color:#373C64;}
+.market .x-grid-row .x-grid-cell {border-bottom-color:#ccc !important; border-right-width:0px;}
+.market .x-grid-row-over .x-grid-cell, .x-grid-row-over .x-grid-rowwrap-div {border-top:0 !important;}
+.market .x-grid-rowwrap-div ,.x-grid-row-over .x-grid-rowwrap-div{vertical-align:middle;border-bottom:1px solid #ccc;border-top:0px;}
+.market .x-grid-table .x-grid-row .x-grid-cell {border-top:0 !important;}
+.market .x-grid-table .x-grid-cell{	height:25px;}
+.market .x-grid-table .x-grid-rowbody .x-panel ,.x-grid-table .x-panel-body-default-framed{	border:2px dashed #FCAF19;margin:5px;}
+.market .x-panel-default-framed{padding:5px 5px 5px 5px !important;	}
+.market .x-docked-top{border-bottom-width: 1px !important;}
+
+
+
+/*客户开发与维护日程管理-弹窗*/
+.popmarket .x-form-item-body .x-form-display-field{ float:left;margin-right:5px}
+.popmarket .x-panel-body-default{ border:1px solid #B5B8C8 !important}
+.popmarket .x-toolbar-docked-top{ border-left:1px solid #B5B8C8 !important;  background-color:#f1f1f1}
+.popmarket .x-grid-header-ct{ border-color:#B5B8C8; }
+.popmarket .x-grid-header-ct .x-column-header{ background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373C64; border-color:#B5B8C8;text-align:center}
+.popmarket .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:22px}
+.popmarket .x-grid-body{border-color:#B5B8C8}
+.popmarket .x-panel-header-default{background-image:none;  background:none; border-width:0px;border-top:0px} 	
+.popmarket .x-panel-header-text-default{color:#373C64；}
+.popmarket .x-grid-row-editor{ margin-left:23px}
+
+/* 删除表格的标题边框阴影*/
+.x-panel-header-default,.x-panel-header-default-top{-moz-box-shadow:none;-webkit-box-shadow:none}
+
+/*普通文本框*/
+.x-form-focus ,textarea.x-form-focus{
+	border:2px solid #fcaf19;
+}
+
+/*只读控件引用的样式*/
+.readonly input,.readonly textarea{ background: repeat-x 0 0; background-image: url(../../images/common/deppon/text-bg.png); background-color: #f1f0f0; color:#5B5B5B;cursor:default}
+.x-form-readonly input, .x-form-readonly textarea{background: repeat-x 0 0; background-image: url(../../images/common/deppon/text-bg.png); background-color: #f1f0f0; color:#5B5B5B;cursor:default}
+.x-form-readonly .x-form-focus ,.readonly textarea.x-form-focus ,.readonly .x-form-focus{
+	border:1px solid #a1a1a1 !important;
+}
+
+/*带标题表格容器添加间距*/
+.basicvboxpanel{margin:2.5px}
+/*理赔创建-出险描述按钮布局*/
+.recompense .poptoolsbarleft{top:0px !important}
+
+/*常用功能树*/
+.normaltree{}
+.normaltree .x-tree-icon-parent{background-image: none; width: 0px}
+.normaltree .x-grid-row .x-grid-cell-inner{font-size:12px }
+.normaltree .x-grid-tree-node-expanded .x-grid-cell-inner{font-size:10pt; color:#373C64 !important}
+.normaltree .x-grid-row-over .x-grid-cell-inner { font-weight: bold;color:#a7a7a7 /*color: #B5B8C8;*/}
+.normaltree .x-grid-row-selected .x-grid-cell-inner ,#FunctionTree .x-grid-row-focused .x-grid-cell-inner{ font-weight: bold; color:#373C64}
+.normaltree .x-tree-icon-leaf{background-image:url(../../images/common/deppon/bullet_black.png);background-repeat:no-repeat}
+.normaltree .x-grid-row-over .x-tree-icon-leaf ,#FunctionTree .x-grid-row-focused .x-tree-icon-leaf{background-image:url(../../images/common/deppon/bullet_blue.png);background-repeat:no-repeat}
+.normaltree .x-grid-row-selected .x-grid-cell, #FunctionTree .x-grid-row-selected .x-grid-rowwrap-div{background-color:#fff !important}
+.normaltree .x-grid-row-over .x-grid-cell, #FunctionTree .x-grid-row-over .x-grid-rowwrap-div{background-color:#fff !important}
+.normaltree .x-grid-tree-node-expanded.x-grid-cell-inner{background-color: transparent !improtant}
+.normaltree .x-grid-row-over .x-grid-cell-inner{background-color: #F0F0F0	}
+.normaltree .x-grid-row-selected .x-grid-cell-inner {background-color: #E0E0E0}
+.normaltree .x-grid-row-focused .x-grid-cell, #FunctionTree .x-grid-row-focused .x-grid-rowwrap-div{background-color:#fff !important}
+.funtitle .x-panel-header span{font-size: 11pt; font-weight: bold; color: #373C64; font-family:fantasy;}
+
+/****部门、用户选择器的控件图片****/
+.x-form-clear-trigger { background-image: url(../../images/common/deppon/clear-trigger.gif)!important}
+.x-form-search-trigger {background-image: url(../../images/common/deppon/search-trigger.gif)!important}
+
+/*会员管理中可伸缩表格的样式*/
+.x-grid-group-title{font:bold 13px tahoma, arial, verdana, sans-serif;color:#8E8E8E}
+.x-grid-group-hd .x-grid-cell-inner{border-width:0 0 1px 0}
+
+  /*提示框*/
+ .x-message-box{ height:140px !important;-webkit-border-radius:0px;	border:2px solid #FAAF19;}
+ .x-message-box .x-window-body {top:10px !important;}
+ .x-message-box .x-window-header .x-window-header-text{font-size:13px; font-weight:bold; color:#373C64}
+ .x-message-box .x-window-body{background-color:#fff;}
+ .x-message-box .x-toolbar-footer{ margin-top:0; padding:4px 0 4px 6px;}
+ .x-message-box .x-container{padding-top:0px !important; }
+ #message{font-size:13px; font-weight:normal; color:#373C64; ;margin-top:20px !important}
+ .x-message-box .ext-mb-error{ width: 70px !important; height:70px !important; top:5px !important; background-image:url(../../images/common/deppon/icon-error.gif); background-repeat:no-repeat; }
+ .x-message-box .ext-mb-info{width: 70px !important; height:70px !important; top:5px !important; background-image:url(../../images/common/deppon/icon-info.gif); background-repeat:no-repeat; }
+.x-message-box .ext-mb-question{width: 70px !important; height:70px !important; top:5px !important; background-image:url(../../images/common/deppon/icon-question.gif); background-repeat:no-repeat; }
+.x-message-box .ext-mb-warning{width: 70px !important; height:70px !important; top:5px !important; background-image:url(../../images/common/deppon/icon-warning.gif); background-repeat:no-repeat}
+.x-message-box .x-window-default{border-color:#A9A9A9; }
+.x-message-box .x-container{text-align:center; }
+
+/*实时创建会员模块中的校验结果*/
+.verifyok .x-panel-body{padding:5px;background-image: url(../../images/common/deppon/ok.png)!important}
+.verifyerror .x-panel-body{padding:5px;background-image: url(../../images/common/deppon/error.png)!important}
+
+/* 修改下拉提示框的样式*/
+.x-menu-icon-separator{width:0xp !important;z-index:-1 !important}
+.x-menu-item-link{padding:6px 2px 3px 15px}
+
+/*工单管理-表格a标签*/
+.x-grid-body a{text-decoration: none}
+
+/*修改工单模块日期控件中按钮样式*/
+.x-datepicker .x-btn{width: 40px; padding: 2px 0}
+.x-datepicker-footer .x-btn, .x-monthpicker-buttons .x-btn{margin: 2px }
+/*----- 首页相关的代码---begin----*/
+.homepage{margin:10px;border:0px}
+.homepage .x-panel-body-default{padding-top:10px}
+.homepage .x-panel-header{padding:0px}
+
+/*首页中待办日程的样式*/
+.maintainview{margin:10px;border:#CCC solid thin}
+.maintainview .x-panel-body-default{border:0px}
+.maintainview .x-panel-header-default{border-top:0px; border-left:0px; border-right:0px}
+
+/*首页中功能模块名称的样式*/
+.module_name{font-size:14px;font-weight:bold;color:#373c64}
+
+.tab_content .loginmes .x-panel-body-default{border-width:1px !important;border-color:#B5B8C8 !important;margin-top:5px !important;	background-color:#f4f4f7;margin-bottom:10px !important;}
+.homepagestyle  .x-fieldset{background-color:#f4f4f7;padding:0 0 0 10px !important;}
+.titlestyle .x-fieldset-header{	height:34px;width:80px !important;;	padding:7px 0px 0px 10px;font-size:13px;	color:white;background-image: url(../../images/login/title_bg.png)!important};}
+.ulstyle{list-style-type:none;}
+.listyle{display:block;	width:120px;height:50px;color:#373c64;	font-size:14px;	font-weight:bold;	padding-top:12px;text-align:center;	font-family:"宋体";	float:left;	background-image: url(../../images/login/dirc_line.png)；}
+.listyle:hover{	display:block;	width:120px;height:50px;color:#f49631;	font-size:14px;	font-weight:bold;	padding-top:14px;text-align:center;	font-family:"宋体";	float:left;	background-image: url(../../images/login/dirc_circle.png)};	}
+.disc{	width:100%;	height:50px;background-image: url(../../images/login/dirc_line.png)};}	
+td.mes{	font-size:12px;	color:red !important;}
+.functname{	font-size:13px;	color:#373c64;line-height:28px;font-weight:bold;}	
+.direcmes{	font-size:13px;	color:#373c64;	padding-left:35px;	line-height:25px;}	
+.fovertab {	font-size:12px;	font-weight:bold;	color:#ffffff;	display:block;	width:130px;float:left;	height:50px;background-image:url(../../images/login/dirc_circle.png);	background-repeat:no-repeat;}
+.fovertab span {background-color:none;	height:29px;font-weight:bold;	color:#f49631;	font-size:13px;	background-repeat:no-repeat;background-position:right;	display:inline-block;	padding:0 9px 0 9px;line-height:29px;}
+.formaltab {font-size:12px;	width:130px;height:50px;font-weight:bold;display:block;	float:left;	background-repeat:no-repeat;background-image:url(../../images/login/dirc_line.png);}
+.formaltab span {background-color:none;	height:29px;font-weight:bold;	color:#4b5074;	font-size:13px;	background-repeat:no-repeat;	background-position:right;	display:inline-block;padding:0 9px 0 9px;line-height:29px;}
+.setcn_tb td {line-height:20px;	padding-top:3px;padding-left:15px;}
+.dis {	display:block;	border:none !important;}
+.undis {display:none;border:none !important;}
+.opertlink{	text-decoration:none;	color:#00F;}
+.loginmes{	height:50px;}
+table.dis,table.undis{	background-color:#f4f4f7;}
+td.tdstyle{	padding-left:30px;}
+th{	font-weight:bold;	color:#4b5074;	font-size:13px;}
+.contname{	list-style-image:url(../../images/login/contactor.png);}
+.contphone{	list-style-image:url(../../images/login/contphone.png);}
+.contmail{	list-style-image:url(../../images/login/contmail.png);}
+/*----- 首页相关的代码---end----*/
+
+/*导入失败后的错误提示框*/
+.warningwin .x-window-body-default{	border:0px solid #CECECE !important;}
+.warningwin .x-form-readonly textarea{	background-color:#ffffff;color:#000000;}
+/*帮助按钮样式*/
+#treelayoutID .x-btn{background-image:url(../../images/common/deppon/help.png);	background-repeat:no-repeat;border:none;}
+.helpwin .x-window-body-default{background-image:url(../../images/login/helpdoc.png);}
+.welcommes .x-panel-body-default{background-image:url(../../images/login/homewel.png);}
+.helpwin .x-window-header-text-default{	font-size:12px;	color:#373c64;}
+
+/*homepgrid*/
+.homepgrid .x-panel-body{ border:1px solid #B5B8C8 !important;color:#373c64;}
+.homepgrid  .x-grid-group-title{font-weight:normal; color:#373c64;}
+.homepgrid .x-panel-body-default{ border:1px solid #B5B8C8 !important}
+.homepgrid .x-toolbar-docked-top{ height:31px; border-left:1px solid #B5B8C8 !important; background-image:url(../../images/common/deppon/bg_SearchBtn.png);  background-repeat:no-repeat; background-position:left top; background-color:#f1f1f1}
+.homepgrid .x-toolbar-docked-top{ background-position:-500px top}
+.homepgrid .x-toolbar-docked-top .x-btn{ margin-right:10px}
+.homepgrid .x-grid-cell-inner{font-size:13px}
+.homepgrid .x-grid-header-ct{ border-color:#B5B8C8; }
+.homepgrid .x-grid-header-ct .x-column-header{background-image:url(../../images/common/deppon/bg_ListTitle.gif);  background-repeat:repeat-x; background-position:left center; background-color:#f1f1f1; font-size:12px; font-weight:bold; color:#373c64; border-color:#B5B8C8;text-align:center}
+.homepgrid .x-grid-header-ct .x-column-header .x-column-header-inner{ line-height:26px}
+.homepgrid .x-grid-body{border-color:#B5B8C8 !important}
+
+.titlestyle_sec{height:34px;	margin-left:10px;	width:80px !important;	padding:7px 0px 0px 10px;	font-size:13px;	font-weight:bold;	color:white;	background-image: url(../../images/login/title_bg.png)!important;}
+
+/*帮助文档*/
+.tit .x-form-display-field{font-weight: bold !important; font-size: 18px !important; }
+.x-window .details .x-form-display-field ,.x-window .details .x-form-item-label{color: gray;}
+
+/*客户360*/
+#operatingDecisionR-body .x-grid-row .x-grid-cell{border-width:0 0 1px 0;}
+#operatingDecisionR-body .x-grid-row{height: 21px !important;}
+#operatingDecisionR-body .x-grid-row .x-grid-cell{height: 20px !important;}
+#operatingDecisionR-body .x-grid-row .x-grid-cell .x-grid-cell-inner{padding:3px 6px 2px;}
+#analysisTwo .x-panel-body table {border-collapse:collapse;border-top:1px #b5b8c8 solid;border-left:1px #b5b8c8 solid;}
+#analysisTwo .x-panel-body tbody tr td{height: 21px !important; border-bottom:1px solid #EDEDED; display:inline; float:left; font-size:12px; padding:3px 0; text-align:center; width:120px;}
+
+/*营销效果评估复合表头*/
+#deptNameColumn .x-grid-header-ct .x-column-header .x-column-header-inner{line-height:15px;}
+#deptNameColumn-titleContainer{padding-top:13px !important;}
+#deptNameColumn-titleContainer .x-column-header-text{line-height:16px; display:block; vertical-align: middle;}
+
+/*公告管理*/
+.notice_bg{	background-color:#F1F1F1;font-family:微软雅黑; background-color:#F4F4F7;  padding-top:40px;}
+.title{	margin:10px auto;}
+.title h2{text-align:center; color:#373C64;}
+.title .line{height:2px;margin:0px 30px 10px;background-color:#666;	}
+.headline{margin:0px auto;text-align:center;}
+.headline .subhead{color:#808080;font-size:12px;margin-right:20px;}
+.content .img{width:850px;overflow:hidden;margin:0 auto;text-align:center;}
+.content .img_tit{font-size:13px;display:block;margin-top:5px;color: #900}
+.text{width:750px;margin:0 auto;}
+.text p ,.text span{word-wrap: break-word;	font-size:13px; line-height:1.5em;}
+.foot{position:absolute;width:100%;	margin-top:20px;margin-bottom:10px;}
+.foot .line{height:1px;	margin:0px 30px 10px;background-color:#666;	}
+.ttachment{	float:left;	margin-left:30px;width:400px;}
+.ttachment *{float:left;margin-left:30px;}
+.ttachment a{font-size:13px;display:block;float:left;margin-left:15px;}
+#newWinId{ background-color: #373C64; border: 2px solid #FAAF19; }
+#newWinId .x-window-default, .x-window-header-default-top{background-color: transparent !important;}
+#newWinId .x-window-header .x-window-header-text{color: #fff;}
+#newWinId .x-window-body *{font-size: 13px !important; color: #fff !important;font-family: 微软雅黑 !important; text-decoration : none;}
+#newWinId .x-window-body a{display: block; }
+#newWinId .x-window-body a img{display: block; margin: 0 auto;}
+
+/*合同编辑客户能否月结提示语*/
+#showNameDisplay .x-form-item-body .x-form-display-field{ float: left;}
+
+.x-item-disabled{opacity:0.6;}
+.x-window .details .x-form-display-field ,.x-window .details .x-form-item-label{color: gray;}

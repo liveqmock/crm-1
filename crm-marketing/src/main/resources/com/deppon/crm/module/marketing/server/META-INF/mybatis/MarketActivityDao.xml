@@ -1,0 +1,3059 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.MarketActivity">
+  <!--   <resultMap type="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree" id="deptTree">
+    	<id property="id" column="FID"/>
+    	<result property="deptName" column="FDEPTNAME"/>
+    	<result property="userId" column="userId"/>
+    	<result property="deptStandardCode" column="FSTANDARDCODE"/>
+    	<result property="parentId" column="FPARENTID"/>
+    	<collection property="childTree" select="loadChildTree" column="{id=fid,userId=userId}" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree"/>
+    </resultMap> -->
+    <resultMap type="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree" id="tree">
+    	<id property="id" column="FID"/>
+    	<result property="text" column="FDEPTNAME"/>
+    	<result property="deptStandardCode" column="FSTANDARDCODE"/>
+    	<result property="parentId" column="FPARENTID"/>
+    	<result property="checked" column="FCHECKED"/>
+    	<result property="canSelect" column="FCANSELECT"/>
+    	<result property="level" column="FLEVEL"/>
+    	<result property="leaf" column="FLEAF"/>
+    </resultMap>
+    <resultMap type="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree" id="deptTree">
+    	<id property="id" column="FID"/>
+    	<result property="text" column="FDEPTNAME"/>
+    	<result property="deptStandardCode" column="FSTANDARDCODE"/>
+    	<result property="parentId" column="FPARENTID"/>
+    	<result property="checked" column="FCHECKED"/>
+    	<result property="leaf" column="FLEAF"/>
+    	<collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+    		<id property="id" column="FID1"/>
+    		<result property="text" column="FDEPTNAME1"/>
+    		<result property="deptStandardCode" column="FSTANDARDCODE1"/>
+    		<result property="parentId" column="FPARENTID1"/>
+    		<result property="checked" column="FCHECKED1"/>
+    		<result property="leaf" column="FLEAF1"/>
+    		<collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+	    		<id property="id" column="FID2"/>
+	    		<result property="text" column="FDEPTNAME2"/>
+	    		<result property="deptStandardCode" column="FSTANDARDCODE2"/>
+	    		<result property="parentId" column="FPARENTID2"/>
+	    		<result property="checked" column="FCHECKED2"/>
+    			<result property="leaf" column="FLEAF2"/>
+	    		<collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+		    		<id property="id" column="FID3"/>
+		    		<result property="text" column="FDEPTNAME3"/>
+		    		<result property="deptStandardCode" column="FSTANDARDCODE3"/>
+		    		<result property="parentId" column="FPARENTID3"/>
+		    		<result property="checked" column="FCHECKED3"/>
+    				<result property="leaf" column="FLEAF3"/>
+		    		<collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+			    		<id property="id" column="FID4"/>
+			    		<result property="text" column="FDEPTNAME4"/>
+			    		<result property="deptStandardCode" column="FSTANDARDCODE4"/>
+			    		<result property="parentId" column="FPARENTID4"/>
+			    		<result property="checked" column="FCHECKED4"/>
+    					<result property="leaf" column="FLEAF4"/>
+			    		<collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+				    		<id property="id" column="FID5"/>
+				    		<result property="text" column="FDEPTNAME5"/>
+				    		<result property="deptStandardCode" column="FSTANDARDCODE5"/>
+				    		<result property="parentId" column="FPARENTID5"/>
+				    		<result property="checked" column="FCHECKED5"/>
+    						<result property="leaf" column="FLEAF5"/>
+				    		<collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+					    		<id property="id" column="FID6"/>
+					    		<result property="text" column="FDEPTNAME6"/>
+					    		<result property="deptStandardCode" column="FSTANDARDCODE6"/>
+					    		<result property="parentId" column="FPARENTID6"/>
+					    		<result property="checked" column="FCHECKED6"/>
+    							<result property="leaf" column="FLEAF6"/>
+					    		<!-- <collection property="children" ofType="com.deppon.crm.module.marketing.shared.domain.activity.DeptTree">
+						    		<id property="id" column="FID7"/>
+						    		<result property="deptName" column="FDEPTNAME7"/>
+						    		<result property="deptStandardCode" column="FSTANDARDCODE7"/>
+						    		<result property="parentId" column="FPARENTID7"/>
+    							</collection> -->
+    						</collection>
+    					</collection>
+    				</collection>
+    			</collection>
+    		</collection>
+    	</collection>
+    </resultMap>
+    <resultMap id="clientBase" type="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+        <result property="id" column="ID"/>
+        <result property="activityId" column="ACTIVITID"/>
+        <result property="clientBaseId" column="CLIENTBASEID"/>
+        <result property="clientBaseName" column="CLIENTBASENAME"/>
+        <result property="clientBaseStatus" column="CLIENTBASESTATUS"/>
+        <result property="clientNum" column="CLIENTNUM"/>
+        <result property="deptId" column="DEPTID"/>
+        <result property="deptName" column="DEPTNAME"/>
+        <result property="createDate" column="CREATEDATE"/>
+        <result property="createUser" column="CREATEUSER"/>
+    </resultMap>
+    <resultMap id="activityDept" type="com.deppon.crm.module.marketing.shared.domain.activity.ActivityDept">
+        <result property="id" column="ID"/>
+        <result property="activityId" column="ACTIVITID"/>
+        <result property="deptStandardCode" column="DEPTSTANDARDCODE"/>
+        <result property="deptName" column="DEPTNAME"/>
+    </resultMap>
+    <resultMap id="lineDept" type="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+    	<result property="id" column="ID"/>
+        <result property="conditionId" column="CONDITIONID"/>
+        <result property="conditionType" column="CONDITIONTYPE"/>	       
+        <result property="leaveDeptCode" column="LEAVEDEPTCODE"/>
+        <result property="leavedDeptName" column="LEAVEDDEPTNAME"/>
+        <result property="arriveDeptCode" column="ARRIVEDEPTCODE"/>
+        <result property="arriveDeptName" column="arriveDeptName"/>
+    </resultMap>
+    <resultMap id="fileInfo" type="com.deppon.crm.module.common.file.domain.FileInfo">
+    	<result property="id" column="ID"/>
+        <result property="createDate" column="CREATEDATE"/>
+        <result property="createUser" column="CREATEDATE"/>	       
+        <result property="modifyDate" column="MODIFYDATE"/>
+        <result property="modifyUser" column="MODIFYUSER"/>
+        <result property="fileType" column="FILETYPE"/>
+        <result property="fileName" column="FILENAME"/>
+        <result property="savePath" column="SAVEPATH"/>
+        <result property="fileSize" column="FILESIZE"/>
+        <result property="sourceType" column="SOURCETYPE"/>
+        <result property="sourceId" column="SOURCEID"/>
+        <result property="createDept" column="CREATEDEPT"/>
+    </resultMap>
+    <resultMap id="marketActivity" type="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity" >
+    	<id property="id" column="FID"/>
+    	<result property="topic" column="FACTIVITYTOPIC"/>
+    	<result property="activityName" column="FACTIVITYNAME"/>
+    	<result property="activityCategory" column="FACTIVITYCATEGORY"/>
+    	<result property="activityType" column="FACTIVITYTYPE"/>
+    	<result property="activityCode" column="FACTIVITYCODE"/>
+    	<result property="content" column="FACTIVITYCONTENT"/>
+    	<result property="slogan" column="FSLOGAN"/>
+    	<result property="proposerCode" column="FAPPLICATIONUSER"/>
+    	<result property="proposerName" column="FAPPLYUSERNAME"/>
+    	<result property="deptId" column="FDEPTID"/>
+    	<result property="startTime" column="FACTIVESTARTTIME"/>
+    	<result property="endTime" column="FACTIVEENDTIME"/>
+    	<result property="target1" column="FFIRSTTARGET"/>
+    	<result property="target2" column="FSENCONDTARGET"/>
+    	<result property="target3" column="FTHIRDTARGET"/>
+    	<result property="itemNames" column="FITEMNAME"/>
+    	<result property="workFlowNum" column="FWORKFLOWNUM"/>
+    	<result property="preferType" column="FPREFERTYPE"/>
+    	<result property="contactsId" column="FCONTACTSID"/>
+    	<result property="contactsName" column="FCONTACTSNAME"/>
+    	<result property="contactsTel" column="FCONTACTPHONE"/>
+    	<result property="applyReason" column="FAPPLYREASON"/>
+    	<result property="createDate" column="FCREATETIME"/>
+    	<result property="createUser" column="FCREATEUSERID"/>
+    	<result property="modifyDate" column="FLASTMODIFYTIME"/>
+    	<result property="modifyUser" column="FLASTMODIFYUSERID"/>
+    	<result property="useRule" column="FUSERULE"/>
+    	<result property="createRule" column="FCREATERULE"/>
+    	<result property="minBillAmt" column="FMINCARGOAMOUNT"/>
+    	<result property="maxBillAmt" column="FMAXCARGOAMOUNT"/>
+    	<result property="maxCargoWeight" column="FMAXCARGOWEIGHT"/>
+    	<result property="minCargoWeight" column="FMINCARGOWEIGHT"/>
+    	<result property="minCargoVolume" column="FMINCARGOVOLUME"/>
+    	<result property="maxCargoVolume" column="FMAXCARGOVOLUME"/>
+    	<result property="lineRequest" column="FCONDITIONTYPE"/>
+    	<result property="activityStatus" column="FACTIVITYSTATUS"/>
+    	<result property="custTradeCode" column="FCUSTTRADECODE"/>
+    	<result property="secondTradeCode" column="FSECONDTRADECODE"/>
+    	<result property="productTypeCode" column="FPRODUCTTYPECODE"/>
+    	<result property="orderSourceCode" column="FORDERSOURCECODE"/>
+    	<result property="activitySourceCode" column="FACTIVITYSOURCECODE"/>
+    	<result property="materialCode" column="FMATERIALCODE"/>
+    	<result property="discountCode" column="FDISCOUNTCODE"/>
+    	<result property="couponCode" column="FCOUPONCODE"/>
+    	<result property="fileSourceType" column="FFILESOURCETYPE"/>
+    	<result property="activityWorkflowNum" column="FACTIVITYWORKFLOWNUM"/>
+    	<collection property="clientBase" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase"  column="FID" select="searchActivityClientByActivityId" />
+    	<collection property="activityDepts" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityDept"  column="FID" select="searchActivityDeptByActivityId" /> 
+    	<collection property="custTradeMul" ofType="String" column="{id=FID,conditionType=FACTIVITYSOURCECODE,type=FCUSTTRADECODE}" select="searchMultipleByActivityIdAndType" />
+    	<collection property="secondTradeMul" ofType="String"  column="{id=FID,conditionType=FACTIVITYSOURCECODE,type=FSECONDTRADECODE}" select="searchMultipleByActivityIdAndType" />
+    	<collection property="productTypeMul" ofType="String"  column="{id=FID,conditionType=FACTIVITYSOURCECODE,type=FPRODUCTTYPECODE}" select="searchMultipleByActivityIdAndType" />
+    	<collection property="orderSourceMul" ofType="String"  column="{id=FID,conditionType=FACTIVITYSOURCECODE,type=FORDERSOURCECODE}" select="searchMultipleByActivityIdAndType" />
+    	<collection property="materialInfo" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityOption"  column="{id=FID,infoType=FMATERIALCODE}" select="searchActivityOptionByActivityIdAndType" />
+    	<collection property="discountInfo" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityOption"  column="{id=FID,infoType=FDISCOUNTCODE}" select="searchActivityOptionByActivityIdAndType" />
+    	<collection property="couponInfo" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityOption"  column="{id=FID,infoType=FCOUPONCODE}" select="searchActivityOptionByActivityIdAndType" />
+    	<collection property="files" ofType="com.deppon.crm.module.common.file.domain.FileInfo"  column="{activityId=FID,sourceType=FFILESOURCETYPE}" select="searchUpdateFiles" />
+    	<collection property="lineDepts" ofType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept"  column="{activityId=FID,conditionType=FACTIVITYSOURCECODE}" select="searchLineDeptByTypeAndActivityId" />	
+    </resultMap>
+    <resultMap id="uselessMarketActivity" type="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity" >
+    	<id property="id" column="FID"/>
+    	<result property="topic" column="FACTIVITYTOPIC"/>
+    	<result property="activityName" column="FACTIVITYNAME"/>
+    	<result property="activityCategory" column="FACTIVITYCATEGORY"/>
+    	<result property="activityType" column="FACTIVITYTYPE"/>
+    	<result property="activityCode" column="FACTIVITYCODE"/>
+    	<result property="createDate" column="FCREATETIME"/>
+    	<result property="createUser" column="FCREATEUSERID"/>
+    	<result property="modifyDate" column="FLASTMODIFYTIME"/>
+    	<result property="modifyUser" column="FLASTMODIFYUSERID"/>
+    	<result property="activityStatus" column="FACTIVITYSTATUS"/>
+    	<result property="activitySourceCode" column="FACTIVITYSOURCECODE"/>
+    	<result property="materialCode" column="FMATERIALCODE"/>
+    	<result property="discountCode" column="FDISCOUNTCODE"/>
+    	<result property="couponCode" column="FCOUPONCODE"/>
+    	<result property="fileSourceType" column="FFILESOURCETYPE"/>
+    	<collection property="clientBase"  column="FID" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase" select="searchActivityClientByActivityId" />
+    	<collection property="activityDepts"  column="FID" ofType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityDept" select="searchActivityDeptByActivityId" />
+    	<collection property="files"  column="{activityId=FID,sourceType=FFILESOURCETYPE}" ofType="com.deppon.crm.module.common.file.domain.FileInfo" select="searchUpdateFiles" />
+    	<collection property="lineDepts"  column="{activityId=FID,conditionType=FACTIVITYSOURCECODE}" ofType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept" select="searchLineDeptByTypeAndActivityId" />
+    </resultMap>
+	<select id="searchAuthDeptCharacter" resultType="String">
+		<![CDATA[
+			 SELECT MAX(deptCharacter) FROM 
+			 (SELECT CASE
+           	 WHEN LAD.FIFBIGREGION = '1' THEN
+             'BIGREGION'
+             WHEN LAD.FIFDIVISION = '1' THEN
+             'DIVISION'
+             END deptCharacter
+             FROM T_ORG_DEPARTMENT DEPT
+             JOIN T_CRM_LADINGSTATION LAD 
+             ON DEPT.FSTANDARDCODE = LAD.FSTANDARDCODE
+             WHERE DEPT.FID = #{id,jdbcType=VARCHAR}
+             UNION
+             SELECT CASE
+             WHEN LAD1.FIFBIGREGION = '1' THEN
+             'BIGREGION'
+             WHEN LAD1.FIFDIVISION = '1' THEN
+             'DIVISION'
+             END deptCharacter 
+			 FROM T_ORG_DEPARTMENT DEPT JOIN T_ORG_DEPARTMENT DEPT1
+			 ON DEPT.FPARENTID=DEPT1.FID
+			 JOIN T_ORG_DEPARTMENT DEPT2 
+			 ON DEPT1.FPARENTID = DEPT2.FID
+			 JOIN T_CRM_LADINGSTATION LAD1
+			 ON DEPT2.FSTANDARDCODE=LAD1.FSTANDARDCODE
+			 WHERE DEPT.FID = #{id,jdbcType=VARCHAR})
+		]]>
+	</select>
+	<!-- 市场推广活动主表插入数据 -->
+	<insert id="insertMarketActivity" 
+			parameterType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity">
+			<selectKey keyProperty="id" order="BEFORE" resultType="String">
+				SELECT SEQ_ID_ACTIVITIES.NEXTVAL AS ID FROM DUAL
+			</selectKey>
+			<![CDATA[
+				INSERT INTO T_MARK_ACTIVITIES
+				  (FID,
+				   FACTIVITYTOPIC,
+				   FACTIVITYNAME,
+				   FACTIVITYCATEGORY,
+				   FACTIVITYTYPE,
+				   FACTIVITYCODE,
+				   FACTIVITYCONTENT,
+				   FSLOGAN,
+				   FAPPLICATIONUSER,
+				   FAPPLYUSERNAME,
+				   FDEPTID,
+				   FACTIVESTARTTIME,
+				   FACTIVEENDTIME,
+				   FFIRSTTARGET,
+				   FSENCONDTARGET,
+				   FTHIRDTARGET,
+				   FITEMNAME,
+				   FWORKFLOWNUM,
+				   FPREFERTYPE,
+				   FCONTACTSID,
+				   FCONTACTSNAME,
+				   FCONTACTPHONE,
+				   FAPPLYREASON,
+				   FCREATETIME,
+				   FCREATEUSERID,
+				   FLASTMODIFYTIME,
+				   FLASTMODIFYUSERID,
+				   FUSERULE,
+				   FCREATERULE,
+				   FMINCARGOAMOUNT,
+				   FMAXCARGOAMOUNT,
+				   FMAXCARGOWEIGHT,
+				   FMINCARGOWEIGHT,
+				   FMINCARGOVOLUME,
+				   FMAXCARGOVOLUME,
+				   FCONDITIONTYPE,
+				   FACTIVITYSTATUS,
+				   FACTIVITYWORKFLOWNUM)
+				VALUES(
+				   #{id,jdbcType=VARCHAR},
+				   #{topic,jdbcType=VARCHAR},
+				   #{activityName,jdbcType=VARCHAR},
+				   #{activityCategory,jdbcType=VARCHAR},
+				   #{activityType,jdbcType=VARCHAR},
+				   #{activityCode,jdbcType=VARCHAR},
+				   #{content,jdbcType=VARCHAR},
+				   #{slogan,jdbcType=VARCHAR},
+				   #{proposerCode,jdbcType=VARCHAR},
+				   #{proposerName,jdbcType=VARCHAR},
+				   #{deptId,jdbcType=VARCHAR},
+				   #{startTime,jdbcType=TIMESTAMP},
+				   #{endTime,jdbcType=TIMESTAMP},
+				   #{target1,jdbcType=VARCHAR},
+				   #{target2,jdbcType=VARCHAR},
+				   #{target3,jdbcType=VARCHAR},
+				   #{itemNames,jdbcType=VARCHAR},
+				   #{workFlowNum,jdbcType=VARCHAR},
+				   #{preferType,jdbcType=VARCHAR},
+				   #{contactsId,jdbcType=VARCHAR},
+				   #{contactsName,jdbcType=VARCHAR},
+				   #{contactsTel,jdbcType=VARCHAR},
+				   #{applyReason,jdbcType=VARCHAR},
+				   #{createDate,jdbcType=TIMESTAMP},
+				   #{createUser,jdbcType=VARCHAR},
+				   #{modifyDate,jdbcType=TIMESTAMP},
+				   #{modifyUser,jdbcType=VARCHAR},
+				   #{useRule,jdbcType=VARCHAR},
+				   #{createRule,jdbcType=VARCHAR},
+				   #{minBillAmt,jdbcType=VARCHAR},
+				   #{maxBillAmt,jdbcType=VARCHAR},
+				   #{maxCargoWeight,jdbcType=VARCHAR},
+				   #{minCargoWeight,jdbcType=VARCHAR},
+				   #{minCargoVolume,jdbcType=VARCHAR},
+				   #{maxCargoVolume,jdbcType=VARCHAR},
+				   #{lineRequest,jdbcType=VARCHAR},
+				   #{activityStatus,jdbcType=VARCHAR},
+				   #{activityWorkflowNum,jdbcType=VARCHAR}
+				)
+			]]>
+	</insert>
+	<!-- 市场推广活动多选信息插入 -->
+	<insert id="insertMultiple" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.Multiple">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_MULTIPLE.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_MULTIPLE
+			  (FID, FCONDITIONID, FCONDITIONTYPE, FTYPE, FCONDITIONVALUE)
+			VALUES
+			  (#{id,jdbcType=VARCHAR},#{conditionId,jdbcType=VARCHAR},#{conditionType,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	<!-- 市场推广活动走货线路 -->
+	<insert id="insertLineDept" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_LINEDEPT.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_LINE_DEPT
+			  (FID,
+			   FCONDITIONID,
+			   FLINETYPE,
+			   FLEAVEDEPTCODE,
+			   FLEAVEDEPTNAME,
+			   FARRIVEPTCODE,
+			   FARRIVEDEPTNAME,
+			   FCREATETIME,
+			   FCREATEUSERID)
+			VALUES
+			  (
+			   #{id,jdbcType=VARCHAR},
+			   #{conditionId,jdbcType=VARCHAR},
+			   #{conditionType,jdbcType=VARCHAR},
+			   #{leaveDeptCode,jdbcType=VARCHAR},
+			   #{leavedDeptName,jdbcType=VARCHAR},
+			   #{arriveDeptCode,jdbcType=VARCHAR},
+			   #{arriveDeptName,jdbcType=VARCHAR},
+			   #{createDate,jdbcType=TIMESTAMP},
+			   #{createUser,jdbcType=VARCHAR}
+			  )
+		]]>
+	</insert>
+	<!-- 市场推广活动走货线路 -->
+	<insert id="insertLineDeptBatch" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_LINEDEPT.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_LINE_DEPT
+			  (FID,
+			   FCONDITIONID,
+			   FLINETYPE,
+			   FLEAVEDEPTCODE,
+			   FLEAVEDEPTNAME,
+			   FARRIVEPTCODE,
+			   FARRIVEDEPTNAME,
+			   FCREATETIME,
+			   FCREATEUSERID)
+			VALUES
+			  (
+			   #{id,jdbcType=VARCHAR},
+			   #{conditionId,jdbcType=VARCHAR},
+			   #{conditionType,jdbcType=VARCHAR},
+			   #{leaveDeptCode,jdbcType=VARCHAR},
+			   #{leavedDeptName,jdbcType=VARCHAR},
+			   #{arriveDeptCode,jdbcType=VARCHAR},
+			   #{arriveDeptName,jdbcType=VARCHAR},
+			   #{createDate,jdbcType=TIMESTAMP},
+			   #{createUser,jdbcType=VARCHAR}
+			  )
+		]]>
+	</insert>
+	<!-- 插入市场推广活动折扣优惠申请物品信息 -->
+	<insert id="insertOptions" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityOption">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_LINEDEPT.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_OPTIONS
+			  (FID, FMARKACTIVITID, FNAME, FVALUE, FINFORMATIONTYPE)
+			VALUES
+			  (
+			   #{id,jdbcType=VARCHAR},
+			   #{activityId,jdbcType=VARCHAR},
+			   #{type,jdbcType=VARCHAR},
+			   #{value,jdbcType=VARCHAR},
+			   #{infoType,jdbcType=VARCHAR}
+			  )
+		  ]]>
+	</insert>
+	<!-- 新增市场推广活动参与部门 -->
+	<insert id="insertActivityDept" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityDept">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_ACTIVATIESDEPT.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_ACTIVITIES_DEPT
+			  (FID, FACTIVITEID, FDEPTCODE, FCREATETIME, FCREATEUSERID)
+			VALUES
+			  (
+			   #{id,jdbcType=VARCHAR},
+			   #{activityId,jdbcType=VARCHAR},
+			   #{deptStandardCode,jdbcType=VARCHAR},
+			   #{createDate,jdbcType=TIMESTAMP},
+			   #{createUser,jdbcType=VARCHAR}
+			   )
+		]]>
+	</insert>
+	<update id="updateMaketActivityById"
+			parameterType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity">	
+		UPDATE T_MARK_ACTIVITIES
+		   <set>
+		   	   <if test="topic != null and topic != '' ">
+		   	   		FACTIVITYTOPIC=#{topic,jdbcType=VARCHAR},
+		   	   </if>
+		   	   <if test="activityName != null and activityName != '' ">
+		   	   		FACTIVITYNAME=#{activityName,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="activityCategory != null and activityCategory != '' ">
+		   	   		FACTIVITYCATEGORY=#{activityCategory,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="activityType != null and activityType != '' ">
+		   	   		FACTIVITYTYPE=#{activityType,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="activityCode != null and activityCode != '' ">
+		   	   		<!-- <![CDATA[
+		   	   		FACTIVITYCODE=RTRIM(#{activityCode,jdbcType=VARCHAR}||TO_CHAR(SYSDATE,'YYYYMMDD'))||LTRIM(TO_CHAR(DECODE((SELECT NVL(SUBSTR(M.FACTIVITYCODE,-4),0)+1 FROM T_MARK_ACTIVITIES M WHERE
+			        M.FID=(SELECT MAX(FID) FROM T_MARK_ACTIVITIES M1 WHERE M1.FCREATETIME >= TRUNC(SYSDATE,'YYYY') AND M1.FCREATETIME<ADD_MONTHS(TRUNC(SYSDATE,'YYYY'),12) AND M1.FACTIVITYCODE IS NOT NULL)),10000,1,(SELECT NVL(SUBSTR(M.FACTIVITYCODE,-4),0)+1 FROM T_MARK_ACTIVITIES M WHERE
+			        M.FID=(SELECT MAX(FID) FROM T_MARK_ACTIVITIES M1 WHERE M1.FCREATETIME >= TRUNC(SYSDATE,'YYYY') AND M1.FCREATETIME<ADD_MONTHS(TRUNC(SYSDATE,'YYYY'),12) AND M1.FACTIVITYCODE IS NOT NULL)) ),'0000')),
+					]]> -->
+					<![CDATA[
+						FACTIVITYCODE = RTRIM(#{activityCode,jdbcType=VARCHAR})||PAG_MARK_ACTIVITY_CLIENT.createActivityCode,
+					]]>
+		   	   </if>
+		   	   <if test="content != null and content != '' ">
+		   	   		FACTIVITYCONTENT=#{content,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="slogan != null and slogan != '' ">
+		   	   		FSLOGAN=#{slogan,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="proposerCode != null and proposerCode != '' ">
+		   	   		FAPPLICATIONUSER=#{proposerCode,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="proposerName != null and proposerName != '' ">
+		   	   		FAPPLYUSERNAME=#{proposerName,jdbcType=VARCHAR},
+		   	   </if>
+		   	   <if test="deptId != null and deptId != ''">
+		   	   		FDEPTID = #{deptId,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="startTime != null">
+		   	   		FACTIVESTARTTIME=#{startTime,jdbcType=TIMESTAMP},
+		   	   </if>
+		       <if test="endTime != null">
+		   	   		FACTIVEENDTIME=#{endTime,jdbcType=TIMESTAMP},
+		   	   </if>
+		       <if test="target1 != null and target1 != '' ">
+		   	   		FFIRSTTARGET=#{target1,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="target2 != null and target2 != '' ">
+		   	   		FSENCONDTARGET=#{target2,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="target3 != null and target3 != '' ">
+		   	   		FTHIRDTARGET=#{target3,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="itemNames != null and itemNames != '' ">
+		   	   		FITEMNAME=#{itemNames,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="workFlowNum != null and workFlowNum != '' ">
+		   	   		FWORKFLOWNUM=#{workFlowNum,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="preferType != null and preferType != '' ">
+		   	   		FPREFERTYPE=#{preferType,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="contactsId != null and contactsId != '' ">
+		   	   		FCONTACTSID=#{contactsId,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="contactsName != null and contactsName != '' ">
+		   	   		FCONTACTSNAME=#{contactsName,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="contactsTel != null and contactsTel != '' ">
+		   	   		FCONTACTPHONE=#{contactsTel,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="applyReason != null and applyReason != '' ">
+		   	   		FAPPLYREASON=#{applyReason,jdbcType=VARCHAR},
+		   	   </if>
+		   	   <if test="createDate != null">
+		   	   		FCREATETIME=#{createDate,jdbcType=TIMESTAMP},
+		   	   </if>
+		       <if test="createUser != null and createUser != '' ">
+		   	   		FCREATEUSERID=#{createUser,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="modifyDate != null">
+		   	   		FLASTMODIFYTIME=#{modifyDate,jdbcType=TIMESTAMP},
+		   	   </if>
+		       <if test="modifyUser != null and modifyUser != '' ">
+		   	   		FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="useRule != null and useRule != '' ">
+		   	   		FUSERULE=#{useRule,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="createRule != null and createRule != '' ">
+		   	   		FCREATERULE=#{createRule,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="minBillAmt != null and minBillAmt != '' ">
+		   	   		FMINCARGOAMOUNT=#{minBillAmt,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="maxBillAmt != null and maxBillAmt != '' ">
+		   	   		FMAXCARGOAMOUNT=#{maxBillAmt,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="maxCargoWeight != null and maxCargoWeight != '' ">
+		   	   		FMAXCARGOWEIGHT=#{maxCargoWeight,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="minCargoWeight != null and minCargoWeight != '' ">
+		   	   		FMINCARGOWEIGHT=#{minCargoWeight,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="minCargoVolume != null and minCargoVolume != '' ">
+		   	   		FMINCARGOVOLUME=#{minCargoVolume,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="maxCargoVolume != null and maxCargoVolume != '' ">
+		   	   		FMAXCARGOVOLUME=#{maxCargoVolume,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="lineRequest != null and lineRequest != '' ">
+		   	   		FCONDITIONTYPE=#{lineRequest,jdbcType=VARCHAR},
+		   	   </if>
+		       <if test="activityStatus != null and activityStatus != '' ">
+		   	   		FACTIVITYSTATUS=#{activityStatus,jdbcType=VARCHAR},
+		   	   </if>
+		   	   <if test="activityWorkflowNum != null and activityWorkflowNum != '' ">
+		   	   		FACTIVITYWORKFLOWNUM=#{activityWorkflowNum,jdbcType=VARCHAR},
+		   	   </if>
+		   </set> 			       
+		   WHERE FID=#{id,jdbcType=VARCHAR}			 
+	</update>
+	<delete id="deleteMarketActivityByIds" parameterType="List">
+			DELETE FROM T_MARK_ACTIVITIES
+			WHERE
+			FID IN 
+			<foreach collection="list" item="item" open="(" separator="," close=")">
+				#{item.id,jdbcType=VARCHAR}
+		    </foreach>
+	</delete>
+	<delete id="deleteMultipleByType" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.Multiple">
+			DELETE FROM T_MARK_MULTIPLE
+			WHERE
+			FCONDITIONID = #{conditionId,jdbcType=VARCHAR}
+			AND
+			FCONDITIONTYPE = #{conditionType,jdbcType=VARCHAR}
+			AND 
+			FTYPE = #{type,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteMultipleById">
+		<![CDATA[
+			DELETE FROM T_MARK_MULTIPLE
+			WHERE
+			FID = #{id,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<delete id="deleteLineDeptByType" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+		<![CDATA[
+			DELETE FROM T_MARK_LINE_DEPT
+			WHERE
+			FCONDITIONID = #{conditionId,jdbcType=VARCHAR}
+			AND
+			FLINETYPE = #{conditionType,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<delete id="deleteLineDeptById">
+		<![CDATA[
+			DELETE FROM T_MARK_LINE_DEPT
+			WHERE
+			FID = #{id,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<delete id="deleteLineDeptByIdList" parameterType="List">
+		<![CDATA[
+			DELETE FROM T_MARK_LINE_DEPT
+			WHERE
+			FID IN 
+		]]>
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item.id,jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+	<delete id="deleteOptionsByType" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityOption">
+		<![CDATA[
+			DELETE FROM T_MARK_OPTIONS
+			WHERE
+			FMARKACTIVITID = #{activityId,jdbcType=VARCHAR}
+			AND
+			FINFORMATIONTYPE = #{infoType,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<delete id="deleteOptionsById">
+		<![CDATA[
+			DELETE FROM T_MARK_OPTIONS
+			WHERE
+			FID = #{id,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<delete id="deleteActivityDeptByActivityId">
+		<![CDATA[
+			DELETE FROM T_MARK_ACTIVITIES_DEPT
+			WHERE
+			FACTIVITEID = #{activityId,jdbcType=VARCHAR} 
+		]]>
+	</delete>
+	<delete id="deleteActivityDeptById">
+		<![CDATA[
+			DELETE FROM T_MARK_ACTIVITIES_DEPT
+			WHERE
+			FID = #{id,jdbcType=VARCHAR} 
+		]]>
+	</delete>
+	<delete id="deleteActivityDeptByIdList">
+		<![CDATA[
+			DELETE FROM T_MARK_ACTIVITIES_DEPT
+			WHERE
+			FID IN
+		]]>
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item.id,jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+	<insert id="insertActivityClient" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_ACTIVITECUST.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_MARK_ACTIVITE_CUST
+		  (FID, FACTIVITID, FCUSTCONDITIONID,FSTATUS,FCUSTOMERNUM, FCREATETIME, FCREATEUSERID)
+		VALUES
+		  (#{id,jdbcType=VARCHAR},#{activityId,jdbcType=VARCHAR},#{clientBaseId,jdbcType=VARCHAR},#{clientBaseStatus,jdbcType=VARCHAR},#{clientNum,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{createUser,jdbcType=VARCHAR})
+		]]>
+	</insert>
+<!-- 	<select id="loadTreeRoot" resultMap="deptTree">
+		SELECT D.FID,D.FDEPTNAME,D.FSTANDARDCODE,D.FPARENTID,#{userId,jdbcType=VARCHAR} userId
+		FROM T_ORG_DEPARTMENT D WHERE D.FID =103
+	</select>
+	<select id="loadChildTree" parameterType="Map" resultMap="deptTree">
+		SELECT D.FID, D.FDEPTNAME, D.FSTANDARDCODE, D.FPARENTID,#{userId} USERID
+      FROM T_ORG_DEPARTMENT D
+     WHERE D.FPARENTID = #{id}
+       AND EXISTS
+     (SELECT 1
+          FROM T_AUTH_USERDEPARTMENT ADEPT
+          JOIN T_ORG_DEPARTMENT DEPT1 ON ADEPT.FDEPTID = DEPT1.FID
+          JOIN T_CRM_LADINGSTATION LAD ON DEPT1.FSTANDARDCODE=LAD.FSTANDARDCODE
+         WHERE DEPT1.FDEPTSEQ LIKE D.FDEPTSEQ || '%' AND ADEPT.FUSERID = #{userId} AND LAD.FIFBUSSINESSDEPT='1')
+	</select> -->
+	<select id="loadAuthTreeTier">
+		SELECT DISTINCT FID FID,
+	       MAX(FDEPTNAME) FDEPTNAME,
+	       MAX(FSTANDARDCODE) FSTANDARDCODE,
+	       MAX(FPARENTID) FPARENTID,
+	       MAX(FLEAF) FLEAF,
+	       MAX(FLEVEL) FLEVEL,
+	       MAX(FCANSELECT) FCANSELECT,
+           MAX(FPARENTID) FPARENTID
+	    FROM(
+	    SELECT DISTINCT
+	          D.FID FID ,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          CASE WHEN UD.FID IS NOT NULL THEN '1' ELSE '0' END FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL)          
+	    UNION
+	    SELECT DISTINCT
+	          D.FID FID ,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          '0' FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_ORG_DEPARTMENT D1
+	          ON D.FID=D1.FPARENTID
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D1.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D1.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D1.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL) 
+	    UNION
+	    SELECT DISTINCT
+	          D.FID FID ,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          '0' FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_ORG_DEPARTMENT D1
+	          ON D.FID=D1.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D2
+	          ON D1.FID=D2.FPARENTID
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D2.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D2.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D2.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL) 
+	    UNION
+	    SELECT DISTINCT
+	          D.FID FID ,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          '0' FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_ORG_DEPARTMENT D1
+	          ON D.FID=D1.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D2
+	          ON D1.FID=D2.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D3
+	          ON D2.FID=D3.FPARENTID
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D3.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D3.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D3.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL)
+	    UNION
+	    SELECT DISTINCT
+	          D.FID FID ,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          '0' FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_ORG_DEPARTMENT D1
+	          ON D.FID=D1.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D2
+	          ON D1.FID=D2.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D3
+	          ON D2.FID=D3.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D4
+	          ON D3.FID=D4.FPARENTID
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D4.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D4.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D4.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL)
+	    UNION
+	    SELECT DISTINCT
+	          D.FID FID ,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          '0' FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_ORG_DEPARTMENT D1
+	          ON D.FID=D1.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D2
+	          ON D1.FID=D2.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D3
+	          ON D2.FID=D3.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D4
+	          ON D3.FID=D4.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D5
+	          ON D4.FID=D5.FPARENTID
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D5.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D5.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D5.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL)
+	      UNION
+	      SELECT DISTINCT
+	          D.FID FID,
+	          D.FDEPTNAME FDEPTNAME,
+	          D.FSTANDARDCODE FSTANDARDCODE,
+	          D.FPARENTID FPARENTID,
+	          D.FLEAF FLEAF,
+	          D.FDEPTLEVEL FLEVEL,
+	          '0' FCANSELECT
+	          FROM T_ORG_DEPARTMENT D
+	          JOIN T_ORG_DEPARTMENT D1
+	          ON D.FID=D1.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D2
+	          ON D1.FID=D2.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D3
+	          ON D2.FID=D3.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D4
+	          ON D3.FID=D4.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D5
+	          ON D4.FID=D5.FPARENTID
+	          JOIN T_ORG_DEPARTMENT D6
+	          ON D5.FID=D6.FPARENTID
+	          JOIN T_AUTH_USERDEPARTMENT UD
+	          ON UD.FDEPTID=D6.FID
+	          LEFT JOIN T_CRM_LADINGSTATION LA
+	          ON LA.FSTANDARDCODE=D6.FSTANDARDCODE 
+	          LEFT JOIN T_CRM_DEPTCHARACTER C
+	          ON C.FDEPTID=D6.FID
+	          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+	          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+	          OR C.FID IS NOT NULL)
+	    )
+    	WHERE
+	     <choose>         
+		          <when test="parentId != null and parentId != ''">
+		          	D.FPARENTID = #{parentId,jdbcType=VARCHAR}
+		          </when>
+		          <otherwise>
+		          	D.FID = 103	
+		          </otherwise>
+	     </choose>
+	    GROUP BY FID
+	    ORDER BY FLEVEL,FID
+		<!-- SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          CASE WHEN UD.FID IS NOT NULL THEN '1' ELSE '0' END FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D.FID AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID
+          WHERE (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)   -->
+         
+	</select>
+	<select id="loadAuthTree" resultMap="tree" >
+	SELECT DISTINCT FID FID,
+	       MAX(FDEPTNAME) FDEPTNAME,
+	       MAX(FSTANDARDCODE) FSTANDARDCODE,
+	       MAX(FPARENTID) FPARENTID,
+	       MAX(FLEAF) FLEAF,
+	       MAX(FLEVEL) FLEVEL,
+	       MAX(FCANSELECT) FCANSELECT,
+           MAX(FPARENTID) FPARENTID
+    FROM(
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          CASE WHEN UD.FID IS NOT NULL THEN '1' ELSE '0' END FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)          
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D1.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D1.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D1.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL) 
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D2.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D2.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D2.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL) 
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D3.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D3.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D3.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_ORG_DEPARTMENT D4
+          ON D3.FID=D4.FPARENTID
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D4.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D4.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D4.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_ORG_DEPARTMENT D4
+          ON D3.FID=D4.FPARENTID
+          JOIN T_ORG_DEPARTMENT D5
+          ON D4.FID=D5.FPARENTID
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D5.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D5.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D5.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+      UNION
+      SELECT DISTINCT
+          D.FID FID,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_ORG_DEPARTMENT D4
+          ON D3.FID=D4.FPARENTID
+          JOIN T_ORG_DEPARTMENT D5
+          ON D4.FID=D5.FPARENTID
+          JOIN T_ORG_DEPARTMENT D6
+          ON D5.FID=D6.FPARENTID
+          JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D6.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D6.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D6.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR}
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+    )
+    WHERE (FDEPTSEQ LIKE '%464252%' OR FDEPTSEQ LIKE '%464253%' OR FDEPTSEQ LIKE '%464254%'
+    OR FID=103 OR FID=104 )
+    GROUP BY FID
+    ORDER BY FLEVEL,FID
+	<!-- SELECT DISTINCT FID FID,
+	       MAX(FDEPTNAME) FDEPTNAME,
+	       MAX(FSTANDARDCODE) FSTANDARDCODE,
+	       MAX(FPARENTID) FPARENTID,
+	       MAX(FLEAF) FLEAF,
+	       MAX(FLEVEL) FLEVEL,
+	       MAX(FCHECKED) FCHECKED,
+	       MAX(FCANSELECT) FCANSELECT,
+           MAX(FPARENTID) FPARENTID
+    FROM(
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          CASE WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+          CASE WHEN UD.FID IS NOT NULL THEN '1' ELSE '0' END FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)          
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          '0' FCHECKED,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D1.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D1.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D1.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D1.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL) 
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          '0' FCHECKED,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D2.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D2.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D2.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D2.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL) 
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          '0' FCHECKED,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D3.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D3.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D3.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D3.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          '0' FCHECKED,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_ORG_DEPARTMENT D4
+          ON D3.FID=D4.FPARENTID
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D4.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D4.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D4.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D4.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+    UNION
+    SELECT DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          '0' FCHECKED,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_ORG_DEPARTMENT D4
+          ON D3.FID=D4.FPARENTID
+          JOIN T_ORG_DEPARTMENT D5
+          ON D4.FID=D5.FPARENTID
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D5.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D5.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D5.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D5.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+      UNION
+      SELECT DISTINCT
+          D.FID FID,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID,
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          '0' FCHECKED,
+          '0' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FID=D1.FPARENTID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FID=D2.FPARENTID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FID=D3.FPARENTID
+          JOIN T_ORG_DEPARTMENT D4
+          ON D3.FID=D4.FPARENTID
+          JOIN T_ORG_DEPARTMENT D5
+          ON D4.FID=D5.FPARENTID
+          JOIN T_ORG_DEPARTMENT D6
+          ON D5.FID=D6.FPARENTID
+          LEFT JOIN T_AUTH_USERDEPARTMENT UD
+          ON UD.FDEPTID=D6.FID
+          LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+          ON D5.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D6.FSTANDARDCODE 
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D6.FID
+          WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+          AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+          OR C.FID IS NOT NULL)
+    )
+    GROUP BY FID
+    ORDER BY FLEVEL,FID -->
+	<!-- SELECT DISTINCT MAX(FID) FID,
+	       MAX(FDEPTNAME) FDEPTNAME,
+	       MAX(FSTANDARDCODE) FSTANDARDCODE,
+	       MAX(FPARENTID) FPARENTID,
+	       MAX(FLEAF) FLEAF,
+	       MAX(FLEVEL) FLEVEL,
+	       MAX(FCHECKED) FCHECKED,
+	       MAX(FPARENTID) FPARENTID
+		FROM(
+		SELECT DISTINCT
+		      D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D.FID
+		      LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		      ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		      WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+		      AND D.FDEPTSEQ LIKE '%103%'
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D1.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D1.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		      AND D.FDEPTSEQ LIKE '%103%'
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED	      
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D2.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D2.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		      AND D.FDEPTSEQ LIKE '%103%'
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D3
+		      ON D2.FID=D3.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D3.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D3.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		      AND D.FDEPTSEQ LIKE '%103%'
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D3
+		      ON D2.FID=D3.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D4
+		      ON D3.FID=D4.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D4.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D4.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		      AND D.FDEPTSEQ LIKE '%103%'
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D3
+		      ON D2.FID=D3.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D4
+		      ON D3.FID=D4.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D5
+		      ON D4.FID=D5.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D5.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D5.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		      AND D.FDEPTSEQ LIKE '%103%'
+		  UNION
+		  SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D3
+		      ON D2.FID=D3.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D4
+		      ON D3.FID=D4.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D5
+		      ON D4.FID=D5.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D6
+		      ON D5.FID=D6.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D6.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D6.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		      AND D.FDEPTSEQ LIKE '%103%'
+		)
+		GROUP BY FID
+		ORDER BY FLEVEL,FID -->
+	<!-- SELECT DISTINCT
+	    D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+	    CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+	    D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+	    CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+	    D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+	    CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+	    D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+	    CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+	    D4.FID FID4 ,D4.FDEPTNAME FDEPTNAME4,D4.FSTANDARDCODE FSTANDARDCODE4,D4.FPARENTID FPARENTID4,D4.FLEAF FLEAF4,
+	    CASE  WHEN AD4.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED4,
+	    D5.FID FID5 ,D5.FDEPTNAME FDEPTNAME5,D5.FSTANDARDCODE FSTANDARDCODE5,D5.FPARENTID FPARENTID5,D5.FLEAF FLEAF5,
+	    CASE  WHEN AD5.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED5,
+	    D6.FID FID6 ,D6.FDEPTNAME FDEPTNAME6,D6.FSTANDARDCODE FSTANDARDCODE6,D6.FPARENTID FPARENTID6,D6.FLEAF FLEAF6,
+	    CASE  WHEN AD6.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED6
+	     FROM T_ORG_DEPARTMENT D
+	    JOIN T_ORG_DEPARTMENT D1
+	    ON D.FID=D1.FPARENTID
+	    JOIN T_ORG_DEPARTMENT D2
+	    ON D1.FID=D2.FPARENTID
+	    JOIN T_ORG_DEPARTMENT D3
+	    ON D2.FID=D3.FPARENTID
+	    JOIN T_ORG_DEPARTMENT D4
+	    ON D3.FID=D4.FPARENTID
+	    JOIN T_ORG_DEPARTMENT D5
+	    ON D4.FID=D5.FPARENTID
+	    JOIN T_ORG_DEPARTMENT D6
+	    ON D5.FID=D6.FPARENTID
+	    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+	    ON UD.FDEPTID=D6.FID
+	    JOIN T_CRM_LADINGSTATION LAD
+	    ON LAD.FSTANDARDCODE=D6.FSTANDARDCODE
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+	    ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD1
+	    ON D1.FSTANDARDCODE = AD1.FDEPTCODE AND AD1.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD2
+	    ON D2.FSTANDARDCODE = AD2.FDEPTCODE AND AD2.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD3
+	    ON D3.FSTANDARDCODE = AD3.FDEPTCODE AND AD3.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD4
+	    ON D4.FSTANDARDCODE = AD4.FDEPTCODE AND AD4.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD5
+	    ON D5.FSTANDARDCODE = AD5.FDEPTCODE AND AD5.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD6 
+	    ON D6.FSTANDARDCODE = AD6.FDEPTCODE AND AD6.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD6.FID IS NOT NULL) AND D.FID=103
+    UNION
+    SELECT DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		D4.FID FID4 ,D4.FDEPTNAME FDEPTNAME4,D4.FSTANDARDCODE FSTANDARDCODE4,D4.FPARENTID FPARENTID4,D4.FLEAF FLEAF4,
+		CASE  WHEN AD4.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED4,
+		D5.FID FID5 ,D5.FDEPTNAME FDEPTNAME5,D5.FSTANDARDCODE FSTANDARDCODE5,D5.FPARENTID FPARENTID5,D5.FLEAF FLEAF5,
+		CASE  WHEN AD5.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		 FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		JOIN T_ORG_DEPARTMENT D4
+		ON D3.FID=D4.FPARENTID
+		JOIN T_ORG_DEPARTMENT D5
+		ON D4.FID=D5.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D5.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D5.FSTANDARDCODE
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD1
+		ON D1.FSTANDARDCODE = AD1.FDEPTCODE AND AD1.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD2
+		ON D2.FSTANDARDCODE = AD2.FDEPTCODE AND AD2.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD3
+		ON D3.FSTANDARDCODE = AD3.FDEPTCODE AND AD3.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD4
+		ON D4.FSTANDARDCODE = AD4.FDEPTCODE AND AD4.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD5
+		ON D5.FSTANDARDCODE = AD5.FDEPTCODE AND AD5.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD5.FID IS NOT NULL) AND D.FID=103
+    UNION
+    SELECT DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		D4.FID FID4 ,D4.FDEPTNAME FDEPTNAME4,D4.FSTANDARDCODE FSTANDARDCODE4,D4.FPARENTID FPARENTID4,D4.FLEAF FLEAF4,
+		CASE  WHEN AD4.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		 FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		JOIN T_ORG_DEPARTMENT D4
+		ON D3.FID=D4.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D4.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D4.FSTANDARDCODE
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD1
+		ON D1.FSTANDARDCODE = AD1.FDEPTCODE AND AD1.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD2
+		ON D2.FSTANDARDCODE = AD2.FDEPTCODE AND AD2.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD3
+		ON D3.FSTANDARDCODE = AD3.FDEPTCODE AND AD3.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD4
+		ON D4.FSTANDARDCODE = AD4.FDEPTCODE AND AD4.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD4.FID IS NOT NULL) AND D.FID=103
+       UNION
+    SELECT DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		NULL FID4 ,NULL FDEPTNAME4,NULL FSTANDARDCODE4,NULL FPARENTID4,NULL FLEAF4,
+		NULL FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		 FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D3.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D3.FSTANDARDCODE
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD1
+		ON D1.FSTANDARDCODE = AD1.FDEPTCODE AND AD1.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD2
+		ON D2.FSTANDARDCODE = AD2.FDEPTCODE AND AD2.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD3
+		ON D3.FSTANDARDCODE = AD3.FDEPTCODE AND AD3.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD3.FID IS NOT NULL) AND D.FID=103
+    UNION
+    SELECT DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		NULL FID3 ,NULL FDEPTNAME3,NULL FSTANDARDCODE3,NULL FPARENTID3,NULL FLEAF3,
+		NULL FCHECKED3,
+		NULL FID4 ,NULL FDEPTNAME4,NULL FSTANDARDCODE4,NULL FPARENTID4,NULL FLEAF4,
+		NULL FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		 FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D3.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D3.FSTANDARDCODE
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD1
+		ON D1.FSTANDARDCODE = AD1.FDEPTCODE AND AD1.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD2
+		ON D2.FSTANDARDCODE = AD2.FDEPTCODE AND AD2.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD3
+		ON D3.FSTANDARDCODE = AD3.FDEPTCODE AND AD3.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD3.FID IS NOT NULL) AND D.FID=103
+		UNION
+    SELECT DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		NULL FID2 ,NULL FDEPTNAME2,NULL FSTANDARDCODE2,NULL FPARENTID2,NULL FLEAF2,
+		NULL FCHECKED2,
+		NULL FID3 ,NULL FDEPTNAME3,NULL FSTANDARDCODE3,NULL FPARENTID3,NULL FLEAF3,
+		NULL FCHECKED3,
+		NULL FID4 ,NULL FDEPTNAME4,NULL FSTANDARDCODE4,NULL FPARENTID4,NULL FLEAF4,
+		NULL FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		 FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D2.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D2.FSTANDARDCODE
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD1
+		ON D1.FSTANDARDCODE = AD1.FDEPTCODE AND AD1.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		LEFT JOIN T_MARK_ACTIVITIES_DEPT AD2
+		ON D2.FSTANDARDCODE = AD2.FDEPTCODE AND AD2.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD2.FID IS NOT NULL) AND D.FID=103 -->
+	</select>
+	<select id="loadDeliverOrArriveTree"  resultMap="tree" >
+		  SELECT   
+          FID ,FDEPTNAME,FSTANDARDCODE,FPARENTID,FLEAF,FLEVEL,FCANSELECT 
+          FROM 
+          (SELECT DISTINCT D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID, 
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL,
+          D.FDEPTSEQ FDEPTSEQ,
+          '1' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID AND C.FOWNER='ACTIVITY'
+          WHERE LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+                OR C.FID IS NOT NULL
+          UNION
+          SELECT D1.FID FID ,
+          D1.FDEPTNAME FDEPTNAME,
+          D1.FSTANDARDCODE FSTANDARDCODE,
+          D1.FPARENTID FPARENTID, 
+          D1.FLEAF FLEAF,
+          D1.FDEPTLEVEL FLEVEL,
+          D1.FDEPTSEQ FDEPTSEQ,
+          '1' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FPARENTID=D1.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID AND C.FOWNER='ACTIVITY'
+          WHERE LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+                OR C.FID IS NOT NULL
+          UNION 
+          SELECT DISTINCT D2.FID FID ,
+          D2.FDEPTNAME FDEPTNAME,
+          D2.FSTANDARDCODE FSTANDARDCODE,
+          D2.FPARENTID FPARENTID, 
+          D2.FLEAF FLEAF,
+          D2.FDEPTLEVEL FLEVEL,
+          D2.FDEPTSEQ FDEPTSEQ,
+          '1' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FPARENTID=D1.FID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FPARENTID=D1.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID AND C.FOWNER='ACTIVITY'
+          WHERE LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+                OR C.FID IS NOT NULL
+          UNION
+          SELECT DISTINCT D3.FID FID ,
+          D3.FDEPTNAME FDEPTNAME,
+          D3.FSTANDARDCODE FSTANDARDCODE,
+          D3.FPARENTID FPARENTID, 
+          D3.FLEAF FLEAF,
+          D3.FDEPTLEVEL FLEVEL,
+          D3.FDEPTSEQ FDEPTSEQ,
+          '1' FCANSELECT
+          FROM T_ORG_DEPARTMENT D
+          JOIN T_ORG_DEPARTMENT D1
+          ON D.FPARENTID=D1.FID
+          JOIN T_ORG_DEPARTMENT D2
+          ON D1.FPARENTID=D2.FID
+          JOIN T_ORG_DEPARTMENT D3
+          ON D2.FPARENTID=D3.FID
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID AND C.FOWNER='ACTIVITY'
+          WHERE LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+                OR C.FID IS NOT NULL)
+          WHERE (FDEPTSEQ LIKE '%464252%' OR FDEPTSEQ LIKE '%464253%' OR FDEPTSEQ LIKE '%464254%'
+          OR FID=103 OR FID=104 )     
+          ORDER BY FLEVEL,FPARENTID
+		<!-- SELECT  DISTINCT
+          D.FID FID ,
+          D.FDEPTNAME FDEPTNAME,
+          D.FSTANDARDCODE FSTANDARDCODE,
+          D.FPARENTID FPARENTID, 
+          D.FLEAF FLEAF,
+          D.FDEPTLEVEL FLEVEL
+          FROM T_ORG_DEPARTMENT D
+          LEFT JOIN T_CRM_LADINGSTATION LA
+          ON LA.FSTANDARDCODE=D.FSTANDARDCODE
+          LEFT JOIN T_CRM_DEPTCHARACTER C
+          ON C.FDEPTID=D.FID AND C.FOWNER='ACTIVITY'
+          WHERE LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+                OR C.FID IS NOT NULL
+          ORDER BY FLEVEL -->
+		<!-- SELECT FID,
+	       MAX(FDEPTNAME) FDEPTNAME,
+	       MAX(FSTANDARDCODE) FSTANDARDCODE,
+	       MAX(FPARENTID) FPARENTID,
+	       MAX(FLEAF) FLEAF,
+	       MAX(FLEVEL) FLEVEL,
+	       MAX(FCHECKED) FCHECKED,
+	       MAX(FCANSELECT) FCANSELECT
+			FROM(
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    CASE WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+			    CASE WHEN UD.FID IS NOT NULL THEN '1' ELSE '0' END FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			        ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D1.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D1.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D1.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			        ON D1.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}  
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D1.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL) 
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D1.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D1.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D1.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			      ON D1.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D1.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL) 
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D2
+			    ON D1.FID=D2.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D2.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D2.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D2.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			      ON D2.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D2.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL) 
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D2
+			    ON D1.FID=D2.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D3
+			    ON D2.FID=D3.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D3.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D3.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D3.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			      ON D3.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D3.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL) 
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D2
+			    ON D1.FID=D2.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D3
+			    ON D2.FID=D3.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D4
+			    ON D3.FID=D4.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D4.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D4.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D4.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			      ON D4.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D4.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D2
+			    ON D1.FID=D2.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D3
+			    ON D2.FID=D3.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D4
+			    ON D3.FID=D4.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D5
+			    ON D4.FID=D5.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D5.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D5.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D5.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			      ON D5.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D5.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+			UNION
+			SELECT  DISTINCT
+			    D.FID FID ,
+			    D.FDEPTNAME FDEPTNAME,
+			    D.FSTANDARDCODE FSTANDARDCODE,
+			    D.FPARENTID FPARENTID, 
+			    D.FLEAF FLEAF,
+			    D.FDEPTLEVEL FLEVEL,
+			    '0' FCHECKED,
+			    '0' FCANSELECT
+			    FROM T_ORG_DEPARTMENT D
+			    JOIN T_ORG_DEPARTMENT D1
+			    ON D.FID=D1.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D2
+			    ON D1.FID=D2.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D3
+			    ON D2.FID=D3.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D4
+			    ON D3.FID=D4.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D5
+			    ON D4.FID=D5.FPARENTID
+			    JOIN T_ORG_DEPARTMENT D6
+			    ON D5.FID=D6.FPARENTID
+			    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+			    ON UD.FDEPTID=D6.FID
+			    JOIN T_CRM_LADINGSTATION LA
+			    ON LA.FSTANDARDCODE=D6.FSTANDARDCODE
+			    LEFT JOIN T_CRM_DEPTCHARACTER C
+			    ON C.FDEPTID=D6.FID
+			    LEFT JOIN T_MARK_LINE_DEPT AD
+			    <if test="lineRequest == 'LEAVE'">
+			      ON D6.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR} 
+			    </if>  
+			    <if test="lineRequest == 'ARRIVE'">
+			      ON D6.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+			    </if>     
+			    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (LA.FIFDIVISION='1' OR LA.FIFBIGREGION='1' OR LA.FIFSMALLREGION='1' OR LA.FIFBUSSINESSDEPT='1'
+			          OR C.FID IS NOT NULL)  AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+			)
+			GROUP BY FID
+			ORDER BY FLEVEL,FID  
+     -->
+		<!-- SELECT  DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED
+		FROM T_ORG_DEPARTMENT D
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D.FSTANDARDCODE
+		LEFT JOIN T_MARK_LINE_DEPT AD
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD6.FID IS NOT NULL) AND D.FID=103 -->
+		<!-- SELECT  DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		D4.FID FID4 ,D4.FDEPTNAME FDEPTNAME4,D4.FSTANDARDCODE FSTANDARDCODE4,D4.FPARENTID FPARENTID4,D4.FLEAF FLEAF4,
+		CASE  WHEN AD4.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED4,
+		D5.FID FID5 ,D5.FDEPTNAME FDEPTNAME5,D5.FSTANDARDCODE FSTANDARDCODE5,D5.FPARENTID FPARENTID5,D5.FLEAF FLEAF5,
+		CASE  WHEN AD5.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED5,
+		D6.FID FID6 ,D6.FDEPTNAME FDEPTNAME6,D6.FSTANDARDCODE FSTANDARDCODE6,D6.FPARENTID FPARENTID6,D6.FLEAF FLEAF6,
+		CASE  WHEN AD6.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED6
+		FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		JOIN T_ORG_DEPARTMENT D4
+		ON D3.FID=D4.FPARENTID
+		JOIN T_ORG_DEPARTMENT D5
+		ON D4.FID=D5.FPARENTID
+		JOIN T_ORG_DEPARTMENT D6
+		ON D5.FID=D6.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D6.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D6.FSTANDARDCODE
+		LEFT JOIN T_MARK_LINE_DEPT AD
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD1
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD1.FLEAVEDEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD1.FARRIVEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD2
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD2.FLEAVEDEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD2.FARRIVEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD3
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD3.FLEAVEDEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD3.FARRIVEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD4
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD4.FLEAVEDEPTCODE AND AD4.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD4.FARRIVEPTCODE AND AD4.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD5
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD5.FLEAVEDEPTCODE AND AD5.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD5.FARRIVEPTCODE AND AD5.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD6 
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD6.FLEAVEDEPTCODE AND AD6.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD6.FARRIVEPTCODE AND AD6.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD6.FID IS NOT NULL) AND D.FID=103
+		UNION
+		SELECT  DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		D4.FID FID4 ,D4.FDEPTNAME FDEPTNAME4,D4.FSTANDARDCODE FSTANDARDCODE4,D4.FPARENTID FPARENTID4,D4.FLEAF FLEAF4,
+		CASE  WHEN AD4.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED4,
+		D5.FID FID5 ,D5.FDEPTNAME FDEPTNAME5,D5.FSTANDARDCODE FSTANDARDCODE5,D5.FPARENTID FPARENTID5,D5.FLEAF FLEAF5,
+		CASE  WHEN AD5.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		JOIN T_ORG_DEPARTMENT D4
+		ON D3.FID=D4.FPARENTID
+		JOIN T_ORG_DEPARTMENT D5
+		ON D4.FID=D5.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D5.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D5.FSTANDARDCODE
+		LEFT JOIN T_MARK_LINE_DEPT AD
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD1
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD1.FLEAVEDEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD1.FARRIVEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD2
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD2.FLEAVEDEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD2.FARRIVEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD3
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD3.FLEAVEDEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD3.FARRIVEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD4
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD4.FLEAVEDEPTCODE AND AD4.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD4.FARRIVEPTCODE AND AD4.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD5
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD5.FLEAVEDEPTCODE AND AD5.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD5.FARRIVEPTCODE AND AD5.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD5.FID IS NOT NULL) AND D.FID=103
+		UNION
+		SELECT  DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		D4.FID FID4 ,D4.FDEPTNAME FDEPTNAME4,D4.FSTANDARDCODE FSTANDARDCODE4,D4.FPARENTID FPARENTID4,D4.FLEAF FLEAF4,
+		CASE  WHEN AD4.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		JOIN T_ORG_DEPARTMENT D4
+		ON D3.FID=D4.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D4.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D4.FSTANDARDCODE
+		LEFT JOIN T_MARK_LINE_DEPT AD
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD1
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD1.FLEAVEDEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD1.FARRIVEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD2
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD2.FLEAVEDEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD2.FARRIVEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD3
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD3.FLEAVEDEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD3.FARRIVEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD4
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD4.FLEAVEDEPTCODE AND AD4.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD4.FARRIVEPTCODE AND AD4.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD4.FID IS NOT NULL) AND D.FID=103
+			UNION
+		SELECT  DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		D3.FID FID3 ,D3.FDEPTNAME FDEPTNAME3,D3.FSTANDARDCODE FSTANDARDCODE3,D3.FPARENTID FPARENTID3,D3.FLEAF FLEAF3,
+		CASE  WHEN AD3.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED3,
+		NULL FID4 ,NULL FDEPTNAME4,NULL FSTANDARDCODE4,NULL FPARENTID4,NULL FLEAF4,
+		NULL FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		JOIN T_ORG_DEPARTMENT D3
+		ON D2.FID=D3.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D3.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D3.FSTANDARDCODE
+		LEFT JOIN T_MARK_LINE_DEPT AD
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD1
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD1.FLEAVEDEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD1.FARRIVEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD2
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD2.FLEAVEDEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD2.FARRIVEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD3
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD3.FLEAVEDEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD3.FARRIVEPTCODE AND AD3.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD3.FID IS NOT NULL) AND D.FID=103
+		UNION
+		SELECT  DISTINCT
+		D.FID FID ,D.FDEPTNAME FDEPTNAME,D.FSTANDARDCODE FSTANDARDCODE,D.FPARENTID FPARENTID, D.FLEAF FLEAF,
+		CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED,
+		D1.FID FID1 ,D1.FDEPTNAME FDEPTNAME1,D1.FSTANDARDCODE FSTANDARDCODE1,D1.FPARENTID FPARENTID1,D1.FLEAF FLEAF1,
+		CASE  WHEN AD1.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED1,
+		D2.FID FID2 ,D2.FDEPTNAME FDEPTNAME2,D2.FSTANDARDCODE FSTANDARDCODE2,D2.FPARENTID FPARENTID2,D2.FLEAF FLEAF2,
+		CASE  WHEN AD2.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED2,
+		NULL FID3 ,NULL FDEPTNAME3,NULL FSTANDARDCODE3,NULL FPARENTID3,NULL FLEAF3,
+		NULL FCHECKED3,
+		NULL FID4 ,NULL FDEPTNAME4,NULL FSTANDARDCODE4,NULL FPARENTID4,NULL FLEAF4,
+		NULL FCHECKED4,
+		NULL FID5 ,NULL FDEPTNAME5,NULL FSTANDARDCODE5,NULL FPARENTID5,NULL FLEAF5,
+		NULL FCHECKED5,
+		NULL FID6 ,NULL FDEPTNAME6,NULL FSTANDARDCODE6,NULL FPARENTID6,NULL FLEAF6,
+		NULL FCHECKED6
+		FROM T_ORG_DEPARTMENT D
+		JOIN T_ORG_DEPARTMENT D1
+		ON D.FID=D1.FPARENTID
+		JOIN T_ORG_DEPARTMENT D2
+		ON D1.FID=D2.FPARENTID
+		LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		ON UD.FDEPTID=D2.FID
+		JOIN T_CRM_LADINGSTATION LAD
+		ON LAD.FSTANDARDCODE=D2.FSTANDARDCODE
+		LEFT JOIN T_MARK_LINE_DEPT AD
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD.FLEAVEDEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD.FARRIVEPTCODE AND AD.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD1
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD1.FLEAVEDEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD1.FARRIVEPTCODE AND AD1.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		LEFT JOIN T_MARK_LINE_DEPT AD2
+		<if test="lineRequest == 'LEAVE'">
+			ON D.FSTANDARDCODE = AD2.FLEAVEDEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		<if test="lineRequest == 'ARRIVE'">
+			ON D.FSTANDARDCODE = AD2.FARRIVEPTCODE AND AD2.FCONDITIONID =#{activityId,jdbcType=VARCHAR} AND AD.FLINETYPE=#{conditionType,jdbcType=VARCHAR}
+		</if>
+		WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND LAD.FIFBUSSINESSDEPT='1' AND (UD.FID IS NOT NULL OR AD2.FID IS NOT NULL) AND D.FID=103 -->
+	</select>
+	<select id="searchMarketActivityByMulCondition" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivityVO"
+		resultType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivityVO">
+		SELECT ACT.FID id,
+	       MAX(ACT.FACTIVITYNAME) activityName,
+	       MAX(ACT.FACTIVITYCODE) activityCode,
+	       MAX(ACT.FACTIVESTARTTIME) startTime,
+	       MAX(ACT.FACTIVEENDTIME) endTime,
+	       MAX(ACT.FACTIVITYSTATUS) activityStatus,
+	       MAX(ACT.FACTIVITYTYPE) activityType,
+	       MAX(ACT.FACTIVITYCATEGORY) activityCategory,
+	       MAX(ACT.FCREATEUSERID) createUser,
+	       MAX(ACT.FCREATETIME) createDate,
+	       MAX(ACT.FDEPTID) deptId,
+	       MAX(D.FDEPTNAME) deptName,
+	       MAX(E.FEMPNAME) createUserName,
+	       WM_CONCAT(C.FCLIENTBASENAME) clientBases  
+	   FROM T_MARK_ACTIVITIES ACT
+	   LEFT JOIN T_MARK_ACTIVITE_CUST R ON ACT.FID = R.FACTIVITID
+	   LEFT JOIN T_MARK_CUSTCONDITION C ON R.FCUSTCONDITIONID = C.FID
+	   LEFT JOIN T_ORG_EMPLOYEE E ON E.FID = ACT.FCREATEUSERID
+	   LEFT JOIN T_ORG_DEPARTMENT D ON D.FID=ACT.FDEPTID
+	   <where>
+		   <if test="deptCharacter!='LTTGROUP' and deptCharacter !='EXPGROUP'">
+		   		(ACT.FDEPTID IN (SELECT FDEPTID FROM T_AUTH_USERDEPARTMENT WHERE FUSERID = #{createUser,jdbcType=VARCHAR} )
+		   			OR ACT.FDEPTID = #{deptId,jdbcType=VARCHAR})
+		   </if>
+		   <choose>
+		   		<when test="id != null and id != ''">
+		   		    AND ACT.FID = #{id,jdbcType=VARCHAR}
+		   		</when>
+		   		<when test="activityCode != null and activityCode !=''">
+		   			AND ACT.FACTIVITYCODE = #{activityCode,jdbcType=VARCHAR}
+		   		</when>
+		   		<otherwise>
+		   			<if test="activityName != null and activityName != ''">
+		   				AND ACT.FACTIVITYNAME LIKE '%'||#{activityName,jdbcType=VARCHAR}||'%'
+		   			</if>
+			   			
+		   			<if test="activityType != null and activityType != ''">
+		   				AND ACT.FACTIVITYTYPE = #{activityType,jdbcType=VARCHAR}
+		   			</if>
+		   			<if test="activityCategory != null and activityCategory != ''">
+		   			 	AND ACT.FACTIVITYCATEGORY = #{activityCategory,jdbcType=VARCHAR}
+		   			</if>
+		   			<if test="activityStatus != null and activityStatus != ''">
+		   				AND ACT.FACTIVITYSTATUS = #{activityStatus,jdbcType=VARCHAR}
+		   			</if>
+		   			<![CDATA[
+		   				AND ACT.FACTIVESTARTTIME >= TRUNC(#{startTime,jdbcType=TIMESTAMP})
+	   					AND ACT.FACTIVEENDTIME < TRUNC(#{endTime,jdbcType=TIMESTAMP})+1
+		   			]]>
+		   		</otherwise>
+		   </choose>	   
+	  	   AND ACT.FACTIVITYSTATUS IS NOT NULL
+	   </where> 
+	   GROUP BY ACT.FID		
+	   ORDER BY ACT.FID DESC
+	</select>
+	<select id="countMarketActivityByMulCondition" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivityVO"
+		resultType="int">
+		SELECT COUNT(DISTINCT ACT.FID)
+	   FROM T_MARK_ACTIVITIES ACT
+	   LEFT JOIN T_MARK_ACTIVITE_CUST R ON ACT.FID = R.FACTIVITID
+	   <where>
+		   <if test="deptCharacter!='LTTGROUP' and deptCharacter !='EXPGROUP'">
+			   		(ACT.FDEPTID IN (SELECT FDEPTID FROM T_AUTH_USERDEPARTMENT WHERE FUSERID = #{createUser,jdbcType=VARCHAR} )
+			   		OR ACT.FDEPTID = #{deptId,jdbcType=VARCHAR})
+		   </if>
+		   <choose>
+		   		<when test="id != null and id != ''">
+		   		    AND ACT.FID = #{id,jdbcType=VARCHAR}
+		   		</when>
+		   		<when test="activityCode != null and activityCode !=''">
+		   			AND ACT.FACTIVITYCODE = #{activityCode,jdbcType=VARCHAR}
+		   		</when>
+		   		<otherwise>
+		   			<if test="activityName != null and activityName != ''">
+		   				AND ACT.FACTIVITYNAME LIKE '%'||#{activityName,jdbcType=VARCHAR}||'%'
+		   			</if>
+			   			
+		   			<if test="activityType != null and activityType != ''">
+		   				AND ACT.FACTIVITYTYPE = #{activityType,jdbcType=VARCHAR}
+		   			</if>
+		   			<if test="activityCategory != null and activityCategory != ''">
+		   			 	AND ACT.FACTIVITYCATEGORY = #{activityCategory,jdbcType=VARCHAR}
+		   			</if>
+		   			<if test="activityStatus != null and activityStatus != ''">
+		   				AND ACT.FACTIVITYSTATUS = #{activityStatus,jdbcType=VARCHAR}
+		   			</if>
+		   			<![CDATA[
+		   				AND ACT.FACTIVESTARTTIME >= TRUNC(#{startTime,jdbcType=TIMESTAMP})
+	   					AND ACT.FACTIVEENDTIME < TRUNC(#{endTime,jdbcType=TIMESTAMP})+1
+		   			]]>
+		   		</otherwise>
+		   </choose>
+	   AND ACT.FACTIVITYSTATUS IS NOT NULL
+	   </where>
+	</select>
+	<select id="searchMarketActivityByIdOrWorkFlowNum" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity" 
+			resultMap="marketActivity">
+		SELECT FID,
+	       FACTIVITYTOPIC,
+	       FACTIVITYNAME,
+	       FACTIVITYCATEGORY,
+	       FACTIVITYTYPE,
+	       FACTIVITYCODE,
+	       FACTIVITYCONTENT,
+	       FSLOGAN,
+	       FAPPLICATIONUSER,
+	       FAPPLYUSERNAME,
+	       FDEPTID,
+	       FACTIVESTARTTIME,
+	       FACTIVEENDTIME,
+	       FFIRSTTARGET,
+	       FSENCONDTARGET,
+	       FTHIRDTARGET,
+	       FITEMNAME,
+	       FWORKFLOWNUM,
+	       FPREFERTYPE,
+	       FCONTACTSID,
+	       FCONTACTSNAME,
+	       FCONTACTPHONE,
+	       FAPPLYREASON,
+	       FCREATETIME,
+	       FCREATEUSERID,
+	       FLASTMODIFYTIME,
+	       FLASTMODIFYUSERID,
+	       FUSERULE,
+	       FCREATERULE,
+	       FMINCARGOAMOUNT,
+	       FMAXCARGOAMOUNT,
+	       FMAXCARGOWEIGHT,
+	       FMINCARGOWEIGHT,
+	       FMINCARGOVOLUME,
+	       FMAXCARGOVOLUME,
+	       FCONDITIONTYPE,
+	       FACTIVITYSTATUS,
+	       FACTIVITYWORKFLOWNUM,
+	       #{custTradeCode,jdbcType=VARCHAR} FCUSTTRADECODE,
+    	   #{secondTradeCode,jdbcType=VARCHAR} FSECONDTRADECODE,
+    	   #{productTypeCode,jdbcType=VARCHAR} FPRODUCTTYPECODE,
+    	   #{orderSourceCode,jdbcType=VARCHAR} FORDERSOURCECODE,
+    	   #{activitySourceCode,jdbcType=VARCHAR} FACTIVITYSOURCECODE,
+    	   #{materialCode,jdbcType=VARCHAR} FMATERIALCODE,
+    	   #{discountCode,jdbcType=VARCHAR} FDISCOUNTCODE,
+    	   #{couponCode,jdbcType=VARCHAR} FCOUPONCODE,
+    	   #{fileSourceType,jdbcType=VARCHAR} FFILESOURCETYPE
+	  FROM T_MARK_ACTIVITIES
+	  WHERE 
+	  <choose>
+		  <when test="id != null and id != ''">
+		  	FID =#{id,jdbcType=VARCHAR}
+		  </when>
+		  <otherwise>
+		  	FACTIVITYWORKFLOWNUM = #{activityWorkflowNum,jdbcType=VARCHAR}
+		  </otherwise>
+	  </choose>		
+	</select>
+	<select id='searchMultipleByActivityIdAndType' parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.Multiple">
+		SELECT M.FID id,
+			   M.FCONDITIONID conditionId,
+			   M.FCONDITIONTYPE conditionType,
+			   M.FTYPE type,
+			   M.FCONDITIONVALUE value
+		 FROM T_MARK_MULTIPLE M
+		WHERE M.FCONDITIONID = #{id}
+		  AND M.FCONDITIONTYPE = #{conditionType,jdbcType=VARCHAR}
+		  AND M.FTYPE = #{type,jdbcType=VARCHAR}
+	</select>
+	<select id="searchActivityOptionByActivityIdAndType" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityOption">
+		SELECT FID id, FMARKACTIVITID activityId, FNAME type, FVALUE value, FINFORMATIONTYPE infoType
+		  FROM T_MARK_OPTIONS
+		 WHERE FMARKACTIVITID = #{id,jdbcType=VARCHAR}
+		   AND FINFORMATIONTYPE = #{infoType,jdbcType=VARCHAR}
+	</select>
+	<select id="searchActivityClientByActivityId"  resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		 SELECT RE.FID id,
+         RE.FACTIVITID activityId,
+         RE.FCUSTCONDITIONID clientBaseId,
+         CU.FCLIENTBASENAME clientBaseName,
+         RE.FSTATUS clientBaseStatus,
+         RE.FCUSTOMERNUM clientNum,
+         CU.FDEPTID deptId,
+         DEPT.FDEPTNAME deptName,
+         CU.FCREATETIME createDate,
+         CU.FCREATEUSERID createUser,
+         E.FEMPNAME createUserName
+      FROM T_MARK_ACTIVITE_CUST RE
+      JOIN T_MARK_CUSTCONDITION CU ON RE.FCUSTCONDITIONID = CU.FID
+      LEFT JOIN T_ORG_EMPLOYEE E ON E.FID=CU.FCREATEUSERID
+      LEFT JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FID=CU.FDEPTID
+      WHERE RE.FACTIVITID=#{id,jdbcType=VARCHAR}
+	</select>
+	<select id="searchUpdateFiles" parameterType="Map" resultType="com.deppon.crm.module.common.file.domain.FileInfo">
+		SELECT F.FID id,
+	       F.FCREATETIME createDate,
+	       E.FEMPNAME createUser,
+	       F.FLASTUPDATETIME modifyDate,
+	       F.FLASTMODIFYUSERID modifyUser,
+	       F.FFILETYPE fileType,
+	       F.FFILENAME fileName,
+	       F.FSAVEPATH savePath,
+	       F.FFILESIZE fileSize,
+	       F.FSOURCETYPE sourceType,
+	       F.FSOURCEID sourceId,
+	       F.FCREATEDEPT createDept
+	  FROM T_CRM_FILEINFO F
+	  LEFT JOIN T_ORG_EMPLOYEE E
+	  ON E.FID=F.FCREATEUSERID
+	 WHERE FSOURCEID = #{activityId,jdbcType=VARCHAR}
+	   AND FSOURCETYPE = #{sourceType,jdbcType=VARCHAR}
+	</select>
+	<select id="searchActivityDeptByActivityId" resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityDept">
+	    SELECT AD.FID id, AD.FACTIVITEID activityId, AD.FDEPTCODE deptStandardCode,DEPT.FDEPTNAME deptName
+	     FROM T_MARK_ACTIVITIES_DEPT AD
+	     JOIN T_ORG_DEPARTMENT DEPT
+	     ON AD.FDEPTCODE=DEPT.FSTANDARDCODE
+		WHERE FACTIVITEID = #{activityId,jdbcType=VARCHAR}
+		ORDER BY AD.FID
+	</select>
+	<select id="countActivityDeptByActivityId"  resultType="int">
+	    SELECT COUNT(1)
+		 FROM T_MARK_ACTIVITIES_DEPT
+		WHERE FACTIVITEID = #{activityId,jdbcType=VARCHAR}
+	</select>
+	<select id="searchLineDeptByTypeAndActivityId" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+	 SELECT FID id,
+	       FCONDITIONID conditionId,
+	       FLINETYPE conditionType,
+	       FLEAVEDEPTCODE leaveDeptCode,
+	       FLEAVEDEPTNAME leavedDeptName,
+	       FARRIVEPTCODE arriveDeptCode,
+	       FARRIVEDEPTNAME arriveDeptName
+	  FROM T_MARK_LINE_DEPT
+	 WHERE FLINETYPE = #{conditionType,jdbcType=VARCHAR}
+	   AND FCONDITIONID = #{activityId,jdbcType=VARCHAR}
+	</select>
+	<select id="countActivityDeptNum" parameterType="List" resultType="int">
+		SELECT COUNT(DISTINCT D.FID)
+		  FROM T_ORG_DEPARTMENT D
+		  JOIN T_CRM_LADINGSTATION L 
+		  ON D.FSTANDARDCODE = L.FSTANDARDCODE AND L.FIFBUSSINESSDEPT = '1'
+		 CROSS JOIN T_ORG_DEPARTMENT D1
+		 WHERE D.FDEPTSEQ LIKE D1.FDEPTSEQ || '%'
+		   AND D1.FSTANDARDCODE IN
+		   <foreach collection="list" open="(" separator="," close=")" item="deptCode">
+		   		#{deptCode,jdbcType=VARCHAR}
+		   </foreach>
+	</select>
+	<delete id="deleteClientBaseByRelationId" parameterType="Map" >
+		DELETE FROM T_MARK_ACTIVITE_CUST
+		 WHERE FID = #{relationId,jdbcType=VARCHAR}
+	</delete>
+<!-- 	<insert id="insertClientBaseRelation" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_ACTIVITECUST.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		INSERT INTO T_MARK_ACTIVITE_CUST
+		  (FID,
+		   FACTIVITID,
+		   FCUSTCONDITIONID,
+		   FSTATUS,
+		   FCREATETIME,
+		   FCREATEUSERID)
+		VALUES
+		  (
+		  	SEQ_ID_ACTIVITECUST.NEXTVAL,
+		  	#{activityId,jdbcType=VARCHAR},
+		  	#{clientBaseId,jdbcType=VARCHAR},
+		  	#{clientBaseStatus,jdbcType=VARCHAR},
+		  	#{createDate,jdbcType=DATE},
+		  	#{createUser,jdbcType=VARCHAR}
+		  )
+	</insert> -->
+	<update id="updateActivityClientById" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		UPDATE T_MARK_ACTIVITE_CUST
+		<set>
+		   <if test="clientBaseStatus != null and clientBaseStatus != '' ">
+		   		FSTATUS = #{clientBaseStatus,jdbcType=VARCHAR}, 
+		   </if>
+		   <if test="planStartTime != null">
+		   		FPLANSTARTTIME = TRUNC(#{planStartTime,jdbcType=TIMESTAMP}), 
+		   </if>
+		   <if test="planEndTime != null">
+		   		FPLANENDTIME = TRUNC(#{planEndTime,jdbcType=TIMESTAMP})+1-1/24/60/60, 
+		   </if>
+		   <if test="modifyDate != null">
+		   		FLASTMODIFYTIME = #{modifyDate,jdbcType=TIMESTAMP}, 
+		   </if>
+		   <if test="modifyUser != null and modifyUser != '' ">
+		   		FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR}
+		   </if>
+		</set>
+		 WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+	<select id="searchActivityClientByName" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		SELECT C.FID             clientBaseId,
+	       C.FCLIENTBASENAME clientBaseName,
+	       C.FSTATUS         clientBaseStatus,
+	       C.FDEPTID         deptId,
+	       D.FDEPTNAME       deptName,
+	       C.FCREATETIME     createDate,
+	       E.FEMPNAME        createUserName
+		  FROM T_MARK_CUSTCONDITION C
+		  LEFT JOIN T_ORG_EMPLOYEE E ON C.FCREATEUSERID = E.FID
+		  LEFT JOIN T_ORG_DEPARTMENT D ON D.FID = C.FDEPTID
+		 WHERE  C.FSTATUS = #{clientBaseStatus,jdbcType=VARCHAR}
+		<if test="deptCharacter!='LTTGROUP' and deptCharacter !='EXPGROUP'">
+			AND (C.FDEPTID IN (SELECT AU.FDEPTID
+		                       FROM T_AUTH_USERDEPARTMENT AU
+		                      WHERE AU.FUSERID = #{userId,jdbcType=VARCHAR})
+		         OR C.FDEPTID = #{deptId,jdbcType=VARCHAR})
+		</if>
+	    <if test="clientBaseName != null and clientBaseName != ''">
+		   AND C.FCLIENTBASENAME LIKE '%'||#{clientBaseName,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="clients != null and clients.length>0">
+		   AND C.FID NOT IN
+		   <foreach collection="clients" item="clientId" open="(" separator="," close=")" >
+		   		#{clientId,jdbcType=VARCHAR}
+		   </foreach>
+		</if>
+		ORDER BY C.FID DESC
+	</select>
+	<select id="searchActivityClientByClientIds" parameterType="list" resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		SELECT C.FID             clientBaseId,
+		       C.FCLIENTBASENAME clientBaseName,
+		       C.FSTATUS         clientBaseStatus,
+		       C.FDEPTID 		 deptId,
+		       DEPT.FDEPTNAME    deptName,
+		       C.FCREATEUSERID   createUser,
+		       E.FEMPNAME        createUserName
+		  FROM T_MARK_CUSTCONDITION C
+		  LEFT JOIN T_ORG_DEPARTMENT DEPT
+		  ON C.FDEPTID=DEPT.FID
+		  LEFT JOIN T_ORG_EMPLOYEE E
+		  ON E.FID=C.FCREATEUSERID
+		 WHERE C.FID IN
+		   <foreach collection="list" item="clientBase" open="(" separator="," close=")" >
+		   		#{clientBase.clientBaseId,jdbcType=VARCHAR}
+		   </foreach>
+	</select>
+	<select id="countActivityClientByName" parameterType="Map" resultType="int">
+		SELECT COUNT(1)
+		  FROM T_MARK_CUSTCONDITION C
+		 WHERE C.FSTATUS = #{clientBaseStatus,jdbcType=VARCHAR}
+		<if test="deptCharacter!='LTTGROUP' and deptCharacter !='EXPGROUP'">
+			AND (C.FDEPTID IN (SELECT AU.FDEPTID
+		                       FROM T_AUTH_USERDEPARTMENT AU
+		                      WHERE AU.FUSERID = #{userId,jdbcType=VARCHAR})
+		         OR C.FDEPTID = #{deptId,jdbcType=VARCHAR})
+		</if>
+	    <if test="clientBaseName != null and clientBaseName != ''">
+		   AND C.FCLIENTBASENAME LIKE '%'||#{clientBaseName,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="clients != null and clients.length>0">
+			AND C.FID NOT IN
+			<foreach collection="clients" item="clientId" open="(" separator="," close=")">
+				#{clientId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</select>
+	<select id="searchActivityClientByMultipleCondition" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityClientBase">
+		SELECT RE.FID id,
+			   RE.FCUSTCONDITIONID clientBaseId,
+		       RE.FACTIVITID       activityId,
+		       CU.FCLIENTBASENAME  clientBaseName,
+		       CU.FSTATUS clientBaseStatus,
+		       RE.FCUSTOMERNUM clientNum
+		  FROM T_MARK_ACTIVITE_CUST RE
+		  LEFT JOIN T_MARK_CUSTCONDITION CU ON RE.FCUSTCONDITIONID = CU.FID
+		 <where>
+		 	<if test="activityId != null and activityId != ''">
+		 		RE.FACTIVITID = #{activityId,jdbcType=VARCHAR}
+		 	</if>
+		 	<if test="clientBaseStatus !=null and clientBaseStatus != ''">
+		   		AND RE.FSTATUS = #{clientBaseStatus,jdbcType=VARCHAR}
+		    </if>
+		    <if test="id != null and id != ''">
+		    	AND RE.FID = #{id,jdbcType=VARCHAR}
+		    </if>
+		    <if test="clients != null and clients.size()>0">
+				CU.FID NOT IN
+				<foreach collection="clients" item="clientBase" open="(" separator="," close=")">
+					#{clientBase.clientBaseId,jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		 </where>
+	</select>
+	<select id="searchUpdateAuth" parameterType="map" resultType="int">
+		SELECT CASE
+         WHEN AC.FCREATEUSERID = #{userId,jdbcType = VARCHAR} THEN 1
+         WHEN E.FID IS NOT NULL THEN 2 ELSE 0 END
+	    FROM T_MARK_ACTIVITIES AC
+	    JOIN T_ORG_DEPARTMENT DE
+	    JOIN T_ORG_EMPLOYEE E ON DE.FPRINCIPAL = E.FEMPCODE ON AC.FDEPTID = DE.FID
+	    WHERE AC.FID = #{activityId,jdbcType=VARCHAR}
+	</select>
+	<select id="searchTree" parameterType="map" resultMap="tree">
+		  <!-- SELECT DISTINCT
+		      D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL
+		      FROM T_ORG_DEPARTMENT D
+		      WHERE D.FDEPTSEQ LIKE '%103%'
+		      ORDER BY D.FDEPTLEVEL  -->
+	     SELECT DISTINCT MAX(FID) FID,
+	       MAX(FDEPTNAME) FDEPTNAME,
+	       MAX(FSTANDARDCODE) FSTANDARDCODE,
+	       MAX(FPARENTID) FPARENTID,
+	       MAX(FLEAF) FLEAF,
+	       MAX(FLEVEL) FLEVEL,
+	       MAX(FCHECKED) FCHECKED,
+	       MAX(FPARENTID) FPARENTID
+		FROM(
+		SELECT DISTINCT
+		      D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      LEFT JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D.FID
+		      LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+		      ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+		      WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D1.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D1.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED	      
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D2.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D2.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D3
+		      ON D2.FID=D3.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D3.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D3.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		UNION
+		SELECT D.FID FID ,
+		      D.FDEPTNAME FDEPTNAME,
+		      D.FSTANDARDCODE FSTANDARDCODE,
+		      D.FPARENTID FPARENTID,
+		      D.FLEAF FLEAF,
+		      D.FDEPTLEVEL FLEVEL,
+		      '0' FCHECKED
+		      FROM T_ORG_DEPARTMENT D
+		      JOIN T_ORG_DEPARTMENT D1
+		      ON D.FID=D1.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D2
+		      ON D1.FID=D2.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D3
+		      ON D2.FID=D3.FPARENTID
+		      JOIN T_ORG_DEPARTMENT D4
+		      ON D3.FID=D4.FPARENTID
+		      JOIN T_CRM_LADINGSTATION LAD
+		      ON D4.FSTANDARDCODE=LAD.FSTANDARDCODE
+		      JOIN T_AUTH_USERDEPARTMENT UD
+		      ON UD.FDEPTID=D4.FID
+		      WHERE LAD.FIFBUSSINESSDEPT = '1' AND UD.FUSERID=#{userId,jdbcType=VARCHAR}
+		)
+		GROUP BY FID
+		ORDER BY FLEVEL,FID
+		<!-- SELECT DISTINCT
+	    D.FID FID ,
+	    D.FDEPTNAME FDEPTNAME,
+	    D.FSTANDARDCODE FSTANDARDCODE,
+	    D.FPARENTID FPARENTID,
+	    D.FLEAF FLEAF,
+	    CASE  WHEN AD.FID IS NOT NULL THEN '1' ELSE '0' END FCHECKED
+	    FROM T_ORG_DEPARTMENT D
+	    LEFT JOIN T_AUTH_USERDEPARTMENT UD
+	    ON UD.FDEPTID=D.FID
+	    LEFT JOIN T_MARK_ACTIVITIES_DEPT AD
+	    ON D.FSTANDARDCODE = AD.FDEPTCODE AND AD.FACTIVITEID =#{activityId,jdbcType=VARCHAR}
+	    WHERE UD.FUSERID=#{userId,jdbcType=VARCHAR} AND (UD.FID IS NOT NULL OR AD.FID IS NOT NULL)
+	    ORDER BY D.FDEPTLEVEL -->
+	</select>
+	<select id="searchLatestMarketActivityByDeptId" resultType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity">
+		SELECT FID                  id,
+		       FACTIVITYTOPIC       topic,
+		       FACTIVITYNAME        activityName,
+		       FACTIVITYCATEGORY    activityCategory,
+		       FACTIVITYTYPE        activityType,
+		       FACTIVITYCODE        activityCode,
+		       FACTIVITYCONTENT     content,
+		       FSLOGAN              slogan,
+		       FAPPLICATIONUSER     proposerCode,
+		       FAPPLYUSERNAME       proposerName,
+		       FDEPTID              deptId,
+		       FACTIVESTARTTIME     startTime,
+		       FACTIVEENDTIME       endTime,
+		       FFIRSTTARGET         target1,
+		       FSENCONDTARGET       target2,
+		       FTHIRDTARGET         target3,
+		       FITEMNAME            itemNames,
+		       FWORKFLOWNUM         workFlowNum,
+		       FPREFERTYPE          preferType,
+		       FCONTACTSID          contactsId,
+		       FCONTACTSNAME        contactsName,
+		       FCONTACTPHONE        contactsTel,
+		       FAPPLYREASON         applyReason,
+		       FCREATETIME          createDate,
+		       FCREATEUSERID        createUser,
+		       FLASTMODIFYTIME      modifyDate,
+		       FLASTMODIFYUSERID    modifyUser,
+		       FUSERULE             useRule,
+		       FCREATERULE          createRule,
+		       FMINCARGOAMOUNT      minBillAmt,
+		       FMAXCARGOAMOUNT      maxBillAmt,
+		       FMAXCARGOWEIGHT      maxCargoWeight,
+		       FMINCARGOWEIGHT      minCargoWeight,
+		       FMINCARGOVOLUME      minCargoVolume,
+		       FMAXCARGOVOLUME      maxCargoVolume,
+		       FCONDITIONTYPE       lineRequest,
+		       FACTIVITYSTATUS      activityStatus,
+		       FACTIVITYWORKFLOWNUM activityWorkflowNum
+		  FROM T_MARK_ACTIVITIES ACT
+		 WHERE ACT.FID IN
+       (SELECT MAX(A.FID)
+          FROM T_MARK_ACTIVITIES_DEPT AD
+          JOIN T_MARK_ACTIVITIES A ON AD.FACTIVITEID = A.FID
+          JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FSTANDARDCODE = AD.FDEPTCODE
+         CROSS JOIN T_ORG_DEPARTMENT D1
+         WHERE D1.FID = #{id,jdbcType=VARCHAR}
+           AND D1.FDEPTSEQ LIKE '%' || DEPT.FDEPTSEQ || '%'
+           AND A.FACTIVITYSTATUS IN
+               ('ESTABLISHED', 'EXECUTED', 'PLANCREATED')
+           AND A.FACTIVITYTYPE = 'NATIONWIDE')
+
+	</select>
+	<select id="searchUselessActivities"  resultMap="uselessMarketActivity">		
+			SELECT FID,
+		       FACTIVITYTOPIC ,
+		       FACTIVITYNAME,
+		       FACTIVITYCATEGORY,
+		       FACTIVITYTYPE,
+		       FACTIVITYCODE,
+		       FCREATETIME,
+		       FCREATEUSERID,
+		       FLASTMODIFYTIME,
+		       FLASTMODIFYUSERID,
+		       FACTIVITYSTATUS,
+	    	   #{activitySourceCode,jdbcType=VARCHAR} FACTIVITYSOURCECODE,
+	    	   #{fileSourceType,jdbcType=VARCHAR} FFILESOURCETYPE
+		  FROM T_MARK_ACTIVITIES
+		  WHERE 
+		  <choose>
+			  <when test="condition == 'useless'">
+				<![CDATA[  	
+				  	FCREATETIME < SYSDATE - 1 AND FACTIVITYSTATUS IS NULL
+			  	]]>
+			  </when>
+			  <when test="condition == 'complete'">
+				<![CDATA[  	
+				  	FACTIVEENDTIME < SYSDATE
+			  	]]>
+			  </when>
+			  <otherwise>
+			  		FID = NULL
+			  </otherwise>
+	  	  </choose>
+	</select>
+	<insert id="insertActivityException" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityExceptionHandle">
+		INSERT INTO T_MARK_ACTIVITYEXCEPTION
+		  (FID, FACTIVITYID, FEXCEPTIONTYPE, FISHANDLE)
+		VALUES
+		  (SEQ_ID_ACTIVITYEXCEPTION.NEXTVAL, #{activityId,jdbcType=VARCHAR}, #{exceptionType,jdbcType=VARCHAR}, #{handle,jdbcType=VARCHAR})		
+	</insert>
+	<update id="updateActivityExceptionById" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityExceptionHandle">
+		UPDATE T_MARK_ACTIVITYEXCEPTION
+		   SET FISHANDLE = #{handle,jdbcType=VARCHAR}
+		 WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>	
+	<select id="searchActivityExeptionUnhandle" parameterType="String" 
+		resultType="com.deppon.crm.module.marketing.shared.domain.activity.ActivityExceptionHandle">
+		 SELECT FID id,
+		        FACTIVITYID activityId,
+		        FEXCEPTIONTYPE exceptionType,
+		        FISHANDLE handle
+		  FROM T_MARK_ACTIVITYEXCEPTION
+		 WHERE FISHANDLE = #{handle,jdbcType=VARCHAR}
+	</select>
+	<!-- 查询折扣工作流是否已使用 -->
+	<select id="checkWorkflowIsRepeat" parameterType="String" resultType="int">
+		SELECT COUNT(1) FROM T_MARK_ACTIVITIES AC WHERE AC.FWORKFLOWNUM	=#{workflowNum,jdbcType=VARCHAR}
+	</select>
+	<!-- 查询待下发的客户群并生成相应的计划 -->
+	<select id="createClientBasePlan" statementType="CALLABLE">
+		{call PAG_MARK_ACTIVITY_CLIENT.createClientBaseDetail}
+	</select>
+	<!-- 查询关联的市场推广活动的客户群数量 -->
+	<select id="countClientBaseDetail" statementType="CALLABLE">
+		{call PAG_MARK_ACTIVITY_CLIENT.countClientBaseDetail}
+	</select>
+	<!-- 生成客户群明细报表 -->
+	<select id="createClientDetailReport" statementType="CALLABLE">
+		{call PAG_MARK_ACTIVITY_CLIENT.createClientDetailReport}
+	</select>
+	<select id="searchMarketActivityForMarketPlan" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.MarketActivity">
+		SELECT FID               id,
+		       FACTIVITYNAME     activityName,
+		       FACTIVITYCATEGORY activityCategory,
+		       FACTIVITYTYPE     activityType,
+		       FACTIVITYCODE     activityCode,
+		       FUSERULE          useRule,
+		       FCREATERULE       createRule
+		  FROM T_MARK_ACTIVITIES
+		 WHERE FPREFERTYPE = 'COUPON'
+		   AND ((FACTIVITYTYPE = 'NATIONWIDE' AND
+		       FACTIVITYSTATUS IN ('ESTABLISHED', 'EXECUTED', 'PLANCREATED')) OR
+		       (FACTIVITYTYPE = 'REGION' AND
+		       FACTIVITYSTATUS IN ('PROCESSED', 'EXECUTED', 'PLANCREATED')))
+		   AND FACTIVITYNAME LIKE '%'||#{activityName,jdbcType=VARCHAR}||'%'
+		   AND FACTIVITYCATEGORY = #{activityCategory,jdbcType=VARCHAR}
+	</select>
+	<select id="countMarketActivityByName" resultType="int">
+		SELECT COUNT(1) FROM T_MARK_ACTIVITIES WHERE FACTIVITYNAME = #{activityName,jdbcType=VARCHAR}
+	</select>
+</mapper>
+
+

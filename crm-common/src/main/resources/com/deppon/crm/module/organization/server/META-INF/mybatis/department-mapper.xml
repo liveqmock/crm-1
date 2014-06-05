@@ -1,0 +1,1081 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.crm.module.organization.shared.domain.Department">
+
+	<!-- 部门表返回的结果集，多表联查 -->
+	<resultMap id="departmentResultMap"
+		type="com.deppon.crm.module.organization.shared.domain.Department">
+		<id property="id" column="MASTER_ID" />
+		<result property="deptCode" column="MASTER_DEPTCODE" />
+		<result property="leaf" column="MASTER_LEAF" />
+		<result property="deptName" column="MASTER_DEPTNAME" />
+		<result property="phone" column="MASTER_PHONE" />
+		<result property="fax" column="MASTER_FAX" />
+		<result property="zipCode" column="MASTER_ZIPCODE" />
+		<result property="address" column="MASTER_ADDRESS" />
+		<result property="status" column="MASTER_STATUS" />
+		<result property="companyName" column="MASTER_COMPANYNAME" />
+		<result property="validDate" column="MASTER_VALIDDATE" />
+		<result property="invalidDate" column="MASTER_INVALIDDATE" />
+		<result property="displayOrder" column="MASTER_DISPLAYORDER" />
+		<result property="deptLevel" column="MASTER_DEPTLEVEL" />
+		<result property="deptDesc" column="MASTER_DEPTDESC" />
+		<result property="deptSeq" column="MASTER_DEPTSEQ" />
+		<result property="principal" column="MASTER_PRINCIPAL" />
+		<result property="standardCode" column="MASTER_FSTANDARDCODE" />
+		<result property="principalName" column="PRINCIPALNAME" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<association property="parentCode" column="ENTRY_1_ID"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="ENTRY_1_ID" />
+			<result property="leaf" column="ENTRY_1_LEAF" />
+			<result property="deptCode" column="ENTRY_1_DEPTCODE" />
+			<result property="deptName" column="ENTRY_1_DEPTNAME" />
+			<result property="principal" column="ENTRY_1_PRINCIPAL" />
+			<result property="phone" column="ENTRY_1_PHONE" />
+			<result property="fax" column="ENTRY_1_FAX" />
+			<result property="parentCode" column="ENTRY_1_PARENTID" />
+			<result property="companyName" column="ENTRY_1_COMPANYNAME" />
+			<result property="zipCode" column="ENTRY_1_ZIPCODE" />
+			<result property="address" column="ENTRY_1_ADDRESS" />
+			<result property="status" column="ENTRY_1_STATUS" />
+			<result property="validDate" column="ENTRY_1_VALIDDATE" />
+			<result property="invalidDate" column="ENTRY_1_INVALIDDATE" />
+			<result property="displayOrder" column="ENTRY_1_DISPLAYORDER" />
+			<result property="deptLevel" column="ENTRY_1_DEPTLEVEL" />
+			<result property="deptDesc" column="ENTRY_1_DEPTDESC" />
+			<result property="deptSeq" column="ENTRY_1_DEPTSEQ" />
+			<result property="standardCode" column="ENTRY_1_FSTANDARDCODE" />
+			<result property="createUser" column="ENTRY_1_CREATEUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="createDate" column="ENTRY_1_CREATEDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+			<result property="modifyUser" column="ENTRY_1_MODIFYUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="modifyDate" column="ENTRY_1_MODIFYDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+		</association>
+	</resultMap>
+	<!-- 部门表返回的结果集，单表查询 -->
+	<resultMap id="ExecuteDeptResultMap" type="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="FID" />
+			<result property="deptCode" column="FDEPTCODE" />
+			<result property="deptName" column="FDEPTNAME" />
+			<result property="principal" column="FPRINCIPAL" />
+			<result property="phone" column="FPHONE" />
+			<result property="fax" column="FFAX" />
+			<result property="parentCode" column="FPARENTID" />
+			<result property="companyName" column="FCOMPANYNAME" />
+			<result property="zipCode" column="FZIPCODE" />
+			<result property="address" column="FADDRESS" />
+			<result property="status" column="FSTATUS" />
+			<result property="validDate" column="FVALIDDATE" />
+			<result property="invalidDate" column="FINVALIDDATE" />
+			<result property="displayOrder" column="FDISPLAYORDER" />
+			<result property="deptLevel" column="FDEPTLEVEL" />
+			<result property="deptDesc" column="FDEPTDESC" />
+			<result property="deptSeq" column="FDEPTSEQ" />
+			<result property="leaf" column="FLEAF" />
+			<result property="createUser" column="FCREATEUSERID" />
+			<result property="createDate" column="FCREATETIME" />
+			<result property="modifyUser" column="FLASTMODIFYUSERID" />
+			<result property="modifyDate" column="FLASTUPDATETIME" />
+			<result property="standardCode" column="FSTANDARDCODE" />
+	</resultMap>	
+	<!--查询的字段 -->
+	<sql id="select_param">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FDEPTCODE AS
+		MASTER_DEPTCODE,
+		MASTER.FDEPTNAME AS MASTER_DEPTNAME,
+		MASTER.FCOMPANYNAME AS MASTER_COMPANYNAME,
+		MASTER.FPRINCIPAL AS
+		MASTER_PRINCIPAL,
+		MASTER.FPHONE AS MASTER_PHONE,
+		MASTER.FFAX AS
+		MASTER_FAX,
+		MASTER.FLEAF AS MASTER_LEAF,
+		ENTRY_1.FID AS ENTRY_1_ID,
+		ENTRY_1.FDEPTCODE AS ENTRY_1_DEPTCODE,
+		ENTRY_1.FDEPTNAME AS
+		ENTRY_1_DEPTNAME,
+		ENTRY_1.FPRINCIPAL AS ENTRY_1_PRINCIPAL,
+		ENTRY_1.FPHONE AS ENTRY_1_PHONE,
+		ENTRY_1.FFAX AS ENTRY_1_FAX,
+		ENTRY_1.FLEAF AS ENTRY_1_LEAF,
+		ENTRY_1.FPARENTID AS ENTRY_1_PARENTID,
+		ENTRY_1.FCOMPANYNAME AS ENTRY_1_COMPANYNAME,
+		ENTRY_1.FZIPCODE AS
+		ENTRY_1_ZIPCODE,
+		ENTRY_1.FADDRESS AS ENTRY_1_ADDRESS,
+		ENTRY_1.FSTATUS AS
+		ENTRY_1_STATUS,
+		ENTRY_1.FVALIDDATE AS ENTRY_1_VALIDDATE,
+		ENTRY_1.FINVALIDDATE AS ENTRY_1_INVALIDDATE,
+		ENTRY_1.FDISPLAYORDER AS
+		ENTRY_1_DISPLAYORDER,
+		ENTRY_1.FDEPTLEVEL AS ENTRY_1_DEPTLEVEL,
+		ENTRY_1.FDEPTDESC AS ENTRY_1_DEPTDESC,
+		ENTRY_1.FDEPTSEQ AS
+		ENTRY_1_DEPTSEQ,
+		ENTRY_1.FCREATEUSERID AS ENTRY_1_CREATEUSER,
+		ENTRY_1.FCREATETIME AS ENTRY_1_CREATEDATE,
+		ENTRY_1.FLASTMODIFYUSERID AS
+		ENTRY_1_MODIFYUSER,
+		ENTRY_1.FLASTUPDATETIME AS ENTRY_1_MODIFYDATE,
+		ENTRY_1.FSTANDARDCODE AS ENTRY_1_FSTANDARDCODE,
+		MASTER.FZIPCODE AS
+		MASTER_ZIPCODE,
+		MASTER.FADDRESS AS MASTER_ADDRESS,
+		MASTER.FSTATUS AS
+		MASTER_STATUS,
+		MASTER.FVALIDDATE AS MASTER_VALIDDATE,
+		MASTER.FINVALIDDATE AS MASTER_INVALIDDATE,
+		MASTER.FDISPLAYORDER AS
+		MASTER_DISPLAYORDER,
+		MASTER.FDEPTLEVEL AS MASTER_DEPTLEVEL,
+		MASTER.FDEPTDESC AS MASTER_DEPTDESC,
+		MASTER.FDEPTSEQ AS MASTER_DEPTSEQ,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS
+		MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FSTANDARDCODE AS MASTER_FSTANDARDCODE,
+		MASTER.FLASTUPDATETIME AS
+		MASTER_MODIFYDATE
+		
+	</sql>
+	
+	<sql id="select_param_byName">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FDEPTCODE AS
+		MASTER_DEPTCODE,
+		MASTER.FDEPTNAME AS MASTER_DEPTNAME,
+		MASTER.FCOMPANYNAME AS MASTER_COMPANYNAME,
+		MASTER.FPRINCIPAL AS
+		MASTER_PRINCIPAL,
+		MASTER.FPHONE AS MASTER_PHONE,
+		MASTER.FFAX AS
+		MASTER_FAX,
+		MASTER.FLEAF AS MASTER_LEAF,
+		ENTRY_1.FID AS ENTRY_1_ID,
+		ENTRY_1.FDEPTCODE AS ENTRY_1_DEPTCODE,
+		ENTRY_1.FDEPTNAME AS
+		ENTRY_1_DEPTNAME,
+		ENTRY_1.FPRINCIPAL AS ENTRY_1_PRINCIPAL,
+		ENTRY_1.FPHONE AS ENTRY_1_PHONE,
+		ENTRY_1.FFAX AS ENTRY_1_FAX,
+		ENTRY_1.FLEAF AS ENTRY_1_LEAF,
+		ENTRY_1.FPARENTID AS ENTRY_1_PARENTID,
+		ENTRY_1.FCOMPANYNAME AS ENTRY_1_COMPANYNAME,
+		ENTRY_1.FZIPCODE AS
+		ENTRY_1_ZIPCODE,
+		ENTRY_1.FADDRESS AS ENTRY_1_ADDRESS,
+		ENTRY_1.FSTATUS AS
+		ENTRY_1_STATUS,
+		ENTRY_1.FVALIDDATE AS ENTRY_1_VALIDDATE,
+		ENTRY_1.FINVALIDDATE AS ENTRY_1_INVALIDDATE,
+		ENTRY_1.FDISPLAYORDER AS
+		ENTRY_1_DISPLAYORDER,
+		ENTRY_1.FDEPTLEVEL AS ENTRY_1_DEPTLEVEL,
+		ENTRY_1.FDEPTDESC AS ENTRY_1_DEPTDESC,
+		ENTRY_1.FDEPTSEQ AS
+		ENTRY_1_DEPTSEQ,
+		ENTRY_1.FCREATEUSERID AS ENTRY_1_CREATEUSER,
+		ENTRY_1.FCREATETIME AS ENTRY_1_CREATEDATE,
+		ENTRY_1.FLASTMODIFYUSERID AS
+		ENTRY_1_MODIFYUSER,
+		ENTRY_1.FLASTUPDATETIME AS ENTRY_1_MODIFYDATE,
+		ENTRY_1.FSTANDARDCODE AS ENTRY_1_FSTANDARDCODE,
+		MASTER.FZIPCODE AS
+		MASTER_ZIPCODE,
+		MASTER.FADDRESS AS MASTER_ADDRESS,
+		MASTER.FSTATUS AS
+		MASTER_STATUS,
+		MASTER.FVALIDDATE AS MASTER_VALIDDATE,
+		MASTER.FINVALIDDATE AS MASTER_INVALIDDATE,
+		MASTER.FDISPLAYORDER AS
+		MASTER_DISPLAYORDER,
+		MASTER.FDEPTLEVEL AS MASTER_DEPTLEVEL,
+		MASTER.FDEPTDESC AS MASTER_DEPTDESC,
+		MASTER.FDEPTSEQ AS MASTER_DEPTSEQ,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS
+		MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FSTANDARDCODE AS MASTER_FSTANDARDCODE,
+		MASTER.FLASTUPDATETIME AS
+		MASTER_MODIFYDATE,
+		EMP.FEMPNAME AS PRINCIPALNAME
+		
+	</sql>
+
+	<!-- 通过ID获取该部门的所有数据 -->
+	<select id="getById" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FID=#{id,jdbcType=DECIMAL}
+		]]>
+	</select>
+
+	<!-- 通过名字模糊查询所有数据 -->
+	<select id="getByLikeDeptName" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTANDARDCODE IS NOT NULL
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+			ORDER BY MASTER.FDEPTNAME
+		]]>
+	</select>
+	<!-- 通过名字模糊查询所有数据 条数-->
+	<select id="getByLikeDeptNameCount" resultType="int" parameterType="string">
+		<![CDATA[
+			SELECT COUNT(*)
+		]]>
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTANDARDCODE IS NOT NULL
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+			ORDER BY MASTER.FDEPTNAME
+		]]>
+	</select>
+	<!-- 通过名字模糊查询所有数据 -->
+	<select id="getByLikeDeptNameRow" resultMap="departmentResultMap"
+		parameterType="string">
+		
+		<![CDATA[
+		    SELECT * FROM (
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTANDARDCODE IS NOT NULL
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+				 ORDER BY MASTER.Fdeptname
+			)WHERE rownum<=#{rows}
+		]]>
+	</select>
+
+
+
+	<!-- 通过名字模糊查询父节点信息 -->
+	<select id="getByLikeDeptNameByDeptId" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTANDARDCODE IS NOT NULL
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+ 			START WITH MASTER.FID = #{deptId}
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+		]]>
+	</select>
+	<!-- 通过名字模糊查询父节点信息-->
+	<select id="getByLikeDeptNameByDeptCode" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTANDARDCODE IS NOT NULL
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+ 			START WITH MASTER.FDEPTCODE = #{deptCode}
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+		]]>
+	</select>
+	<!-- 通过名字模糊查询父节点信息-->
+	<select id="getByLikeDeptNameByStandardCode" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTANDARDCODE IS NOT NULL
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+ 			START WITH MASTER.Fstandardcode = #{deptCode}
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+		]]>
+	</select>
+
+	<!-- 通过ID获取该部门的所有子部门 -->
+	<select id="getAllChildById" parameterType="string" resultMap="departmentResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+	  	<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FPARENTID=#{id}
+			AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+
+	<!-- 获取当前要展开节点的子节点 -->
+	<select id="getDirectChildDepartments" resultMap="departmentResultMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+		]]>
+		<where>
+			<if test="parentCode!=null and parentCode.id!=null">
+				AND MASTER.FPARENTID = #{parentCode.id}
+				AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+			</if>
+		</where>
+	</select>
+
+	<!-- 通过部门名称模糊查询，获取部门序列 -->
+	<select id="getAllSeq" parameterType="string" resultType="string">
+		<![CDATA[
+		  SELECT MASTER.FDEPTSEQ
+	      FROM T_ORG_DEPARTMENT MASTER
+	      WHERE MASTER.FDEPTNAME LIKE #{deptName}
+		]]>
+
+		<!-- 通过部门名称模糊查询，获取部门编号 -->
+	</select>
+	<select id="getAllDeptByName" parameterType="string" resultType="string">
+		<![CDATA[
+			SELECT FDEPTCODE
+           	FROM T_ORG_DEPARTMENT
+      		WHERE FDEPTNAME LIKE #{deptName}
+		]]>
+	</select>
+
+	<!-- 部门表返回的结果集，单表查询 -->
+	<resultMap id="departmentSimpleResultMap"
+		type="com.deppon.crm.module.organization.shared.domain.Department">
+		<id property="id" column="MASTER_ID" />
+		<result property="deptCode" column="MASTER_DEPTCODE" />
+		<result property="deptName" column="MASTER_DEPTNAME" />
+		<result property="phone" column="MASTER_PHONE" />
+		<result property="fax" column="MASTER_FAX" />
+		<result property="zipCode" column="MASTER_ZIPCODE" />
+		<result property="address" column="MASTER_ADDRESS" />
+		<result property="status" column="MASTER_STATUS" />
+		<result property="companyName" column="MASTER_COMPANYNAME" />
+		<result property="validDate" column="MASTER_VALIDDATE" />
+		<result property="invalidDate" column="MASTER_INVALIDDATE" />
+		<result property="displayOrder" column="MASTER_DISPLAYORDER" />
+		<result property="deptLevel" column="MASTER_DEPTLEVEL" />
+		<result property="deptDesc" column="MASTER_DEPTDESC" />
+		<result property="deptSeq" column="MASTER_DEPTSEQ" />
+		<result property="principal" column="MASTER_PRINCIPAL" />
+		<result property="standardCode" column="MASTER_FSTANDARDCODE" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<association property="parentCode" column="MASTER_PARENTID"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="MASTER_PARENTID" />
+		</association>
+	</resultMap>
+
+	<!-- 单表查询字段 -->
+	<sql id="select_simple_param">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FDEPTCODE AS
+		MASTER_DEPTCODE,
+		MASTER.FDEPTNAME AS MASTER_DEPTNAME,
+		MASTER.FCOMPANYNAME AS MASTER_COMPANYNAME,
+		MASTER.FPRINCIPAL AS
+		MASTER_PRINCIPAL,
+		MASTER.FPHONE AS MASTER_PHONE,
+		MASTER.FFAX AS
+		MASTER_FAX,
+		MASTER.FPARENTID AS MASTER_PARENTID,
+		MASTER.FZIPCODE AS
+		MASTER_ZIPCODE,
+		MASTER.FADDRESS AS MASTER_ADDRESS,
+		MASTER.FSTATUS AS
+		MASTER_STATUS,
+		MASTER.FVALIDDATE AS MASTER_VALIDDATE,
+		MASTER.FINVALIDDATE AS MASTER_INVALIDDATE,
+		MASTER.FDISPLAYORDER AS
+		MASTER_DISPLAYORDER,
+		MASTER.FDEPTLEVEL AS MASTER_DEPTLEVEL,
+		MASTER.FDEPTDESC AS MASTER_DEPTDESC,
+		MASTER.FDEPTSEQ AS MASTER_DEPTSEQ,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS
+		MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE,
+		MASTER.FSTANDARDCODE AS MASTER_FSTANDARDCODE 
+	</sql>
+
+	<!-- 得到非当前用户分配的部门ID集合 -->
+	<select id="getDeptIdsNoCurrentUserAuthDept" resultType="string"
+		parameterType="map">
+		<![CDATA[
+			SELECT FDEPTID
+    		FROM T_AUTH_USERDEPARTMENT MASTER
+   			WHERE MASTER.FUSERID = #{currentUserId}
+     		AND MASTER.FDEPTID NOT IN (
+     			SELECT FDEPTID 
+     			FROM T_AUTH_USERAUTHDEPARTMENT
+                WHERE FUSERID = #{userId})
+		]]>
+	</select>
+		<!-- 得到非当前用户分配的部门ID集合 -->
+	<select id="getAllDepartmentsByIds" resultMap="departmentSimpleResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+    		FROM T_ORG_DEPARTMENT MASTER
+   			WHERE MASTER.FID IN ${seqIn}
+		]]>
+	</select>
+
+
+	<!-- 得到可分配的部门对象集合 -->
+	<select id="getLeftDeptsByUserId" resultMap="departmentSimpleResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			RIGHT JOIN T_AUTH_USERAUTHDEPARTMENT ENTITY_0
+			ON MASTER.FID = ENTITY_0.FDEPTID
+ 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+ 		]]>
+ 		<if test="deptName!=null and deptName!=''">
+			AND MASTER.FDEPTNAME LIKE #{deptName}
+		</if>
+		<![CDATA[
+ 			AND MASTER.FID NOT IN (
+ 			SELECT FDEPTID 
+ 			FROM T_AUTH_USERDEPARTMENT
+ 			WHERE FUSERID=#{userId})
+		]]>
+	</select>
+	<!-- 得到可分配的部门对象集合 -->
+	<select id="getLeftDeptsByEmpCode" resultMap="departmentSimpleResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			RIGHT JOIN T_AUTH_USERAUTHDEPARTMENT ENTITY_0
+			ON MASTER.FID = ENTITY_0.FDEPTID
+ 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+ 		]]>
+ 		<if test="deptName!=null and deptName!=''">
+			AND MASTER.FDEPTNAME LIKE #{deptName}
+		</if>
+		<![CDATA[
+ 			AND MASTER.FID NOT IN (
+ 			SELECT FDEPTID 
+ 			FROM T_AUTH_USERDEPARTMENT
+ 			WHERE FUSERID IN (SELECT FID FROM T_AUTH_USER WHERE FLOGINNAME = #{empCode}))
+		]]>
+	</select>
+
+	<!-- 得到已分配的部门对象集合 -->
+	<select id="getAuthedDeptsByUserId" resultMap="departmentSimpleResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			RIGHT JOIN T_AUTH_USERAUTHDEPARTMENT ENTITY_0
+			ON MASTER.FID = ENTITY_0.FDEPTID
+ 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+ 			AND MASTER.FID IN (
+ 			SELECT FDEPTID 
+ 			FROM T_AUTH_USERDEPARTMENT
+ 			WHERE FUSERID=#{userId})
+		]]>
+	</select>
+
+	<!-- 得到登录用户所能分配的所有部门对象集合 -->
+	<select id="getAllAuthDepts" resultMap="departmentSimpleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+ 			RIGHT JOIN T_AUTH_USERAUTHDEPARTMENT ENTITY_0
+			ON MASTER.FID = ENTITY_0.FDEPTID
+			WHERE ENTITY_0.FUSERID = #{currentUserId}
+		]]>
+		<if test="deptName!=null and deptName!=''">
+			AND MASTER.FDEPTNAME LIKE #{deptName}
+		</if>
+	</select>
+	<!-- ..............................................备用方法.......................................... -->
+
+
+	<!-- 获取所有部门信息 -->
+	<select id="getAllDept" resultMap="departmentResultMap"
+		parameterType="org.apache.ibatis.session.RowBounds">
+		select * from (select t1.*,rownum rn from (
+		SELECT
+		<include refid="select_param" />
+		FROM T_ORG_DEPARTMENT MASTER
+		LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+		ON
+		MASTER.FPARENTID = ENTRY_1.FID
+		) t1)
+		<if test="null != limit and null !=offset and 0 !=limit ">
+			where <![CDATA[ rn <=  #{limit} * #{offset}+ #{limit} and rn>#{limit} * #{offset}
+		      ]]>
+		</if>
+	</select>
+
+	<!-- 获取部门树的根节点 -->
+	<select id="getRoot" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT 
+			WHERE FPARENTID IS NULL
+		]]>
+	</select>
+
+	<!-- 删除部门时用 ，只获取其ID -->
+	<select id="getAllChildIdById" parameterType="string"
+		resultType="string">
+		<![CDATA[
+			SELECT FID FROM T_ORG_DEPARTMENT
+			START WITH FID=#{id} 
+			CONNECT BY PRIOR FID = FPARENTID
+		]]>
+	</select>
+
+	<!-- 根据条件，查询部门的个数 -->
+	<select id="count" resultType="Long"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+			ON MASTER.FPRINCIPAL = ENTRY_0.FEMPCODE
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+			ON MASTER.FPARENTID = ENTRY_1.FID
+		]]>
+		<where>
+			<if test="id!=null">
+				MASTER.FID like #{id}
+			</if>
+			<if test="deptCode!=null and deptCode!=''">
+				AND MASTER.FDEPTCODE LIKE #{deptCode}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				AND MASTER.FDEPTNAME LIKE #{deptName}
+			</if>
+			<if test="principal!=null and principal!=''">
+				AND MASTER.FPRINCIPAL = #{principal}
+			</if>
+			<if test="phone!=null and phone!=''">
+				AND MASTER.FPHONE LIKE #{phone}
+			</if>
+			<if test="fax!=null and fax!=''">
+				AND MASTER.FFAX LIKE #{fax}
+			</if>
+			<if test="parentCode!=null and parentCode.id!=null">
+				AND MASTER.FPARENTID = #{parentCode.id}
+			</if>
+			<if test="companyName!=null and companyName!=''">
+				AND MASTER.FCOMPANYNAME = #{companyName}
+			</if>
+			<if test="zipCode!=null and zipCode!=''">
+				AND MASTER.FZIPCODE LIKE #{zipCode}
+			</if>
+			<if test="address!=null and address!=''">
+				AND MASTER.FADDRESS LIKE #{address}
+			</if>
+			<if test="status!=null">
+				AND MASTER.FSTATUS = #{status}
+			</if>
+			<if test="validDate!=null">
+				AND MASTER.FVALIDDATE = #{validDate}
+			</if>
+			<if test="invalidDate!=null">
+				AND MASTER.FINVALIDDATE = #{invalidDate}
+			</if>
+			<if test="displayOrder!=null">
+				AND MASTER.FDISPLAYORDER = #{displayOrder}
+			</if>
+			<if test="deptLevel!=null">
+				AND MASTER.FDEPTLEVEL = #{deptLevel}
+			</if>
+			<if test="deptDesc!=null and deptDesc!=''">
+				AND MASTER.FDEPTDESC LIKE #{deptDesc}
+			</if>
+			<if test="deptSeq!=null and deptSeq!=''">
+				AND MASTER.FDEPTSEQ LIKE #{deptSeq}
+			</if>
+		</where>
+	</select>
+
+	<!-- 根据条件，获取所有部门 -->
+	<select id="getAll" resultMap="departmentResultMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+		]]>
+		<where>
+			<if test="id!=null">
+				MASTER.FID like #{id}
+			</if>
+			<if test="deptCode!=null and deptCode!=''">
+				AND MASTER.FDEPTCODE LIKE #{deptCode}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				AND MASTER.FDEPTNAME LIKE #{deptName}
+			</if>
+			<if test="principal!=null and principal!=''">
+				AND MASTER.FPRINCIPAL = #{principal}
+			</if>
+			<if test="phone!=null and phone!=''">
+				AND MASTER.FPHONE LIKE #{phone}
+			</if>
+			<if test="fax!=null and fax!=''">
+				AND MASTER.FFAX LIKE #{fax}
+			</if>
+			<if test="parentCode!=null and parentCode.id!=null">
+				AND MASTER.FPARENTID= #{parentCode.id}
+			</if>
+			<if test="companyName!=null and companyName!=''">
+				AND MASTER.FCOMPANYNAME = #{companyName}
+			</if>
+			<if test="zipCode!=null and zipCode!=''">
+				AND MASTER.FZIPCODE LIKE #{zipCode}
+			</if>
+			<if test="address!=null and address!=''">
+				AND MASTER.FADDRESS LIKE #{address}
+			</if>
+			<if test="status!=null">
+				AND MASTER.FSTATUS = #{status}
+			</if>
+			<if test="validDate!=null">
+				AND MASTER.FVALIDDATE = #{validDate}
+			</if>
+			<if test="invalidDate!=null">
+				AND MASTER.FINVALIDDATE = #{invalidDate}
+			</if>
+			<if test="displayOrder!=null">
+				AND MASTER.FDISPLAYORDER = #{displayOrder}
+			</if>
+			<if test="deptLevel!=null">
+				AND MASTER.FDEPTLEVEL = #{deptLevel}
+			</if>
+			<if test="deptDesc!=null and deptDesc!=''">
+				AND MASTER.FDEPTDESC LIKE #{deptDesc}
+			</if>
+			<if test="deptSeq!=null and deptSeq!=''">
+				AND MASTER.FDEPTSEQ LIKE #{deptSeq}
+			</if>
+		</where>
+	</select>
+
+	<!-- 通过ID获取该部门的所有子部门 -->
+	<select id="getAllChildDeptByDeptId" resultMap="departmentSimpleResultMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			CONNECT BY PRIOR MASTER.FID = MASTER.FPARENTID
+			START WITH MASTER.FID = #{id}
+		]]>
+	</select>
+
+	<!-- 插入LEAF数据，叶子节点 -->
+	<!-- <update id="inSertLeaf"> UPDATE T_ORG_DEPARTMENT <set> FLEAF = 1 </set> 
+		WHERE FID = #{id} </update> -->
+
+	<!-- 插入LEAF数据，非叶子节点 -->
+	<!-- <update id="inSertNoLeaf"> UPDATE T_ORG_DEPARTMENT <set> FLEAF = 0 
+		</set> WHERE FID = #{id} </update> -->
+	<!-- 获得所有事业部 -->
+	<select id="getAllBizDept" parameterType="string"
+		resultType="com.deppon.crm.module.organization.shared.domain.BizDept">
+		SELECT
+		FID id,FDEPTNAME deptName,FDEPTCODE deptCode,fstandardCode standardCode
+		FROM
+		T_ORG_DEPARTMENT
+		WHERE FPARENTID = #{value}
+	</select>
+
+	<!-- 查询所有事业部 -->
+	<select id="getAllBizDeptList" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FPARENTID = #{parentId} 
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+		]]>
+	</select>
+
+	<!-- 查询对应的事业部 -->
+	<select id="getBizDeptByDeptId" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			WHERE MASTER.FSTATUS = 1 AND MASTER.FPARENTID = #{parentId} 
+				AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+ 			START WITH MASTER.FID = #{deptId}
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+		]]>
+	</select>
+
+
+	<!-- 通过名字模糊查询所有部门数据 -->
+	<select id="searchDeptByName" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param_byName" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+            LEFT JOIN T_ORG_EMPLOYEE EMP
+                ON MASTER.FPRINCIPAL = EMP.FEMPCODE
+            	WHERE MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		ORDER BY MASTER.FDEPTNAME
+		]]>
+	</select>
+	
+	
+	<!-- 通过名字、标杆编码查询所有部门数据 -->
+	<select id="queryDeptByNameAndStandardCode" resultMap="departmentResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+            	WHERE MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTATUS = 1 AND ENTRY_1.FSTANDARDCODE =#{standardCode}
+		]]>
+	</select>
+	
+	<select id="queryDeptByNameAndStandardCodeForEx" resultMap="departmentResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_2
+			ON ENTRY_1.FPARENTID = ENTRY_2.FID
+            	WHERE MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTATUS = 1 AND ENTRY_2.FSTANDARDCODE =#{standardCode}
+            ORDER BY MASTER.FDEPTNAME
+		]]>
+	</select>
+
+
+	<!-- 通过名字模糊查询所有部门数据的个数 -->
+	<select id="countDeptByName" resultType="Long" parameterType="string">
+		<![CDATA[
+	    SELECT COUNT(*)
+			FROM T_ORG_DEPARTMENT MASTER
+			WHERE MASTER.FDEPTNAME LIKE #{deptName} AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+
+	<!-- 通过部门标杆编码得到部门ID -->
+	<select id="getDeptIdByStandardCode" resultType="String"
+		parameterType="string">
+		<![CDATA[
+	    select t.FID 
+	    from t_org_department t
+        where t.FSTANDARDCODE = #{value}
+		]]>
+	</select>
+	
+	<!-- 查询部门信息-优惠券使用 -->
+	<sql id="select_dept_structure">
+      SELECT SALESORG.FDEPTNAME 	orgDeptName,
+           SALESORG.FSTANDARDCODE 	orgCode,
+           BIG.FDEPTNAME 			bigDeptName,
+           BIG.FSTANDARDCODE 		bigCode,
+           SMA.FDEPTNAME 			smaDeptName,
+           SMA.FSTANDARDCODE 		smaCode,
+           DEPT.FDEPTNAME 			salesDeptName，
+           DEPT.FSTANDARDCODE 		salesCode
+	    FROM T_ORG_DEPARTMENT 		SALESORG
+	      LEFT JOIN T_ORG_DEPARTMENT BIG ON SALESORG.FID = BIG.FPARENTID
+	      LEFT JOIN T_ORG_DEPARTMENT SMA ON BIG.FID = SMA.FPARENTID
+	      LEFT JOIN T_ORG_DEPARTMENT DEPT ON SMA.FID = DEPT.FPARENTID
+	</sql>
+	
+	<!-- 根据标杆编码，查询部门信息（事业部/大区/小区/营业部） -->
+	<select id="select_dept_structure_info" 
+			resultType="com.deppon.crm.module.organization.shared.domain.DeptInfo" 
+			parameterType="string">
+		<include refid="select_dept_structure"/>
+		<![CDATA[
+			WHERE  DEPT.FSTANDARDCODE = #{standardcode,jdbcType=VARCHAR}||''
+			AND DEPT.FSTATUS = 1
+		]]>
+	</select>
+
+	<!-- 模糊查询 部门集合总条数 -->
+	<select id="searchExecuteDepCount" parameterType="map" resultType="String">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_ORG_DEPARTMENT 
+		]]>
+		<![CDATA[	WHERE ( FID IN]]>
+		<foreach collection="deptIdsSet" separator="OR FID IN"
+				item="depts">
+			<foreach collection="depts" open="(" close=")" separator=","
+				item="deptId">
+			<![CDATA[	${deptId}  ]]>
+			</foreach>
+		</foreach>
+		<![CDATA[ 
+			) AND FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+		]]>
+	</select>
+	<!-- 模糊查询 部门集合列表 -->
+	<select id="searchExecuteDep" parameterType="map" resultMap="ExecuteDeptResultMap">
+		<![CDATA[
+			SELECT 	
+					FID,FDEPTCODE,FDEPTNAME,FPRINCIPAL,FPHONE,
+					FFAX,FCOMPANYNAME,FZIPCODE,FADDRESS,FSTATUS,FVALIDDATE,
+					FINVALIDDATE,FDISPLAYORDER,FDEPTLEVEL,FDEPTDESC,FDEPTSEQ,
+					FLEAF,FCREATEUSERID,FCREATETIME,FLASTMODIFYUSERID,FLASTUPDATETIME,
+					FSTANDARDCODE
+			FROM T_ORG_DEPARTMENT 
+		]]>
+		<![CDATA[	WHERE ( FID IN]]>
+		<foreach collection="deptIdsSet" separator="OR FID IN"
+				item="depts">
+			<foreach collection="depts" open="(" close=")" separator=","
+				item="deptId">
+			<![CDATA[	${deptId}  ]]>
+			</foreach>
+		</foreach>
+		<![CDATA[ 
+			) AND FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+		]]>
+	</select>
+	<!-- 通过名字模糊查询所有外场 -->
+	<select id="queryOutFieldListByName" resultMap="departmentResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			Inner JOIN t_crm_ladingstation lt ON MASTER.Fstandardcode = lt.fstandardcode 
+     		 LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+              ON MASTER.FPARENTID = ENTRY_1.FID
+		      WHERE lt.fstandardcode is not null 
+		      AND lt.fdeptname  LIKE #{deptName,jdbcType=VARCHAR}
+		       AND lt.fisoutfield = '1'
+		      AND MASTER.FSTANDARDCODE IS NOT NULL
+		      AND MASTER.FSTATUS = 1  
+		      AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+					ORDER BY MASTER.FDEPTNAME
+		]]>
+	</select>	
+	<!-- 通过名字模糊查询所有数据 条数-->
+	<select id="queryOutFieldListByCount" resultType="int" parameterType="string">
+		<![CDATA[
+			SELECT COUNT(*)
+		]]>
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			Inner JOIN t_crm_ladingstation lt ON MASTER.Fstandardcode = lt.fstandardcode 
+     		 LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+              ON MASTER.FPARENTID = ENTRY_1.FID
+		      WHERE lt.fstandardcode is not null 
+		      AND lt.fdeptname  LIKE #{deptName,jdbcType=VARCHAR}
+		       AND lt.fisoutfield = '1'
+		      AND MASTER.FSTANDARDCODE IS NOT NULL
+		      AND MASTER.FSTATUS = 1  
+		      AND EXISTS (SELECT 'X' FROM T_ORG_DEPARTMENT X WHERE X.FID = 104 START WITH X.FID = MASTER.FID CONNECT BY PRIOR X.FPARENTID = X.FID)
+					ORDER BY MASTER.FDEPTNAME
+		]]>
+	</select>
+	<!-- 通过部门ID查询上级部门信息 -->
+	<select id="queryDeptByParentDeptId" resultMap="ExecuteDeptResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 	
+					FID,FDEPTCODE,FDEPTNAME,FPRINCIPAL,FPHONE,
+					FFAX,FCOMPANYNAME,FZIPCODE,FADDRESS,FSTATUS,FVALIDDATE,
+					FINVALIDDATE,FDISPLAYORDER,FDEPTLEVEL,FDEPTDESC,FDEPTSEQ,
+					FLEAF,FCREATEUSERID,FCREATETIME,FLASTMODIFYUSERID,FLASTUPDATETIME,
+					FSTANDARDCODE
+			FROM T_ORG_DEPARTMENT where FID = #{deptId}
+		]]>
+	</select>
+	<!-- 通过ID获取该部门的所有上级部门 -->
+	<select id="getAllParentDeptByDeptId" resultMap="departmentSimpleResultMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+			START WITH MASTER.FID = #{id}
+		]]>
+	</select>
+	<select id="getDeptByStandCode" resultMap="departmentSimpleResultMap">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			WHERE MASTER.FSTANDARDCODE = #{StandardCode,jdbcType=VARCHAR}
+			AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	<!-- 部门同步-->
+	<select id="syncDep" parameterType="map">
+	 {call syncDept.syncDeptment(#{deptStandCode,mode=IN,jdbcType=VARCHAR},#{changeType,mode=IN,jdbcType=VARCHAR},#{oldParentStandCode,mode=IN,jdbcType=VARCHAR})}  
+	</select>
+		<select id="getAllParentDeptBystandCodeAndLastWord" resultMap="departmentSimpleResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			where MASTER.Fdeptname like #{lastWord}
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+			START WITH MASTER.fstandardcode = #{standCode}
+		]]>
+	</select>
+	
+	<!-- 模糊查找部门列表 -->
+	<select id="getDepartmentListByLikeDeptName" resultMap="departmentSimpleResultMap" parameterType="string">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			WHERE MASTER.FDEPTNAME like #{deptName} 
+			AND MASTER.FSTANDARDCODE IS NOT NULL 
+			AND MASTER.FSTATUS = 1
+		]]>
+	</select>
+	  <!-- 获取最新的修改时间 -->
+	<select id="getLastModifyTime" resultType="date">
+		<![CDATA[
+			SELECT MAX(FLASTUPDATETIME) FROM T_ORG_DEPARTMENT
+		]]>
+	</select>
+	  <!-- 获取最新的修改时间 -->
+	<select id="getAllDepartments" resultMap="departmentResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+            	ON MASTER.FPARENTID = ENTRY_1.FID
+            	AND MASTER.FSTATUS = 1
+		]]>
+	</select>
+	
+</mapper>

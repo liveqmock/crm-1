@@ -1,0 +1,12 @@
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid,VARCHAR
+contact,fcontactid,VARCHAR
+currentUsableScore,fcurrentUsableScore,NUMERIC
+currentToUsesScore,fcurrentToUsesScore,NUMERIC
+currentTotalScore,fcurrentTotalScore,NUMERIC
+totalScore,ftotalScore,NUMERIC
+totalToUsesScore,ftotalToUsesScore,NUMERIC
+lastDateScore,flastDateScore,DATE

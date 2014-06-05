@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>客户开发计划java-doc</title>
+</head>
+<body>
+<a  name="biz">
+<fieldset>
+<legend>客户开发计划相关业务</legend>
+<img alt="" src="doc-files/客户关联业务模型.png">
+</fieldset>
+</a>
+<a  name="flowchart">
+<fieldset>
+<legend>客户开发计划业务流程图</legend>
+<img alt="" src="doc-files/customer.png">
+</fieldset>
+</a>
+<a  name="customerMode">
+<fieldset>
+<legend>客户开发计划概念模型</legend>
+<img alt="" src="doc-files/CustomerDevelopClassView.jpg">
+<img alt="" src="doc-files/DevelopScheduleModule.jpg">
+</fieldset>
+</a>
+<a  name="customerClass">
+<fieldset>
+<legend>客户开发计划业务模型</legend>
+<img alt="" src="doc-files/CustomerDevelop.jpg">
+<img alt="" src="doc-files/DevelopSchedule.jpg">
+</fieldset>
+</a>
+<a  name="DevelopPlanMgr">
+<fieldset>
+<legend>开发计划管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">开发计划管理--开发计划查询</td><td><a href="#searchDevelopPlan">开发计划管理序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月，时间范围应涵盖计划的开始时间到结束时间</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看开发计划详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的开发计划信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+<tr><td>RULE-A8</td><td>查询结果包括所有状态的计划</td><td></td></tr>
+
+<tr><td colspan="2" align="center">开发计划管理--开发计划新增</td><td><a href="#saveDevelopPlan">开发计划保存序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月，时间范围应涵盖计划的开始时间到结束时间</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看潜客、散客详情的360视图</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的潜客、散客信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果最小单位为客户联系人，分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项在当前页进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>对于多次查询数据，累加列表显示的数据</td><td></td></tr>
+<tr><td>RULE-A9</td><td>计划主题同部门之下不可重复</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A10</td><td>必须选择客户信息，才能制定开发计划</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A11</td><td>关联计划名称只关联执行中计划（即未到达计划结束时间），计划结束状态应为已完成或已过期，若计划中有已过期日程，<br>
+	则计划截止状态为已过期，计划状态不在用户界面显示，作为系统判断条件存在。</td><td></td></tr>
+<tr><td>RULE-A12</td><td>制定开发计划，系统自动分配到开发活动中的执行人员，在代办事宜提示</td><td></td></tr>
+<tr><td>RULE-A13</td><td>新增计划时自动增加相关客户的日程，时间留空，状态为“已指派”，当天的计划状态为“执行中”。</td><td></td></tr>
+<tr><td>RULE-A14</td><td>不可创建当前日期之前的计划</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+
+
+<tr><td colspan="2" align="center">开发计划管理--开发计划修改</td><td><a href="#updateDevelopPlan">开发计划修改序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>所属日程状态都是“已指派”才能修改计划，否则修改按钮为灰不可修改</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A2</td><td>必须选择客户信息，才能制定开发计划</td><td></td></tr>
+<tr><td>RULE-A3</td><td>制定开发计划，系统自动分配到开发活动中的执行人员，在代办事宜提示</td><td></td></tr>
+
+
+<tr><td colspan="2" align="center">开发计划管理--开发计划删除</td><td><a href="#deleteDevelopPlan">开发计划删除序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>所属日程状态都是“已指派”才能删除计划，否则删除按钮为灰不可修改</td><td><a href="#PlanValidator">设计</a></td></tr>
+<tr><td>RULE-A1</td><td>删除数据不再显示在查询列表</td><td></td></tr>
+
+</table>
+</fieldset>
+</a>
+<a  name="DevelopScheduleMgr">
+<fieldset>
+<legend>开发日程管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">开发日程管理--开发日程管理</td><td><a href="#searchDevelopSchedule">searchDevelopScheduleManager序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看开发计划详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的开发计划及日程信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+<tr><td>RULE-A8</td><td>查询条件中不显示“已完成”状态的计划，查询结果无此限制</td><td></td></tr>
+<tr><td>RULE-A9</td><td>查询条件中计划名称列表框中，空则表示所有计划，“无计划”则代表无计划的日程。</td><td></td></tr>
+
+<tr><td colspan="2" align="center">开发日程管理--开发日程新增</td><td><a href="#createDevelopSchedule">createDevelopScheduleManager序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看潜客、散客详情的360视图</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的潜客、散客信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果最小单位为客户联系人，分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项在当前页进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>对于多次查询数据，累加列表显示的数据</td><td></td></tr>
+<tr><td>RULE-A8</td><td>如开发日程对应某计划，则执行人员设定的日程时间必须在先前制定开发计划时设置的开发时限内。如未对应某计划，则无此限制</td><td></td></tr>
+<tr><td>RULE-A9</td><td>制定日程，在代办事宜提示</td><td></td></tr>
+<tr><td>RULE-A10</td><td>必须选择客户信息，才能制定开发日程</td><td></td></tr>
+<tr><td>RULE-A11</td><td>制定日程后，日程状态更新为“已制定”</td><td></td></tr>
+
+<tr><td colspan="2" align="center">开发日程管理--开发日程修改</td><td><a href="#updateDevelopSchedule">updateDevelopScheduleManager序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>已制定回访录入的日程不允许修改，修改按钮为灰</td><td></td></tr>
+<tr><td>RULE-A2</td><td>必须选择客户信息，才能制定开发日程</td><td></td></tr>
+<tr><td>RULE-A3</td><td>制定开发日程，系统自动分配到开发活动中的执行人员，在代办事宜提示</td><td></td></tr>
+<tr><td>RULE-A4</td><td>如开发日程对应某计划，则执行人员设定的日程时间必须在先前制定开发计划时设置的开发时限内。如未对应某计划，则无此限制</td><td></td></tr>
+
+<tr><td colspan="2" align="center">开发日程管理--开发日程删除</td><td><a href="#deleteDevelopSchedule">deleteDevelopScheduleManager序列图设计</a>()</td></tr>
+<tr><td>RULE-A1</td><td>删除数据不再显示在查询列表</td><td></td></tr>
+<tr><td>RULE-A2</td><td>无法删除回访信息已录入的日程</td><td></td></tr>
+<tr><td>RULE-A3</td><td>
+1.有关联计划的日程：<br>
+在数据库中清空该记录的日程信息，并重置状态为“已指派”。<br>
+2.无关联计划的日程：<br>
+在数据库中删除该记录。<br>
+</td><td></td></tr>
+</table>
+</fieldset>
+</a>
+<a  name="ReturnVisitMgr">
+<fieldset>
+<legend>回访录入管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">回访录入管理--回访记录管理</td><td><a href="#searchReturnVisit">searchReturnVisit序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看回访录入详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的回访录入信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+<tr><td>RULE-A8</td><td>查询条件中开发主题初始化为所有状态的主题</td><td></td></tr>
+
+<tr><td colspan="2" align="center">回访录入管理--回访录入新增</td><td><a href="#saveReturnVisit">saveReturnVisit序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>在选择反馈责任人，保存后，在代办事宜，系统自动提示责任人，责任人点提示，进入回访录入界面，录入处理结果，可再次保存。</td><td></td></tr>
+<tr><td>RULE-A2</td><td>始发城市默认为录入人员所在城市</td><td></td></tr>
+<tr><td>RULE-A3</td><td>跟踪时间应大于小于今天</td><td></td></tr>
+<tr><td>RULE-A4</td><td>查看回访记录按钮点击后转到回访查询页面，并带入当前客户联系人姓名，不做查询动作</td><td></td></tr>
+</table>
+</fieldset>
+</a>
+<a  name="FivekmmapMgr">
+<fieldset>
+<legend>五公里地图</legend>
+<table border="1">
+<tr><td colspan="2" align="center">五公里地图</td><td><a href="#5kMap">五公里地图序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看回访录入详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的回访录入信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+<tr><td>RULE-A8</td><td>地图初始状态为空，勾选查询列表中客户，才会在地图中显示</td><td></td></tr>
+<tr><td>RULE-A9</td><td>不同等级的客户对应不同颜色的旗帜标注，潜客对应黄色旗帜，散客对应绿色旗帜，会员对应红色旗帜</td><td></td></tr>
+<tr><td>RULE-A10</td><td>客户信息必需有客户详细地址，才能标注客户</td><td></td></tr>
+<tr><td>RULE-A11</td><td>选中客户记录后，点击“定位标注”，根据客户地址搜索客户位置。<br>
+人工筛选最可能的标注信息后，点击“保存标注”保存该标注信息。</td><td></td></tr>
+
+<tr><td>RULE-A12</td><td>点击“制定计划”，跳转至制定计划页面，并将客户列表中已勾选的客户信息反显到计划页面。<br>
+（潜散客跳转至开发计划，会员跳转至维护计划）</td><td></td></tr>
+
+</table>
+</fieldset>
+</a>
+<a  name="monitorProcessMgr">
+<fieldset>
+<legend>监控开发过程管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">监控开发过程</td><td><a href="#monitorPlan">监控开发过程序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看回访录入详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的回访录入信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+                                                      
+</table>
+</fieldset>
+</a>
+<a  name="CustomerDevelopMaintainTimer">
+<fieldset>
+<legend>状态定时器</legend>
+<table border="1">
+<tr><td colspan="2" align="center">状态定时器</td><td><a href="#CustomerDevelopMaintainTimer">状态定时器序列图设计</a></td></tr>
+</table>
+</fieldset>
+</a>
+<div id="searchDevelopPlan">
+<fieldset>
+<legend>开发计划管理序列图设计</legend>
+<img alt="" src="doc-files/DevelopPlanSearch.jpg">
+</fieldset>
+</div>
+<div id="saveDevelopPlan">
+<fieldset>
+<legend>开发计划保存序列图设计</legend>
+<img alt="" src="doc-files/DevelopPlanCreate.jpg">
+</fieldset>
+</div>
+<div id="updateDevelopPlan">
+<fieldset>
+<legend>开发计划修改序列图设计</legend>
+<img alt="" src="doc-files/DevelopPlanUpdate.jpg">
+</fieldset>
+</div>
+<div id="deleteDevelopPlan">
+<fieldset>
+<legend>开发计划删除序列图设计</legend>
+<img alt="" src="doc-files/DevelopPlanDelete.jpg">
+</fieldset>
+</div>
+<div id="searchDevelopSchedule">
+<a name="">
+<fieldset>
+<legend>开发日程查询时序图</legend>
+<img alt="" src="doc-files/开发日程查询时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="createDevelopSchedule">
+<a name="">
+<fieldset>
+<legend>开发日程新增时序图</legend>
+<img alt="" src="doc-files/开发日程新增时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="updateDevelopSchedule">
+<a name="">
+<fieldset>
+<legend>开发日程修改时序图</legend>
+<img alt="" src="doc-files/开发日程修改时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="deleteDevelopSchedule">
+<a name="">
+<fieldset>
+<legend>开发日程删除时序图</legend>
+<img alt="" src="doc-files/开发日程删除时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="searchReturnVisit">
+<a name="">
+<fieldset>
+<legend>回访录入管理时序图</legend>
+<img alt="" src="doc-files/ReturnVisitSearch.jpg">
+</fieldset>
+</a>
+</div>
+<div id="saveReturnVisit">
+<a name="">
+<fieldset>
+<legend>回访录入时序图</legend>
+<img alt="" src="doc-files/ReturnVisitCreate.jpg">
+</fieldset>
+</a>
+</div>
+<div id="5kMap">
+<a name="">
+<fieldset>
+<legend>五公里地图时序图</legend>
+<img alt="" src="doc-files/5kMap.jpg">
+</fieldset>
+</a>
+</div>
+<div id="monitorPlan">
+<a name="">
+<fieldset>
+<legend>监控计划时序图</legend>
+<img alt="" src="doc-files/monitorPlan.jpg">
+</fieldset>
+</a>
+</div>
+<div id="CustomerDevelopMaintainTimer">
+<a name="">
+<fieldset>
+<legend>状态定时器序列图设计</legend>
+<img alt="" src="doc-files/CustomerDevelopMaintainTimer.jpg">
+</fieldset>
+</a>
+</div>
+<div id="PlanValidator">
+<a name="">
+<fieldset>
+<legend>客户开发验证序列图设计</legend>
+<img alt="" src="doc-files/PlanValidator.jpg">
+</fieldset>
+</a>
+</div>
+<div id="DAO">
+<fieldset>
+<legend>DAO说明</legend>
+<table border="1">
+<tr><td>NO</td><td>dao方法</td><td>dao调用sqlID</td><td>功能</td></tr>
+</table>
+</fieldset>
+</div>
+<div id="domain">
+<fieldset>
+<legend>domain说明</legend>
+<table>
+<tr>
+</table>
+</fieldset>
+</div>
+</body>
+</html>

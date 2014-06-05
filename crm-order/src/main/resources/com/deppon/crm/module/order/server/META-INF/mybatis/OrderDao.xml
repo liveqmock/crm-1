@@ -1,0 +1,1031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.order.shared.domain.Order">
+
+	<!-- 根据单号查询订单详情 (接口用) -->
+	<select id="queryOrderByNumber" resultMap="OrderRusultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="interface_orderTableFields"/>
+		<![CDATA[
+		    FROM 
+				T_ORD_ORDER RD 
+			LEFT JOIN 
+				T_ORG_DEPARTMENT DP
+			ON 
+				DP.FID = RD.FDEPARTUREID
+			LEFT JOIN
+				T_ORG_DEPARTMENT TD ON RD.FRECEIVINGTOPOINTID=TD.FID
+			LEFT JOIN 
+				T_ORG_DEPARTMENT DD
+			ON 
+				DD.FID = RD.FACCEPTDEPTID
+			WHERE 
+				RD.FCHANNELNUMBER = #{orderNumber}
+			 OR 
+			 	RD.FORDERNUMBER = #{orderNumber}
+		]]>
+	</select>
+	<!-- 根据淘宝商城订单ID更新相关订单信息 (接口用)-->
+	<update id="updateOrderByOrderPerson" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		UPDATE T_ORD_ORDER SET
+		<if test="contactName != null and contactName != ''">
+			FCONTACTNAME=#{contactName,jdbcType=VARCHAR},
+		</if>
+		<if test="contactPhone != null and contactPhone != ''">
+			FCONTACTPHONE=#{contactPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="contactMobile != null and contactMobile != ''">
+			FCONTACTMOBILE=#{contactMobile,jdbcType=VARCHAR},
+		</if>
+		<if test="contactProvince != null and contactProvince != ''">
+			FCONTACTPROVINCE=#{contactProvince,jdbcType=VARCHAR},
+		</if>
+		<if test="contactCity != null and contactCity != ''">
+			FCONTACTCITY=#{contactCity,jdbcType=VARCHAR},
+		</if>
+		<if test="contactArea != null and contactArea != ''">
+			FCONTACTAREA=#{contactArea,jdbcType=VARCHAR},
+		</if>
+		<if test="contactAddress != null and contactAddress != ''">
+			FCONTACTADDRESS=#{contactAddress,jdbcType=VARCHAR},
+		</if>
+		<if test="startStation != null">
+			FDEPARTUREID=#{startStation,jdbcType=VARCHAR},
+		</if>
+		<if test="shipperNumber != null and shipperNumber != ''">
+			FSHIPPERNUMBER=#{shipperNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="channelCustId != null and channelCustId != ''">
+			FCHANNELCUSTID=#{channelCustId,jdbcType=VARCHAR}
+		</if>
+		WHERE FORDERPERSON = #{orderPerson}
+	</update>
+
+	<!-- 根据ERPID查询订单信息 -->
+	<select id="getOrderByErpId" resultMap="OrderRusultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		WHERE
+		RD.FERPID = #{erpID}
+	</select>
+
+	<!-- 根据渠道单号查询订单信息 -->
+	<select id="queryOrderByChannelNumber" resultMap="OrderRusultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		WHERE
+		RD.FCHANNELNUMBER = #{channelNumber} AND ROWNUM =1
+	</select>
+
+	<!-- 根据订单条件查询订单信息  (接口用)-->
+	<select id="queryOrderByCondition" resultMap="OrderRusultMap">
+		<![CDATA[
+			SELECT * FROM (SELECT ALLROW.*, row_number() over(order by Fcreatetime desc) ROW_NUM FROM (SELECT 
+		]]>
+		<include refid="interface_orderTableFields" />
+		<![CDATA[
+			FROM 
+				T_ORD_ORDER RD  
+			LEFT JOIN 
+			    T_ORG_DEPARTMENT DP
+			ON 
+				DP.FID = RD.FDEPARTUREID
+			LEFT JOIN
+				T_ORG_DEPARTMENT TD ON RD.FRECEIVINGTOPOINTID=TD.FID
+			LEFT JOIN 
+				T_ORG_DEPARTMENT DD
+			ON 
+				DD.FID = RD.FACCEPTDEPTID
+			WHERE 1=1 
+		]]>
+		<!-- 官网有规则的查询条件 -->
+		<choose>
+			<when test="onlineName != null and onlineName != ''">
+				<![CDATA[
+					AND RD.FONLINENAME = #{onlineName}
+				]]>
+				<if test="orderStatus == null or orderStatus == ''">
+					AND RD.FORDERSTATUS in
+					('IN_TRANSIT','GOT','SIGNSUCCESS','SIGNFAIL')
+				</if>
+			</when>
+			<when test="customerCode != null and customerCode != ''">
+				<![CDATA[ AND RD.FCHANNELCUSTID = #{customerCode}]]>
+			</when>
+		</choose>
+		<if test="orderStatus != null and orderStatus != ''">
+			<![CDATA[ AND RD.FORDERSTATUS in ]]>
+			<foreach collection="orderStatus" open="(" close=")" separator="," item="status">
+				#{status}
+			</foreach>
+		</if>
+		<if test="acceptStatus != null and acceptStatus != ''">
+			<![CDATA[ AND RD.FORDERSTATUS = #{acceptStatus}]]>
+		</if>
+		<!--			
+		    * 修改人：张斌
+			*修改时间：2013-7-30 17：00
+			*原有内容：无（新增）
+			*修改原因：接口调用增加查询条件
+		-->
+		<!-- begin -->
+		<if test="transportMode != null and transportMode != ''">
+			<![CDATA[ AND RD.FTRANSPORTMODE = #{transportMode}]]>
+		</if>
+		<!-- end -->
+		<if test="deptCode != null and deptCode != ''">
+			<![CDATA[ AND DD.FSTANDARDCODE = #{deptCode}]]>
+		</if>
+		<if test="shipperCust != null and shipperCust != ''">
+			<![CDATA[ AND RD.FSHIPPERNAME = #{shipperCust}]]>
+		</if>
+		<if test="shipperLinkman != null and shipperLinkman != ''">
+			<![CDATA[ AND RD.FCONTACTNAME = #{shipperLinkman}]]>
+		</if>
+		<if test="shipperMobile != null and shipperMobile != ''">
+			<![CDATA[ AND RD.FCONTACTMOBILE = #{shipperMobile}]]>
+		</if>
+		<if test="shipperPhone != null and shipperPhone != ''">
+			<![CDATA[ AND RD.FCONTACTPHONE = #{shipperPhone}]]>
+		</if>
+		
+		<if test="paymentType != null and paymentType != ''">
+			<![CDATA[ AND RD.FPAYMENTTYPE = #{paymentType}]]>
+		</if>
+		<if test="orderNumber != null and orderNumber != ''">
+			<![CDATA[ AND (RD.FORDERNUMBER = #{orderNumber} 
+			          OR RD.FCHANNELNUMBER = #{orderNumber}) ]]>
+		</if>
+		<if test="waybillNumber != null and waybillNumber != ''">
+			<![CDATA[ AND RD.FWAYBILLNUMBER = #{waybillNumber}]]>
+		</if>
+		<if test="receiveContact != null and receiveContact != ''">
+			<![CDATA[ AND RD.FRECEIVENAME LIKE #{receiveContact}||'%']]>
+		</if>
+		<if test="goodsName != null and goodsName != ''">
+			<![CDATA[ AND RD.FGOODSNAME LIKE '%'||#{goodsName}||'%' ]]>
+		</if>
+		<if test="startDate != null ">
+			<![CDATA[ AND RD.FCREATETIME > #{startDate}]]>
+		</if>
+		<if test="endDate != null ">
+			<![CDATA[ AND RD.FCREATETIME < #{endDate} ]]>
+		</if>
+		<if test="orderType != null and orderType != ''">
+			<![CDATA[ AND RD.FRESOURCE = #{orderType}]]>
+		</if>
+		<if test="aliMemberType != null and aliMemberType != ''">
+			<![CDATA[ AND RD.FMEMBERTYPE = #{aliMemberType}]]>
+		</if>
+		<![CDATA[
+			ORDER BY 
+				RD.FCREATETIME DESC ) ALLROW) 
+			WHERE 
+				ROW_NUM >= #{startLine} AND ROW_NUM <= #{endLine} ]]>
+	</select>
+
+	<!-- 根据订单条件查询订单记录数 (接口用) -->
+	<select id="countOrderByCondition" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(*)
+			FROM 
+				T_ORD_ORDER RD 
+			LEFT JOIN 
+			    T_ORG_DEPARTMENT DP
+			ON 
+				DP.FID = RD.FDEPARTUREID
+			LEFT JOIN 
+				T_ORG_DEPARTMENT DD
+			ON 
+				DD.FID = RD.FACCEPTDEPTID
+			WHERE 1=1 
+		]]>
+		<choose>
+			<when test="onlineName != null and onlineName != ''">
+				<![CDATA[
+					 AND RD.FONLINENAME = #{onlineName}
+				]]>
+				<if test="orderStatus == null or orderStatus == ''">
+					AND RD.FORDERSTATUS in
+					('IN_TRANSIT','GOT','SIGNSUCCESS','SIGNFAIL')
+				</if>
+			</when>
+			<when test="customerCode != null and customerCode != ''">
+				<![CDATA[ AND RD.FCHANNELCUSTID = #{customerCode}]]>
+			</when>
+		</choose>
+		<if test="orderStatus != null and orderStatus != ''">
+			<![CDATA[ AND RD.FORDERSTATUS in ]]>
+			<foreach collection="orderStatus" open="(" close=")" separator="," item="status">
+				#{status}
+			</foreach>
+		</if>
+
+		<if test="acceptStatus != null and acceptStatus != ''">
+			<![CDATA[ AND RD.FORDERSTATUS = #{acceptStatus}]]>
+		</if>
+		<!--			
+		    * 修改人：张斌
+			*修改时间：2013-7-30 17：00
+			*原有内容：无（新增）
+			*修改原因：接口调用增加查询条件
+		-->
+		<!-- begin -->
+		<if test="transportMode != null and transportMode != ''">
+			<![CDATA[ AND RD.FTRANSPORTMODE = #{transportMode}]]>
+		</if>
+		<!-- end -->
+		<if test="deptCode != null and deptCode != ''">
+			<![CDATA[ AND DD.FSTANDARDCODE = #{deptCode}]]>
+		</if>
+		<if test="shipperCust != null and shipperCust != ''">
+			<![CDATA[ AND RD.FSHIPPERNAME = #{shipperCust}]]>
+		</if>
+		<if test="shipperLinkman != null and shipperLinkman != ''">
+			<![CDATA[ AND RD.FCONTACTNAME = #{shipperLinkman}]]>
+		</if>
+		<if test="shipperMobile != null and shipperMobile != ''">
+			<![CDATA[ AND RD.FCONTACTMOBILE = #{shipperMobile}]]>
+		</if>
+		<if test="shipperPhone != null and shipperPhone != ''">
+			<![CDATA[ AND RD.FCONTACTPHONE = #{shipperPhone}]]>
+		</if>
+		
+		<if test="paymentType != null and paymentType != ''">
+			<![CDATA[ AND RD.FPAYMENTTYPE = #{paymentType}]]>
+		</if>
+		<if test="orderNumber != null and orderNumber != ''">
+			<![CDATA[ AND (RD.FORDERNUMBER = #{orderNumber} 
+			          OR RD.FCHANNELNUMBER = #{orderNumber}) ]]>
+		</if>
+		<if test="waybillNumber != null and waybillNumber != ''">
+			<![CDATA[ AND RD.FWAYBILLNUMBER = #{waybillNumber}]]>
+		</if>
+		<if test="receiveContact != null and receiveContact != ''">
+			<![CDATA[ AND RD.FRECEIVENAME LIKE #{receiveContact}||'%']]>
+		</if>
+		<if test="goodsName != null and goodsName != ''">
+			<![CDATA[ AND RD.FGOODSNAME LIKE '%'||#{goodsName}||'%' ]]>
+		</if>
+		<if test="startDate != null ">
+			<![CDATA[ AND RD.FCREATETIME > #{startDate}]]>
+		</if>
+		<if test="endDate != null ">
+			<![CDATA[ AND RD.FCREATETIME < #{endDate}]]>
+		</if>
+		<if test="orderType != null and orderType != ''">
+			<![CDATA[ AND RD.FRESOURCE = #{orderType}]]>
+		</if>
+	</select>
+
+	<!-- 映射 -->
+	<resultMap id="OrderRusultMap" type="com.deppon.crm.module.order.shared.domain.Order">
+		<result column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FLINKMANID" property="contactManId" jdbcType="VARCHAR" />
+		<result column="FHASTENCOUNT" property="hastenCount" jdbcType="NUMERIC" />
+		<result column="FLASTHASTENTIME" property="lastHastenTime" jdbcType="TIMESTAMP" />
+		<result column="FSHIPPERID" property="shipperId" jdbcType="VARCHAR" />
+		<result column="FSHIPPERNUMBER" property="shipperNumber" jdbcType="VARCHAR" />
+		<result column="FSHIPPERNAME" property="shipperName" jdbcType="VARCHAR" />
+		<result column="FCONTACTNAME" property="contactName" jdbcType="VARCHAR" />
+		<result column="FCONTACTMOBILE" property="contactMobile" jdbcType="VARCHAR" />
+		<result column="FCONTACTPHONE" property="contactPhone" jdbcType="VARCHAR" />
+		<result column="FCONTACTPROVINCE" property="contactProvince" jdbcType="VARCHAR" />
+		<result column="FCONTACTCITY" property="contactCity" jdbcType="VARCHAR" />
+		<result column="FCONTACTAREA" property="contactArea" jdbcType="VARCHAR" />
+		<result column="FCONTACTADDRESS" property="contactAddress" jdbcType="VARCHAR" />
+		<result column="FISRECEIVEGOOD" property="isReceiveGoods" jdbcType="NUMERIC" />
+		<result column="FBEGINACCEPTIME" property="beginAcceptTime" jdbcType="TIMESTAMP" />
+		<result column="FENDACCPTIME" property="endAcceptTime" jdbcType="TIMESTAMP" />
+		<!-- <result column="FISSAME" property="isSameName" jdbcType="VARCHAR" /> -->
+		<result column="FRECEIVEID" property="receiverCustId" jdbcType="VARCHAR" />
+		<result column="FRECEIVENUMBER" property="receiverCustNumber" jdbcType="VARCHAR" />
+		<result column="FCOMPANY" property="receiverCustcompany" jdbcType="VARCHAR" />
+		<result column="FRECEIVENAME" property="receiverCustName" jdbcType="VARCHAR" />
+		<result column="FRECEIVEMOBILE" property="receiverCustMobile" jdbcType="VARCHAR" />
+		<result column="FRECEIVEPHONE" property="receiverCustPhone" jdbcType="VARCHAR" />
+		<result column="FPROVINCE" property="receiverCustProvince" jdbcType="VARCHAR" />
+		<result column="FCITY" property="receiverCustCity" jdbcType="VARCHAR" />
+		<result column="FAREA" property="receiverCustArea" jdbcType="VARCHAR" />
+		<result column="FADDRESS" property="receiverCustAddress" jdbcType="VARCHAR" />
+		<result column="FISSENDMS" property="isSendmessage" jdbcType="NUMERIC" />
+		<!-- <result column="FNAME" property="accepterName" jdbcType="VARCHAR" /> -->
+		<!-- <result column="FMOBILE" property="accepterMobile" jdbcType="VARCHAR" /> -->
+		<!-- <result column="FPHONE" property="accepterPhone" jdbcType="VARCHAR" /> -->
+		<!-- <result column="FACCEPTPROVINCE" property="accepterProvince" -->
+		<!-- jdbcType="VARCHAR" /> -->
+		<!-- <result column="FACCEPTCITY" property="accepterCity" jdbcType="VARCHAR" /> -->
+		<!-- <result column="FACCEPTAREA" property="accepterArea" jdbcType="VARCHAR" /> -->
+		<!-- <result column="FACCEPTADDRESS" property="accepterAddress" -->
+		<!-- jdbcType="VARCHAR" /> -->
+		<result column="FTRANSPORTMODE" property="transportMode" jdbcType="VARCHAR" />
+		<result column="FGOODSNAME" property="goodsName" jdbcType="VARCHAR" />
+		<result column="FPACKING" property="packing" jdbcType="VARCHAR" />
+		<result column="FGOODSTYPE" property="goodsType" jdbcType="VARCHAR" />
+		<result column="FTOTALPIECE" property="goodsNumber" jdbcType="NUMERIC" />
+		<result column="FTOTALWEIGHT" property="totalWeight" jdbcType="DOUBLE" />
+		<result column="FTOTALVOLUME" property="totalVolume" jdbcType="DOUBLE" />
+		<result column="FPAYMENTTYPE" property="paymentType" jdbcType="VARCHAR" />
+		<result column="FCHANNELTYPE" property="channelType" jdbcType="VARCHAR" />
+		<result column="FCHANNELCUSTID" property="channelCustId" jdbcType="VARCHAR" />
+		<result column="FDELIVERYMODE" property="deliveryMode" jdbcType="VARCHAR" />
+		<result column="FDSHKTYPE" property="reciveLoanType" jdbcType="VARCHAR" />
+		<result column="FDSHK" property="reviceMoneyAmount" jdbcType="NUMERIC" />
+		<result column="FBJSMJZ" property="insuredAmount" jdbcType="DOUBLE" />
+		<result column="FORDERTIME" property="orderTime" jdbcType="TIMESTAMP" />
+		<result column="FDEPARTUREID" property="startStation" jdbcType="VARCHAR" />
+		<result column="FSTARTSTATIONNAME" property="startStationName" jdbcType="VARCHAR" />
+		<result column="FACCEPTDEPTID" property="acceptDept" jdbcType="VARCHAR" />
+		<result column="FACCEPTDEPTNAME" property="acceptDeptName" jdbcType="VARCHAR" />
+		<result column="FORDERSTATUS" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="FACCEPTER" property="dealPerson" jdbcType="VARCHAR" />
+		<result column="FACCEPTTIME" property="orderAcceptTime" jdbcType="TIMESTAMP" />
+		<result column="FACCEPTERNAME" property="receiver" jdbcType="VARCHAR" />
+		<result column="FACCEPTERMOBILE" property="accepterPersonMobile" jdbcType="VARCHAR" />
+		<result column="FWAYBILLNUMBER" property="waybillNumber" jdbcType="VARCHAR" />
+		<result column="FACCEPTTIME" property="orderAcceptTime" jdbcType="TIMESTAMP" />
+		<result column="FACCEPTERNAME" property="receiver" jdbcType="VARCHAR" />
+		<result column="FACCEPTERMOBILE" property="accepterPersonMobile" jdbcType="VARCHAR" />
+		<result column="FWAYBILLNUMBER" property="waybillNumber" jdbcType="VARCHAR" />
+		<result column="FRESOURCE" property="resource" jdbcType="VARCHAR" />
+		<result column="FORDERNUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="FRETURNBILLTYPE" property="returnBillType" jdbcType="VARCHAR" />
+		<result column="FTRANSNOTE" property="transNote" jdbcType="VARCHAR" />
+		<result column="FRECEIVINGTOPOINTID" property="receivingToPoint" jdbcType="VARCHAR" />
+		<result column="FRECEIVINGTOPOINTNAME" property="receivingToPointName" jdbcType="VARCHAR" />
+		<result column="FORDERPERSON" property="orderPerson" jdbcType="VARCHAR" />
+		<result column="FFEEDBACKINFO" property="feedbackInfo" jdbcType="VARCHAR" />
+		<result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="FCREATEUSERID" property="createUser" jdbcType="VARCHAR" />
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="VARCHAR" />
+		<result column="FONLINENAME" property="onlineName" jdbcType="VARCHAR" />
+		<result column="FMEMBERTYPE" property="memberType" jdbcType="VARCHAR" />
+		<result column="FCHANNELNUMBER" property="channelNumber" />
+		<result column="FDELAYORDERTIME" property="delayTime" jdbcType="TIMESTAMP" />
+		<result column="FCOUPON" property="couponNumber" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- CRM接口使用查询字段 (接口用)-->
+	<sql id="interface_orderTableFields">
+		<![CDATA[
+			RD.FID FID,RD.FLINKMANID FLINKMANID, RD.FHASTENCOUNT FHASTENCOUNT,
+			RD.FLASTHASTENTIME FLASTHASTENTIME,RD.FSHIPPERID FSHIPPERID,
+			RD.FSHIPPERNUMBER FSHIPPERNUMBER,RD.FSHIPPERNAME FSHIPPERNAME,
+			RD.FCONTACTNAME FCONTACTNAME,RD.FCONTACTMOBILE FCONTACTMOBILE,
+			RD.FCONTACTPHONE FCONTACTPHONE,	RD.FCONTACTPROVINCE FCONTACTPROVINCE, 
+			RD.FCONTACTCITY FCONTACTCITY,	RD.FCONTACTAREA FCONTACTAREA,	
+			RD.FCONTACTADDRESS FCONTACTADDRESS,	RD.FISRECEIVEGOOD FISRECEIVEGOOD,
+			RD.FBEGINACCEPTIME FBEGINACCEPTIME,RD.FENDACCPTIME FENDACCPTIME,
+			RD.FRECEIVEID FRECEIVEID, RD.FRECEIVENUMBER FRECEIVENUMBER,
+			RD.FCOMPANY FCOMPANY,	RD.FRECEIVENAME FRECEIVENAME,	
+			RD.FRECEIVEMOBILE FRECEIVEMOBILE,	RD.FRECEIVEPHONE FRECEIVEPHONE, 
+			RD.FPROVINCE FPROVINCE, RD.FCITY FCITY,RD.FAREA FAREA,RD.FADDRESS  FADDRESS,
+			RD.FISSENDMS  FISSENDMS,RD.FTRANSPORTMODE FTRANSPORTMODE, 
+			RD.FGOODSNAME FGOODSNAME,RD.FPACKING FPACKING,RD.FGOODSTYPE  FGOODSTYPE,
+			RD.FTOTALPIECE	FTOTALPIECE,	RD.FTOTALWEIGHT FTOTALWEIGHT, 
+			RD.FTOTALVOLUME FTOTALVOLUME,RD.FPAYMENTTYPE FPAYMENTTYPE, 
+			RD.FCHANNELTYPE FCHANNELTYPE, RD.FCHANNELCUSTID FCHANNELCUSTID,
+			RD.FDELIVERYMODE FDELIVERYMODE,RD.FDSHKTYPE FDSHKTYPE,RD.FDSHK FDSHK, 
+			RD.FBJSMJZ FBJSMJZ,RD.FORDERTIME  FORDERTIME,DP.FSTANDARDCODE 	FDEPARTUREID,
+			DD.FSTANDARDCODE	FACCEPTDEPTID,	
+			RD.FORDERSTATUS FORDERSTATUS,	RD.FACCEPTER FACCEPTER,	RD.FACCEPTTIME  FACCEPTTIME, 
+			RD.FACCEPTERNAME FACCEPTERNAME,RD.FACCEPTERMOBILE	FACCEPTERMOBILE,
+			RD.FWAYBILLNUMBER FWAYBILLNUMBER,	RD.FRESOURCE FRESOURCE, 
+			RD.FTRANSNOTE FTRANSNOTE,	RD.FRETURNBILLTYPE FRETURNBILLTYPE,
+			RD.FORDERNUMBER FORDERNUMBER,RD.FCHANNELNUMBER FCHANNELNUMBER,
+			TD.FSTANDARDCODE FRECEIVINGTOPOINTID,RD.FORDERPERSON FORDERPERSON,
+			RD.FFEEDBACKINFO FFEEDBACKINFO,	RD.FCREATETIME FCREATETIME,
+			RD.FLASTUPDATETIME FLASTUPDATETIME,
+			RD.FLASTMODIFYUSERID FLASTMODIFYUSERID,RD.FONLINENAME FONLINENAME,
+			RD.FMEMBERTYPE FMEMBERTYPE,RD.FCOUPON FCOUPON,
+			TD.FDEPTNAME FRECEIVINGTOPOINTNAME
+		]]>
+	</sql>
+
+	<!-- 订单表所有字段 -->
+	<sql id="orderTableFields">
+	<![CDATA[
+		RD.FID FID,RD.FLINKMANID FLINKMANID, RD.FHASTENCOUNT FHASTENCOUNT,
+		RD.FLASTHASTENTIME FLASTHASTENTIME,RD.FSHIPPERID FSHIPPERID,
+		RD.FSHIPPERNUMBER FSHIPPERNUMBER,RD.FSHIPPERNAME FSHIPPERNAME,
+		RD.FCONTACTNAME FCONTACTNAME,RD.FCONTACTMOBILE FCONTACTMOBILE,
+		RD.FCONTACTPHONE FCONTACTPHONE,	RD.FCONTACTPROVINCE FCONTACTPROVINCE, 
+		RD.FCONTACTCITY FCONTACTCITY,	RD.FCONTACTAREA FCONTACTAREA,	
+		RD.FCONTACTADDRESS FCONTACTADDRESS,	RD.FISRECEIVEGOOD FISRECEIVEGOOD,
+		RD.FBEGINACCEPTIME FBEGINACCEPTIME,RD.FENDACCPTIME FENDACCPTIME,
+		RD.FRECEIVEID FRECEIVEID, RD.FRECEIVENUMBER FRECEIVENUMBER,
+		RD.FCOMPANY FCOMPANY,	RD.FRECEIVENAME FRECEIVENAME,	
+		RD.FRECEIVEMOBILE FRECEIVEMOBILE,	RD.FRECEIVEPHONE FRECEIVEPHONE, 
+		RD.FPROVINCE FPROVINCE, RD.FCITY FCITY,RD.FAREA FAREA,RD.FADDRESS  FADDRESS,
+		RD.FISSENDMS  FISSENDMS,RD.FTRANSPORTMODE FTRANSPORTMODE, 
+		RD.FGOODSNAME FGOODSNAME,RD.FPACKING FPACKING,RD.FGOODSTYPE  FGOODSTYPE,
+		RD.FTOTALPIECE	FTOTALPIECE,	RD.FTOTALWEIGHT FTOTALWEIGHT, 
+		RD.FTOTALVOLUME FTOTALVOLUME,RD.FPAYMENTTYPE FPAYMENTTYPE, 
+		RD.FCHANNELTYPE FCHANNELTYPE, RD.FCHANNELCUSTID FCHANNELCUSTID,
+		RD.FDELIVERYMODE FDELIVERYMODE,RD.FDSHKTYPE FDSHKTYPE,RD.FDSHK FDSHK, 
+		RD.FBJSMJZ FBJSMJZ,RD.FORDERTIME  FORDERTIME,RD.FDEPARTUREID 	FDEPARTUREID,
+		RD.FACCEPTDEPTID	FACCEPTDEPTID,	
+		RD.FORDERSTATUS FORDERSTATUS,	RD.FACCEPTER FACCEPTER,	RD.FACCEPTTIME  FACCEPTTIME, 
+		RD.FACCEPTERNAME FACCEPTERNAME,RD.FACCEPTERMOBILE	FACCEPTERMOBILE,
+		RD.FWAYBILLNUMBER FWAYBILLNUMBER,	RD.FRESOURCE FRESOURCE, 
+		RD.FTRANSNOTE FTRANSNOTE,	RD.FRETURNBILLTYPE FRETURNBILLTYPE,
+		RD.FORDERNUMBER FORDERNUMBER,RD.FCHANNELNUMBER FCHANNELNUMBER,
+		RD.FRECEIVINGTOPOINTID FRECEIVINGTOPOINTID,RD.FORDERPERSON FORDERPERSON,
+		RD.FFEEDBACKINFO FFEEDBACKINFO,	RD.FCREATETIME FCREATETIME,
+		RD.FLASTUPDATETIME FLASTUPDATETIME,
+		RD.FLASTMODIFYUSERID FLASTMODIFYUSERID,RD.FONLINENAME FONLINENAME,
+		RD.FMEMBERTYPE FMEMBERTYPE,RD.FCOUPON FCOUPON,RD.FDELAYORDERTIME FDELAYORDERTIME
+		]]>
+	</sql>
+
+	<!-- 订单序列 -->
+	<select id="getSeqId" resultType="int" parameterType="map">
+		<![CDATA[
+			SELECT ${seqName}.NEXTVAL ID FROM DUAL
+		]]>
+	</select>
+
+	<!-- 保存订单 -->
+	<insert id="insertOrder" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		<![CDATA[INSERT INTO
+		T_ORD_ORDER (
+		FID,FLINKMANID,
+		FSHIPPERID,FSHIPPERNUMBER,FSHIPPERNAME,FCONTACTNAME,
+		FCONTACTMOBILE,FCONTACTPHONE,	FCONTACTPROVINCE, FCONTACTCITY,
+		FCONTACTAREA,	FCONTACTADDRESS,	FISRECEIVEGOOD,	FBEGINACCEPTIME,
+		FENDACCPTIME,	FRECEIVEID, FRECEIVENUMBER,FCOMPANY,
+		FRECEIVENAME,	FRECEIVEMOBILE,	FRECEIVEPHONE, FPROVINCE, FCITY,
+		FAREA, FADDRESS, FISSENDMS,FTRANSPORTMODE, 
+		FGOODSNAME,FPACKING, FGOODSTYPE,	FTOTALPIECE,
+		FTOTALWEIGHT, FTOTALVOLUME,FPAYMENTTYPE, FCHANNELTYPE, 
+		FCHANNELCUSTID,FDELIVERYMODE,FDSHKTYPE,FDSHK, 
+		FBJSMJZ, FORDERTIME,	FDEPARTUREID,	FACCEPTDEPTID,
+		FACCEPTDEPTNAME,FORDERSTATUS,	FACCEPTER,
+		 FACCEPTTIME, FACCEPTERNAME,	FACCEPTERMOBILE,FWAYBILLNUMBER,
+		FRESOURCE, FTRANSNOTE,	FRETURNBILLTYPE,	FORDERNUMBER,
+		FCHANNELNUMBER,FRECEIVINGTOPOINTID,FORDERPERSON,FFEEDBACKINFO,
+		FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FONLINENAME,FMEMBERTYPE,FTOWAITACCEPTTIME,
+		FCOUPON,FDELAYORDERTIME,FCHANNELNUM_UNI
+		)
+		values
+		(#{id,jdbcType=VARCHAR}, #{contactManId,jdbcType=VARCHAR},
+		#{shipperId,jdbcType=VARCHAR},	#{shipperNumber,jdbcType=VARCHAR},
+		#{shipperName,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR},
+		#{contactMobile,jdbcType=VARCHAR},#{contactPhone,jdbcType=VARCHAR},
+		#{contactProvince,jdbcType=VARCHAR}, #{contactCity,jdbcType=VARCHAR},
+		#{contactArea,jdbcType=VARCHAR}, #{contactAddress,jdbcType=VARCHAR},
+		#{isReceiveGoods,jdbcType=NUMERIC},	#{beginAcceptTime,jdbcType=TIMESTAMP},
+		#{endAcceptTime,jdbcType=TIMESTAMP},	#{receiverCustId,jdbcType=VARCHAR},
+		#{receiverCustNumber,jdbcType=VARCHAR},	#{receiverCustcompany,jdbcType=VARCHAR},
+		#{receiverCustName,jdbcType=VARCHAR},	#{receiverCustMobile,jdbcType=VARCHAR},
+		#{receiverCustPhone,jdbcType=VARCHAR},	#{receiverCustProvince,jdbcType=VARCHAR},
+		#{receiverCustCity,jdbcType=VARCHAR},	#{receiverCustArea,jdbcType=VARCHAR},
+		#{receiverCustAddress,jdbcType=VARCHAR},	#{isSendmessage,jdbcType=NUMERIC},
+		#{transportMode,jdbcType=VARCHAR}, #{goodsName,jdbcType=VARCHAR},
+		#{packing,jdbcType=VARCHAR},	#{goodsType,jdbcType=VARCHAR},
+		#{goodsNumber,jdbcType=NUMERIC}, #{totalWeight,jdbcType=DOUBLE},
+		#{totalVolume,jdbcType=DOUBLE}, #{paymentType,jdbcType=VARCHAR},
+		#{channelType,jdbcType=VARCHAR},	#{channelCustId,jdbcType=VARCHAR},
+		#{deliveryMode,jdbcType=VARCHAR},	#{reciveLoanType,jdbcType=VARCHAR},
+		#{reviceMoneyAmount,jdbcType=DOUBLE},	#{insuredAmount,jdbcType=DOUBLE},
+		#{orderTime,jdbcType=TIMESTAMP},	#{startStation,jdbcType=VARCHAR},
+		#{acceptDept,jdbcType=VARCHAR},	#{acceptDeptName,jdbcType=VARCHAR},
+		#{orderStatus,jdbcType=VARCHAR},	#{dealPerson,jdbcType=VARCHAR},
+		#{orderAcceptTime,jdbcType=TIMESTAMP},	#{receiver,jdbcType=VARCHAR},
+		#{accepterPersonMobile,jdbcType=VARCHAR},	#{waybillNumber,jdbcType=VARCHAR},
+		#{resource,jdbcType=VARCHAR},	#{transNote,jdbcType=VARCHAR},
+		#{returnBillType,jdbcType=VARCHAR},	#{orderNumber,jdbcType=VARCHAR},
+		#{channelNumber,jdbcType=VARCHAR},	#{receivingToPoint,jdbcType=VARCHAR} ,
+		#{orderPerson,jdbcType=VARCHAR} ,	#{feedbackInfo,jdbcType=VARCHAR} ,
+		sysdate,	#{createUser,jdbcType=VARCHAR},
+		sysdate,	#{modifyUser,jdbcType=VARCHAR},	
+		#{onlineName,jdbcType=VARCHAR},#{memberType,jdbcType=VARCHAR},
+		#{toWaitAcceptTime,jdbcType=TIMESTAMP},	#{couponNumber,jdbcType=VARCHAR},
+		#{delayTime,jdbcType=TIMESTAMP},
+		#{channelNumber,jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<!-- 修改订单 -->
+	<update id="updateOrder" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		UPDATE T_ORD_ORDER SET
+		<if test="hastenCount != null ">
+			FHASTENCOUNT=#{hastenCount,jdbcType=NUMERIC},
+		</if>
+		<if test="lastHastenTime != null ">
+			FLASTHASTENTIME=#{lastHastenTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="shipperId != null ">
+			FSHIPPERID=#{shipperId,jdbcType=VARCHAR},
+		</if>
+		<if test="contactManId != null ">
+			FLINKMANID=#{contactManId,jdbcType=VARCHAR},
+		</if>
+		<if test="shipperNumber != null ">
+			FSHIPPERNUMBER=#{shipperNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="shipperName != null ">
+			FSHIPPERNAME=#{shipperName,jdbcType=VARCHAR},
+		</if>
+		<if test="contactName != null ">
+			FCONTACTNAME=#{contactName,jdbcType=VARCHAR},
+		</if>
+		<if test="contactMobile != null ">
+			FCONTACTMOBILE=#{contactMobile,jdbcType=VARCHAR},
+		</if>
+		<if test="contactPhone != null ">
+			FCONTACTPHONE=#{contactPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="contactProvince != null ">
+			FCONTACTPROVINCE=#{contactProvince,jdbcType=VARCHAR},
+		</if>
+		<if test="contactCity != null ">
+			FCONTACTCITY=#{contactCity,jdbcType=VARCHAR},
+		</if>
+		<if test="contactArea != null ">
+			FCONTACTAREA=#{contactArea,jdbcType=VARCHAR},
+		</if>
+		<if test="contactAddress != null ">
+			FCONTACTADDRESS=#{contactAddress,jdbcType=VARCHAR},
+		</if>
+		<if test="isReceiveGoods != null ">
+			FISRECEIVEGOOD=#{isReceiveGoods,jdbcType=NUMERIC},
+		</if>
+		<if test="beginAcceptTime != null ">
+			FBEGINACCEPTIME=#{beginAcceptTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="endAcceptTime != null">
+			FENDACCPTIME=#{endAcceptTime,jdbcType=TIMESTAMP},
+		</if>
+		<!-- <if test="isSameName != null "> -->
+		<!-- FISSAME=#{isSameName,jdbcType=VARCHAR}, -->
+		<!-- </if> -->
+		<if test="receiverCustId != null ">
+			FRECEIVEID=#{receiverCustId,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustNumber != null ">
+			FRECEIVENUMBER=#{receiverCustNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustcompany != null ">
+			FCOMPANY=#{receiverCustcompany,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustName != null ">
+			FRECEIVENAME=#{receiverCustName,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustMobile != null ">
+			FRECEIVEMOBILE=#{receiverCustMobile,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustPhone != null ">
+			FRECEIVEPHONE=#{receiverCustPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustProvince != null ">
+			FPROVINCE=#{receiverCustProvince,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustCity != null ">
+			FCITY=#{receiverCustCity,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustArea != null ">
+			FAREA=#{receiverCustArea,jdbcType=VARCHAR},
+		</if>
+		<if test="receiverCustAddress != null ">
+			FADDRESS=#{receiverCustAddress,jdbcType=VARCHAR},
+		</if>
+		<if test="transportMode != null ">
+			FTRANSPORTMODE=#{transportMode,jdbcType=VARCHAR},
+		</if>
+		<if test="goodsName != null">
+			FGOODSNAME=#{goodsName,jdbcType=VARCHAR},
+		</if>
+		<if test="packing != null ">
+			FPACKING=#{packing,jdbcType=VARCHAR},
+		</if>
+		<if test="goodsType != null ">
+			FGOODSTYPE=#{goodsType,jdbcType=VARCHAR},
+		</if>
+		<if test="goodsNumber != null ">
+			FTOTALPIECE=#{goodsNumber,jdbcType=NUMERIC},
+		</if>
+		<if test="totalWeight != null ">
+			FTOTALWEIGHT=#{totalWeight,jdbcType=DOUBLE},
+		</if>
+		<if test="totalVolume != null ">
+			FTOTALVOLUME=#{totalVolume,jdbcType=DOUBLE},
+		</if>
+		<if test="paymentType != null ">
+			FPAYMENTTYPE=#{paymentType,jdbcType=VARCHAR},
+		</if>
+		<if test="channelType != null ">
+			FCHANNELTYPE=#{channelType,jdbcType=VARCHAR},
+		</if>
+		<if test="channelCustId != null ">
+			FCHANNELCUSTID=#{channelCustId,jdbcType=VARCHAR},
+		</if>
+		<if test="deliveryMode != null ">
+			FDELIVERYMODE=#{deliveryMode,jdbcType=VARCHAR},
+		</if>
+		<if test="reciveLoanType != null ">
+			FDSHKTYPE=#{reciveLoanType,jdbcType=VARCHAR},
+		</if>
+		<if test="reviceMoneyAmount != null ">
+			FDSHK=#{reviceMoneyAmount,jdbcType=DOUBLE},
+		</if>
+		<if test="insuredAmount != null ">
+			FBJSMJZ=#{insuredAmount,jdbcType=DOUBLE},
+		</if>
+		<if test="orderTime != null ">
+			FORDERTIME=#{orderTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="startStation != null">
+			FDEPARTUREID=#{startStation,jdbcType=VARCHAR},
+		</if>
+		<if test="acceptDept != null">
+			FACCEPTDEPTID=#{acceptDept,jdbcType=VARCHAR},
+		</if>
+		<if test="acceptDeptName != null ">
+			FACCEPTDEPTNAME=#{acceptDeptName,jdbcType=VARCHAR},
+		</if>
+		<if test="orderStatus != null ">
+			FORDERSTATUS=#{orderStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="dealPerson != null ">
+			FACCEPTER=#{dealPerson,jdbcType=VARCHAR},
+		</if>
+		<if test="orderAcceptTime != null ">
+			FACCEPTTIME=#{orderAcceptTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="receiver != null ">
+			FACCEPTERNAME=#{receiver,jdbcType=VARCHAR},
+		</if>
+		<if test="accepterPersonMobile != null ">
+			FACCEPTERMOBILE=#{accepterPersonMobile,jdbcType=VARCHAR},
+		</if>
+		<if test="waybillNumber != null">
+			FWAYBILLNUMBER=#{waybillNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="resource != null ">
+			FRESOURCE=#{resource,jdbcType=VARCHAR},
+		</if>
+		<if test="channelNumber != null ">
+			FCHANNELNUMBER=#{channelNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="orderNumber != null ">
+			FORDERNUMBER=#{orderNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="transNote != null ">
+			FTRANSNOTE=#{transNote,jdbcType=VARCHAR},
+		</if>
+		<if test="returnBillType != null ">
+			FRETURNBILLTYPE=#{returnBillType,jdbcType=VARCHAR},
+		</if>
+		<if test="orderPerson != null ">
+			FORDERPERSON=#{orderPerson,jdbcType=VARCHAR},
+		</if>
+		<if test="receivingToPoint != null ">
+			FRECEIVINGTOPOINTID=#{receivingToPoint,jdbcType=VARCHAR},
+		</if>
+		<if test="feedbackInfo != null">
+			FFEEDBACKINFO=#{feedbackInfo,jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null ">
+			FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR},
+		</if>
+		<if test="onlineName != null ">
+			FonlineName=#{onlineName,jdbcType=VARCHAR},
+		</if>
+		<if test="memberType != null ">
+			FMEMBERTYPE=#{memberType,jdbcType=VARCHAR},
+		</if>
+		<if test="isSendmessage != null ">
+			FISSENDMS=#{isSendmessage,jdbcType=NUMERIC},
+		</if>
+		<if test="createDate != null ">
+			FCREATETIME=#{createDate,jdbcType=TIMESTAMP},
+		</if>
+		<if test="toWaitAcceptTime != null ">
+			FTOWAITACCEPTTIME=#{toWaitAcceptTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="couponNumber != null ">
+			FCOUPON=#{couponNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="delayTime != null ">
+			FDELAYORDERTIME=#{delayTime,jdbcType=TIMESTAMP},
+		</if>
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{id}
+	</update>
+
+	<!-- 修改订单状态_根据订单ID_ -->
+	<update id="updateOrderStatusByID" parameterType="map">
+		UPDATE
+		T_ORD_ORDER SET
+		FORDERSTATUS=#{orderStatus,jdbcType=VARCHAR}
+		WHERE FID =
+		#{id}
+	</update>
+
+	<!-- 删除订单_根据订单ID -->
+	<delete id="deleteOrderByID" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		DELETE FROM
+		T_ORD_ORDER
+		WHERE FID =
+		#{id,jdbcType=VARCHAR}
+	</delete>
+
+	<!-- 查询订单_根据订单ID -->
+	<select id="queryOrderByID" resultMap="OrderRusultMap" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		SELECT
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		WHERE RD.FID
+		=
+		#{id,jdbcType=VARCHAR}
+	</select>
+
+	<!--订单公共关联表 -->
+	<sql id="relTabels">
+		FROM
+		T_ORD_ORDER RD LEFT JOIN T_CRM_LADINGSTATION LAD ON
+		RD.FDEPARTUREID=LAD.FID
+		LEFT JOIN
+		T_CRM_LADINGSTATION TOLAD ON
+		RD.FRECEIVINGTOPOINTID=TOLAD.FID
+		LEFT JOIN T_ORG_DEPARTMENT ACCDEP
+		ON
+		RD.FACCEPTDEPTID = ACCDEP.FID
+		LEFT JOIN T_ORG_EMPLOYEE EMP ON
+		RD.FCREATEUSERID=EMP.FID
+	</sql>
+
+	<!-- 查询订单_根据订单号 -->
+	<select id="queryOrderByNum" resultMap="OrderRusultMap" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		SELECT
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		WHERE RD.FORDERNUMBER
+		=
+		#{orderNumber,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 查询订单_根据运单号 -->
+	<select id="queryOrderByWaybillNumber" resultMap="OrderRusultMap"
+		parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		SELECT
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		WHERE RD.FWAYBILLNUMBER
+		=
+		#{WAYBILLNUMBER,JDBCTYPE=VARCHAR}
+	</select>
+
+	<!-- 订单查询_共用表 (x) -->
+	<sql id="searchOrderCommonTables">
+		FROM
+		T_ORD_ORDER RD LEFT JOIN T_CRM_LADINGSTATION LAD ON
+		RD.FDEPARTUREID=LAD.FID
+		LEFT JOIN
+		T_CRM_LADINGSTATION TOLAD ON
+		RD.FRECEIVINGTOPOINTID=TOLAD.FID
+		LEFT JOIN T_ORG_EMPLOYEE EMP ON
+		RD.FCREATEUSERID=EMP.FID
+		LEFT JOIN
+		(SELECT ACC.FDEPTNAME, ACC .FID , CLAD.FID F2 FROM T_ORG_DEPARTMENT
+		ACC ,
+		T_CRM_LADINGSTATION CLAD
+		WHERE ACC.FID = CLAD.FORGID ) ACCDEP ON ACCDEP.F2 = RD.FACCEPTDEPTID
+
+	</sql>
+
+	<!-- 订单查询_共用条件 -->
+	<sql id="searchOrderCommonCondition">
+		WHERE 1=1
+		<if test="waybillNum != null and waybillNum != ''">
+			and RD.FWAYBILLNUMBER=#{waybillNum,jdbcType=VARCHAR}
+		</if>
+		<if test="orderNum != null and orderNum != ''">
+			and (RD.FORDERNUMBER=#{orderNum,jdbcType=VARCHAR} OR
+			RD.FCHANNELNUMBER=#{orderNum,jdbcType=VARCHAR})
+		</if>
+		<if test="startDate != null and startDate != ''">
+			and RD.FCREATETIME>=#{startDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			and RD.FCREATETIME &lt;=#{endDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="startModifyDate != null and startModifyDate != ''">
+			and RD.FLASTUPDATETIME>=#{startModifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endModifyDate != null and endModifyDate != ''">
+			and RD.FLASTUPDATETIME &lt;=#{endModifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="resource != null and resource != ''">
+			and RD.FRESOURCE=#{resource,jdbcType=VARCHAR}
+		</if>
+		<if test="contactMobile != null and contactMobile != ''">
+			and RD.FCONTACTMOBILE=#{contactMobile,jdbcType=VARCHAR}
+		</if>
+		<if test="contactPhone != null and contactPhone != ''">
+			and RD.FCONTACTPHONE like concat(#{contactPhone,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="deptIds != null and deptIds != '' and  0!=deptIds.size()">
+			AND ACCDEP.FID IN
+			<foreach collection="deptIds" open="(" close=")" separator="," item="item">
+				${item}
+			</foreach>
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			AND RD.FORDERSTATUS = #{orderStatus}
+		</if>
+		<if test="startStationId != null and startStationId != ''">
+			AND RD.FDEPARTUREID = #{startStationId}
+		</if>
+		<if test="createEmpName != null and createEmpName != ''">
+			AND EMP.FEMPNAME = #{createEmpName}
+		</if>
+		<!--			
+		    * 修改人：张斌
+			*修改时间：2013-7-27 11:40
+			*原有内容：无（新增）
+			*修改原因：mybatis中新增transportMode查询条件
+		-->
+		<!-- begin -->
+		<if test="transportMode != null and transportMode != ''">
+			AND RD.FTRANSPORTMODE = #{transportMode}
+		</if>
+		<!-- end -->
+	</sql>
+
+	<!-- 订单分配、受理网点部门——公共 -->
+	<sql id="stationDeptFields">
+		LAD.FDEPTNAME FSTARTSTATIONNAME,TOLAD.FDEPTNAME
+		FRECEIVINGTOPOINTNAME,ACCDEP.FDEPTNAME
+		FACCEPTDEPTNAME,
+	</sql>
+
+	<!-- 查询订单_根据条件 -->
+	<select id="searchOrderByCondition" resultMap="OrderRusultMap"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderSearchCondition">
+		SELECT emp.fempname FCREATEUSERID,
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		<include refid="searchOrderCommonCondition" />
+		ORDER BY RD.FHASTENCOUNT DESC,RD.FCREATETIME
+	</select>
+
+	<!-- 查询订单条数_根据条件 -->
+	<select id="searchOrderCountByCondition" resultType="Long"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderSearchCondition">
+		SELECT COUNT(*)
+		<include refid="relTabels" />
+		<include refid="searchOrderCommonCondition" />
+	</select>
+
+	<!-- 查询订单_根据订单ID列表 -->
+	<select id="getOrdersByIds" resultMap="OrderRusultMap" parameterType="list">
+		SELECT
+		<include refid="orderTableFields" />
+		FROM T_ORD_ORDER RD
+		<where>
+			RD.FID in
+			<foreach collection="list" item="item" open="(" close=")" separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</where>
+	</select>
+
+	<!-- 修改订单_批量分配 -->
+	<update id="updateOrderAssignBatch" parameterType="map">
+		UPDATE T_ORD_ORDER SET FTOWAITACCEPTTIME = sysdate
+		<if test="orderStatus != null and orderStatus != ''">
+			,FORDERSTATUS=#{orderStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="startStation != null">
+			,FDEPARTUREID=#{startStation,jdbcType=VARCHAR}
+		</if>
+		<if test="acceptDept != null and acceptDept != ''">
+			,FACCEPTDEPTID=#{acceptDept,jdbcType=VARCHAR}
+		</if>
+		<if test="acceptDeptName != null and acceptDeptName != ''">
+			,FACCEPTDEPTNAME=#{acceptDeptName,jdbcType=VARCHAR}
+		</if>
+		<where>
+			FID in
+			<foreach collection="orderIds" item="item" open="(" close=")" separator=",">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</where>
+	</update>
+
+	<!-- 根据订单分配的区域和状态查询订单信息 -->
+	<select id="getOrderByDeptIdAndStatus" parameterType="map" resultMap="OrderRusultMap">
+		SELECT
+		<include refid="orderTableFields" />
+		FROM T_ORD_ORDER RD
+		WHERE RD.FDEPARTUREID in
+		<foreach collection="deptIds" open="(" close=")" separator="," item="deptId">
+			#{deptId}
+		</foreach>
+		AND RD.FORDERSTATUS =#{status}
+	</select>
+
+	<!--根据发货客户ID，和发货地址查询受理部门 -->
+	<select id="queryStartStationByHistory" parameterType="map" resultType="string">		
+	<![CDATA[
+		SELECT  * FROM (SELECT O.FDEPARTUREID FROM T_ORD_ORDER O 
+		WHERE O.FSHIPPERID = #{custId,jdbcType=VARCHAR}
+		AND O.FCONTACTPROVINCE=#{contactProvince,jdbcType=VARCHAR} 
+		AND O.FCONTACTCITY = #{contactCity,jdbcType=VARCHAR}
+		AND O.FCONTACTAREA = #{contactArea,jdbcType=VARCHAR}
+		AND O.FCONTACTADDRESS = #{contactAddress,jdbcType=VARCHAR}
+		AND O.FDEPARTUREID IS NOT NULL
+		ORDER BY O.FCREATETIME  DESC ) WHERE ROWNUM <=1
+		]]>
+	</select>
+
+	<!--根据发货客户ID查询始發部门 -->
+	<select id="queryStartStationByShipperId" parameterType="string" resultType="string">		
+	<![CDATA[
+		SELECT  FDEPARTUREID FROM (SELECT O.FDEPARTUREID FROM T_ORD_ORDER O 
+		WHERE O.FSHIPPERID = #{custId,jdbcType=VARCHAR}
+		ORDER BY O.FCREATETIME  DESC ) WHERE ROWNUM <=1
+		]]>
+	</select>
+	<!--根据发货客户手机号码查询始发部门Id -->
+	<select id="queryStartStationByContactmobile" parameterType="string" resultType="string">		
+	<![CDATA[
+		SELECT FDEPARTUREID FROM (SELECT *
+		FROM T_ORD_ORDER
+		WHERE FCONTACTMOBILE=#{phone,jdbcType=VARCHAR}
+		ORDER BY FCREATETIME DESC) WHERE ROWNUM <=1
+	]]>
+	</select>
+
+	<!-- 查询订单_根据客户ID,创建时间_公用 -->
+	<sql id="getOrderByCustIdCommonCondition">
+		<where>
+			<if test="startDate != null and startDate != ''">
+				RD.FCREATETIME>#{startDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND RD.FCREATETIME &lt;=#{endDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="custId != null and custId != ''">
+				AND RD.FSHIPPERID = #{custId}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 查询订单_根据客户ID,创建时间 -->
+	<select id="getOrderListByCustId" resultMap="OrderRusultMap" parameterType="map">
+		SELECT
+		<include refid="stationDeptFields" />
+		<include refid="orderTableFields" />
+		<include refid="relTabels" />
+		<include refid="getOrderByCustIdCommonCondition" />
+		ORDER BY RD.FCREATETIME DESC
+	</select>
+
+	<!-- 查询订单条数_根据客户ID,创建时间 -->
+	<select id="getOrderCountByCustId" resultType="Long" parameterType="map">
+		SELECT COUNT(*)
+		<include refid="relTabels" />
+		<include refid="getOrderByCustIdCommonCondition" />
+	</select>
+
+	<update id="updateOrderByWaybillNumber" parameterType="string">
+		UPDATE
+		T_ORD_ORDER
+		SET
+		FWAYBILLNUMBER=NULL
+		WHERE FWAYBILLNUMBER=#{waybillNumber}
+	</update>
+	<!-- 如果延迟时间>=当前时间，订单装态变为待受理状态 -->
+	<update id="updateDelayToUnaccept" parameterType="map">
+		UPDATE
+		T_ORD_ORDER
+		SET
+		FORDERSTATUS=#{statusUnaccept,jdbcType=VARCHAR},
+		FTOWAITACCEPTTIME=sysdate,
+		FLASTUPDATETIME=sysdate,
+		FFEEDBACKINFO=''
+		WHERE sysdate>=FDELAYORDERTIME
+		AND FORDERSTATUS=#{statusDelay,jdbcType=VARCHAR}
+	</update>	
+
+</mapper>

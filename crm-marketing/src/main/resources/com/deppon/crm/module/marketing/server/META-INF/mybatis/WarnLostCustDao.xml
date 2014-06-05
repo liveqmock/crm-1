@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain">
+  <resultMap id="warnLostCust" type="com.deppon.crm.module.marketing.shared.domain.WarnLostCust">
+        <result column="FID" property="id" jdbcType="NUMERIC" />
+        <result column="FSEASONTIMS" property="seasonTime" jdbcType="NUMERIC" />
+        <result column="FCUSTNUMBER" property="custNumber" jdbcType="VARCHAR" />
+        <result column="FINTERVALSENDTIME" property="intervalNendTime" jdbcType="NUMERIC" />
+        <result column="FLASTSENDTIME" property="lastsendTime" jdbcType="DATE" />
+        <result column="FLASTSENDMONEY" property="lastsendMoney" jdbcType="NUMERIC" />
+        <result column="FSUMINRECENT90DAY" property="suminRecent90day" jdbcType="NUMERIC" />
+        <result column="FCREATETIME" property="createTime" jdbcType="DATE" />
+        <result column="FCREATEUSER" property="createUser" jdbcType="NUMERIC" />
+        <result column="FCREATEUSERNAME" property="createUserName" jdbcType="VARCHAR" />
+        <result column="FDEPTSTANDARDNAME" property="deptStandardName" jdbcType="VARCHAR" />
+        <result column="FAREASTANDARDNAME" property="areaStandardName" jdbcType="VARCHAR" />
+        <result column="FBIGAREASTANDARDNAME" property="bigAreaStandardName" jdbcType="VARCHAR" />
+        <result column="FCAREERDEPTSTANDARDNAME" property="careerDeptStandardName" jdbcType="VARCHAR" />
+        <result column="FCADRESTANDARDNAME" property="cadreStandardName" jdbcType="VARCHAR" />
+        <result column="FCUSTLEVEL" property="custLevel" jdbcType="VARCHAR" />
+        <result column="FCUSTNAME" property="custName" jdbcType="VARCHAR" />
+        <result column="FISSEASON" property="isSeason" jdbcType="NUMERIC" />
+        <result column="FEXECUTOR" property="executor" jdbcType="VARCHAR" />
+         <result column="FISSEASONDESC" property="isSeasonDesc" jdbcType="NUMERIC" />
+         <result column="FCUSTLEVELDESC" property="custLevelDesc" jdbcType="VARCHAR" />
+         <result column="FWARNSTATUSDESC" property="warnStatusDesc" jdbcType="VARCHAR" />
+         <result column="FCUSTCATEGORYDESC" property="custCategoryDesc" jdbcType="VARCHAR" />
+        
+        <result column="FWARNSTATUS" property="warnStatus" jdbcType="VARCHAR" />
+        <result column="FCUSTCATEGORY" property="custCategory" jdbcType="VARCHAR" />
+        <result column="FPREDELIVERYTENDTIME" property="preDeliverytendTime" jdbcType="DATE" />
+        <result column="FPREDELIVERYTBIEGNTIME" property="preDeliverytBiegnTime" jdbcType="DATE" />
+        <result column="FWARNSTATUSCHANGEUSER" property="warnStatusChangeUser" jdbcType="VARCHAR" />
+        <result column="FWARNSTATUSCHANGETIME" property="warnStatusChangeTime" jdbcType="DATE" />
+     	<result column="FLOSTCAUSE" property="lostCause" jdbcType="VARCHAR" />
+        <result column="FLOSTCAUSEREMARK" property="lostCustRemark" jdbcType="VARCHAR" />
+        <result column="FVISITTIME" property="returnTimes" jdbcType="NUMERIC" />
+    </resultMap>
+    <resultMap id="WarnInfo" type="com.deppon.crm.module.marketing.shared.domain.WarnStatusUpdateInfo">
+		<result column="FWARNSTATUS" property="warnStatus" jdbcType="NUMERIC" />
+		<result column="FPREDELIVERYTBEGINTIME" property="preSendBeginTime" jdbcType="DATE" />
+		<result column="FPREDELIVERYTENDTIME" property="preSendEndTime"	jdbcType="DATE" />
+		<result column="FLOSTCAUSE" property="lostCause" jdbcType="VARCHAR" />
+		<result column="FOTHERLOSTCAUSE" property="lostCauseRemark" jdbcType="VARCHAR"/>
+		<result column="FISSEASON" property="isseason" jdbcType="NUMERIC"/>
+		<result column="FCUSTNUMBER" property="custNumber" jdbcType="VARCHAR"/>
+		<result column="FLASTSENDTIME" property="lastSendTime" jdbcType="VARCHAR"/>
+		<result column="FCREATETIME" property="warnTime" jdbcType="VARCHAR"/>
+	</resultMap>
+	<resultMap id="MailAccountResultMap" type="com.deppon.crm.module.marketing.shared.domain.WarnLostMailAccount">
+		<result column="FID" property="id" jdbcType="NUMERIC" />
+		<result column="FEMPNAME" property="receiverName" jdbcType="VARCHAR" />
+		<result column="FOEMAIL" property="emailAddress"	jdbcType="VARCHAR" />
+		<result column="FEMPCODE" property="empCode" jdbcType="VARCHAR" />
+		<result column="FSTANDARDCODE" property="deptStandardCode" jdbcType="VARCHAR"/>
+	</resultMap>
+	<sql id="MailAccoount_Column_List">
+		DISTINCT EMP.FID, EMP.FEMPNAME, EMP.FOEMAIL, EMP.FEMPCODE,D.FSTANDARDCODE
+	</sql>
+	<sql id="warnCust_Column_List">
+		DISTINCT LOST.FID,
+	       LOST.FCUSTNUMBER,
+	       LOST.FINTERVALSENDTIME,
+	       LOST.FLASTSENDTIME,
+	       LOST.FLASTSENDMONEY,
+	       LOST.FSUMINRECENT90DAY,
+	       LOST.FCUSTLEVEL,
+	       DECODE(LOST.FCUSTLEVEL,'NORMAL','普通客户','GOLD','黄金客户','PLATINUM','铂金客户','钻石客户') FCUSTLEVELDESC,
+	       DECODE(LOST.FISSEASON,'0','非季节性客户','季节性客户') FISSEASONDESC,
+	       DECODE(LOST.FWARNSTATUS,'LOST','流失','PRELOST','预流失','正常') FWARNSTATUSDESC,
+	       DECODE(LOST.FCUSTCATEGORY,'LTT','零担','EL','零担和快递','快递') FCUSTCATEGORYDESC,
+	       LOST.FCUSTNAME,
+	       (SELECT D.FDEPTNAME
+	          FROM T_ORG_DEPARTMENT D
+	         WHERE D.FSTANDARDCODE = LOST.FDEPTSTANDARDCODE) FDEPTSTANDARDNAME,
+	       (SELECT D.FDEPTNAME
+	          FROM T_ORG_DEPARTMENT D
+	         WHERE D.FSTANDARDCODE = LOST.FAREASTANDARDCODE) FAREASTANDARDNAME,
+	       (SELECT D.FDEPTNAME
+	          FROM T_ORG_DEPARTMENT D
+	         WHERE D.FSTANDARDCODE = LOST.FBIGAREASTANDARDCODE) FBIGAREASTANDARDNAME,
+	       (SELECT D.FDEPTNAME
+	          FROM T_ORG_DEPARTMENT D
+	         WHERE D.FSTANDARDCODE = LOST.FCAREERDEPTSTANDARDCODE) FCAREERDEPTSTANDARDNAME,
+	       (SELECT D.FDEPTNAME
+	          FROM T_ORG_DEPARTMENT D
+	         WHERE D.FSTANDARDCODE = LOST.FCADRESTANDARDCODE) FCADRESTANDARDNAME,
+	       LOST.FCREATETIME FCREATETIME,
+	       LOST.FISSEASON FISSEASON,
+	       LOST.FWARNSTATUS FWARNSTATUS,
+	       LOST.FVISITTIME FVISITTIME,
+	       LOST.FCUSTCATEGORY FCUSTCATEGORY,
+	       LOST.FPREDELIVERYTBIEGNTIME FPREDELIVERYTBIEGNTIME,
+	       LOST.FPREDELIVERYTENDTIME FPREDELIVERYTENDTIME,
+	       (SELECT EX.FOTHERLOSTCAUSE
+	          FROM T_CUST_CUSTBASEDATA_EXTEND EX, T_CUST_CUSTBASEDATA CUST
+	         WHERE EX.FCUSTID = CUST.FID
+	           AND CUST.FCUSTNUMBER = LOST.FCUSTNUMBER) FLOSTCAUSEREMARK,
+	       (SELECT EX.FLOSTCAUSE
+	          FROM T_CUST_CUSTBASEDATA_EXTEND EX, T_CUST_CUSTBASEDATA CUST
+	         WHERE EX.FCUSTID = CUST.FID
+	           AND CUST.FCUSTNUMBER = LOST.FCUSTNUMBER) FLOSTCAUSE,
+	      WLOGRES.FMODIFYUSER FMODIFYUSER,
+                  WLOGRES.FWARNSTATUSCHANGETIME,
+           (SELECT E.FEMPNAME FROM T_ORG_EMPLOYEE E WHERE E.FID = WLOGRES.FMODIFYUSER) FWARNSTATUSCHANGEUSER,
+	       (SELECT FEMPNAME FROM T_ORG_EMPLOYEE WHERE FID = LOST.FCREATEUSER) FCREATEUSERNAME,
+	       (SELECT FEMPNAME
+                   FROM T_ORG_EMPLOYEE E
+                   JOIN T_ORG_DEPARTMENT D ON E.FID = D.FPRINCIPAL
+                  WHERE D.FDEPTCODE = LOST.FDEPTSTANDARDCODE
+                  ) FEXECUTEER
+	</sql>
+	<select id="getDetpGroupFromWarnLost" parameterType="java.util.HashMap" resultMap="MailAccountResultMap">
+		SELECT <include refid="MailAccoount_Column_List"/>	 FROM 
+		(SELECT 
+			<if test="level=='AREA'">
+				FAREASTANDARDCODE FDEPTSTANDARDCODE
+			</if>
+			<if test="level=='BIGAREA'">
+				FBIGAREASTANDARDCODE FDEPTSTANDARDCODE
+			</if>
+			<if test="level=='CAREEA'">
+				FCAREERDEPTSTANDARDCODE FDEPTSTANDARDCODE
+			</if>
+				 FROM T_CUST_WARNLOST
+				 WHERE 
+				 FCUSTLEVEL IN 
+				 <foreach item="item" collection="para" open="(" separator="," close=")">
+              	 	 #{item}
+           		 </foreach>
+				 GROUP BY 
+				<if test="level=='AREA'">
+					FAREASTANDARDCODE
+				</if>
+				<if test="level=='BIGAREA'">
+					FBIGAREASTANDARDCODE
+				</if>
+				<if test="level=='CAREEA'">
+					FCAREERDEPTSTANDARDCODE
+				</if>) LOST, 
+		        T_ORG_EMPLOYEE    EMP,
+		        T_ORG_DEPARTMENT  D
+ 		WHERE LOST.FDEPTSTANDARDCODE = D.FSTANDARDCODE
+  		 AND EMP.FDEPTID = D.FID
+					AND EMP.FPOSITION = #{position,jdbcType=VARCHAR}
+				AND EMP.FSTATUS=1
+	</select>
+	<select id="getDetpGroupFromExpress" parameterType="java.util.HashMap" resultMap="MailAccountResultMap">
+		SELECT <include refid="MailAccoount_Column_List"/>
+		  FROM (SELECT FPARENTID FID
+		          FROM T_ORG_DEPARTMENT
+		         WHERE FSTANDARDCODE IN
+		               (SELECT EX.FEXPRESSPOINTCODE
+		                  FROM T_CUST_WARNLOST LOST, t_crm_expresspointbusinessdept EX
+		                 WHERE LOST.FDEPTSTANDARDCODE = EX.FBUSINESSDEPTCODE
+		                   )) LOST,
+		       T_ORG_EMPLOYEE EMP,
+		       T_ORG_DEPARTMENT D
+		 WHERE LOST.FID = D.FID
+		   AND EMP.FDEPTID = D.FID
+		   AND EMP.FPOSITION = #{position,jdbcType=VARCHAR}
+		   AND EMP.FSTATUS = 1
+	</select>
+	<select id="searchWarnLostCust" parameterType="java.util.HashMap" resultMap="warnLostCust">
+		SELECT <include refid="warnCust_Column_List"/>	 FROM T_CUST_WARNLOST LOST
+		 LEFT JOIN (SELECT RES.FCUSTNUMBER,
+                    RES.FWARNSTATUSCHANGETIME FWARNSTATUSCHANGETIME,
+                    RES.FMODIFYUSER FMODIFYUSER
+               FROM (SELECT WLOG.FCUSTNUMBER,
+                            WLOG.FCREATETIME FWARNSTATUSCHANGETIME,
+                            WLOG.FMODIFYUSER FMODIFYUSER,
+                            row_number() over(partition by WLOG.FCUSTNUMBER order by WLOG.FCREATETIME desc) NUM
+                       FROM T_CUST_WARNSTATUSCHANGELOG WLOG) RES
+              WHERE RES.NUM = 1) WLOGRES ON WLOGRES.FCUSTNUMBER =
+                                            LOST.FCUSTNUMBER
+	 	 WHERE LOST.FCADRESTANDARDCODE IS NOT NULL 
+	 		 <if test="beginTime!=null and endTime!=null">
+	 		  <![CDATA[
+                 AND LOST.FCREATETIME>=#{beginTime,jdbcType=DATE} 
+				 AND LOST.FCREATETIME<=#{endTime,jdbcType=DATE}+1      
+              ]]>
+			</if>
+	 		AND LOST.FCUSTLEVEL IN 
+			<foreach item="item" collection="para" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+		    <if test="level=='AREA'">
+		   		AND LOST.FAREASTANDARDCODE = #{deptStandardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="level=='BIGAREA'">
+				AND LOST.FBIGAREASTANDARDCODE= #{deptStandardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="level=='CAREEA'">
+				AND LOST.FCAREERDEPTSTANDARDCODE= #{deptStandardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="level=='EXPRESSBIGAREA'">
+				AND LOST.FDEPTSTANDARDCODE IN (
+				SELECT EX.FBUSINESSDEPTCODE
+				  FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EX
+				 WHERE FEXPRESSPOINTCODE IN
+				       (SELECT FSTANDARDCODE
+				          FROM T_ORG_DEPARTMENT V
+				         START WITH V.FSTANDARDCODE =#{deptStandardCode,jdbcType=VARCHAR}
+				        CONNECT BY PRIOR FID = FPARENTID)
+				)
+			</if>
+	</select>
+		<select id="searchWarnLostCustByCustInfo" parameterType="java.util.HashMap" resultMap="warnLostCust">
+			            SELECT <include refid="warnCust_Column_List"/>,ROWNUM FROM T_CUST_WARNLOG LOST
+			             LEFT JOIN (SELECT RES.FCUSTNUMBER,
+                    RES.FWARNSTATUSCHANGETIME FWARNSTATUSCHANGETIME,
+                    RES.FMODIFYUSER FMODIFYUSER
+               FROM (SELECT WLOG.FCUSTNUMBER,
+                            WLOG.FCREATETIME FWARNSTATUSCHANGETIME,
+                            WLOG.FMODIFYUSER FMODIFYUSER,
+                            row_number() over(partition by WLOG.FCUSTNUMBER order by WLOG.FCREATETIME desc) NUM
+                       FROM T_CUST_WARNSTATUSCHANGELOG WLOG) RES
+              WHERE RES.NUM = 1) WLOGRES ON WLOGRES.FCUSTNUMBER =
+                                            LOST.FCUSTNUMBER 
+					 <if test="deptid!=null and deptid!=''">
+				 		, T_ORG_DEPARTMENT DEP
+				 	 </if>
+				 	 WHERE
+				 	 1=1 
+				 	 <if test="deptid!=null and deptid!=''">
+				 		AND DEP.FID=#{deptid,jdbcType=NUMERIC}
+				 		AND DEP.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+				 	 </if>
+				 	 <if test="custNumber!=null and custNumber!=''">
+				 		AND LOST.FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}
+				 	 </if>
+				 	   <if test="custName!=null or custName!=''">
+				 		AND LOST.FCUSTNAME LIKE '%'||#{custName,jdbcType=VARCHAR}||'%'
+				 	 </if> 
+				 	  <if test="endTime!=null and beginTime!=null">
+				 		<![CDATA[
+			                 AND LOST.FCREATETIME>=#{beginTime,jdbcType=DATE} 
+							 AND LOST.FCREATETIME<=#{endTime,jdbcType=DATE}+1      
+			              ]]>
+				 	 </if>
+				 	 ORDER BY LOST.FID
+	</select>
+	<select id="searchWarnLostCustByCustCount" parameterType="java.util.HashMap" resultType="int">
+			          SELECT COUNT(1) FROM T_CUST_WARNLOG LOST
+					 <if test="deptid!=null and deptid!=''">
+				 		, T_ORG_DEPARTMENT DEP
+				 	 </if>
+				 	 WHERE
+				 	 1=1 
+				 	 <if test="deptid!=null and deptid!=''">
+				 		AND DEP.FID=#{deptid,jdbcType=NUMERIC}
+				 		AND DEP.FSTANDARDCODE=LOST.FDEPTSTANDARDCODE
+				 	 </if>
+				 	 <if test="custNumber!=null and custNumber!=''">
+				 		AND LOST.FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}
+				 	 </if>
+				 	   <if test="custName!=null or custName!=''">
+				 		AND LOST.FCUSTNAME LIKE '%'||#{custName,jdbcType=VARCHAR}||'%'
+				 	 </if> 
+				 	  <if test="endTime!=null and beginTime!=null">
+				 		<![CDATA[
+			                 AND LOST.FCREATETIME>=#{beginTime,jdbcType=DATE} 
+							 AND trunc(LOST.FCREATETIME)<=#{endTime,jdbcType=DATE}      
+			              ]]>
+				 	 </if>
+	</select>
+	<select id="searchWarnLostCustInfo" parameterType="java.util.HashMap" resultMap="WarnInfo">
+			SELECT E.FWARNSTATUS,
+		               E.FPREDELIVERYTBEGINTIME,
+		               E.FPREDELIVERYTENDTIME,
+		               E.FLOSTCAUSE,
+		               E.FOTHERLOSTCAUSE,
+		               E.FISSEASON,
+		               C.FCUSTNUMBER,
+		               LOST.FCREATETIME,
+		               LOST.FLASTSENDTIME
+		          FROM T_CUST_CUSTBASEDATA C
+		         INNER JOIN T_CUST_CUSTBASEDATA_EXTEND E ON E.FCUSTID = C.FID
+		          LEFT JOIN T_CUST_WARNLOST LOST ON LOST.FCUSTNUMBER = C.FCUSTNUMBER
+		          WHERE
+		          1=1 AND
+		          <if test="custId!=null and custId!=0">
+		           C.FID=#{custId,jdbcType=NUMERIC}
+	 			  </if>
+	 			 <if test="custNumber!=null and custNumber!=''">
+		           C.FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}
+	 			 </if>
+	</select>
+	<select id="createWarnLostList" parameterType="java.lang.String"  statementType="CALLABLE">
+		<!-- 生成流失预警名单 已经生成维护计划和日程-->
+		{call PAG_WarnLostListOperation.createWarnLostList()}
+	</select>
+	<select id="update" parameterType="com.deppon.crm.module.marketing.shared.domain.WarnStatusUpdateInfo"  statementType="CALLABLE">
+		<!--在回访节目中，调用此过程，手动更新客户的预警信息 -->
+	{call PAG_WarnLostListOperation.UPDATEWARNSTATUSMANUAL(#{modifyEmpId},
+	#{warnStatus,jdbcType=VARCHAR},#{preSendBeginTime,jdbcType=DATE},#{preSendEndTime,jdbcType=DATE},
+	#{lostCause,jdbcType=VARCHAR},#{lostCauseRemark,jdbcType=VARCHAR},#{rVid},#{custNumber,jdbcType=VARCHAR},#{isseason,jdbcType=NUMERIC})}
+	</select>
+	
+	<select id="monitorWarnStatus" parameterType="java.lang.String"  statementType="CALLABLE">
+		<!--在回访节目中，调用此过程，自动更新客户的预警信息 -->
+	{call PAG_WarnLostListOperation.monitorWarnStatus()}
+	</select>
+	
+	<select id="searchWarnLostCustFor360View" parameterType="map" resultType="com.deppon.crm.module.marketing.shared.WarnLostInfoFor360">
+		<![CDATA[
+			SELECT DISTINCT DECODE(WLOG.FWARNSTATUS,
+                       'LOST',
+                       '流失',
+                       'PRELOST',
+                       '预流失',
+                       '正常') warnStatus,
+                WLOG.FPREDELIVERYTBIEGNTIME preDeliverytendTime,
+                WLOG.FPREDELIVERYTENDTIME preDeliverytBiegnTime,
+                DECODE(WLOG.FISSEASON, '0', '非季节性客户', '季节性客户') isSeason,
+                CLOG.FLOSTCAUSE lostCause,
+                WLOG.FCREATETIME createTime,
+                MO.FEMPNAME executor,
+                CLOG.FCREATETIME warnStatusChangeTime,
+                CLOG.FOTHERLOSTCAUSE lostCustRemark
+		  FROM T_CUST_WARNLOG WLOG
+		  JOIN T_CUST_WARNSTATUSCHANGELOG CLOG
+		    ON WLOG.FCUSTNUMBER = CLOG.FCUSTNUMBER
+		  JOIN T_ORG_EMPLOYEE MO
+		    ON CLOG.FMODIFYUSER = MO.FID
+		 WHERE CLOG.FRVID IS NOT NULL
+		]]>
+		<if test="custNumber!=null and custNumber!=''">
+			AND WLOG.FCUSTNUMBER = #{custNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="custName!=null and custName!=''">
+			AND WLOG.FCUSTNAME = #{custName,jdbcType=VARCHAR}
+		</if>
+		<if test="beginTime!=null and endTime!=null">
+			<![CDATA[
+				AND WLOG.FCREATETIME >=#{beginTime,jdbcType=DATE}
+				AND WLOG.FCREATETIME <=#{endTime,jdbcType=DATE}
+			]]>
+		</if>
+	</select>
+</mapper>
+

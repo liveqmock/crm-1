@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/jms
+	http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+	http://www.springframework.org/schema/context     
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<!-- SERVICE层 -->
+	<!-- 授权管理服务 -->
+	<bean id="authorizeService"
+		class="com.deppon.crm.module.authorization.server.service.impl.AuthorizeService">
+		<property name="authorizeDao" ref="authorizeDao"></property>
+	</bean>
+	<!-- DAO层 -->
+	<!-- 授权用户角色与部门数据访问 -->
+	<bean id="authorizeDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.AuthorizeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="ladingstationDepartmentDao"
+		class="com.deppon.crm.module.common.server.dao.impl.LadingstationDepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<bean id="ladingstationDepartmentService"
+		class="com.deppon.crm.module.common.server.service.impl.LadingstationDepartmentService">
+		<property name="ladingstationDepartmentDao" ref="ladingstationDepartmentDao"></property>
+	</bean>
+	<bean id="ladingstationDepartmentManager"
+		class="com.deppon.crm.module.common.server.manager.impl.LadingstationDepartmentManager">
+		<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService" />
+ 	<property name="departmentService" ref="departmentService" />
+	</bean>
+
+
+	<bean id="customerOperate" factory-bean="customerOperateProxy"
+		factory-method="create">
+	</bean>
+	<bean id="customerOperateProxy"
+		class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className"
+			value="com.deppon.crm.module.client.customer.impl.CustomerOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="waybillOperateProxy"
+		class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className"
+			value="com.deppon.crm.module.client.order.impl.WaybillOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="waybillOperate" factory-bean="waybillOperateProxy"
+		factory-method="create">
+	</bean>
+	<!-- log -->
+	<bean id="interfaceLogBuffer"
+		class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="queueSize" value="5"></property>
+		<property name="listSize" value="5"></property>
+		<property name="logSender" ref="interfaceLogSender"></property>
+	</bean>
+	<bean id="interfaceLogSender"
+		class="com.deppon.crm.module.client.log.InterfaceInvokeLogSender">
+		<property name="jdbcTemplate" ref="interfaceLogSenderJdbcTemplate"></property>
+	</bean>
+	<bean id="interfaceLogSenderJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<bean id="serviceAccessProxyFactory"
+		class="com.deppon.crm.module.client.common.ServiceAccessProxyFactory"
+		factory-method="createInstance">
+		<property name="logBuffer" ref="interfaceLogBuffer"></property>
+		<property name="interfaceProvider" ref="interfaceProvider"></property>
+	</bean>
+	<bean id="interfaceProvider" class="com.deppon.crm.module.client.common.DbInterfaceProvider">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="smsSenderProxy"
+		class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className"
+			value="com.deppon.crm.module.client.sms.impl.SmsInfoSenderImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="smsSender" factory-bean="smsSenderProxy" factory-method="create">
+	</bean>
+	<!-- 角色数据访问 -->
+	<bean id="roleDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.RoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="userDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.UserDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="giftApplyOperate"
+		class="com.deppon.crm.module.client.workflow.impl.GiftApplyOperateImpl">
+	</bean>
+	<bean id="messageBundle"
+		class="com.deppon.foss.framework.server.web.message.MessageBundle"></bean>
+	<!-- 部门数据访问 -->
+	<bean id="departmentDao"
+		class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 用户授权部门和角色数据访问 -->
+	<bean id="userDeptAndRoleDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.UserDeptAndRoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="messageManager"
+		class="com.deppon.crm.module.common.server.manager.impl.MessageManager">
+		<property name="messageService" ref="messageService"></property>
+	</bean>
+	<bean id="messageDao" class="com.deppon.crm.module.common.server.dao.impl.MessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<bean id="messageService"
+		class="com.deppon.crm.module.common.server.service.impl.MessageService">
+		<property name="messageDao" ref="messageDao"></property>
+	</bean>
+	<!-- 用户管理服务 -->
+	<bean id="userService"
+		class="com.deppon.crm.module.authorization.server.service.impl.UserService">
+		<property name="userDao" ref="userDao"></property>
+		<property name="roleDao" ref="roleDao"></property>
+		<property name="departmentDao" ref="departmentDao"></property>
+		<property name="userDeptAndRoleDao" ref="userDeptAndRoleDao"></property>
+	</bean>
+	<!-- 职员数据访问 -->
+	<bean id="employeeDao"
+		class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="bankProvinceCityDao"
+		class="com.deppon.crm.module.common.server.dao.impl.BankProvinceCityDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="bankProvinceCityService"
+		class="com.deppon.crm.module.common.server.service.impl.BankProvinceCityServiceImpl">
+		<property name="bankProvinceCityDao" ref="bankProvinceCityDao"></property>
+	</bean>
+	<bean id="bankProvinceCityManager"
+		class="com.deppon.crm.module.common.server.manager.impl.BankProvinceCityManagerImpl">
+		<property name="bankProvinceCityService" ref="bankProvinceCityService"></property>
+	</bean>
+	<!-- SERVICE层 -->
+	<!-- 部门管理服务 -->
+	<bean id="departmentService"
+		class="com.deppon.crm.module.organization.server.service.impl.DepartmentService">
+		<property name="departmentDao" ref="departmentDao"></property>
+	</bean>
+	<bean id="contractApplyOperate"
+		class="com.deppon.crm.module.customer.server.manager.OAworkflowImpl">
+	</bean>
+	<bean id="smsInfoSender"
+		class="com.deppon.crm.module.customer.server.util.CommonMockClass" />
+	<!-- 职员管理服务 -->
+	<bean id="employeeService"
+		class="com.deppon.crm.module.organization.server.service.impl.EmployeeService">
+		<property name="employeeDao" ref="employeeDao"></property>
+	</bean>
+
+	<bean id="fileDao" class="com.deppon.crm.module.common.file.dao.impl.FileDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="fileService"
+		class="com.deppon.crm.module.common.file.service.impl.FileService">
+		<property name="fileDao" ref="fileDao"></property>
+	</bean>
+	<bean id="fileManager"
+		class="com.deppon.crm.module.common.file.manager.impl.FileManager">
+		<property name="fileService" ref="fileService"></property>
+	</bean>
+
+	<bean id="WaitCustomerLogDao"
+		class="com.deppon.crm.module.client.sync.dao.impl.WaitCustomerLogDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="SearchMemberInfosDao"
+		class="com.deppon.crm.module.client.sync.dao.impl.SearchMemberInfosDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="CustomerInfoLog" class="com.deppon.crm.module.client.sync.impl.CustomerInfoLog">
+		<property name="waitCustomerLogDao" ref="WaitCustomerLogDao"></property>
+		<property name="searchMemberInfosDao" ref="SearchMemberInfosDao"></property>
+	</bean>
+	<bean id="headDao" class="com.deppon.crm.module.common.server.dao.impl.HeadDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="detailDao" class="com.deppon.crm.module.common.server.dao.impl.DetailDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="approvingWokflowDataDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ApprovingWorkflowDataDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 数据字典缓存提供者 -->
+	<bean id="dataDictionaryCacheProvider"
+		class="com.deppon.crm.module.frameworkimpl.server.cache.DataDictionaryCacheProvider">
+		<property name="headDao" ref="headDao"></property>
+		<property name="detailDao" ref="detailDao"></property>
+	</bean>
+	
+	<bean id='detailService' 
+		class="com.deppon.crm.module.common.server.service.impl.DetailService">
+		<property name="detailDao" ref="detailDao"></property>
+	</bean>
+	
+	<bean id='detailManager' 
+		class="com.deppon.crm.module.common.server.manager.impl.DetailManager">
+		<property name="detailService" ref="detailService"></property>
+	</bean>
+	
+	<bean id="crmToEsbInfoSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbRequestSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_CRM_REQUEST_COM_OUT" />
+	</bean>
+	<!-- 发出CRM响应 -->
+	<bean id="crmToEsbResponseSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbResponseSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_CRM_RESPONSE_COM_OUT" />
+	</bean>
+	<!-- 发送CRM状态 -->
+	<bean id="crmToEsbStaSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbStatusSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_ESB_STATUS" />
+	</bean>
+
+	<!-- 异常发送 -->
+	<bean id="crmToEsbExceptionSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbExceptionSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_ESB_EXCEPTION" />
+	</bean>
+
+	<bean id="crmToEsbTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean>
+	
+		<bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="transportType">
+			<util:constant static-field="com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP" />
+		</property>
+		<property name="queueManager" value="QM_APPD" />
+		<property name="hostName" value="192.168.17.141" />
+		<property name="channel" value="CRM.CLIENT" />
+		<property name="port" value="2428" />
+	</bean>
+		<bean id="branchRuleManager"
+		class="com.deppon.crm.module.bps.server.rule.BranchRuleManagerImpl" />
+	<bean id="participantRuleManager"
+		class="com.deppon.crm.module.bps.server.rule.ParticipantRuleManagerImpl" />
+	<bean id="bpsWorkflowManager"
+		class=" com.deppon.crm.module.bps.server.manager.impl.BpsWorkflowManager">
+		<property name="branchRuleManager" ref="branchRuleManager"></property>
+		<property name="participantRuleManager" ref="participantRuleManager"></property>
+		<property name="amountConfigService" ref="amountConfigService"></property>
+	</bean>
+	<bean id="amountConfigService"
+		class="com.deppon.crm.module.bps.server.service.impl.AmountConfigServiceImpl">
+		<property name="amountConfigDao" ref="amountConfigDao"></property>
+	</bean>
+	<bean id="amountConfigDao"
+		class="com.deppon.crm.module.bps.server.dao.impl.AmountConfigDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="contractBranch" class="com.deppon.crm.module.customer.bpsworkflow.branch.ContractBranch"/>
+	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+		<property name="host" value="smtp.deppon.com"/>
+		<property name="userName" value="CRM@deppon.com"/>
+		<property name="password" value="dp31350606"/>
+		</bean>
+	<!-- dao层配置 -->			
+	<bean id="sysMailConfigDao" class="com.deppon.crm.module.sysmail.server.dao.impl.SysMailConfigDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- service 层配置 -->
+	<bean id="sysMailConfigService" class="com.deppon.crm.module.sysmail.server.service.impl.SysMailConfigService">
+		<property name="sysMailConfigDao" ref="sysMailConfigDao"/>
+	</bean>
+	
+	<!-- manager 层配置 -->
+	<bean id="sysMailConfigManager" class="com.deppon.crm.module.sysmail.server.manager.impl.SysMailConfigManager">
+		<property name="sysMailConfigService" ref="sysMailConfigService"/>
+	</bean>
+	
+	<bean id="sysMailSendDao" class="com.deppon.crm.module.sysmail.server.dao.impl.SysMailSendDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="sysMailSendService" class="com.deppon.crm.module.sysmail.server.service.impl.SysMailSendService">
+		<property name="sysMailSendDao" ref="sysMailSendDao"/>
+	</bean>
+	
+	<bean id="sysMailSendManager" class="com.deppon.crm.module.sysmail.server.manager.impl.SysMailSendManager">
+		<property name="mailSenderService" ref="mailSenderService"/>
+		<property name="sysMailSendService" ref="sysMailSendService"/>
+	</bean>
+	    <bean id="departmentCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.DepartmentCacheProvider">
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+		<bean id="departmentCache" class="com.deppon.crm.module.frameworkimpl.server.cache.DepartmentCache">
+		<property name="cacheProvider" ref="departmentCacheProvider"></property>
+	    <property name="cacheStorage" ref="redisCacheStorage"/>
+	</bean>
+<context:property-placeholder location="./foss.properties"/>
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+	  <property name="maxActive" value="${redis.pool.maxActive}" />
+	  <property name="maxIdle" value="${redis.pool.maxIdle}" />
+	  <property name="maxWait" value="${redis.pool.maxWait}" />
+	  <property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
+	  <property name="testOnReturn" value="${redis.pool.testOnReturn}" />
+	</bean>
+	<!-- redis 客户端连接配置 -->
+	<bean id="redisClient" class="redis.clients.jedis.JedisPool">
+	  <constructor-arg index="0" ref="poolConfig" />
+	  <constructor-arg index="1" value="${redis.host1}" />
+	  <constructor-arg index="2" value="${redis.port1}" />
+	  <constructor-arg index="3" value="${redis.timeout}" />
+	  <constructor-arg index="4" value="${redis.password1}" />
+	</bean>
+	
+	<bean id="redisCacheStorage" class="com.deppon.crm.module.frameworkimpl.server.cache.CRMRedisCacheStorage">
+	<property name="client" ref="redisClient" />
+	</bean>
+</beans>

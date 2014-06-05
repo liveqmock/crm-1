@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase">
+	<resultMap type="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase"  id="serachClientBaseDetail">
+		<id property="id" column="FID"/>
+		<result property="clientBaseName" column="FCLIENTBASENAME"/>
+		<result property="clientCreateStartTime" column="FCREATESTARTTIME"/>
+		<result property="clientCreateEndTime" column="FCREATEENDTIME"/>
+		<result property="lineType" column="FCONDITIONTYPE"/>
+		<result property="clientBaseStatus" column="FSTATUS"/>
+		<result property="clientDeptId" column="FDEPTID"/>
+		<result property="createUser" column="FCREATEUSERID"/>
+		<result property="clientBaseCode" column="FCLIENTBASECODE"/>
+		<result property="tradesCode" column="FTRADESCODE"/> 
+		<result property="secondTradesCode" column="FSECONDTRADESCODE"/>
+		<result property="clientTypesCode" column="FCLIENTTYPESCODE"/>
+		<result property="clientlatentsCode" column="FCLIENTLATENTSCODE"/>
+		<result property="clientGradesCode" column="FCLIENTGRADESCODE"/>
+		<result property="clientSourcesCode" column="FCLIENTSOURCESCODE"/>
+		<result property="productTypesCode" column="FPRODUCTTYPESCODE"/>
+		<result property="clientPropertysCode" column="FCLIENTPROPERTYSCODE"/>
+		<result property="takeMethodsCode" column="FTAKEMETHODSCODE"/>
+		<result property="cooperateWillsCode" column="FCOOPERATEWILLSCODE"/> 
+		<collection property="trades" column="{id=FID,conditionType=FCLIENTBASECODE,type=FTRADESCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="secondTrades" column="{id=FID,conditionType=FCLIENTBASECODE,type=FSECONDTRADESCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="clientTypes" column="{id=FID,conditionType=FCLIENTBASECODE,type=FCLIENTTYPESCODE}" ofType="String" select="searchMultipleByIdType"></collection> 	
+		<collection property="clientlatents" column="{id=FID,conditionType=FCLIENTBASECODE,type=FCLIENTLATENTSCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="clientGrades" column="{id=FID,conditionType=FCLIENTBASECODE,type=FCLIENTGRADESCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="clientSources" column="{id=FID,conditionType=FCLIENTBASECODE,type=FCLIENTSOURCESCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="productTypes" column="{id=FID,conditionType=FCLIENTBASECODE,type=FPRODUCTTYPESCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="clientPropertys" column="{id=FID,conditionType=FCLIENTBASECODE,type=FCLIENTPROPERTYSCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="takeMethods" column="{id=FID,conditionType=FCLIENTBASECODE,type=FTAKEMETHODSCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="cooperateWills" column="{id=FID,conditionType=FCLIENTBASECODE,type=FCOOPERATEWILLSCODE}" ofType="String" select="searchMultipleByIdType"></collection> 
+		<collection property="lineDept" column="{id=FID,conditionType=FCLIENTBASECODE}" ofType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept" select="searchLineDeptByCondition"></collection> 
+	</resultMap>
+	<!-- 查询客户群名称是否重复 -->
+	<select id="searchClientBaseNameIsRepaat" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase" resultType="int">
+		SELECT COUNT(1) 
+		FROM  T_MARK_CUSTCONDITION M 
+		WHERE  M.FCLIENTBASENAME=#{clientBaseName,jdbcType=VARCHAR}
+		<if test="id!=null and id!=''">
+		 <![CDATA[
+			AND	M.FID <>#{id,jdbcTypt=VARCHAR}
+		 ]]>
+		</if>
+		 <![CDATA[
+			AND M.FSTATUS <>#{clientBaseStatus,jdbcTypt=VARCHAR}
+		 ]]>
+	</select>
+
+	<!-- 查询客户群 -->
+	<select id="searchClientBase" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase" resultType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase">
+	  SELECT DISTINCT C.FID             ID,
+                  C.FCLIENTBASENAME CLIENTBASENAME,
+                  C.FSTATUS         CLIENTBASESTATUS,
+                  E.FEMPNAME        CREATEUSER,
+                  C.FCREATEUSERID   CREATEUSERID,
+                  C.FCREATETIME     CREATEDATE,
+                  D.FDEPTNAME       CLIENTDEPTNAME,
+                  C.FDEPTID         CLIENTDEPTID,
+                  D.FPRINCIPAL      PRINCIPALID
+             FROM T_MARK_CUSTCONDITION C
+        	 LEFT JOIN T_ORG_DEPARTMENT D
+               ON D.FID = C.FDEPTID
+       		 LEFT JOIN T_ORG_EMPLOYEE E
+               ON E.FID = C.FCREATEUSERID
+               WHERE 1 = 1
+		 <choose>
+		 	<when test="clientBaseName !=null and clientBaseName!='' ">
+		 		 AND C.FCLIENTBASENAME LIKE '%'||#{clientBaseName,jdbcTypt=VARCHAR}||'%'
+		 	</when>
+			<otherwise>
+				 <if test="id!=null">
+				   AND C.FID=#{id,jdbcTypt=NUMERIC}
+				 </if>
+				 <if test="clientBaseName !=null and clientBaseName!='' ">
+				  
+				 </if>
+				 <if test="clientCreateStartTime !=null and clientCreateEndTime !=null ">
+				 <![CDATA[  AND  TRUNC(C.FCREATETIME) >= #{clientCreateStartTime,jdbcType=DATE}
+				   AND  TRUNC(C.FCREATETIME) <=#{clientCreateEndTime,jdbcType=DATE}
+				    ]]>
+		  		</if>
+			</otherwise>
+		 </choose>
+		 	<if test="deptCharacter!='LTTGROUP' and deptCharacter !='EXPGROUP'">
+		 		 AND C.FDEPTID IN (SELECT FDEPTID FROM T_AUTH_USERDEPARTMENT WHERE FUSERID = #{createUser,jdbcType=VARCHAR} OR  C.FDEPTID =#{currentDeptId,jdbcType=VARCHAR}) 
+		 	</if>
+		  <![CDATA[
+				   AND C.FSTATUS <>#{clientBaseStatus,jdbcTypt=VARCHAR}
+				    ]]>
+		       	ORDER BY C.FID DESC
+	</select>
+	<!-- 查询客户群总数 -->
+	<select id="searchClientBaseCount" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase" resultType="int">
+	
+		SELECT  COUNT(DISTINCT C.FID)
+		 FROM T_MARK_CUSTCONDITION C
+		 LEFT JOIN T_ORG_DEPARTMENT D
+               ON D.FID = C.FDEPTID
+         LEFT JOIN T_ORG_EMPLOYEE E
+               ON E.FID = C.FCREATEUSERID	
+		 WHERE 1 = 1
+		  <choose>
+		 	<when test="clientBaseName !=null and clientBaseName !='' ">
+		 		 AND C.FCLIENTBASENAME LIKE '%'||#{clientBaseName,jdbcTypt=VARCHAR}||'%'
+		 	</when>
+			<otherwise>
+				 <if test="id!=null">
+				   AND C.FID=#{id,jdbcTypt=NUMERIC}
+				 </if>
+				 <if test="clientBaseName !=null and clientBaseName!='' ">
+				  
+				 </if>
+				 <if test="clientCreateStartTime !=null and clientCreateEndTime !=null ">
+				  <![CDATA[  AND  TRUNC(C.FCREATETIME) >= #{clientCreateStartTime,jdbcType=DATE}
+				   AND  TRUNC(C.FCREATETIME) <=#{clientCreateEndTime,jdbcType=DATE}
+				    ]]>
+		  		</if>
+		  		
+			</otherwise>
+		 </choose>
+			<if test="deptCharacter!='LTTGROUP' and deptCharacter !='EXPGROUP'">
+		 		 AND C.FDEPTID IN (SELECT FDEPTID FROM T_AUTH_USERDEPARTMENT WHERE FUSERID = #{createUser,jdbcType=VARCHAR} OR  C.FDEPTID =#{currentDeptId,jdbcType=VARCHAR})	
+		 	</if>
+		  <![CDATA[
+				   AND C.FSTATUS <>#{clientBaseStatus,jdbcTypt=VARCHAR}
+				    ]]>
+	</select>
+	
+	<!-- 查询客户群创建人和部门负责人ＩＤ -->
+	<select id="searchAuthorityId" parameterType="String" resultType="hashmap"> 
+         SELECT C.FCREATEUSERID USERID, 
+		        E.FID     FPRINCIPALID
+		   FROM T_MARK_CUSTCONDITION C
+		   JOIN T_ORG_DEPARTMENT D
+		     ON C.FDEPTID = D.FID
+		   JOIN T_ORG_EMPLOYEE E
+		     ON E.FEMPCODE = D.FPRINCIPAL
+		WHERE C.FID = #{_parameter,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 按条件查询多选信息-->
+	 <select id="searchMultipleByCondition" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.Multiple" resultType="com.deppon.crm.module.marketing.shared.domain.activity.Multiple">
+		SELECT 	M.FCONDITIONID CONDITIONID, 
+				M.FTYPE TYPE, 
+				M.FCONDITIONVALUE VALUE
+ 			FROM T_MARK_MULTIPLE M
+ 			WHERE M.FCONDITIONTYPE = #{conditionType,jdbcType=VARCHAR}
+   			AND M.FCONDITIONID = #{conditionId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 查看客户群详情 -->
+	<select id="searchClientBaseDetail" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase" resultMap="serachClientBaseDetail">
+			SELECT 
+			   FID,	
+			   FCLIENTBASENAME,
+			   FCREATESTARTTIME,
+			   FCREATEENDTIME,
+		       FSTATUS,
+		       FCREATEUSERID,
+		       FCREATETIME,
+		       FDEPTID ,
+		       FCONDITIONTYPE,
+		       #{clientBaseCode} FCLIENTBASECODE,
+		       #{tradesCode} FTRADESCODE,
+		       #{secondTradesCode} FSECONDTRADESCODE,
+		       #{clientTypesCode} FCLIENTTYPESCODE,
+		       #{clientlatentsCode} FCLIENTLATENTSCODE,
+		       #{clientGradesCode} FCLIENTGRADESCODE,
+		       #{clientSourcesCode} FCLIENTSOURCESCODE,
+		       #{productTypesCode} FPRODUCTTYPESCODE,
+		       #{clientPropertysCode} FCLIENTPROPERTYSCODE,
+		       #{takeMethodsCode} FTAKEMETHODSCODE,
+		       #{cooperateWillsCode} FCOOPERATEWILLSCODE
+		  FROM T_MARK_CUSTCONDITION 
+		  WHERE FID=#{id,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<!-- 查询多选项byIDType -->
+	<select id="searchMultipleByIdType" parameterType="map" resultType="String">
+      SELECT M.FCONDITIONVALUE VALUE
+		 FROM T_MARK_MULTIPLE M
+		WHERE M.FCONDITIONID = #{id}
+		  AND M.FCONDITIONTYPE = #{conditionType}
+		  AND M.FTYPE = #{type}
+	</select>
+	
+	<!-- 查询线路部门表by客户群Id -->
+	<select id="searchLineDeptByCondition" parameterType="map" resultType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+			SELECT D.FID ID,
+			       D.FLEAVEDEPTCODE LEAVEDEPTCODE,
+			       D.FLEAVEDEPTNAME LEAVEDDEPTNAME,
+			       D.FARRIVEPTCODE  ARRIVEDEPTCODE,
+			       D.FARRIVEDEPTNAME ARRIVEDEPTNAME
+			  FROM T_MARK_LINE_DEPT D
+			 WHERE D.FLINETYPE = #{conditionType,jdbcType=VARCHAR}
+			   AND D.FCONDITIONID = #{id,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据客户群ID查询客户状态 -->
+	<select id="searchClientBaseStatusById" parameterType="String" resultType="String">
+      SELECT C.FSTATUS FROM T_MARK_CUSTCONDITION C WHERE C.FID =#{_parameter,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 根据一级行业List查找二级行业 -->
+	<select id="searchSecondTradesByList" parameterType="list" resultType="com.deppon.crm.module.common.shared.domain.Detail">
+	  SELECT D2.FCODE code, 
+	  		 D2.FCODEDESC codeDesc,
+	  		 DECODE(D2.FSTATUS ,'A',1,'N',0) status,
+	  		 D2.FINVALIDTIME invaliTime
+	        FROM T_CODE_DETAIL D1
+	        JOIN T_CODE_DETAIL D2
+         	ON D1.FID = D2.FPARENTID
+         	WHERE D1.FCODE in
+       <foreach collection="list" item="item" open="(" separator="," close=")">
+        #{item,jdbcType=VARCHAR}
+        </foreach>
+	</select>
+	
+	<!-- 删除客户群 ById-->
+	<delete id="deleteClientBaseById" parameterType="map">
+		<![CDATA[
+		DELETE FROM T_MARK_CUSTCONDITION C
+ 		WHERE C.FID =  #{clintBaseId,jdbcType=VARCHAR}
+  		AND C.FSTATUS = #{status,jdbcType=VARCHAR}
+		]]>
+		<!-- UNUSED 客户群状态为未使用 -->
+	</delete>
+	<!-- 删除线路部门ById -->
+	<delete id="deleteLineDeptById" parameterType="map"> 
+		DELETE FROM T_MARK_LINE_DEPT L 
+		WHERE L.FCONDITIONID =#{clintBaseId,jdbcType=VARCHAR}
+		AND L.FLINETYPE=#{lineType,jdbcType=VARCHAR}
+		
+	</delete>
+	
+	<!-- 删除多选项ById -->
+	<delete id="deleteMultipleById" parameterType="map"> 
+		DELETE FROM  T_MARK_MULTIPLE M 
+		WHERE M.FCONDITIONID =#{clintBaseId,jdbcType=VARCHAR}
+		AND M.FCONDITIONTYPE =#{conditionType,jdbcType=VARCHAR}
+	</delete>
+	
+	<!-- 新增客户群 -->
+	<insert id="insertClientBase" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CUSTCONDITION.NEXTVAL FROM DUAL
+		</selectKey>
+	<![CDATA[ 
+		INSERT INTO T_MARK_CUSTCONDITION
+		  (FID,
+		   FCLIENTBASENAME,
+		   FCREATESTARTTIME,
+		   FCREATEENDTIME,
+		   FCONDITIONTYPE,
+		   FDEPTID,
+		   FSTATUS,
+		   FCREATETIME,
+		   FCREATEUSERID
+		  )
+	VALUES
+		  (#{id,jdbcType=NUMERIC},
+		   #{clientBaseName,jdbcType=VARCHAR},
+		   #{clientCreateStartTime,jdbcType=TIMESTAMP},
+		   #{clientCreateEndTime,jdbcType=TIMESTAMP},
+		   #{lineType,jdbcType=VARCHAR},
+		   #{clientDeptId,jdbcType=NUMERIC},
+		   #{clientBaseStatus,jdbcType=VARCHAR},
+		   #{createDate,jdbcType=TIMESTAMP},
+		   #{createUser,jdbcType=NUMERIC})
+		
+	]]>
+	</insert>
+	<!-- 新增客户群多选信息-->
+	<insert id="insertClientMultiple" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.Multiple">
+		<![CDATA[ 
+			INSERT INTO T_MARK_MULTIPLE
+ 				(FID, FCONDITIONID, FCONDITIONTYPE, FTYPE, FCONDITIONVALUE)
+			VALUES
+  				(SEQ_ID_MULTIPLE.NEXTVAL,#{conditionId,jdbcType=VARCHAR},#{conditionType,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR})
+		]]>
+
+	</insert>
+	<!-- 新增部门线路-->
+	<insert id="inserLineDpet" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.LineDept">
+		
+		<![CDATA[ 
+			INSERT INTO T_MARK_LINE_DEPT
+				  (FID,
+				   FCONDITIONID,
+				   FLINETYPE,
+				   FLEAVEDEPTCODE,
+				   FLEAVEDEPTNAME,
+				   FARRIVEPTCODE,
+				   FARRIVEDEPTNAME,
+				   FCREATETIME,
+				   FCREATEUSERID,
+				   FLASTMODIFYTIME,
+				   FLASTMODIFYUSERID
+				  )
+			VALUES
+				   (
+				   SEQ_ID_LINEDEPT.NEXTVAL,
+				   #{conditionId,jdbcType=VARCHAR},
+				   #{conditionType,jdbcType=VARCHAR},
+				   #{leaveDeptCode,jdbcType=VARCHAR},
+				   #{leavedDeptName,jdbcType=VARCHAR},
+				   #{arriveDeptCode,jdbcType=VARCHAR},
+				   #{arriveDeptName,jdbcType=VARCHAR},
+				   #{createDate,jdbcType=TIMESTAMP},
+				   #{createUser,jdbcType=VARCHAR},
+				   #{modifyDate,jdbcType=TIMESTAMP},
+				   #{modifyUser,jdbcType=VARCHAR}
+			 		 )
+		]]>
+	</insert>
+	<!-- 更新客户群信息 -->
+	<update id="updateClientBase" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase">
+		UPDATE T_MARK_CUSTCONDITION 
+		   <set>
+		      <if test="clientBaseName !=null and clientBaseName !='' " >
+		      	FCLIENTBASENAME= #{clientBaseName,jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="lineType !=null and lineType !=''">
+		      	FCONDITIONTYPE=#{lineType,jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="clientBaseStatus !=null and clientBaseStatus !=''" >
+		      	FSTATUS=#{clientBaseStatus,jdbcType=VARCHAR},
+		      </if>	
+		      	FCREATESTARTTIME= #{clientCreateStartTime,jdbcType=TIMESTAMP},
+		       	FCREATEENDTIME= #{clientCreateEndTime,jdbcType=TIMESTAMP},
+		       <if test="modifyDate !=null">
+		       	FLASTMODIFYTIME=#{modifyDate,jdbcType=TIMESTAMP},
+		       </if>
+		       <if test="modifyUser !=null and modifyUser !=''">
+		       FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		       </if>
+		    </set> 
+		 WHERE FID =#{id,jdbcType=VARCHAR} 
+	</update>
+	<update id="updateClientBaseStatus" parameterType="com.deppon.crm.module.marketing.shared.domain.activity.ClientBase">
+		UPDATE T_MARK_CUSTCONDITION 
+		   <set>
+		      <if test="clientBaseStatus !=null and clientBaseStatus !=''" >
+		      	FSTATUS=#{clientBaseStatus,jdbcType=VARCHAR},
+		      </if>	
+		       <if test="modifyDate !=null">
+		       	FLASTMODIFYTIME=#{modifyDate,jdbcType=TIMESTAMP},
+		       </if>
+		       <if test="modifyUser !=null and modifyUser !=''">
+		       FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		       </if>
+		    </set> 
+		 WHERE FID =#{id,jdbcType=VARCHAR} 
+	</update>
+<!-- 查询无效作废二级行业 -->
+<select id="searchSecondTradesToString" parameterType="map" resultType="String">
+SELECT A.FCODEDESC SECONDTRADES
+  FROM T_CODE_DETAIL A
+  JOIN T_MARK_MULTIPLE M
+    ON A.FCODE = M.FCONDITIONVALUE
+ WHERE (A.FCODE, A.FCREATETIME) IN
+       (SELECT D.FCODE, MAX(D.FCREATETIME)
+          FROM T_CODE_DETAIL D
+         WHERE D.FCODETYPE = 'SECOND_TRADE'
+         GROUP BY D.FCODE)
+   AND M.FCONDITIONID = #{conditionId}
+   AND M.FCONDITIONTYPE = #{conditionType}
+   AND M.FTYPE = 'SECOND_TRADE'
+
+</select>
+	
+</mapper>

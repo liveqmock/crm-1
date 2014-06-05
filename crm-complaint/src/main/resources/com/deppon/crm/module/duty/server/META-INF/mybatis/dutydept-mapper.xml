@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.DutyDept">
+<resultMap id="dutyDeptMap"
+		type="com.deppon.crm.module.duty.shared.domain.DutyDept">
+		<id column="FDEPT_ID" property="deptId" jdbcType="DECIMAL" />
+		<result column="FSTANDARD_CODE" property="standardCode" jdbcType="VARCHAR" />
+		<result column="FDEPT_NAME" property="deptName" jdbcType="VARCHAR" />
+		<result column="FCREATE_USERID" property="createUser" jdbcType="VARCHAR" />
+		<result column="FCREATE_TIME" property="createDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<!-- 查询所有的工单责任部门 -->
+	<select id="searchAllDutyDept" resultMap="dutyDeptMap">
+		select T.FDEPT_ID,
+		       T.FSTANDARD_CODE,
+		       T.FDEPT_NAME,
+		       T.FCREATE_USERID,
+		       T.FCREATE_TIME
+		  from t_crm_duty_department T
+	</select>
+	<!-- 添加工单特殊责任部门 -->
+	<insert id="insertDutyDept" parameterType="com.deppon.crm.module.duty.shared.domain.DutyDept">
+		insert into t_crm_duty_department 
+		   	  (FDEPT_ID,
+		       FSTANDARD_CODE,
+		       FDEPT_NAME,
+		       FCREATE_USERID,
+		       FCREATE_TIME)
+		VALUES(#{deptId},
+				#{standardCode},
+				#{deptName},
+				#{createUser},
+				sysdate)
+	</insert>
+	<!-- 根据Id查询工单特殊责任部门 -->
+	<select id="searchDutyDeptById" resultType="Integer" parameterType="string">
+		select count(fdept_id) 
+		  from t_crm_duty_department 
+		  where fdept_id = #{deptId}
+	</select>
+	
+	<!-- 根据个人Id查询其所在事业部 -->
+	<select id="searchBusinessByUser" resultType="string" parameterType="string">
+		  select distinct(tt.fstandardcode) as standardCode from (
+           select * from t_org_department  t
+           start with t.fid  =  ( select a.fdeptid from t_org_employee a where a.fempcode = #{userid}) 
+           connect by prior t.fparentid = t.fid
+    	) tt where tt.fstatus = 1 and tt.fdeptlevel=4 and  tt.fstandardcode is not null
+	</select>
+	<!-- 根据部门Id查询其所在事业部 -->
+	<select id="searchBusinessByDept" resultType="string" parameterType="string">
+		  select distinct(tt.fstandardcode) as standardCode from (
+           select * from t_org_department  t
+           start with t.fid  =  #{deptId}
+           connect by prior t.fparentid = t.fid
+    	) tt where tt.fstatus = 1 and tt.fdeptlevel=4 and  tt.fstandardcode is not null
+	</select>
+	
+	
+	
+	<!-- 删除工单特殊责任部门集合 -->
+	<delete id="deleteDutyDeptList" parameterType="list">
+		delete from t_crm_duty_department where fdept_id in 
+		<foreach collection="list" open="(" close=")" separator="," item="dutyDept">
+			#{dutyDept.deptId}
+		</foreach>
+	</delete>
+	<select id="searchDutyDeptType" resultType="Integer" parameterType="string">
+			select count(*) from (
+		      	 select * from t_org_department  t
+		 		 start with t.fid =  #{deptId}
+		 		 connect by prior t.fparentid = t.fid
+				 ) tt where tt.fstatus = 1 and tt.fdeptname like '%经营本部%'
+	</select>
+	<select id="searchDutyEmpType" resultType="Integer" parameterType="string">
+		select count(*) from (
+		       	  select * from t_org_department  t
+				  start with t.fid =(select e.fdeptid from t_org_employee e where e.fid = #{empId})
+				  connect by prior t.fparentid = t.fid
+				) tt where tt.fstatus = 1 and tt.fdeptname like '%经营本部%'
+	</select>
+	
+	<select id="searchDepartmentByEmpId" resultType="com.deppon.crm.module.organization.shared.domain.Department" parameterType="string">
+		select 
+		       dept.fid as id,
+		       dept.fdeptcode as deptCode,
+		       dept.fdeptname as deptName,
+		       dept.fprincipal as principal,
+		       dept.fstatus as status
+		from t_org_department dept left join t_org_employee emp on emp.fdeptid = dept.fid 
+		where dept.fstatus = 1 and emp.fstatus = 1 and emp.fid = #{empId}
+	</select>
+	
+	
+	<select id="isSameDepartmentByDeptIds" resultType="com.deppon.crm.module.duty.shared.domain.DutyDept" parameterType="list">
+		select distinct(tt.fstandardcode) as standardCode,tt.fdeptname as deptName,tt.fid as deptId from (
+           select * from t_org_department  t
+           start with t.fid in 
+           		<foreach collection="list" open="(" close=")" separator="," item="deptId">
+						<![CDATA[#{deptId}]]>
+		  		</foreach>
+           connect by prior t.fparentid = t.fid
+    	) tt where tt.fstatus = 1 and tt.fdeptlevel=4 and  tt.fstandardcode is not null
+	</select>
+</mapper>

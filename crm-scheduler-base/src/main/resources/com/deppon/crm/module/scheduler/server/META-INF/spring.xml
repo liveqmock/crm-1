@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<context:property-placeholder location="classpath*:scheduler.properties" ignore-unresolvable="true"/>
+	<!-- 数据源 jndi方式 -->
+	<!-- 	<bean id="dataSource" -->
+	<!-- 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<!-- 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" /> -->
+	<!-- 		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" /> -->
+	<!-- 		<property name="username" value="develop" /> -->
+	<!-- 		<property name="password" value="develop" /> -->
+	<!-- 	</bean> -->
+
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="${database.jndi.jndiName}"></property>
+		<property name="lookupOnStartup" value="true"></property>
+		<property name="cache" value="true"></property>
+		<property name="proxyInterface" value="javax.sql.DataSource"></property>
+	</bean>
+	<bean id="dataSourceLog" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="${database.jndi.log.jndiName}" />
+		<property name="lookupOnStartup" value="true" />
+		<property name="cache" value="true" />
+		<property name="proxyInterface" value="javax.sql.DataSource" />
+	</bean>
+	
+	<jee:jndi-lookup id="jmsConnectionFactory" jndi-name="${database.jndi.jms.jndiName}" />
+
+	<!-- <bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="${database.jdbc.url}" />
+		<property name="username" value="${database.jdbc.username}" />
+		<property name="password" value="${database.jdbc.password}" />
+	</bean>
+	<bean id="dataSourceLog"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="${database.jdbc.log.url}" />
+		<property name="username" value="${database.jdbc.log.username}" />
+		<property name="password" value="${database.jdbc.log.password}" />
+	</bean> 
+	<bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="transportType">
+			<util:constant static-field="com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP" />
+		</property>
+		<property name="queueManager" value="QM_APP" />
+		<property name="hostName" value="${database.jdbc.jms.hostName}" />
+		<property name="channel" value="${database.jdbc.jms.channel}" />
+		<property name="port" value="${database.jdbc.jms.port}" />
+	</bean> -->
+	
+	<bean id="config"
+		class="com.deppon.foss.framework.server.components.jobgrid.SimpleConfigFactory">
+		<property name="instanceId" value="${scheduler.jobInstance}"/>
+ 		<property name="jndiURL" value="${database.jndi.jndiName}" />
+		<!-- <property name="jdbcDriver" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="jdbcURL" value="${database.jdbc.url}" />
+		<property name="jdbcUser" value="${database.jdbc.username}" />
+		<property name="jdbcPassword" value="${database.jdbc.password}" /> -->
+	</bean>
+
+	<bean id="schedulerFactory"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="quartzProperties" ref="config" />
+	</bean>
+	
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="transactionManager_log" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceLog" />
+	</bean>
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="/WEB-INF/mybatis.xml" />
+		<property name="mapperLocations" value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="sqlSessionFactory_Log" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="/WEB-INF/mybatis.xml" />
+		<property name="mapperLocations" value="classpath*:com/deppon/**/META-INF/mybatis_log/*.xml" />
+		<property name="dataSource" ref="dataSourceLog" />
+	</bean>
+	<!-- 日志队列配置开始 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.deppon" />
+	
+	
+	<bean id="jobGridNode"
+		class="com.deppon.foss.framework.server.components.jobgrid.JobGridNode">
+		<property name="scheduler" ref="schedulerFactory" />
+	</bean>
+
+	<bean id="jobGridManager"
+		class="com.deppon.foss.framework.server.components.jobgrid.JobGridManager">
+		<property name="localNode" ref="jobGridNode" />
+		<property name="jobInstance" value="${scheduler.jobInstance}"/>
+	</bean>
+	
+	<bean id="regulationAction" scope="prototype"
+		class="com.deppon.foss.framework.server.components.jobgrid.action.RegulationAction">
+		<property name="job" ref="jobGridManager"/>
+	</bean>
+		
+	<bean id="logAction" scope="prototype"
+		class="com.deppon.foss.framework.server.components.jobgrid.action.LogAction">
+		<property name="job" ref="jobGridManager"/>	
+	</bean>
+	
+	<!-- 任务管理taskAction -->
+	<bean id="taskAction" scope="prototype"
+		class="com.deppon.foss.framework.server.components.jobgrid.action.TaskAction">
+		<property name="jobGridManager" ref="jobGridManager"/>		
+	</bean>
+</beans>

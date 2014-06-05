@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>客户维护计划java-doc</title>
+</head>
+<body>
+<a  name="biz">
+<fieldset>
+<legend>客户维护计划相关业务</legend>
+<img alt="" src="doc-files2/客户关联业务模型.png">
+</fieldset>
+</a>
+<a  name="flowchart">
+<fieldset>
+<legend>客户维护计划业务流程图</legend>
+<img alt="" src="doc-files2/customer.png">
+</fieldset>
+</a>
+<a  name="customerMode">
+<fieldset>
+<legend>客户维护计划概念模型</legend>
+<img alt="" src="doc-files2/CustomerMaintainClassView.jpg">
+<img alt="" src="doc-files2/MaintainScheduleModule.jpg">
+</fieldset>
+</a>
+<a  name="customerClass">
+<fieldset>
+<legend>客户维护计划业务模型</legend>
+<img alt="" src="doc-files2/CustomerMaintain.jpg">
+<img alt="" src="doc-files2/MaintainSchedule.jpg">
+</fieldset>
+</a>
+<a  name="MaintainPlanMgr">
+<fieldset>
+<legend>维护计划管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">维护计划管理--维护计划查询</td><td><a href="#searchMaintainPlan">维护计划查询序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月，时间范围应涵盖计划的开始时间到结束时间</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看开发计划详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的开发计划信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+<tr><td>RULE-A8</td><td>查询结果包括所有状态的计划</td><td></td></tr>
+
+<tr><td colspan="2" align="center">维护计划管理--维护计划新增</td><td><a href="#saveMaintainPlan">新增维护计划序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看会员详情360视图</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的会员信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果最小单位为客户联系人，分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>对于多次查询数据，累加列表显示的数据</td><td></td></tr>
+<tr><td>RULE-A8</td><td>新增计划时自动增加相关客户的日程，时间留空，状态为“已指派”，当天的计划状态为“执行中”。</td><td></td></tr>
+<tr><td>RULE-A9</td><td>必须选择客户信息，才能制定维护计划</td><td></td></tr>
+<tr><td>RULE-A10</td><td>已制定计划名称只关联执行中计划（即未到达计划结束时间），计划结束状态应为已完成或已过期，<br>
+	若计划中有已过期日程，则计划截止状态为已过期，计划状态不在用户界面显示，作为系统判断条件存在。</td><td></td></tr>
+<tr><td>RULE-A11</td><td>查询客户结果，若客户有固定的维护人，则直接在“执行人”中带出，客户勾选客户并更改维护活动信息中联系人，<br>
+	则由维护活动信息“执行人员”信息覆盖查询结果中“执行人”字段信息。</td><td></td></tr>
+<tr><td>RULE-A12</td><td>“执行人员”信息从HR系统中进行读取。</td><td></td></tr>
+<tr><td>RULE-A13</td><td>制定维护计划，系统自动分配到维护活动中的执行人员，在代办事宜提示</td><td></td></tr>
+<tr><td>RULE-A14</td><td>不可创建当前日期之前的计划</td><td><a href="#PlanValidator">验证序列图设计</a></td></tr>
+
+<tr><td colspan="2" align="center">维护计划管理--维护计划修改</td><td><a href="#updateMaintainPlan">更新维护计划序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>已制定日程的维护计划不允许修改，修改按钮为灰</td><td></td></tr>
+<tr><td>RULE-A1</td><td>必须选择客户信息，才能制定维护计划</td><td></td></tr>
+<tr><td>RULE-A1</td><td>制定维护计划，系统自动分配到维护活动中的执行人员，在代办事宜提示</td><td></td></tr>
+
+<tr><td colspan="2" align="center">维护计划管理--维护计划删除</td><td><a href="#deleteMaintainPlan">删除维护计划序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>删除数据不再显示在查询列表</td><td></td></tr>
+</table>
+</fieldset>
+</a>
+<a  name="CustomerDevelopMaintainTimer">
+<fieldset>
+<legend>状态定时器</legend>
+<table border="1">
+<tr><td colspan="2" align="center">状态定时器</td><td><a href="#CustomerDevelopMaintainTimer">状态定时器序列图设计</a></td></tr>
+</table>
+</fieldset>
+</a>
+<a  name="客户系统自动分配定时器">
+<fieldset>
+<legend>客户维护系统分配</legend>
+<table border="1">
+<tr><td colspan="2" align="center">客户维护系统分配</td><td><a href="#CustomerMaintainAssignTimer">客户系统自动分配定时器序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>系统每月最后一天0点自动依据如下规则制定计划，规定计划时限为下月1号至最后一天，指派下发给营业部经理，执行人由营业部经理进行更改、指派。<br>
+a)	营业部当月发货金额前50名客户<br>
+b)	营业部当月到达金额前50名客户<br>
+c)	当年归属本营业部降级会员客户（每年年底出具降级会员列表，此类客户计划制定时间为每年一月）。<br>
+d)	当月归属本营业部升级会员客户<br>
+e)	营业部当月投诉客户<br>
+f)	流失客户：会员客户当月发货，后两个月未来发货，此种情况为客户在当月流失<br>
+g)	是针对客户的主要联系人;<br>
+h)  针对每月的固定计划：计划主题为“每月固定维护计划201204”.<br>
+i)  每月固定维护计划描述：“货量前50名客户、升降级客户、投诉客户、重点客户、流失客户”</td><td></td></tr>
+<tr><td>RULE-A2</td><td>系统每天00:00:00自动依据如下规则制定计划，且一周之内系统不会再次将同一个客户筛选进入固定计划；<br>
+	固定计划指派下发给营业部经理，执行人由营业部经理进行更改、指派。<br>
+a)	发货频率超期客户：发货周期表发货频率超过客户发货周期。此类客户维护方式固定为电话回访。<br>
+b)	发货量下降客户：<br>
+铂金会员及以上的客户货量金额当月环比上月下降10%以上即标记为当月货量下降客户；<br>
+黄金会员这部分客户货量金额当月环比上月下降30%以上即标记为当月货量下降客户；<br>
+普通会员之间的这部分客户货量金额当月环比上月下降50%以上即标记为当月货量下降客户。此类客户维护方式固定为上门拜访。<br>
+c)	是针对客户的主要联系人;<br>
+d)  计划主题为“每日固定维护计划20120416”，计划完成时限为7天，次日开始为第一天.<br>
+e)	每日固定维护计划描述：“发货频率下降客户、发货量下降客户”</td><td></td></tr>
+</table>
+</fieldset>
+</a>
+<a  name="MaintainScheduleMgr">
+<fieldset>
+<legend>维护日程管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">维护日程管理--维护日程管理</td><td><a href="#searchMaintainSchedule">searchMaintainScheduleManager序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看维护计划详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的维护计划信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>下拉列表默认为空</td><td></td></tr>
+<tr><td>RULE-A8</td><td>查询结果为非“已完成”状态的日程</td><td></td></tr>
+
+<tr><td colspan="2" align="center">维护日程管理--维护日程新增</td><td><a href="#createMaintainSchedule">createMaintainScheduleManager序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>查询条件中创建时间最大查询范围为三个月</td><td></td></tr>
+<tr><td>RULE-A3</td><td>双击查询结果列表记录，可查看潜客详情</td><td></td></tr>
+<tr><td>RULE-A4</td><td>本操作者只能查询本部门的会员信息</td><td></td></tr>
+<tr><td>RULE-A5</td><td>查询结果分页显示，每页显示行数系统默认为20</td><td></td></tr>
+<tr><td>RULE-A6</td><td>点击列表中的标题栏，可用依据该项进行排序</td><td></td></tr>
+<tr><td>RULE-A7</td><td>对于多次查询数据，累加列表显示的数据</td><td></td></tr>
+<tr><td>RULE-A8</td><td>执行人员设定的日程时间必须在先前制定维护计划时设置的维护时限内</td><td></td></tr>
+<tr><td>RULE-A9</td><td>制定日程，在代办事宜提示</td><td></td></tr>
+<tr><td>RULE-A10</td><td>制定日程后，客户维护状态更新为“已受理”</td><td></td></tr>
+<tr><td>RULE-A11</td><td>
+未执行：计划保存，未到计划执行时间，计划状态更新为“未执行”；执行中：进入计划执行时间，计划状态更新为"执行中"；<br>
+已完成：计划执行时间结束，若计划中所有日程均为“已完成”，计划标识为“已完成”；<br>
+已过期：计划执行时间结束，若计划中任意日程状态为“已过期”，计划标识为“已过期”</td><td></td></tr>
+
+<tr><td colspan="2" align="center">维护日程管理--维护日程修改</td><td><a href="#updateMaintainSchedule">updateMaintainScheduleManager序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>已制定回访录入的日程不允许修改，修改按钮为灰</td><td></td></tr>
+<tr><td>RULE-A1</td><td>必须选择一条客户信息，才能制定维护日程</td><td></td></tr>
+<tr><td>RULE-A1</td><td>制定维护日程，系统自动分配到维护活动中的执行人员，在代办事宜提示</td><td></td></tr>
+
+<tr><td colspan="2" align="center">维护日程管理--维护日程删除</td><td><a href="#deleteMaintainSchedule">deleteMaintainScheduleManager序列图设计</a>()</td></tr>
+<tr><td>RULE-A1</td><td>删除数据不再显示在查询列表</td><td></td></tr>
+</table>
+</fieldset>
+</a>
+<a  name="monitorMaintainProcessMgr">
+<fieldset>
+<legend>发货周期表查询</legend>
+<table border="1">
+<tr><td colspan="2" align="center">发货周期表查询</td><td><a href="#DeliverCycle">发货周期表查询序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>
+点击“线路分析”，查询出该客户近两个月发货的目的站、月金额、金额、货量、<br>
+票数、卡航票数、城运票数、精准汽运（长）票数、精准汽运（短）票数、空运票数。<br>
+同期对比数据并最后汇总，如查询日期为10.16日，则系统统计10.1-10.16号做为10月数据，<br>
+同时统计9.1-9.16号数据做为“9月同期”进行数据对比；<br>
+发货金额=预付金额+到付金额-代收货款-劳务费（即开单金额）；<br>
+货量=重量；“发货金额”、“票数”、“城运票数”、“精准汽运（短）”各栏用蓝色标注；<br>
+分析结果以当月发货金额进行降序排列。</td><td></td></tr>
+                                                    
+</table>
+</fieldset>
+</a>
+<a  name="monitorMaintainProcessMgr">
+<fieldset>
+<legend>到货周期表查询</legend>
+<table border="1">
+<tr><td colspan="2" align="center">到货周期表查询</td><td><a href="#ReceiveCycle">到货周期表查询序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>
+点击“线路分析”，查询出该客户近两个月到货的始发站、月金额、金额、货量、票数、<br>
+卡航票数、城运票数、精准汽运（长）票数、精准汽运（短）票数、空运票数。<br>
+同期对比数据并最后汇总，如查询日期为10.16日，则系统统计10.1-10.16号做为10月数据，<br>
+同时统计9.1-9.16号数据做为“9月同期”进行数据对比；<br>
+发货金额=预付金额+到付金额-代收货款-劳务费（即开单金额）；<br>
+货量=重量；“到货金额”、“票数”、“城运票数”、“精准汽运（短）”各栏用蓝色标注；<br>
+分析结果以当月到金额进行降序排列。
+</td><td></td></tr>
+                                                      
+</table>
+</fieldset>
+</a>
+<a  name="customerGroupMgr">
+<fieldset>
+<legend>客户分组管理</legend>
+<table border="1">
+<tr><td colspan="2" align="center">客户分组管理</td><td><a href="#manageCustomerGroup">客户分组管理序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>查询条件都可以选择为空，但不能全部为空</td><td></td></tr>
+<tr><td>RULE-A2</td><td>本操作者只能查询本部门的会员信息</td><td></td></tr>
+<tr><td>RULE-A3</td><td>对于多次查询数据，先清空列表显示的数据，再显示新查询的数据</td><td></td></tr>
+<tr><td>RULE-A4</td><td>选中待选客户，下单选按钮才能选择</td><td></td></tr>
+<tr><td>RULE-A5</td><td>选中已选客户，上单选按钮才能选择</td><td></td></tr>
+<tr><td>RULE-A6</td><td>在已选客户列表中，新增客户显示为红色</td><td></td></tr>
+<tr><td>RULE-A7</td><td>客户分组存在于部门，人员异动不会影响客户分组。</td><td></td></tr>
+<tr><td>RULE-A8</td><td>系统默认为每个营业员名字设置为一个分组，将客户加入此类分组则客户“维护人”字段更改为与分组名字相同。</td><td></td></tr>
+<tr><td>RULE-A9</td><td>保存客户分组，数据显示在发/到货周期表查询界面</td><td></td></tr>
+
+<tr><td colspan="2" align="center">客户分组新增</td><td><a href="#createCustomerGroup">客户分组删除序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>客户分组名称不允许和部门已有分组名称重复</td><td></td></tr>
+
+<tr><td colspan="2" align="center">客户分组修改</td><td><a href="#updateCustomerGroup">客户分组修改序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>客户分组名称不允许和部门已有分组名称重复</td><td></td></tr>
+
+<tr><td colspan="2" align="center">客户分组删除</td><td><a href="#deleteCustomerGroup">客户分组查询序列图设计</a></td></tr>
+<tr><td>RULE-A1</td><td>删除客户分组信息</td><td></td></tr>
+                                                      
+</table>
+</fieldset>
+</a>
+<div id="searchMaintainPlan">
+<fieldset>
+<legend>维护计划管理序列图设计</legend>
+<img alt="" src="doc-files2/DevelopPlanSearch.jpg">
+</fieldset>
+</div>
+<div id="saveMaintainPlan">
+<fieldset>
+<legend>维护计划保存序列图设计</legend>
+<img alt="" src="doc-files2/DevelopPlanCreate.jpg">
+</fieldset>
+</div>
+<div id="updateMaintainPlan">
+<fieldset>
+<legend>维护计划修改序列图设计</legend>
+<img alt="" src="doc-files2/DevelopPlanUpdate.jpg">
+</fieldset>
+</div>
+<div id="deleteMaintainPlan">
+<fieldset>
+<legend>维护计划删除序列图设计</legend>
+<img alt="" src="doc-files2/DevelopPlanDelete.jpg">
+</fieldset>
+</div>
+<div id="searchMaintainSchedule">
+<a name="">
+<fieldset>
+<legend>维护日程查询时序图</legend>
+<img alt="" src="doc-files2/日程查询时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="createMaintainSchedule">
+<a name="">
+<fieldset>
+<legend>维护日程新增时序图</legend>
+<img alt="" src="doc-files2/日程新增时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="updateMaintainSchedule">
+<a name="">
+<fieldset>
+<legend>维护日程修改时序图</legend>
+<img alt="" src="doc-files2/日程修改时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="deleteMaintainSchedule">
+<a name="">
+<fieldset>
+<legend>维护日程删除时序图</legend>
+<img alt="" src="doc-files2/日程删除时序图.jpg">
+</fieldset>
+</a>
+</div>
+<div id="DeliverCycle">
+<a name="">
+<fieldset>
+<legend>发货周期表查询时序图</legend>
+<img alt="" src="doc-files2/DeliverCycle.jpg">
+</fieldset>
+</a>
+</div>
+<div id="ReceiveCycle">
+<a name="">
+<fieldset>
+<legend>到货周期表查询时序图</legend>
+<img alt="" src="doc-files2/ReceiveCycle.jpg">
+</fieldset>
+</a>
+</div>
+<div id="CustomerDevelopMaintainTimer">
+<a name="">
+<fieldset>
+<legend>状态定时器序列图设计</legend>
+<img alt="" src="doc-files2/CustomerDevelopMaintainTimer.jpg">
+</fieldset>
+</a>
+</div>
+<div id="CustomerMaintainAssignTimer">
+<a name="">
+<fieldset>
+<legend>客户系统自动分配序列图设计</legend>
+<img alt="" src="doc-files2/CustomerMaintainAssignTimer.jpg">
+</fieldset>
+</a>
+</div>
+<div id="manageCustomerGroup">
+<a name="">
+<fieldset>
+<legend>客户分组管理序列图设计</legend>
+<img alt="" src="doc-files2/CustomerGroupManage.jpg">
+</fieldset>
+</a>
+</div>
+<div id="createCustomerGroup">
+<a name="">
+<fieldset>
+<legend>客户分组新增序列图设计</legend>
+<img alt="" src="doc-files2/CustomerGroupCreate.jpg">
+</fieldset>
+</a>
+</div>
+<div id="updateCustomerGroup">
+<a name="">
+<fieldset>
+<legend>客户分组修改序列图设计</legend>
+<img alt="" src="doc-files2/CustomerGroupUpdate.jpg">
+</fieldset>
+</a>
+</div>
+<div id="deleteCustomerGroup">
+<a name="">
+<fieldset>
+<legend>客户分组删除序列图设计</legend>
+<img alt="" src="doc-files2/CustomerGroupDelete.jpg">
+</fieldset>
+</a>
+</div>
+<div id="PlanValidator">
+<a name="">
+<fieldset>
+<legend>验证序列图设计</legend>
+<img alt="" src="doc-files2/PlanValidator.jpg">
+</fieldset>
+</a>
+</div>
+<div id="DAO">
+<fieldset>
+<legend>DAO说明</legend>
+<table border="1">
+<tr><td>NO</td><td>dao方法</td><td>dao调用sqlID</td><td>功能</td></tr>
+</table>
+</fieldset>
+</div>
+<div id="domain">
+<fieldset>
+<legend>domain说明</legend>
+<table>
+<tr>
+</table>
+</fieldset>
+</div>
+</body>
+</html>

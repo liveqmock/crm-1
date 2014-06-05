@@ -1,0 +1,134 @@
+--客户来电录入菜单添加
+--影响行数一行
+insert into t_auth_function
+  (FID,
+   FFUNCTIONCODE,
+   FFUNCTIONNAME,
+   FURI,
+   FFUNCTIONLEVEL,
+   FPARENTCODE,
+   FVALIDFLAG,
+   FINVALIDDATE,
+   FVALIDDATE,
+   FDISPLAYORDER,
+   FISCHECK,
+   FFUNCTIONTYPE,
+   FFUNCTIONDESC,
+   FFUNCTIONSEQ,
+   FCREATEUSERID,
+   FCREATETIME,
+   FLASTMODIFYUSERID,
+   FLASTUPDATETIME)
+values
+  (306,
+   '01005005',
+   '客户来电录入',
+   '/marketing/customerCall.action',
+   4,
+   '01005',
+   1,
+   '',
+   '',
+   6,
+   1,
+   3,
+   '客户来电录入',
+   '0/01/01005/01005006',
+   1,
+   '',
+   1,
+   '');
+ 
+--将回访录入查询更改为营销录入查询
+--影响行数一行
+update t_auth_function t set t.ffunctionname = '营销录入查询' where t.ffunctionname = '回访录入查询';
+
+--货量潜力表添加索引
+create index IDX_PARENTID_POTENTIAL on T_CUST_RETURNVISITDETAIL (FPARENTID);
+
+--客户意见表添加索引
+create index IDX_PARENTID_OPTION on T_CUST_REVISITOPINIONDETAIL (FPARENTID)
+
+--价格数据字典
+insert into t_code_detail
+  (FID,
+   FPARENTID,
+   FCODETYPE,
+   FCODE,
+   FCODEDESC,
+   FSTATUS,
+   FCODESEQ,
+   FLANGUAGE,
+   FCREATETIME,
+   FCREATEUSERID,
+   FLASTUPDATETIME,
+   FLASTMODIFYUSERID)
+values
+  (SEQ_ID_DETAIL.NEXTVAL,
+   0,
+   'CUSTOMER_IDEA',
+   'PRICE',
+   '价格',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   043260);
+   
+--营销方式数据字典
+--陌生来电
+insert into t_code_detail
+  (FID,
+   FPARENTID,
+   FCODETYPE,
+   FCODE,
+   FCODEDESC,
+   FSTATUS,
+   FCODESEQ,
+   FLANGUAGE,
+   FCREATETIME,
+   FCREATEUSERID,
+   FLASTUPDATETIME,
+   FLASTMODIFYUSERID)
+values
+  (SEQ_ID_DETAIL.NEXTVAL,
+   0,
+   'DEVELOP_WAY',
+   'STRANGER',
+   '陌生来电',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+  sysdate,
+   1);
+--已有客户来电
+insert into t_code_detail
+  (FID,
+   FPARENTID,
+   FCODETYPE,
+   FCODE,
+   FCODEDESC,
+   FSTATUS,
+   FCODESEQ,
+   FLANGUAGE,
+   FCREATETIME,
+   FCREATEUSERID,
+   FLASTUPDATETIME,
+   FLASTMODIFYUSERID)
+values
+  (SEQ_ID_DETAIL.NEXTVAL,
+   0,
+   'DEVELOP_WAY',
+   'EXISTCUST',
+   '已有客户来电',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+  sysdate,
+   1);

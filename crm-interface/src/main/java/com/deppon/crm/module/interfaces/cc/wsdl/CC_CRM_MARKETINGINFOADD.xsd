@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/crm/inteface/cc/domain">
+
+    <complexType name="MarketingInfoAddRequest">
+    	<sequence>
+    		<element name="custNumber" type="string">
+    			<annotation>
+    				<documentation>客户编码</documentation>
+    			</annotation></element>
+    		<element name="custName" type="string">
+    			<annotation>
+    				<documentation>客户名称</documentation>
+    			</annotation></element>
+    		<element name="cellphone" type="string">
+    			<annotation>
+    				<documentation>手机号码</documentation>
+    			</annotation></element>
+    		<element name="telephone" type="string">
+    			<annotation>
+    				<documentation>固定号码</documentation>
+    			</annotation></element>
+    		<element name="needType" type="string">
+    			<annotation>
+    				<documentation>需求分类（EFFICIENCY：时效 SAFETY：安全 SERVICE：服务 INCREMENT_SERVICE：增值服务 PRICE：价格 OTHER：其它）</documentation>
+    			</annotation></element>
+    		<element name="needQuestion" type="string">
+    			<annotation>
+    				<documentation>需求问题</documentation>
+    			</annotation></element>
+    		<element name="solution" type="string">
+    			<annotation>
+    				<documentation>解决方法</documentation>
+    			</annotation></element>
+    		<element name="marketPerson" type="string">
+    			<annotation>
+    				<documentation>营销人工号</documentation>
+    			</annotation></element>
+    		<element name="marketDept" type="string">
+    			<annotation>
+    				<documentation>营销部门（电销管理小组部门标杆编码）</documentation>
+    			</annotation></element>
+    		<element name="marketTime" type="dateTime">
+    			<annotation>
+    				<documentation>营销时间</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="MarketingInfoAddResponse">
+    	<sequence>
+    		<element name="ifSuccess" type="boolean">
+    			<annotation>
+    				<documentation>是否发送成功</documentation>
+    			</annotation></element>
+    		<element name="errorMsg" type="string">
+    			<annotation>
+    				<documentation>错误信息</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <element name="marketingInfoAddRequest" type="tns:MarketingInfoAddRequest"></element>
+
+    <element name="marketingInfoAddResponse" type="tns:MarketingInfoAddResponse"></element>
+</schema>

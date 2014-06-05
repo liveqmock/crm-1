@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<bean id ="keyCustomerDao" class="com.deppon.crm.module.keycustomer.server.dao.impl.KeyCustomerDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id ="keyCustomerService" class="com.deppon.crm.module.keycustomer.server.service.impl.KeyCustomerService">
+		<property name="keyCustomerDao" ref="keyCustomerDao" />
+	</bean>
+	<bean id ="keyCustomerManager" class="com.deppon.crm.module.keycustomer.server.manager.impl.KeyCustomerManager">
+		<property name="keyCustomerService" ref="keyCustomerService" />
+		<property name="contractService" ref="contractService" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="alterMemberService" ref="alterMemberService" />
+		<property name="memberService" ref="memberService" />
+		<property name="contactService" ref="contactService" />
+		<property name="sysMailSendManager" ref="sysMailSendManager" />
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+		
+		
+	</bean>
+	<bean id ="keyCustomerAction" scope="prototype"
+			class="com.deppon.crm.module.keycustomer.server.action.KeyCustomerAction">
+		<property name="keyCustomerManager" ref="keyCustomerManager" />
+		<property name="alterMemberManager" ref="alterMemberManager" />
+	</bean>
+</beans>

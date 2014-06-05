@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.ServerParameter">
+	<!-- 获取最新的修改时间 -->
+	<select id="getLastModifyTime" resultType="date">
+		<![CDATA[
+			SELECT MAX(FLASTUPDATETIME) FROM T_SERVER_PARAMETER
+		]]>
+	</select>
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="serverParameterMap"
+		type="com.deppon.crm.module.common.shared.domain.ServerParameter">
+		<id property="paramKey" column="FPARAMEKEY" />
+		<result property="pramValue" column="FPARAMEVALUE" />
+	</resultMap>
+	
+	<select id="getAll" resultMap="serverParameterMap">
+	  SELECT FPARAMEKEY,
+	  FPARAMEVALUE 
+	  FROM T_SERVER_PARAMETER 
+	</select>
+	
+<select id="getValueByKey" resultType="string" parameterType="string">
+select FPARAMEVALUE from T_SERVER_PARAMETER  where FPARAMEKEY=#{key}
+</select>
+</mapper>
+		

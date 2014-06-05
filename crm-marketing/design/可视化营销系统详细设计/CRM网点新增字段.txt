@@ -1,0 +1,12 @@
+ -- 是否事业部 
+   alter TABLE  t_crm_ladingstation add  fifDivision CHAR(1);
+   -- 是否大区 
+   alter TABLE  t_crm_ladingstation add  fifBigRegion CHAR(1);
+   -- 是否小区
+   alter TABLE  t_crm_ladingstation add  fifSmallRegion CHAR(1);
+   -- 是否营业部
+   alter TABLE  t_crm_ladingstation add  fifBussinessDept CHAR(1);
+   -- 部门服务区坐标编号
+   alter TABLE  t_crm_ladingstation add  fdepCoordinate CHAR(1);
+   -- 派送区坐标编号
+   alter TABLE  t_crm_ladingstation add  fdeliveryCoordinate CHAR(1);

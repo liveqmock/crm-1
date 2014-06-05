@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.server.domain.ProvinceCity">
+	<resultMap id="BankCityRM"
+		type="com.deppon.crm.module.common.shared.domain.BankCity">
+		<result property="id" column="BC_FID" />
+		<result property="code" column="BC_FCODE" />
+		<result property="name" column="BC_FNAME" />
+		<result property="provinceId" column="BC_FPROVINCEID" />
+		<result property="cancel" column="BC_FCANCEL" />
+		<result property="createTime" column="BC_FCREATETIME" />
+		<result property="createUserId" column="BC_FCREATEUSERID" />
+		<result property="lastUpdateTime" column="BC_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="BC_FLASTMODIFYUSERID" />
+	</resultMap>
+	<sql id="BankCity_column">
+		<![CDATA[
+			BC.FID BC_FID,
+			BC.FCODE BC_FCODE,
+			BC.FNAME BC_FNAME,
+			BC.FPROVINCEID BC_FPROVINCEID,
+			BC.FCANCEL BC_FCANCEL,
+			BC.FCREATETIME BC_FCREATETIME,
+			BC.FCREATEUSERID BC_FCREATEUSERID,
+			BC.FLASTUPDATETIME BC_FLASTUPDATETIME,
+			BC.FLASTMODIFYUSERID BC_FLASTMODIFYUSERID
+		]]>
+	</sql>
+	<resultMap id="BankProvinceRM"
+		type="com.deppon.crm.module.common.shared.domain.BankProvince">
+		<result property="id" column="BP_FID" />
+		<result property="code" column="BP_FCODE" />
+		<result property="name" column="BP_FNAME" />
+		<result property="cancel" column="BP_FCANCEL" />
+		<result property="createTime" column="BP_FCREATETIME" />
+		<result property="createUserId" column="BP_FCREATEUSERID" />
+		<result property="lastUpdateTime" column="BP_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="BP_FLASTMODIFYUSERID" />
+	</resultMap>
+	<sql id="BankProvince_column">
+		<![CDATA[
+			BP.FID BP_FID,
+			BP.FCODE BP_FCODE,
+			BP.FNAME BP_FNAME,
+			BP.FCANCEL BP_FCANCEL,
+			BP.FCREATETIME BP_FCREATETIME,
+			BP.FCREATEUSERID BP_FCREATEUSERID,
+			BP.FLASTUPDATETIME BP_FLASTUPDATETIME,
+			BP.FLASTMODIFYUSERID BP_FLASTMODIFYUSERID
+		]]>
+	</sql>
+	<resultMap id="AccountBranchRM"
+		type="com.deppon.crm.module.common.shared.domain.AccountBranch">
+		<result property="id" column="AB_FID" />
+		<result property="createTime" column="AB_FCREATETIME" />
+		<result property="createUserId" column="AB_FCREATEUSERID" />
+		<result property="lastUpdateTime" column="AB_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="AB_FLASTMODIFYUSERID" />
+		<result property="bankId" column="AB_FBANKID" />
+		<result property="code" column="AB_FCODE" />
+		<result property="name" column="AB_FNAME" />
+		<result property="provinceId" column="AB_FPROVINCEID" />
+		<result property="cityId" column="AB_FCITYID" />
+		<result property="cancel" column="AB_FCANCEL" />
+	</resultMap>
+	<sql id="AccountBranch_column">
+		<![CDATA[
+			AB.FID AB_FID,
+			AB.FCREATETIME AB_FCREATETIME,
+			AB.FCREATEUSERID AB_FCREATEUSERID,
+			AB.FLASTUPDATETIME AB_FLASTUPDATETIME,
+			AB.FLASTMODIFYUSERID AB_FLASTMODIFYUSERID,
+			AB.FBANKID AB_FBANKID,
+			AB.FCODE AB_FCODE,
+			AB.FNAME AB_FNAME,
+			AB.FPROVINCEID AB_FPROVINCEID,
+			AB.FCITYID AB_FCITYID,
+			AB.FCANCEL AB_FCANCEL
+		]]>
+	</sql>
+
+	<resultMap id="AccountBankRM"
+		type="com.deppon.crm.module.common.shared.domain.AccountBank">
+		<result property="id" column="AK_FID" />
+		<result property="createTime" column="AK_FCREATETIME" />
+		<result property="lastUpdateTime" column="AK_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="AK_FLASTMODIFYUSERID" />
+		<result property="name" column="AK_FNAME" />
+		<result property="code" column="AK_FCODE" />
+		<result property="createUserId" column="AK_FCREATEUSERID" />
+		<result property="cancel" column="AK_FCANCEL" />
+	</resultMap>
+	<sql id="AccountBank_column">
+		<![CDATA[
+			AK.FID AK_FID,
+			AK.FCREATETIME AK_FCREATETIME,
+			AK.FLASTUPDATETIME AK_FLASTUPDATETIME,
+			AK.FLASTMODIFYUSERID AK_FLASTMODIFYUSERID,
+			AK.FNAME AK_FNAME,
+			AK.FCODE AK_FCODE,
+			AK.FCREATEUSERID AK_FCREATEUSERID,
+			AK.FCANCEL AK_FCANCEL
+		]]>
+	</sql>
+
+	<select id="queryBankCityByCode" resultMap="BankCityRM">
+		SELECT
+		<include refid="BankCity_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKCITY BC
+			WHERE
+				BC.FCANCEL = 0 
+			AND 	
+				BC.FCODE = #{code}
+		]]>
+	</select>
+	<select id="queryBankProvinceByCode" resultMap="BankProvinceRM">
+		SELECT
+		<include refid="BankProvince_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKPROVINCE BP
+			WHERE 	
+				BP.FCANCEL = 0 
+			AND 
+				BP.FCODE = #{code}
+		]]>
+	</select>
+
+	<select id="queryAccountBankByCode" resultMap="AccountBankRM">
+		SELECT
+		<include refid="AccountBank_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBANK AK
+			WHERE 	
+				AK.FCANCEL = 0 
+			AND 
+				AK.FCODE = #{code}
+		]]>
+	</select>
+
+	<select id="queryAccountBranchByCode" resultMap="AccountBranchRM">
+		SELECT
+		<include refid="AccountBranch_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBRANCH AB
+			WHERE 	
+				AB.FCANCEL = 0 
+			AND 
+				AB.FCODE = #{code}
+		]]>
+	</select>
+	<update id="updateAccountBankById"
+		parameterType="com.deppon.crm.module.common.shared.domain.AccountBank">
+		UPDATE T_CRM_ACCOUNTBANK SET
+		<if test="fId != null and fId != ''">
+			FID = #{id,jdbcType=NUMERIC},
+		</if>
+		<if test="lastUpdateTime != null and lastUpdateTime != ''">
+			FLASTUPDATETIME = #{lastUpdateTime,jdbcType=DATE},
+		</if>
+		<if test="lastModifyUserId != null and lastModifyUserId != ''">
+			FLASTMODIFYUSERID = #{lastModifyUserId,jdbcType=NUMERIC},
+		</if>
+		<if test="name != null and name != ''">
+			FNAME = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="code != null and code != ''">
+			FCODE = #{code,jdbcType=VARCHAR},
+		</if>
+		<if test="cancel != null and cancel != ''">
+			FCANCEL = #{cancel,jdbcType=NUMERIC},
+		</if>
+		FID = #{id,jdbcType=VARCHAR}
+		WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateAccountBranchById"
+		parameterType="com.deppon.crm.module.common.shared.domain.AccountBranch">
+		UPDATE T_CRM_ACCOUNTBRANCH SET
+		<if test="lastUpdateTime != null and lastUpdateTime != ''">
+			FLASTUPDATETIME = #{lastUpdateTime,jdbcType=DATE},
+		</if>
+		<if test="lastModifyUserId != null and lastModifyUserId != ''">
+			FLASTMODIFYUSERID = #{lastModifyUserId,jdbcType=NUMERIC},
+		</if>
+		<if test="bankId != null and bankId != ''">
+			FBANKID = #{bankId,jdbcType=VARCHAR},
+		</if>
+		<if test="code != null and code != ''">
+			FCODE = #{code,jdbcType=VARCHAR},
+		</if>
+		<if test="name != null and name != ''">
+			FNAME = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="provinceId != null and provinceId != ''">
+			FPROVINCEID = #{provinceId,jdbcType=VARCHAR},
+		</if>
+		<if test="cityId != null and cityId != ''">
+			FCITYID = #{cityId,jdbcType=VARCHAR},
+		</if>
+		<if test="cancel != null and cancel != ''">
+			FCANCEL = #{cancel,jdbcType=NUMERIC},
+		</if>
+		FID = #{id,jdbcType=VARCHAR}
+		WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateBankProvinceById"
+		parameterType="com.deppon.crm.module.common.shared.domain.BankProvince">
+		UPDATE T_CRM_BANKPROVINCE SET
+		<if test="name != null and name != ''">
+			FNAME = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="cancel != null and cancel != ''">
+			FCANCEL = #{cancel,jdbcType=VARCHAR},
+		</if>
+		<if test="lastUpdateTime != null and lastUpdateTime != ''">
+			FLASTUPDATETIME = #{lastUpdateTime,jdbcType=DATE},
+		</if>
+		<if test="lastModifyUserId != null and lastModifyUserId != ''">
+			FLASTMODIFYUSERID = #{lastModifyUserId,jdbcType=VARCHAR},
+		</if>
+		FID = #{id,jdbcType=VARCHAR}
+		WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateBankCityById" parameterType="com.deppon.crm.module.common.shared.domain.BankCity">
+		UPDATE T_CRM_BANKCITY SET
+		<if test="name != null and name != ''">
+			FNAME = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="provinceId != null and provinceId != ''">
+			FPROVINCEID = #{provinceId,jdbcType=VARCHAR},
+		</if>
+		<if test="cancel != null and cancel != ''">
+			FCANCEL = #{cancel,jdbcType=VARCHAR},
+		</if>
+		<if test="lastUpdateTime != null">
+			FLASTUPDATETIME = #{lastUpdateTime,jdbcType=VARCHAR},
+		</if>
+		<if test="lastModifyUserId != null and lastModifyUserId != ''">
+			FLASTMODIFYUSERID = #{lastModifyUserId,jdbcType=VARCHAR},
+		</if>
+		FID = #{id,jdbcType=VARCHAR}
+		WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+	<insert id="insertBankCity" parameterType="com.deppon.crm.module.common.shared.domain.BankCity">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT seq_id_city.nextval AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_BANKCITY
+		(FID,FCODE,
+		FNAME,FPROVINCEID,
+		FCANCEL,FCREATETIME,
+		FCREATEUSERID,FLASTUPDATETIME,
+		FLASTMODIFYUSERID)
+		VALUES
+		(#{id,jdbcType=NUMERIC},#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},#{provinceId,jdbcType=VARCHAR},
+		#{cancel,jdbcType=VARCHAR},sysdate,
+		#{createUserId,jdbcType=VARCHAR},#{lastUpdateTime,jdbcType=DATE},
+		#{lastModifyUserId,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="insertBankProvince"
+		parameterType="com.deppon.crm.module.common.shared.domain.BankProvince">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT seq_id_province.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_BANKPROVINCE
+		(FID,FCODE,
+		FNAME,FCANCEL,
+		FCREATETIME,FCREATEUSERID,
+		FLASTUPDATETIME,FLASTMODIFYUSERID)
+		VALUES
+		(#{id,jdbcType=NUMERIC},#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},#{cancel,jdbcType=VARCHAR},
+		sysdate,#{createUserId,jdbcType=VARCHAR},
+		#{lastUpdateTime,jdbcType=DATE},#{lastModifyUserId,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="insertAccountBank"
+		parameterType="com.deppon.crm.module.common.shared.domain.AccountBank">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT
+			seq_crm_accountbranch.nextval AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_ACCOUNTBANK
+		(FID,FCREATETIME,
+		FLASTUPDATETIME,FLASTMODIFYUSERID,
+		FNAME,FCODE,
+		FCREATEUSERID,FCANCEL)
+		VALUES
+		(#{id,jdbcType=NUMERIC},sysdate,
+		#{lastUpdateTime,jdbcType=DATE},#{lastModifyUserId,jdbcType=NUMERIC},
+		#{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},
+		#{createUserId,jdbcType=NUMERIC},#{cancel,jdbcType=NUMERIC})
+	</insert>
+	<insert id="insertAccountBranch"
+		parameterType="com.deppon.crm.module.common.shared.domain.AccountBranch">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT seq_crm_accountbranch.nextval AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_ACCOUNTBRANCH
+		(FID,FCREATETIME,
+		FCREATEUSERID,FLASTUPDATETIME,
+		FLASTMODIFYUSERID,FBANKID,
+		FCODE,FNAME,
+		FPROVINCEID,FCITYID,
+		FCANCEL)
+		VALUES
+		(#{id,jdbcType=NUMERIC},SYSDATE,
+		#{createUserId,jdbcType=NUMERIC},#{lastUpdateTime,jdbcType=DATE},
+		#{lastModifyUserId,jdbcType=NUMERIC},#{bankId,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},
+		#{provinceId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR},
+		#{cancel,jdbcType=NUMERIC})
+	</insert>
+
+
+<select id="queryBankCityById" resultMap="BankCityRM">
+		SELECT
+		<include refid="BankCity_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKCITY BC
+			WHERE
+				BC.FCANCEL = 0 
+			AND 	
+				BC.FID = #{id}
+		]]>
+	</select>
+	
+	<select id="queryAllBankCityById" resultMap="BankCityRM">
+		SELECT
+		<include refid="BankCity_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKCITY BC
+			WHERE	
+				BC.FID = #{id}
+		]]>
+	</select>
+	
+	<select id="queryBankProvinceById" resultMap="BankProvinceRM">
+		SELECT
+		<include refid="BankProvince_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKPROVINCE BP
+			WHERE 	
+				BP.FCANCEL = 0 
+			AND 
+				BP.FID = #{code}
+		]]>
+	</select>
+
+	<select id="queryAllBankProvinceById" resultMap="BankProvinceRM">
+		SELECT
+		<include refid="BankProvince_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKPROVINCE BP
+			WHERE 	
+				BP.FID = #{code}
+		]]>
+	</select>
+	
+	<select id="queryAccountBankById" resultMap="AccountBankRM">
+		SELECT
+		<include refid="AccountBank_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBANK AK
+			WHERE 	
+				AK.FCANCEL = 0 
+			AND 
+				AK.FID = #{id}
+		]]>
+	</select>
+	
+	<select id="queryAllAccountBankById" resultMap="AccountBankRM">
+		SELECT
+		<include refid="AccountBank_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBANK AK
+			WHERE 	
+				AK.FID = #{id}
+		]]>
+	</select>
+	
+	<select id="queryAccountBranchById" resultMap="AccountBranchRM">
+		SELECT
+		<include refid="AccountBranch_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBRANCH AB
+			WHERE 	
+				AB.FCANCEL = 0 
+			AND 
+				AB.FID = #{id}
+		]]>
+	</select>
+	
+	<select id="queryAllAccountBranchById" resultMap="AccountBranchRM">
+		SELECT
+		<include refid="AccountBranch_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBRANCH AB
+			WHERE 	
+				AB.FID = #{id}
+		]]>
+	</select>
+	
+	<select id="queryBankCityByName" resultMap="BankCityRM">
+		SELECT
+		<include refid="BankCity_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKCITY BC
+			WHERE
+				BC.FCANCEL = 0 
+			AND 	
+				BC.FNAME =#{name}
+		]]>
+	</select>
+	<select id="queryBankProvinceByName" resultMap="BankProvinceRM">
+		SELECT
+		<include refid="BankProvince_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_BANKPROVINCE BP
+			WHERE 	
+				BP.FCANCEL = 0 
+			AND 
+				BP.FNAME = #{name}
+		]]>
+	</select>
+
+	<select id="queryAccountBankByName" resultMap="AccountBankRM">
+		SELECT
+		<include refid="AccountBank_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBANK AK
+			WHERE 	
+				AK.FCANCEL = 0 
+			AND 
+				AK.FNAME = #{name}
+		]]>
+	</select>
+
+	<select id="queryAccountBranchByName" resultMap="AccountBranchRM">
+		SELECT
+		<include refid="AccountBranch_column" />
+		<![CDATA[	
+			FROM
+				T_CRM_ACCOUNTBRANCH AB
+			WHERE 	
+				AB.FCANCEL = 0 
+			AND 
+				AB.FNAME = #{name}
+		]]>
+	</select>
+</mapper>

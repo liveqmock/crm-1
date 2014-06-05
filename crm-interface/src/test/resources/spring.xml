@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+	http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+    
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="./DataSource.xml"/>
+    
+    <bean id="customerServiceImpl" class="com.deppon.crm.module.interfaces.customer.impl.CustomerServiceImpl"></bean>
+    <bean id="orderServiceImpl" class="com.deppon.crm.module.interfaces.order.impl.OrderServiceImpl"></bean>
+    <bean id="eSBWorkFlowResultServiceImpl" class="com.deppon.crm.module.interfaces.workflow.impl.ESBWorkFlowResultServiceImpl"></bean>
+    <bean id="giftApplyResultServiceImpl" class="com.deppon.crm.module.interfaces.workflow.impl.GiftApplyResultServiceImpl"></bean>
+    <bean id="paymentApplyResultServiceImpl" class="com.deppon.crm.module.interfaces.workflow.impl.PaymentApplyResultServiceImpl"></bean>
+    <bean id="recompenseOnlineServiceImpl" class="com.deppon.crm.module.interfaces.workflow.impl.RecompenseOnlineServiceImpl"></bean>
+    
+    <jaxws:endpoint id="customerService" implementor="#customerServiceImpl" address="/customerService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="orderService" implementor="#orderServiceImpl" address="/orderService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="contractApplyResultService" implementor="#eSBWorkFlowResultServiceImpl" address="/contractApplyResultService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="giftApplyResultService" implementor="#giftApplyResultServiceImpl" address="/giftApplyResultService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="paymentApplyResultService" implementor="#paymentApplyResultServiceImpl" address="/paymentApplyResultService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="recompenseOnlineService" implementor="#recompenseOnlineServiceImpl" address="/recompenseOnlineService">
+    </jaxws:endpoint>
+	
+</beans>
+

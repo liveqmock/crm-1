@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.PilotCity">
+	<resultMap type="com.deppon.crm.module.common.shared.domain.PilotCity" id="PilotCityResult">
+		<id column="FID" property="id"/>
+		<result column="FCODE" property="cityCode"/>
+		<result column="FNAME" property="cityName"/>
+		<result column="FISPILOT" property="isPilot"/>
+		<result column="FHASAGENT" property="hasAgent"/>
+		<result column="FCREATE_TIME" property="createDate"/>
+		<result column="FMODIFY_TIME" property="modifyDate"/>
+		<result column="FSTATUS" property="status"/>
+	</resultMap>
+
+	<select id="getPilotCity" resultMap="PilotCityResult"
+		parameterType="com.deppon.crm.module.common.shared.domain.PilotCity">
+		select * from T_CRM_PILOTCITY where FCODE = #{cityCode}
+	</select>
+
+	<select id="checkPilotCity" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		select FISPILOT from T_CRM_PILOTCITY where FCODE = #{value}
+		and FSTATUS = 1
+	</select>
+	
+	<select id="checkPilotCityByName" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		select FISPILOT from T_CRM_PILOTCITY where FNAME = #{value}
+		and FSTATUS = 1
+	</select>
+
+	<insert id="insertPilotCity">
+		insert into T_CRM_PILOTCITY(FID,FCODE,FNAME,FISPILOT,FHASAGENT,FCREATE_TIME,FMODIFY_TIME,FSTATUS,FCREATE_USER_CODE,FMODIFY_USER_CODE)
+		values(#{id},#{cityCode},#{cityName},#{isPilot},#{hasAgent},sysdate,sysdate,#{status},#{createUser,jdbcType=VARCHAR},#{modifyUser,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updatePilotCity">
+		update T_CRM_PILOTCITY
+		set 
+		<if test="cityName != null and cityName != ''">
+			FNAME=#{cityName,jdbcType=VARCHAR},
+		</if>
+		<if test="isPilot != null">
+			FISPILOT=#{isPilot},
+		</if>
+		<if test="hasAgent != null">
+			FHASAGENT=#{hasAgent},
+		</if>
+		<if test="status != null">
+			FSTATUS=#{status},
+		</if>
+		<if test="createUser != null and createUser != ''">
+			FCREATE_USER_CODE=#{createUser},
+		</if>
+		<if test="modifyUser != null and modifyUser != ''">
+			FMODIFY_USER_CODE=#{modifyUser},
+		</if>
+					FMODIFY_TIME=sysdate
+		where FCODE = #{cityCode,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="deletePilotCity">
+		delete from T_CRM_PILOTCITY where FID = #{value}
+	</delete>
+</mapper>

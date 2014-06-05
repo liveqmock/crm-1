@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.Bulletin">
+	<resultMap id="baseResultMap"
+		type="com.deppon.crm.module.complaint.shared.domain.Bulletin">
+		<id column="fid" property="fid" jdbcType="DECIMAL" />
+		<result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+		<result column="FCREATEUSERID" property="createuserid" jdbcType="DECIMAL" />
+		<result column="FLASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="lastmodifyuserid" jdbcType="DECIMAL" />
+		<result column="FCOMPID" property="compid" jdbcType="VARCHAR" />
+		<result column="FBULLETINID" property="bulletinid" jdbcType="VARCHAR" />
+		<result column="FBULLETINNAME" property="bulletinname" jdbcType="VARCHAR" />
+		<result column="FBULLETINJOBID" property="bulletinJobId" jdbcType="VARCHAR" />
+		<result column="FBULLETINTEL" property="bulletinTel" jdbcType="VARCHAR" />
+		<result column="FBULLETINDEPTNAME" property="bulletinDeptName" jdbcType="VARCHAR" />
+		<result column="FPOSITION" property="position" jdbcType="VARCHAR" />
+		<result column="FDEALTYPE" property="dealType" jdbcType="VARCHAR"/>
+	    <result column="FJOBCODE" property="jobCode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="insertBulletinFields">
+		FID, 
+		FCREATETIME, 
+		FCREATEUSERID, 
+		FLASTUPDATETIME, 
+		FLASTMODIFYUSERID,
+		FCOMPID, 
+		FBULLETINID,
+		FBULLETINNAME,
+		FBULLETINJOBID,
+		FBULLETINTEL,
+		FBULLETINDEPTNAME,
+		FPOSITION,
+		FDEALTYPE,
+		FJOBCODE
+	</sql>
+
+	<select id="selectBulletinToProc" resultMap="baseResultMap"
+		parameterType="map">
+		SELECT DISTINCT B.FID, B.FCREATETIME, B.FCREATEUSERID, B.FLASTUPDATETIME,
+		B.FLASTMODIFYUSERID, B.FCOMPID, B.FBULLETINID, B.FBULLETINNAME, B.FBULLETINJOBID, B.FBULLETINTEL,
+		B.FBULLETINDEPTNAME,B.FPOSITION,B.FDEALTYPE,B.FJOBCODE
+		FROM T_CRM_BULLETIN b
+  			INNER JOIN T_CUST_RESULT R ON B.FCOMPID = R.FCOMPLAINID 
+  		WHERE 1=1 and R.fdepttype = 0 
+		<if test=" compid != null and compid !=0 ">
+			AND B.FCOMPID=to_number(#{compid})
+			AND (FSTAT = 'TASK_RETURNED' OR
+               FCOMPID IN
+               (SELECT TC.FID
+                   FROM T_CUST_COMPLAINT TC
+                  WHERE TC.FID = #{compid}
+                    AND TC.FPROSTATUS IN
+                        ('DEPT_RETURNED_UPGRADE', 'DEPT_RETURNED_PROCESS_ALL',
+                         'DEPT_RETURNED_APPROVAL_ALL', 'APPROVAL_RETURNED')))
+		</if>
+ 		AND (R.FJOBCODE = B.FJOBCODE OR B.FJOBCODE IS NULL)
+		ORDER BY B.FCREATETIME,B.FLASTUPDATETIME
+	</select>
+	
+	<select id="selectBulletin" resultMap="baseResultMap"
+		parameterType="map">
+		SELECT DISTINCT B.FID, B.FCREATETIME, B.FCREATEUSERID, B.FLASTUPDATETIME,
+			B.FLASTMODIFYUSERID, B.FCOMPID, B.FBULLETINID, B.FBULLETINNAME, B.FBULLETINJOBID, B.FBULLETINTEL,
+			B.FBULLETINDEPTNAME,B.FPOSITION,B.FDEALTYPE,B.FJOBCODE
+		FROM T_CRM_BULLETIN b
+  			INNER JOIN T_CUST_RESULT R ON B.FCOMPID = R.FCOMPLAINID 
+  		WHERE 1=1 and R.fdepttype = 0 
+		<if test=" compid != null and compid !=0 ">
+			AND B.FCOMPID=to_number(#{compid})
+		</if>
+ 		AND (R.FJOBCODE = B.FJOBCODE OR B.FJOBCODE IS NULL)
+		ORDER BY B.FCREATETIME,B.FLASTUPDATETIME
+	</select>
+	
+<!--	
+    <select id="getSeqId" resultType="int">
+		<![CDATA[
+			SELECT SEQ_ID_CRM_BULLETIN.NEXTVAL ID FROM DUAL
+		]]>
+	</select> -->
+	
+	<insert id="insertBulletin" parameterType="com.deppon.crm.module.complaint.shared.domain.Bulletin">
+		MERGE INTO T_CRM_BULLETIN B1
+		USING (
+			SELECT 
+				#{compid,jdbcType=DECIMAL} FCOMPID, 
+				#{bulletinJobId,jdbcType=VARCHAR} FBULLETINJOBID,
+				#{dealType,jdbcType=VARCHAR} FDEALTYPE,
+				#{jobCode,jdbcType=VARCHAR} FJOBCODE
+			FROM dual b
+		) B2
+		ON (B1.FCOMPID = B2.FCOMPID AND
+         B1.FBULLETINJOBID = B2.FBULLETINJOBID AND
+         B1.FDEALTYPE = B2.FDEALTYPE AND
+         (B1.FJOBCODE = B2.FJOBCODE OR
+         B1.FJOBCODE IS NULL )AND
+         B2.FBULLETINJOBID = #{bulletinJobId,JDBCTYPE=VARCHAR} AND 
+         B1.FCOMPID = #{compid,JDBCTYPE=DECIMAL})
+		WHEN MATCHED THEN
+		  UPDATE SET 
+		  	B1.FLASTUPDATETIME = SYSDATE
+		  	,B1.FLASTMODIFYUSERID = #{lastmodifyuserid,jdbcType=DECIMAL} 
+		WHEN NOT MATCHED THEN
+		     INSERT (
+				<include refid="insertBulletinFields" />
+				)VALUES(
+				SEQ_ID_CRM_BULLETIN.NEXTVAL,
+				sysdate,
+				#{createuserid,jdbcType=DECIMAL},
+				sysdate,
+				#{lastmodifyuserid,jdbcType=DECIMAL},
+				#{compid,jdbcType=DECIMAL},
+				#{bulletinid,jdbcType=DECIMAL},
+				#{bulletinname,jdbcType=VARCHAR},
+				#{bulletinJobId,jdbcType=VARCHAR},
+				#{bulletinTel,jdbcType=VARCHAR},
+				#{bulletinDeptName,jdbcType=VARCHAR},
+				#{position,jdbcType=VARCHAR},
+				#{dealType,jdbcType=VARCHAR},
+				#{jobCode,jdbcType=VARCHAR}
+				)
+	</insert>
+	
+	<delete id="deleteOldBulletinsByCompId" parameterType="string">	
+	    SELECT * FROM T_CRM_BULLETIN B WHERE B.FID NOT IN (
+		    SELECT DISTINCT B.FID
+		    FROM T_CRM_BULLETIN B
+		        INNER JOIN T_CUST_RESULT R ON B.FCOMPID = R.FCOMPLAINID 
+		      WHERE 1=1 and R.fdepttype = 0 
+		      AND B.FCOMPID=TO_NUMBER(#{complaintId} )
+		 		AND (R.FJOBCODE = B.FJOBCODE OR B.FJOBCODE IS NULL)
+		 )
+	    AND B.FCOMPID = #{complaintId}
+	</delete>
+</mapper>

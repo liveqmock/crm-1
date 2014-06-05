@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.client.shared.domain.OrderLog">
+	<resultMap id="InterfaceConfigRM"
+		type="com.deppon.crm.module.client.common.domain.InterfaceConfig">
+		<result property="id" column="IC_FID"/>
+		<result property="className" column="IC_FCLASSNAME" />
+		<result property="outwardService" column="IC_FOUTWARDSERVICE" />
+		<collection property="methodConfigs" resultMap="MethodConfigRM" />
+	</resultMap>
+	<sql id="InterfaceConfig_column">
+		<![CDATA[
+			IC.FID IC_FID,
+			IC.FCLASSNAME IC_FCLASSNAME,
+			IC.FOUTWARDSERVICE IC_FOUTWARDSERVICE
+		]]>
+	</sql>
+	<resultMap id="MethodConfigRM"
+		type="com.deppon.crm.module.client.common.domain.MethodConfig">
+		<result property="id" column="MC_FID" />
+		<result property="name" column="MC_FNAME" />
+		<result property="recordPerformanceLog" column="MC_FRECORDPERFORMANCELOG" />
+		<result property="recordExceptionLog" column="MC_FRECORDEXCEPTIONLOG" />
+	</resultMap>
+	<sql id="MethodConfig_column">
+		<![CDATA[
+			MC.FID MC_FID,
+			MC.FNAME MC_FNAME,
+			MC.FRECORDPERFORMANCELOG MC_FRECORDPERFORMANCELOG,
+			MC.FRECORDEXCEPTIONLOG MC_FRECORDEXCEPTIONLOG,
+			MC.FINTERFACECONID MC_FINTERFACECONID
+		]]>
+	</sql>
+	<select id="queryInterfaceConfig" resultMap="InterfaceConfigRM">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="InterfaceConfig_column" />
+		,
+		<include refid="MethodConfig_column" />
+		<![CDATA[
+			FROM 
+				T_IF_INTERFACECONFIG IC 
+			LEFT JOIN 
+				T_IF_METHODCONFIG MC 
+			on 
+				IC.FID = MC.FINTERFACECONID
+		]]>
+	</select>
+</mapper>

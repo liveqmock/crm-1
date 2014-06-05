@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- <import resource=""/> 加载datasource -->
+	<bean id="customerGetTempDao" class="com.deppon.crm.module.scheduler.server.dao.impl.CustomerGetTempDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="timerPotentialCustomerService" class="com.deppon.crm.module.scheduler.server.service.TimerPotentialCustomerService">
+		<property name="custDao" ref="customerGetTempDao" />
+	</bean>
+
+	<bean id="timerPotentialCustomer" class="com.deppon.crm.module.scheduler.server.manager.TimerPotentialCustomer">
+		<property name="potentialCustomerManager" ref="potentialCustomerManager"></property>
+		<property name="timerPotentialCustomerService" ref="timerPotentialCustomerService"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="scatterCustomerManager" ref="scatterCustomerManager"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+		<property name="mapOperate" ref="mapOperate"></property>
+		<property name="departmentManager" ref="ladingstationDepartmentManager"></property>
+	</bean>
+
+	<bean id="timerMemberCustomer" class="com.deppon.crm.module.scheduler.server.manager.TimerMemberCustomer">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+
+	<bean id="ladingStationJobDao" class="com.deppon.crm.module.scheduler.server.dao.impl.LadingStationJobDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="timerWaybillIntegral" class="com.deppon.crm.module.scheduler.server.manager.TimerWaybillIntegral">
+		<property name="waybillIntegralManager" ref="waybillIntegralManager"></property>
+	</bean>
+	
+	<bean id ="syncDepartmentDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SyncDepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	
+	<bean id ="syncEmployeeDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SyncEmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	
+	<bean id ="timeDataProcessTimer" class="com.deppon.crm.module.scheduler.server.manager.TimeDataProcessTimer">
+		<property name="timerPotentialCustomerService" ref="timerPotentialCustomerService"></property>
+	</bean>
+</beans>

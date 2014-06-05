@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.Tree">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="treeMap" type="com.deppon.crm.module.authorization.shared.domain.Tree">
+		<id property="fId" column="FID"  jdbcType="DECIMAL"/>
+		<result property="createTime" column="FCREATETIME"
+			jdbcType="TIMESTAMP" javaType="Date"/>
+		<result property="lastUpdateTime" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="lastModifyUserId" column="FLASTMODIFYUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="createUserId" column="FCREATEUSERID"
+			javaType="Integer" jdbcType="DECIMAL" />
+			
+		<result property="noteid" column="FNOTEID"
+			 jdbcType="DECIMAL" />
+		<result property="userid" column="FUSERID"
+			jdbcType="DECIMAL" />
+		<result property="noteurl" column="FNOTEURL"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="notename" column="FNOTENAME"
+			javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="base_colomn">
+		fid, fcreatetime, fcreateuserid, flastupdatetime, flastmodifyuserid, fnoteid, fnoteurl, fnotename, fuserid
+	</sql>
+	
+ 	<select id="getTreeByUser" parameterType="map" resultMap="treeMap">
+	 	select <include refid="base_colomn"/>
+	 	from t_crm_tree
+	 	where 1=1
+	 	<if test="null !=userid and ''!=userid ">
+	 		and fuserid=#{userid}
+	 	</if>
+ 	</select>
+ 	
+ 	<select id="selectTreeById" parameterType="map" resultMap="treeMap">
+	 	select <include refid="base_colomn"/>
+	 	from t_crm_tree
+	 	where fid=#{id}
+ 	</select>
+ 	
+ 	<insert id="saveTree" 
+	 	parameterType="com.deppon.crm.module.authorization.shared.domain.Tree">
+	<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT SEQ_ID_TREE.nextval AS
+			id FROM DUAL
+		</selectKey>
+		INSERT INTO t_crm_tree
+		  (FID,
+		   FCREATETIME,
+		   FCREATEUSERID,
+		   FLASTUPDATETIME,
+		   FLASTMODIFYUSERID,
+		   
+		   FNOTEID,
+		   FNOTEURL,
+		   FNOTENAME,
+		   FUSERID
+		   )
+		VALUES
+		  (#{id},
+		   #{createDate, jdbcType=DATE},
+		   #{createUser, jdbcType=DECIMAL},
+		   #{modifyDate, jdbcType=DATE},
+		   #{modifyUser, jdbcType=DECIMAL},
+		  
+		   #{noteid, jdbcType=INTEGER},
+		   #{noteurl, jdbcType=VARCHAR},
+		   #{notename, jdbcType=VARCHAR},
+		   #{userid, jdbcType=INTEGER}
+		  )
+	</insert>
+	<delete id="deleteByUserId" parameterType="map">
+		delete from t_crm_tree where fuserid=#{userid}
+	</delete>
+	<delete id="deleteById" parameterType="map">
+		delete from t_crm_tree where fid=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="logmoniting" namespace="/logmoniting" extends="crm-default">
+		<!-- 日志监控 -->
+		<action name="performanceLog">
+			<result name="success">performanceLogsManager.html</result>
+		</action>
+		<!-- 请求图 -->
+		<action name="requestChart">
+			<result name="success">requestChart.html</result>
+		</action>
+		<!-- 异常信息设置 -->
+		<action name="exceptionSet">
+			<result name="success">exceptionSetManager.html</result>
+		</action>
+		<!--同步日志管理-->
+		<action name="synchronizeLog">
+			<result name="success">synchronizeLogManager.html</result>
+		</action>
+		<!-- Action设置 -->
+		<action name="logSetAction" class="logControlAction" method="logSetAction">
+			<result name="success" type="json" />
+		</action>
+		<!-- Action修改 -->
+		<action name="logUpdateAction" class="logControlAction" method="logUpdateAction">
+			<result name="success" type="json" />
+		</action>
+		<!-- Action删除 -->
+		<action name="deleteAction" class="logControlAction" method="deleteAction">
+			<result name="success" type="json" />
+		</action>
+		<!-- 点击修改Action时候获取Action值 -->
+		<action name="getActionInfo" class="logControlAction" method='receiptActionInfo'>
+			<result name="success" type="json">
+				<param name="includeProperties">basicLoginfo</param>
+			</result>
+		</action>
+		<!-- 获取用于chart图标显示的数据源 -->
+		<action name="getLogStatistics" class="logControlAction" method='searchLogStatisticsByCondition' >
+			<result name="success" type="json">
+				<param name="includeProperties">logStatisticsList</param>
+			</result>
+		</action>
+		<!-- 获取用于前X位action图表显示的数据源 -->
+		<action name="saerchChartTopData" class="logControlAction" method='saerchChartTopData' >
+			<result name="success" type="json">
+				<param name="includeProperties">topChartDataList</param>
+			</result>
+		</action>
+		<!-- 查询Action列表 -->
+		<action name="searchActionList" class="logControlAction" method="searchActionList">
+			<result name="success" type="json">
+				<param name="includeProperties">actionResultList,totalCount</param>
+			</result>
+		</action>
+		<!-- @陈爱春-->
+		<!--  查询Exception列表  -->
+		<action name="searchExceptionList" class="logControlAction" method="searchExceptionList">
+			<result name="success" type="json">
+				<param name="includeProperties">exceptionResultList,totalCount</param>
+			</result>
+		</action>
+		<!-- 新增Exception -->
+		<action name="addExceptionErrorCode" class="logControlAction" method="addExceptionErrorCode">
+			<result name="success" type="json" />
+		</action>
+		<!-- 删除Exception -->
+		<action name="delExceptionErrorCode" class="logControlAction" method="delExceptionErrorCode">
+			<result name="success" type="json" />
+		</action>
+		<!-- 修改updateExceptionErrorCode -->
+		<action name="updateExceptionErrorCode" class="logControlAction" method="updateExceptionErrorCode">
+			<result name="success" type="json" />
+		</action>
+		<!--同步日志管理 （陈爱春）查询searchSynchronizeLogList-->
+		<action name="searchSynchronizeLogList" class="logControlAction" method="searchSynLogList">
+			<result name="success" type="json">
+				<param name="includeProperties">synchronizeLogList,totalCount</param>
+			</result>
+		</action>
+		<!-- 同步日志管理 （陈爱春）修改updateSynchronizeLog -->
+		<action name="updateSynchronizeLog" class="logControlAction" method="updateSynchronizeLog">
+			<result name="success" type="json" />
+		</action>
+	</package>
+</struts>

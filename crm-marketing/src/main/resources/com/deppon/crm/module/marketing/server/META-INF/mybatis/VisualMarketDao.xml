@@ -1,0 +1,1059 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.VisualMarket">
+    <select id="searchMemberList" parameterType="com.deppon.crm.module.marketing.shared.domain.visualMarket.QueryCondition"
+        resultMap="customerMarketInfoMap">
+        <include refid="searchMemberInfoList"/>
+    </select>
+    <!-- 统计固定客户信息总数 -->
+    <select id="countMemberCustInfo" parameterType="com.deppon.crm.module.marketing.shared.domain.visualMarket.QueryCondition"
+        resultType="int">
+             SELECT COUNT(1)
+               FROM 
+                    <!-- 地图标记不为空则添加联系人表-->
+                    <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                        T_CUST_CUSTLINKMAN LINKMAN,
+                    </if>
+                    T_CUST_CUSTBASEDATA BASEDATA
+               LEFT JOIN MV_CRM_CUSTVISUALMARKETNS VISALMARKET
+                 ON VISALMARKET.FCUSTID = BASEDATA.FID   
+                    <if test="deptId!=null and deptId!=''">
+                        AND VISALMARKET.FDEPTID=#{deptId}
+                    </if>
+              WHERE 1=1
+                AND BASEDATA.FCUSTSTATUS='0' 
+                AND BASEDATA.FCUSTGROUP='RC_CUSTOMER'
+                <!-- 地图标记 不为空则测试联系人查询条件-->
+                <if test="mapMakerStatus != null and mapMakerStatus != ''">
+	                AND BASEDATA.FID = LINKMAN.FCUSTID
+	                AND LINKMAN.FISMAINLINKMAN = '1'
+	                AND LINKMAN.FSTATUS='0'
+                </if>
+                <!-- 部门ID -->
+                <if test="deptId!=null and deptId!=''">
+                    AND BASEDATA.FDEPTID=#{deptId}
+                </if>
+              <choose>
+                  <!-- 根据客户编码查询 -->
+                  <when test="custNumber != null and custNumber != ''">
+                      AND BASEDATA.FCUSTNUMBER=#{custNumber}
+                  </when>
+                  <!-- 根据客户id查询 -->
+                  <when test="custId != null and custId != ''">
+                      AND BASEDATA.FID=#{custId}
+                  </when>
+                  <otherwise>
+                  	<!-- 创建时间-->
+                  	<if test="createBeginTime != null and createBeginTime != ''">
+						<![CDATA[
+							AND BASEDATA.FCREATETIME >= TRUNC(#{createBeginTime, jdbcType=DATE})
+				       ]]>
+					</if>
+					<if test="createEndTime != null and createEndTime != ''">
+						<![CDATA[
+							AND BASEDATA.FCREATETIME <= TRUNC(#{createEndTime, jdbcType=DATE})+1
+				       ]]>
+					</if>
+                    <!-- 客户等级 -->
+                    <if test="custDegree!=null and custDegree.length>0">
+                        AND BASEDATA.FDEGREE IN
+                        <foreach item="item" collection="custDegree" open="(" separator="," close=")">
+                           #{item}
+                        </foreach>
+                    </if>
+                    <!-- 所属行业 -->
+                    <if test="custTrade!=null and custTrade.length>0">
+                        AND BASEDATA.FTRADEID IN
+                        <foreach item="item" collection="custTrade" open="(" separator="," close=")">
+                           #{item}
+                        </foreach>
+                    </if>
+                    <!-- 客户标签 -->
+                    <if test="custLabel!=null and custLabel.length>0">
+                        AND BASEDATA.FID IN (
+                            SELECT LABEL.FCUSTID 
+                              FROM T_CUST_CUSTLABEL LABEL
+                             WHERE LABEL.FLABELID IN
+                             <foreach item="item" collection="custLabel" open="(" separator="," close=")">
+                                  #{item}
+                             </foreach>
+                             <!-- 部门ID -->
+			                 <if test="deptId!=null and deptId!=''">
+			                     AND LABEL.FDEPTID=#{deptId}
+			                 </if>  
+                            )
+                    </if>
+                    <!-- 地图标记 用户是否标记 0 未标记 1 已标记-->
+                    <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                       <choose>
+                           <when test="mapMakerStatus == 'MAPMAKED'">
+                               <![CDATA[
+                               AND (LINKMAN.FLAT > '0' OR LINKMAN.FLAT < '0')
+                               AND (LINKMAN.FLNG > '0' OR LINKMAN.FLNG < '0')
+                               ]]>
+                           </when>
+                           <when test="mapMakerStatus == 'UNMAKER'">
+                               <![CDATA[
+                               AND (LINKMAN.FLAT IS NULL
+                                OR LINKMAN.FLNG IS NULL)
+                               ]]>
+                           </when>
+                        </choose>
+                    </if>
+                    <!-- 回访状态、收入恢复进度、超期时常 -->
+                    <include refid="returnVisitStatus_incomeRestoreRate_exceedTime_sql"/>
+              </otherwise>
+         </choose>
+    </select>
+    
+    <!-- 固定客户查询(客户地址0：有效，1：审批中，2：无效) -->
+    <sql id="searchMemberInfoList">
+    SELECT <![CDATA[/*+first_rows(${limitRecord})*/ *]]>
+      FROM(
+            SELECT <![CDATA[/*+first_rows(${limitRecord})*/]]>
+                   ROW_.*, 
+                   <if test="(custNumber != null and custNumber != '') or (custId!=null and custId != '')">
+                       ADDRESS.FADDRESS, 
+                   </if>
+                   ROWNUM ROWNUM_
+              FROM(
+             SELECT 
+                    <![CDATA[/*+index(MV_CRM_CUSTVISUALMARKETNS,MV_CUSTDEPTE_INDEX)*/]]>
+                    BASEDATA.FCUSTNUMBER, 
+                    BASEDATA.FID FCUSTID, 
+                    BASEDATA.FCUSTNAME, 
+                    BASEDATA.FDEPTID, 
+                    BASEDATA.FDEGREE, 
+                    BASEDATA.FCREATETIME, 
+                    LINKMAN.FLAT, 
+                    LINKMAN.FLNG, 
+                    LINKMAN.FID FMAINLINKMANID, 
+                    LINKMAN.FNUMBER, 
+                    LINKMAN.FNAME, 
+                    LINKMAN.FMOBILETEL, 
+                    LINKMAN.FOFFERTEL, 
+                    NVL(VISALMARKET.FMONTHLYINCOME,0) FMONTHLYINCOME, 
+                    NVL(VISALMARKET.FMONTHLYGOODS,0) FMONTHLYGOODS, 
+                    VISALMARKET.FRETURNTIME, 
+                    NVL(VISALMARKET.FRETURNSTATUS,3) FRETURNSTATUS, 
+                    CEIL(VISALMARKET.LASTMONTHSENDPERIOD) FSENDGOODSCYCLE, 
+                    TRADEDATE.FLATELYTRADEDATE, 
+                    'MEMBER' FCUSTTYPE 
+               FROM 
+                    T_CUST_CUSTLINKMAN LINKMAN,
+                    T_CUST_CUSTBASEDATA BASEDATA
+               LEFT JOIN MV_CRM_CUSTVISUALMARKETNS VISALMARKET
+                 ON VISALMARKET.FCUSTID = BASEDATA.FID   
+                    <if test="deptId!=null and deptId!=''">
+                        AND VISALMARKET.FDEPTID=#{deptId}
+                    </if>
+               LEFT JOIN T_CRM_TRADEDATE TRADEDATE 
+                 ON BASEDATA.FID =TRADEDATE.FCUSTID
+              WHERE 1=1
+                AND BASEDATA.FCUSTSTATUS='0'  
+                AND BASEDATA.FCUSTGROUP='RC_CUSTOMER'
+                AND BASEDATA.FID = LINKMAN.FCUSTID
+                AND LINKMAN.FISMAINLINKMAN = '1'
+                AND LINKMAN.FSTATUS=0
+                AND BASEDATA.FCUSTCATEGORY != 'EXPRESS'
+                <!-- 部门ID -->
+                <if test="deptId!=null and deptId!=''">
+                    AND BASEDATA.FDEPTID=#{deptId}
+                </if>
+                <choose>
+                    <!-- 根据客户编码查询 -->
+                    <when test="custNumber != null and custNumber != ''">
+                        AND BASEDATA.FCUSTNUMBER=#{custNumber}
+                    </when>
+                    <!-- 根据客户id查询 -->
+                    <when test="custId != null and custId != ''">
+                        AND BASEDATA.FID=#{custId}
+                    </when>
+                    <otherwise>
+                    	<!-- 创建时间-->
+	                    <if test="createBeginTime != null and createBeginTime != ''">
+							<![CDATA[
+								AND BASEDATA.FCREATETIME >= TRUNC(#{createBeginTime, jdbcType=DATE})
+					       ]]>
+						</if>
+						<if test="createEndTime != null and createEndTime != ''">
+							<![CDATA[
+								AND BASEDATA.FCREATETIME <= TRUNC(#{createEndTime, jdbcType=DATE})+1
+					       ]]>
+						</if>
+                        <!-- 客户等级 -->
+                        <if test="custDegree!=null and custDegree.length>0">
+                            AND BASEDATA.FDEGREE IN
+                            <foreach item="item" collection="custDegree" open="(" separator="," close=")">
+                               #{item}
+                            </foreach>
+                        </if>
+                        <!-- 所属行业 -->
+                        <if test="custTrade!=null and custTrade.length>0">
+                            AND BASEDATA.FTRADEID IN
+                            <foreach item="item" collection="custTrade" open="(" separator="," close=")">
+                               #{item}
+                            </foreach>
+                        </if>
+                        <!-- 客户标签 -->
+                        <if test="custLabel!=null and custLabel.length>0">
+                            AND BASEDATA.FID IN (
+                                SELECT LABEL.FCUSTID 
+                                  FROM T_CUST_CUSTLABEL LABEL
+                                 WHERE LABEL.FLABELID IN
+                                 <foreach item="item" collection="custLabel" open="(" separator="," close=")">
+                                      #{item}
+                                 </foreach>
+                                 <!-- 部门ID -->
+                                 <if test="deptId!=null and deptId!=''">
+                                     AND LABEL.FDEPTID=#{deptId}
+                                 </if>  
+                                )
+                        </if>
+                        <!-- 地图标记 用户是否标记 0 未标记 1 已标记-->
+                        <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                           <choose>
+                               <when test="mapMakerStatus == 'MAPMAKED'">
+                                   <![CDATA[
+                                   AND (LINKMAN.FLAT > '0' OR LINKMAN.FLAT < '0')
+                                   AND (LINKMAN.FLNG > '0' OR LINKMAN.FLNG < '0')
+                                   ]]>
+                               </when>
+                               <when test="mapMakerStatus == 'UNMAKER'">
+                                   <![CDATA[
+                                   AND (LINKMAN.FLAT IS NULL
+                                    OR LINKMAN.FLNG IS NULL)
+                                   ]]>
+                               </when>
+                            </choose>
+                        </if>
+                        <!-- 回访状态、收入恢复进度、超期时常 -->
+                        <include refid="returnVisitStatus_incomeRestoreRate_exceedTime_sql"/>
+                    </otherwise>
+                </choose>
+                <include refid="sortMember_sql"/>
+               )ROW_
+                <if test="(custNumber != null and custNumber != '') or (custId!=null and custId != '')">
+                   LEFT JOIN T_CUST_PREFERENCEADDRESS ADDRESS 
+                     ON ADDRESS.FLINKMANID = ROW_.FMAINLINKMANID
+                    AND ADDRESS.FISMAINADDRESS = '1'
+                    AND ADDRESS.FSTATUS = '0'
+                </if>
+            <![CDATA[
+            WHERE ROWNUM <=${endRecord}
+            ]]>
+            )
+        <![CDATA[
+        WHERE ROWNUM_>${startRecord}
+        ]]>
+    </sql>
+        <!-- 排序 -->
+    <sql id="sortMember_sql">
+        <choose>
+            <!-- 当月货量 -->
+            <when test="sortType=='monthGoodCounts'">
+                ORDER BY FMONTHLYGOODS
+                <include refid="sortMark"/>
+            </when>
+            <!-- 交易时间 -->
+            <when test="sortType=='tradeTime'">
+                ORDER BY FLATELYTRADEDATE
+                <include refid="sortMark"/>
+            </when>
+            <!-- 回访时间 -->
+            <when test="sortType=='revisitTime'">
+                ORDER BY FRETURNTIME
+                <include refid="sortMark"/>
+            </when>
+            <!-- 创建时间 createTime-->
+            <when test="sortType=='createTime'">
+                ORDER BY FCREATETIME
+                <include refid="sortMark"/>
+            </when>
+            <otherwise>
+                ORDER BY FCUSTID
+            </otherwise>
+        </choose>
+    </sql>
+    <!-- 回访状态、收入恢复进度、超期时常 -->
+    <sql id="returnVisitStatus_incomeRestoreRate_exceedTime_sql">
+        <!-- 回访状态 -->
+        <if test="returnVisitStatus != null and returnVisitStatus.length>0">
+                AND VISALMARKET.FRETURNSTATUS IN
+                <foreach item="item" collection="returnVisitStatus" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+        </if>
+        <!-- 收入恢复进度 -->
+        <if test="incomeRestoreRateList != null and incomeRestoreRateList.size>0">
+           AND (
+           <trim  prefixOverrides="OR|AND"> 
+               <foreach item="item" collection="incomeRestoreRateList">
+                  OR (
+                  <choose>
+                       <!-- 查询为0或空的情况 -->
+                       <when test="item.start==null and item.end==0">
+                           VISALMARKET.FINCOMERESTORATE IS NULL OR VISALMARKET.FINCOMERESTORATE=0
+                       </when>
+                       <otherwise>
+		                   <![CDATA[ VISALMARKET.FINCOMERESTORATE > #{item.start} ]]>
+		                   <if test="item.end!=null">
+		                   <![CDATA[  AND VISALMARKET.FINCOMERESTORATE <= #{item.end} ]]>
+		                   </if>
+		               </otherwise>
+		          </choose>
+                  )
+               </foreach>
+           </trim>
+           )
+        </if>
+        <!-- 超期时长 -->
+        <if test="exceedTimeList != null and exceedTimeList.size>0">
+           AND (
+           <trim  prefixOverrides="OR|AND"> 
+               <foreach item="item" collection="exceedTimeList">
+                  OR (
+                  <choose>
+                       <!-- 查询为0或空的情况 -->
+                       <when test="item.start==null and item.end==0">
+                           <![CDATA[VISALMARKET.FEXCEEDTIME IS NULL OR VISALMARKET.FEXCEEDTIME <=0]]>
+                       </when>
+                       <otherwise>
+		                   <trim  prefixOverrides="AND"> 
+		                       <if test="item.start!=null">
+		                           <![CDATA[ VISALMARKET.FEXCEEDTIME > #{item.start} ]]>
+		                       </if>
+		                       <if test="item.end!=null">
+		                           <![CDATA[  AND VISALMARKET.FEXCEEDTIME <= #{item.end} ]]>
+		                       </if>
+		                   </trim>
+		               </otherwise>
+		           </choose>
+                  )
+               </foreach>
+           </trim>
+           )
+        </if>
+    </sql>
+    
+    <!-- ********************查询固定客户主偏好地址和城市信息************************ -->
+    <select id="selectAddressById" resultMap="customerAddressInfo" parameterType="java.lang.String">
+        SELECT LINKMAN.FCUSTID FCUSTID, ADDRESS.FADDRESS, SHUT.FCITY, CITY.FNAME
+    	FROM T_CUST_CUSTLINKMAN LINKMAN
+     	JOIN T_CUST_PREFERENCEADDRESS ADDRESS ON ADDRESS.FLINKMANID =LINKMAN.FID
+    	LEFT JOIN T_CUST_SHUTTLEADDRESS SHUT ON ADDRESS.FSHUTTLEADDRESSID =SHUT.FID
+    	LEFT JOIN T_CRM_CITY CITY ON SHUT.FCITY = CITY.FID
+   		WHERE LINKMAN.FISMAINLINKMAN = '1'
+     	AND LINKMAN.FSTATUS = '0'
+     	AND ADDRESS.FISMAINADDRESS = '1'
+     	AND ADDRESS.FSTATUS = '0'
+     	AND LINKMAN.FCUSTID = #{custId}
+     	<![CDATA[AND ROWNUM <2]]>
+    </select>
+    
+    <!-- ********************查询潜散客地址和城市信息************************ -->
+    <select id="selectPCAddressById" resultMap="customerAddressInfo" parameterType="java.lang.String">
+        SELECT LINKMAN.FCUSTID FCUSTID, ADDRESS.FADDRESS, SHUT.FCITY, CITY.FNAME
+    	FROM T_CUST_CUSTLINKMAN LINKMAN
+     	JOIN T_CUST_PREFERENCEADDRESS ADDRESS ON ADDRESS.FLINKMANID =LINKMAN.FID
+    	LEFT JOIN T_CUST_SHUTTLEADDRESS SHUT ON ADDRESS.FSHUTTLEADDRESSID =SHUT.FID
+    	LEFT JOIN T_CRM_CITY CITY ON SHUT.FCITY = CITY.FID
+   		WHERE LINKMAN.FISMAINLINKMAN = '1'
+     	AND LINKMAN.FSTATUS = '0'
+     	AND ADDRESS.FISMAINADDRESS = '1'
+     	AND ADDRESS.FSTATUS = '0'
+     	AND LINKMAN.FCUSTID = #{custId}
+     	<![CDATA[AND ROWNUM <2]]>
+    </select>
+    
+    
+    <!-- *******************潜散客********************* -->    
+    <!-- 查询潜散客 -->
+    <select id="selectPsList" parameterType="com.deppon.crm.module.marketing.shared.domain.visualMarket.QueryCondition"
+        resultMap="psMarketInfoMap"> 
+        SELECT   <![CDATA[/*+first_rows(${limitRecord})*/ *]]>
+          FROM (
+            SELECT <![CDATA[/*+first_rows(${limitRecord})*/]]>
+                   ROW_.*, 
+                   ROWNUM ROWNUM_
+             FROM(
+        <choose> 
+            <!--*************** 如果是散客查询回访状态表 ***************-->
+            <when test="psCustType == 'SC_CUSTOMER'">
+               SELECT  
+                        NVL(PSVISUAL.FRETURNSTATUS,3) FRETURNSTATUS,
+                        PSVISUAL.FRETURNTIME FRETURNTIME,
+                        'SC_CUSTOMER' FCUSTTYPE,
+                        PS.FDEPTID,
+                        PS.FID,
+                        PS.FCUSTNAME FCUSTNAME,
+                        LINKMAN.FNAME FLINKMANNAME,
+                        LINKMAN.FOFFERTEL FLINKMANPHONE,
+                        LINKMAN.FMOBILETEL FLINKMANMOBILE,
+                        LINKMAN.FID  FMAINLINKMANID,
+                        PS.FCREATETIME,
+                       <!--  PS.FLINKMANADDRESS FADDRESS, -->
+                        ADDRESS.FADDRESS FADDRESS,
+                        LINKMAN.FLAT,
+                        LINKMAN.FLNG
+                 FROM 
+                      T_CUST_CUSTBASEDATA PS 
+                       JOIN 
+                       T_CUST_CUSTLINKMAN LINKMAN 
+                           ON PS.FID=LINKMAN.FCUSTID
+                 LEFT JOIN T_CUST_PREFERENCEADDRESS ADDRESS ON ADDRESS.FLINKMANID =LINKMAN.FID
+                 LEFT JOIN MV_CRM_PSVISUALMARKETNS PSVISUAL
+                   ON PS.FID = PSVISUAL.FCUSTID
+                      <if test="deptId!=null and deptId!=''">
+                          AND PSVISUAL.FDEPTID=#{deptId}
+                      </if>
+                WHERE 1=1
+                  AND PS.FCUSTSTATUS='0'
+                  AND PS.FCUSTGROUP='SC_CUSTOMER'
+                 <!--  AND PS.FID = LINKMAN.FCUSTID -->
+                  AND LINKMAN.FISMAINLINKMAN = '1'
+                  AND LINKMAN.FSTATUS=0
+                <choose>
+                <!-- 如果客户id不为空 -->
+                <when test="custId != null and custId != ''">
+                    AND PS.FID=#{custId}
+                </when>
+                <otherwise>
+                    <!-- 根据部门id查询 -->
+                    <if test="deptId!=null and deptId!=''">
+                        AND PS.FDEPTID=#{deptId}
+                    </if>
+                   <!-- 潜散客户类型 auth:lichunyu
+                    <if test="psCustType != null and psCustType != ''">
+                        AND PS.FCUSTGROUP=#{psCustType}
+                    </if> -->
+                    
+                    <!-- 创建时间-->
+                  	<if test="createBeginTime != null and createEndTime != null">
+						<![CDATA[
+							AND PS.FCREATETIME BETWEEN TRUNC(#{createBeginTime, jdbcType=DATE})
+							AND TRUNC(#{createEndTime, jdbcType=DATE})+1
+				       ]]>
+					</if>
+                    <!-- 是否在地图标记 -->
+                    <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                        <choose>
+                            <when test="mapMakerStatus == 'MAPMAKED'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT > 0 OR LINKMAN.FLAT < 0)
+                                AND (LINKMAN.FLNG > 0 OR LINKMAN.FLNG < 0)
+                                ]]>
+                            </when>
+                            <when test="mapMakerStatus == 'UNMAKER'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT IS NULL
+                                 OR LINKMAN.FLNG IS NULL)
+                                ]]>
+                            </when>
+                         </choose>
+                    </if>
+                    <!-- 客户标签 -->
+                    <if test="custLabel!=null and custLabel.length>0">
+                        AND PS.FID IN (
+                            SELECT LABEL.FCUSTID 
+                              FROM T_CUST_CUSTLABEL LABEL
+                             WHERE LABEL.FLABELID IN
+                             <foreach item="item" collection="custLabel" open="(" separator="," close=")">
+                                  #{item}
+                              </foreach>
+                            )
+                    </if>
+                    <!-- 回访状态、当月收入,发货票数 -->
+                    <include refid="returnVisitStatus_monthlyIncome_endGoodsNumber"/>
+                </otherwise>
+                </choose>
+            </when> 
+            
+            
+            <!--********************* 如果是潜客 ********************-->
+            <otherwise>
+               SELECT <![CDATA[/*+first_rows(${limitRecord})*/]]>
+                      DECODE(SD.FSTATUS, NULL, 3, SD.FSTATUS) FRETURNSTATUS,
+                      VISIT.FDATE FRETURNTIME,
+                      PS.FCUSTTYPE,
+                      PS.FDEPTID,
+                      PS.FID,
+                      PS.FCUSTNAME,
+                      LINKMAN.FNAME FLINKMANNAME,
+                      LINKMAN.FOFFERTEL FLINKMANPHONE,
+                      LINKMAN.FMOBILETEL FLINKMANMOBILE,
+                      PS.FCREATETIME,
+                      LINKMAN.FID  FMAINLINKMANID,
+                       <!--  PS.FLINKMANADDRESS FADDRESS, -->
+                      NVL(ADDRESS.FADDRESS,PS.FCOMPADDR) FADDRESS,
+                      LINKMAN.FLAT,
+                      LINKMAN.FLNG
+                 FROM 
+                       T_CUST_CUSTBASEDATA PS 
+                       LEFT JOIN 
+                       T_CUST_CUSTBASEDATA_EXTEND EXTEND
+                           ON PS.FID=EXTEND.FCUSTID
+                       JOIN <!-- 带确认 -->
+                       T_CUST_CUSTLINKMAN LINKMAN 
+                           ON PS.FID=LINKMAN.FCUSTID
+                 LEFT JOIN T_CUST_PREFERENCEADDRESS ADDRESS ON ADDRESS.FLINKMANID =LINKMAN.FID  
+                       
+                 LEFT JOIN (SELECT FCUSTID FQSID,MAX(FDATE) FDATE 
+                              FROM T_CUST_RETURNVISIT  
+                             WHERE FTYPE='dev' 
+                             <!-- 根据部门id查询 -->
+		                     <if test="deptId!=null and deptId!=''">
+                                 AND FEXECDEPTID=#{deptId}
+		                     </if>
+                             GROUP BY FCUSTID
+                            )VISIT
+                   ON PS.FID = VISIT.FQSID
+                 LEFT JOIN (<!--  回访状态-->
+                      SELECT SD.FCUSTID, 
+                             MIN(DECODE(SD.FSTATUS, '30', 1, '40', 3, 2)) FSTATUS
+                        FROM T_CUST_SCHEDULE SD
+                       WHERE 1=1
+                         <if test="deptId!=null and deptId!=''">
+                         AND SD.FEXECDEPTID = #{deptId}
+                         </if>
+		                 AND TRUNC(SD.FCREATETIME,'MM') =TRUNC(SYSDATE, 'MM')
+                       GROUP BY SD.FCUSTID
+                           ) SD 
+                   ON SD.FCUSTID = PS.FID
+                WHERE 1=1
+                  AND PS.FCUSTSTATUS='0'
+                  AND PS.FCUSTGROUP='PC_CUSTOMER'
+                  <!-- AND PS.FID = LINKMAN.FCUSTID -->
+                  AND LINKMAN.FISMAINLINKMAN = '1'
+                  AND LINKMAN.FSTATUS=0
+                 <!--  AND EXTEND.FCUSTID=PS.FID  -->
+                <choose>
+                <when test="custId != null and custId != ''">
+                    AND PS.FID=#{custId}
+                </when>
+                <otherwise>
+                    <!-- 根据部门id查询 -->
+                    <if test="deptId!=null and deptId!=''">
+                        AND PS.FDEPTID=#{deptId}
+                    </if>
+                    <!-- 潜散客户类型
+                    <if test="psCustType != null and psCustType != ''">
+                        AND PS.FCUSTTYPE=#{psCustType}
+                    </if> -->
+                    
+                    <!-- 创建时间-->
+                  	<if test="createBeginTime != null and createEndTime != null">
+						<![CDATA[
+							AND PS.FCREATETIME BETWEEN TRUNC(#{createBeginTime, jdbcType=DATE})
+							AND TRUNC(#{createEndTime, jdbcType=DATE})+1
+				       ]]>
+					</if>
+					
+                     <!-- 回访状态 (1,'已回访',2,'回访中',3'未回访')-->
+                    <if test="returnVisitStatus!=null and returnVisitStatus.length>0">
+                        AND DECODE(SD.FSTATUS, NULL, 3, SD.FSTATUS) IN 
+                        <foreach item="item" collection="returnVisitStatus" open="(" separator="," close=")">
+                           #{item}
+                         </foreach>
+                    </if>
+                    <!-- 货量潜力 -->
+                    <if test="goodsPotential!=null and goodsPotential.length>0">
+                        AND (EXTEND.FVOLUMEPOTENTIAL IN
+                        <foreach item="item" collection="goodsPotential" open="(" separator="," close=")">
+                           #{item}
+                        </foreach>
+                        <if test="isSearchGoodsPotentialNull">
+                            OR EXTEND.FVOLUMEPOTENTIAL IS NULL
+                        </if>
+                        )
+                    </if>
+                    <!-- 客户来源 -->
+                    <if test="custResource!=null and custResource.length>0">
+                        AND PS.FCHANNELSOURCE IN
+                        <foreach item="item" collection="custResource" open="(" separator="," close=")">
+                           #{item}
+                        </foreach>
+                    </if>
+                    <!-- 是否在地图标记 -->
+                    <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                        <choose>
+                            <when test="mapMakerStatus == 'MAPMAKED'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT > '0' OR LINKMAN.FLAT < '0')
+                                AND (LINKMAN.FLNG > '0' OR LINKMAN.FLNG < '0')
+                                ]]>
+                            </when>
+                            <when test="mapMakerStatus == 'UNMAKER'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT IS NULL
+                                 OR LINKMAN.FLNG IS NULL)
+                                ]]>
+                            </when>
+                         </choose>
+                    </if>
+                    <!-- 客户标签 -->
+                    <if test="custLabel!=null and custLabel.length>0">
+                        AND PS.FID IN (
+                            SELECT LABEL.FCUSTID 
+                              FROM T_CUST_CUSTLABEL LABEL
+                             WHERE LABEL.FLABELID IN
+                             <foreach item="item" collection="custLabel" open="(" separator="," close=")">
+                                  #{item}
+                              </foreach>
+                            )
+                    </if>
+                </otherwise>
+            </choose>
+            </otherwise>
+        </choose>
+        <include refid="sortPs"/>
+                )ROW_
+        <![CDATA[
+            WHERE ROWNUM <=${endRecord}
+        ]]>
+            )
+        <![CDATA[
+        WHERE ROWNUM_>${startRecord}
+        ]]>
+    </select>
+    
+    <!-- ****************统计潜散客信息总数******************** -->    
+    <select id="countPSCustInfo" parameterType="com.deppon.crm.module.marketing.shared.domain.visualMarket.QueryCondition"
+        resultType="int">
+         <choose>
+             <!-- 如果是散客 -->
+             <when test="psCustType == 'SC_CUSTOMER'">
+                 SELECT COUNT(1)
+                 FROM 
+                       T_CUST_CUSTBASEDATA PS 
+                       JOIN 
+                       T_CUST_CUSTLINKMAN LINKMAN 
+                           ON PS.FID=LINKMAN.FCUSTID
+                 LEFT JOIN T_CUST_PREFERENCEADDRESS ADDRESS ON ADDRESS.FLINKMANID =LINKMAN.FID
+                 LEFT JOIN MV_CRM_PSVISUALMARKETNS PSVISUAL
+                   ON PS.FID = PSVISUAL.FCUSTID
+                      <if test="deptId!=null and deptId!=''">
+                          AND PSVISUAL.FDEPTID=#{deptId}
+                      </if>
+                WHERE 1=1
+                  AND PS.FCUSTSTATUS='0'
+              <!--     AND PS.FID=LINKMAN.FCUSTID -->
+                  AND LINKMAN.FISMAINLINKMAN = '1'
+                  AND LINKMAN.FSTATUS=0
+                  AND PS.FCUSTGROUP='SC_CUSTOMER'
+                <choose>
+                <!-- 如果客户id不为空 -->
+                <when test="custId != null and custId != ''">
+                    AND PS.FID=#{custId}
+                </when>
+                <otherwise>
+                    <!-- 根据部门id查询 -->
+                    <if test="deptId!=null and deptId!=''">
+                        AND PS.FDEPTID=#{deptId}
+                    </if>
+                    <!-- 潜散客户类型 -->
+                    <if test="psCustType != null and psCustType != ''">
+                        AND PS.FCUSTGROUP=#{psCustType}
+                    </if>
+                    <!-- 创建时间-->
+                  	<if test="createBeginTime != null and createEndTime != null">
+						<![CDATA[
+							AND PS.FCREATETIME BETWEEN TRUNC(#{createBeginTime, jdbcType=DATE})
+							AND TRUNC(#{createEndTime, jdbcType=DATE})+1
+				       ]]>
+					</if>
+                    <!-- 是否在地图上标记 -->
+                    <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                        <choose>
+                            <when test="mapMakerStatus == 'MAPMAKED'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT > '0' OR LINKMAN.FLAT < '0')
+                                AND (LINKMAN.FLNG > '0' OR LINKMAN.FLNG < '0')
+                                ]]>
+                            </when>
+                            <when test="mapMakerStatus == 'UNMAKER'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT IS NULL
+                                 OR LINKMAN.FLNG IS NULL)
+                                ]]>
+                            </when>
+                         </choose>
+                    </if>
+                    <!-- 客户标签 -->
+                    <if test="custLabel!=null and custLabel.length>0">
+                        AND PS.FID IN (
+                            SELECT LABEL.FCUSTID 
+                              FROM T_CUST_CUSTLABEL LABEL
+                             WHERE LABEL.FLABELID IN
+                             <foreach item="item" collection="custLabel" open="(" separator="," close=")">
+                                  #{item}
+                              </foreach>
+                            )
+                    </if>
+                    <!-- 回访状态、当月收入,发货票数 -->
+                    <include refid="returnVisitStatus_monthlyIncome_endGoodsNumber"/>
+                </otherwise>
+                </choose>
+             </when>
+             
+             <!-- 如果是潜客要查询回访状态表 -->
+             <otherwise>
+                 SELECT COUNT(1)
+                 FROM 
+                       T_CUST_CUSTBASEDATA PS 
+                       LEFT JOIN 
+                       T_CUST_CUSTBASEDATA_EXTEND EXTEND
+                           ON PS.FID=EXTEND.FCUSTID
+                       JOIN 
+                       T_CUST_CUSTLINKMAN LINKMAN 
+                           ON PS.FID=LINKMAN.FCUSTID
+                           <!--auth:lichunyu 计数方法修改  -->
+                       LEFT JOIN T_CUST_PREFERENCEADDRESS ADDRESS ON ADDRESS.FLINKMANID =LINKMAN.FID
+                 LEFT JOIN (
+                      SELECT SD.FCUSTID, 
+                             MIN(DECODE(SD.FSTATUS, '30', 1, '40', 3, 2)) FSTATUS
+                        FROM T_CUST_SCHEDULE SD
+                       WHERE 1=1
+                         <if test="deptId!=null and deptId!=''">
+                         AND SD.FEXECDEPTID = #{deptId}
+                         </if>
+                         AND TRUNC(SD.FCREATETIME,'MM') =TRUNC(SYSDATE, 'MM')
+                       GROUP BY SD.FCUSTID
+                           ) SD 
+                   ON SD.FCUSTID = PS.FID
+                WHERE 1=1
+                  AND PS.FCUSTSTATUS='0'
+                  AND PS.FCUSTGROUP = 'PC_CUSTOMER'
+                 <!--  AND PS.FID = LINKMAN.FCUSTID -->
+                  AND LINKMAN.FISMAINLINKMAN = '1'
+                  AND LINKMAN.FSTATUS=0
+                 <!--  AND EXTEND.FCUSTID=PS.FID -->
+                <choose>
+                <when test="custId != null and custId != ''">
+                    AND PS.FID=#{custId}
+                </when>
+                <otherwise>
+                    <!-- 根据部门id查询 -->
+                    <if test="deptId!=null and deptId!=''">
+                        AND PS.FDEPTID=#{deptId}
+                    </if>
+                    <!-- 潜散客户类型 
+                    <if test="psCustType != null and psCustType != ''">
+                        AND PS.FCUSTGROUP=#{psCustType}
+                    </if>-->
+                    <!-- 创建时间-->
+                  	<if test="createBeginTime != null and createEndTime != null">
+						<![CDATA[
+							AND PS.FCREATETIME BETWEEN TRUNC(#{createBeginTime, jdbcType=DATE})
+							AND TRUNC(#{createEndTime, jdbcType=DATE})+1
+				       ]]>
+					</if>
+                     <!-- 回访状态 -->
+                    <if test="returnVisitStatus!=null and returnVisitStatus.length>0">
+                        AND DECODE(SD.FSTATUS, NULL, 3, SD.FSTATUS) IN 
+                        <foreach item="item" collection="returnVisitStatus" open="(" separator="," close=")">
+                           #{item}
+                         </foreach>
+                    </if>
+                    <!-- 货量潜力 -->
+                    <if test="goodsPotential!=null and goodsPotential.length>0">
+                        AND (EXTEND.FVOLUMEPOTENTIAL IN
+                        <foreach item="item" collection="goodsPotential" open="(" separator="," close=")">
+                           #{item}
+                        </foreach>
+                        <if test="isSearchGoodsPotentialNull">
+                            OR EXTEND.FVOLUMEPOTENTIAL IS NULL
+                        </if>
+                        )
+                    </if>
+                    <!-- 客户来源 -->
+                    <if test="custResource!=null and custResource.length>0">
+                        AND PS.FCHANNELSOURCE IN
+                        <foreach item="item" collection="custResource" open="(" separator="," close=")">
+                           #{item}
+                        </foreach>
+                    </if>
+                    <!-- 是否在地图上标记 -->
+                    <if test="mapMakerStatus != null and mapMakerStatus != ''">
+                        <choose>
+                            <when test="mapMakerStatus == 'MAPMAKED'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT > '0' OR LINKMAN.FLAT < '0')
+                                AND (LINKMAN.FLNG > '0' OR LINKMAN.FLNG < '0')
+                                ]]>
+                            </when>
+                            <when test="mapMakerStatus == 'UNMAKER'">
+                                <![CDATA[
+                                AND (LINKMAN.FLAT IS NULL
+                                 OR LINKMAN.FLNG IS NULL)
+                                ]]>
+                            </when>
+                         </choose>
+                    </if>
+                    <!-- 客户标签 -->
+                    <if test="custLabel!=null and custLabel.length>0">
+                        AND PS.FID IN (
+                            SELECT LABEL.FCUSTID 
+                              FROM T_CUST_CUSTLABEL LABEL
+                             WHERE LABEL.FLABELID IN
+                             <foreach item="item" collection="custLabel" open="(" separator="," close=")">
+                                  #{item}
+                              </foreach>
+                            )
+                    </if>
+                </otherwise>
+             </choose>
+             </otherwise>
+         </choose>
+    </select>
+
+    <sql id="sortPs">
+        <!-- 排序 -->
+        <choose>
+            <!-- 回访时间 -->
+            <when test="sortType=='revisitTime'">
+                ORDER BY FRETURNTIME
+                <include refid="sortMark"/>
+            </when>
+            <!-- 创建时间 createTime-->
+            <when test="sortType=='createTime'">
+                ORDER BY FCREATETIME
+                <include refid="sortMark"/>
+            </when>
+            <otherwise>
+                ORDER BY FID
+            </otherwise>
+        </choose>
+    </sql>
+    <!-- 回访状态、当月收入,发货票数 -->
+    <sql id="returnVisitStatus_monthlyIncome_endGoodsNumber">
+        <!-- 回访状态 -->
+        <if test="returnVisitStatus!=null and returnVisitStatus.length>0">
+            <!-- 如果是散客则查物化视图 -->
+            AND PSVISUAL.FRETURNSTATUS IN
+            <foreach item="item" collection="returnVisitStatus" open="(" separator="," close=")">
+               #{item}
+            </foreach>
+        </if>
+        <!-- 发货票数 -->
+        <if test="sendGoodsNumberList!=null and sendGoodsNumberList.size()>0">
+            AND (
+            <trim  prefixOverrides="OR|AND"> 
+                <foreach item="item" collection="sendGoodsNumberList">
+                   OR (
+                   <choose>
+                       <!-- 查询为0或空的情况 -->
+                       <when test="item.start==null and item.end==0">
+                           PSVISUAL.FTOTALBILLCOUNT IS NULL OR PSVISUAL.FTOTALBILLCOUNT=0
+                       </when>
+                       <otherwise>
+		                   <![CDATA[PSVISUAL.FTOTALBILLCOUNT > #{item.start}]]>
+		                   <if test="item.end!=null">
+		                       <![CDATA[AND PSVISUAL.FTOTALBILLCOUNT <= #{item.end}]]>
+		                   </if>
+		               </otherwise>
+		           </choose>
+                   )
+                </foreach>
+            </trim>
+            )
+        </if>
+        <!-- 当月收入 -->
+        <if test="monthlyIncomeList!=null and monthlyIncomeList.size()>0">
+            AND (
+            <trim  prefixOverrides="OR|AND"> 
+                <foreach item="item" collection="monthlyIncomeList">
+                   OR (
+                   <choose>
+                       <!-- 查询为0或空的情况 -->
+                       <when test="item.start==null and item.end==0">
+	                       <![CDATA[ PSVISUAL.FMONTHLYINCOME IS NULL OR PSVISUAL.FMONTHLYINCOME<=0]]>
+                       </when>
+                       <otherwise>
+		                   <trim  prefixOverrides="AND"> 
+		                       <if test="item.start!=null">
+		                           <![CDATA[ PSVISUAL.FMONTHLYINCOME > #{item.start} ]]>
+		                       </if>
+		                       <if test="item.end!=null">
+		                           <![CDATA[  AND PSVISUAL.FMONTHLYINCOME <= #{item.end} ]]>
+		                       </if>
+		                   </trim>
+                       </otherwise>
+                   </choose>
+                   )
+                </foreach>
+            </trim>
+            )
+        </if>
+    </sql>
+    
+    <!-- 正反序排序标志 -->
+    <sql id="sortMark">
+        <if test="sortMark!=null and sortMark!=''">
+            <choose>
+                <when test="sortMark=='ASC'">
+                    ASC NULLS FIRST 
+                </when>
+                <otherwise>
+                    DESC NULLS LAST
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+    <!-- 半年收入结果映射 -->
+  <resultMap id="halfYearIncomeMap"
+        type="com.deppon.crm.module.marketing.shared.domain.visualMarket.CustMonthlyArriveIncome">
+        <result column="FYEAR" property="year" jdbcType="VARCHAR" />
+        <result column="FMONTH" property="month" jdbcType="VARCHAR" />
+        <result column="ARRIVEINCOME" property="arriveIncome" jdbcType="VARCHAR" />
+        <result column="SENDINCOME" property="sendIncome" jdbcType="VARCHAR" />
+        <result column="CUSTID" property="custId" jdbcType="VARCHAR" />
+    </resultMap>
+ <select id="halfYearIncome" parameterType="java.lang.String" resultMap="halfYearIncomeMap">
+  <![CDATA[    	  
+			select res1.custid,res1.fyear,res1.fmonth,res1.SENDINCOME,res2.ARRIVEINCOME from (
+            SELECT DECODE(T1.FCUSTID, NULL,#{custId}, T1.FCUSTID) CUSTID,
+               LF.YYYY FYEAR,
+               LF.MM FMONTH,
+               DECODE(SUM(T1.FARRIVEDAOUNT + T1.FFPREPAYAMOUNT -
+				                  T1.FAGENTRECEIVEPAY - T1.FREFUNDRABATE),
+				              NULL,
+				              0,
+				              SUM(T1.FARRIVEDAOUNT + T1.FFPREPAYAMOUNT - T1.FAGENTRECEIVEPAY -
+				                  T1.FREFUNDRABATE))  SENDINCOME
+
+           FROM (SELECT TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0 - ROWNUM), 'MM')) AS MM,
+
+                       TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0 - ROWNUM), 'YYYY')) AS YYYY
+                  FROM T_AUTH_FUNCTION
+                 WHERE ROWNUM < 7) LF
+         
+           LEFT JOIN T_CRM_CUSTANALYSEBYDAY T1 ON LF.MM = T1.FMONTH
+                                             AND LF.YYYY = T1.FYEAR
+                                             AND T1.FCUSTID =#{custId}
+                                             AND T1.FCANALYSETYPE = 1
+          GROUP BY LF.MM, LF.YYYY, T1.FCUSTID
+          ORDER BY LF.YYYY, LF.MM
+          ) res1
+         ,( 
+          SELECT DECODE(T1.FCUSTID, NULL,#{custId}, T1.FCUSTID) CUSTID,
+               LF.YYYY FYEAR,
+               LF.MM FMONTH,
+                 DECODE(SUM(T1.FARRIVEDAOUNT + T1.FFPREPAYAMOUNT -
+				                  T1.FAGENTRECEIVEPAY - T1.FREFUNDRABATE),
+				              NULL,
+				              0,
+				              SUM(T1.FARRIVEDAOUNT + T1.FFPREPAYAMOUNT - T1.FAGENTRECEIVEPAY -
+				                  T1.FREFUNDRABATE))  ARRIVEINCOME
+
+           FROM (SELECT TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0 - ROWNUM), 'MM')) AS MM,
+
+                       TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0 - ROWNUM), 'YYYY')) AS YYYY
+                  FROM T_AUTH_FUNCTION
+                 WHERE ROWNUM < 7) LF
+         
+           LEFT JOIN T_CRM_CUSTANALYSEBYDAY T1 ON LF.MM = T1.FMONTH
+                                             AND LF.YYYY = T1.FYEAR
+                                             AND T1.FCUSTID =#{custId}
+                                             AND T1.FCANALYSETYPE = 2
+          GROUP BY LF.MM, LF.YYYY, T1.FCUSTID
+          ORDER BY LF.YYYY, LF.MM
+          ) res2
+          where res2.custid=res1.custid and res2.fyear=res1.fyear and res2.fmonth=res1.fmonth
+   ]]>
+   </select>
+   <!-- 用户回访信息返回 -->
+   <select id="returnstatusofcust" parameterType="java.util.HashMap" resultType="java.lang.String">
+      SELECT
+	        DECODE(MIN(DECODE(SD.FSTATUS,'30',1,'40',3,2)),1,'已回访',2,'回访中','未回访') ST
+	  FROM T_CUST_SCHEDULE SD
+      WHERE SD.FCUSTID=#{id} 
+	 <if test="custType=='mat'">
+	        AND SD.FTYPE in ('mat','monthly')
+	 </if>  
+	 <if test="custType=='dev'">
+	        AND SD.FTYPE=#{custType}
+	 </if> 
+      AND TRUNC(SD.flastupdatetime,'MM')=TRUNC(SYSDATE,'MM')
+   </select>
+   <select id="ThecustOfdoingReturn" parameterType="java.util.HashMap" resultType="java.lang.String">
+       SELECT RES.CUSTID FROM 
+        (
+         SELECT SD.FCUSTID CUSTID,MIN(DECODE(SD.FSTATUS,NULL,'3','30', '1', '40', '3', '2')) ST FROM 
+          <if test="custType=='mat'">
+ 			 T_CUST_CUSTLINKMAN LINKM LEFT JOIN
+          </if>        
+  			 T_CUST_SCHEDULE SD
+             <if test="custType=='mat'">
+    	          ON   SD.FCUSTID =LINKM.FCUSTID  AND SD.FCONTACTID=LINKM.FID
+             </if>
+          		 WHERE SD.FCUSTID IN
+           <foreach collection="ids" item="item" index="index"  open="(" separator="," close=")">
+             #{item}
+           </foreach> 
+            AND TRUNC(SD.flastupdatetime,'MM')=TRUNC(SYSDATE,'MM')
+           <if test="custType=='mat'">
+            	AND  LINKM.FISMAINLINKMAN='1' 
+            	AND SD.FTYPE <![CDATA[<>'dev' ]]>
+            </if>  
+            <if test="custType=='dev'">
+            AND SD.FTYPE=#{custType}
+            </if> 
+             GROUP BY SD.FCONTACTID,SD.FCUSTID        
+        ) 
+ 				RES  WHERE RES.ST='2' 
+   </select>
+    <!-- 客户信息列表返回结果 -->
+    <resultMap id="customerMarketInfoMap"
+        type="com.deppon.crm.module.marketing.shared.domain.visualMarket.CustomerMarketInfo">
+        <result column="FCUSTNUMBER" property="custNumber" jdbcType="VARCHAR" />
+        <result column="FCUSTID" property="custId" jdbcType="VARCHAR" />
+        <result column="FCUSTNAME" property="custName" jdbcType="VARCHAR" />
+        <result column="FNUMBER" property="linkManNumber" jdbcType="VARCHAR" />
+        <result column="FMAINLINKMANID" property="linkManId" jdbcType="VARCHAR" />
+        <result column="FNAME" property="mainLinkManName" jdbcType="VARCHAR" />
+        <result column="FMOBILETEL" property="mobile" jdbcType="VARCHAR" />
+        <result column="FOFFERTEL" property="telephone" jdbcType="VARCHAR" />
+        <result column="FADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="FLNG" property="longitude" jdbcType="VARCHAR" />
+        <result column="FLAT" property="latitude" jdbcType="VARCHAR" />
+        <result column="FMONTHLYINCOME" property="aveMonthlyIncome" jdbcType="NUMERIC" javaType="String"/>
+        <result column="FMONTHLYGOODS" property="monthlyGoodsNum" jdbcType="VARCHAR" />
+        <result column="FLATELYTRADEDATE" property="dealTime" jdbcType="DATE" />
+        <result column="FRETURNTIME" property="returnVisitTime" jdbcType="DATE" />
+        <result column="FCREATETIME" property="createTime" jdbcType="DATE" />
+        <result column="FRETURNSTATUS" property="returnVisitStatus" jdbcType="VARCHAR" />
+        <result column="FDEPTID" property="deptId" jdbcType="VARCHAR" />
+        <result column="FDEGREE" property="custDegree" jdbcType="VARCHAR" />
+        <result column="FSENDGOODSCYCLE" property="sendGoodsCycle" javaType="int" />
+        <result column="FCUSTTYPE" property="custType" jdbcType="VARCHAR" />
+    </resultMap>
+    <!-- 潜散客查询映射map -->
+    <resultMap id="psMarketInfoMap"
+        type="com.deppon.crm.module.marketing.shared.domain.visualMarket.CustomerMarketInfo">
+        <result column="FID" property="psCustId" jdbcType="VARCHAR" />
+        <result column="FCUSTNAME" property="custName" jdbcType="VARCHAR" />
+        <result column="FLINKMANNAME" property="linkManName" jdbcType="VARCHAR" />
+        <result column="FLINKMANPHONE" property="telephone" jdbcType="VARCHAR" />
+        <result column="FLINKMANMOBILE" property="mobile" jdbcType="VARCHAR" />
+         <result column="FMAINLINKMANID" property="linkManId" jdbcType="VARCHAR" />
+        <result column="FRETURNTIME" property="returnVisitTime" jdbcType="DATE" />
+        <result column="FCUSTTYPE" property="custType" jdbcType="VARCHAR" />
+        <result column="FADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="FLNG" property="longitude" jdbcType="VARCHAR" />
+        <result column="FLAT" property="latitude" jdbcType="VARCHAR" />
+        <result column="FDEPTID" property="deptId" jdbcType="VARCHAR" />
+        <result column="FRETURNSTATUS" property="returnVisitStatus" jdbcType="VARCHAR" />
+        <result column="FCREATETIME" property="createTime" jdbcType="DATE" />
+    </resultMap>
+    <!-- 固定客户地址信息映射map -->
+   	<resultMap id="customerAddressInfo"
+        type="com.deppon.crm.module.marketing.shared.domain.visualMarket.CustomerAddressInfo">
+        <result column="FCUSTID" property="custId" jdbcType="VARCHAR" />
+        <result column="FCITY" property="cityId" jdbcType="VARCHAR" />
+        <result column="FNAME" property="cityName" jdbcType="VARCHAR" />
+        <result column="FADDRESS" property="address" jdbcType="VARCHAR" />
+    </resultMap>
+</mapper>
+

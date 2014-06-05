@@ -1,0 +1,8 @@
+dept,fbelongDeptId,VARCHAR
+custName,fcustName,VARCHAR
+contactName,fcontactName,VARCHAR
+phone,fcontactPhone,VARCHAR
+tel,fcontactTel,VARCHAR
+nowLevel,fcurrentlevel,VARCHAR
+targetLevel,ftargetLevel,VARCHAR
+statisticsTime,fstatisticsTime,VARCHAR

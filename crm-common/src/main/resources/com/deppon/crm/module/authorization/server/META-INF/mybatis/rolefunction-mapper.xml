@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.authorization.shared.domain.RoleFunction">
+
+     <!-- 获取自增ID并将数据插入到T_AUTH_FUNCTIONROLE中间表中 -->
+	<insert id="insert" parameterType="map">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT FUNCTION_ROLE_SEQ.NEXTVAL AS
+			id FROM DUAL
+			<!-- SELECT (CASE WHEN MAX(ID) IS NULL THEN 1 ELSE MAX(ID)+1 END) AS id 
+				FROM T_AUTH_FUNCTIONROLE -->
+		</selectKey>
+		<![CDATA[
+			insert into T_AUTH_FUNCTIONROLE(
+				FID,
+				FFUNCID,
+				FROLEID
+			) values (
+				#{id},
+				#{functionId},
+				#{roleId}
+			)
+		]]>
+	</insert>
+
+     <!-- 根据roleID删除T_AUTH_FUNCTIONROLE表中相应信息 -->
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_FUNCTIONROLE WHERE FROLEID = #{id}
+		]]>
+	</delete>
+	
+    <!-- 通过角色id获取该角色的所有功能ID -->
+	<select id="getAllIdByRoleId" parameterType="string" resultType="string">
+		<![CDATA[
+			SELECT
+			FFUNCID
+			FROM T_AUTH_FUNCTIONROLE
+			WHERE FROLEID = #{roleId}
+		]]>
+	</select>
+	
+	<!-- 通过用户id获取该角色的所有功能ID -->
+	<select id="getAllIdByUserId" parameterType="string" resultType="string">
+		<![CDATA[
+			SELECT 
+			distinct f.furi 
+          	FROM T_AUTH_USERROLE UR, T_AUTH_FUNCTIONROLE FR, T_AUTH_FUNCTION F 
+          	WHERE UR.froleid=FR.froleid 
+            AND FR.ffuncid=F.fid 
+			and UR.fuserid = #{userId}
+		]]>
+	</select>
+
+</mapper>

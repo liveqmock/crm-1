@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.backfreight.shared.domain.BackFreight">
+	<!--退运费表映射 -->
+	<resultMap id="backFreightResultMap"
+		type="com.deppon.crm.module.backfreight.shared.domain.BackFreight">
+		<id property="id" column="fid" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATEUSER" />
+		<result property="modifyDate" column="FUPDATETIME" />
+		<result property="modifyUser" column="FUPDATEUSER" />
+		<result property="tranType" column="ftranType"/><!---->
+		<result property="waybillNumber" column="FWAYBILLNUMBER" />
+		<result property="customerType" column="FCUSTOMERTYPE" />
+		<result property="customerNum" column="FCUSTOMERNUM" />
+		<result property="customerName" column="FCUSTOMERNAME" />
+		<result property="waybillAmount" column="FWAYBILLAMOUNT" />
+		<result property="applyAmount" column="FAPPLYAMOUNT" />
+		<result property="outboundTime" column="FOUTBOUNDTIME" />
+		<result property="financeDept" column="FFINANCEDEPT" />
+		<result property="financeDeptName" column="FFINANCEDEPTNAME" />
+		<result property="applyReason" column="FAPPLYREASON" />
+		<result property="applicant" column="FAPPLICANT" />
+		<result property="applicantName" column="FAPPLICANTNAME" />
+		<result property="applyDept" column="FAPPLYDEPT" />
+		<result property="applyDeptName" column="FAPPLYDEPTNAME" />
+		<result property="applyTime" column="FAPPLYTIME" />
+		<result property="applyStatus" column="FAPPLYSTATUS" />
+		<result property="oaWorkflowNum" column="FOAWORKFLOWNUM" />
+		<result property="verifyTime" column="FVERIFYTIME" />
+		<result property="verifier" column="FVERIFIER" />
+		<result property="verifierName" column="FVERIFIERNAME" />
+		<result property="subsidiary" column="FSUBSIDIARY" />
+		<result property="paymentType" column="FPAYMENTTYPE" />
+		<result property="stowageDept" column="FSTOWAGEDEPT" />
+		<result property="stowageDeptName" column="FSTOWAGEDEPTNAME" />
+		<result property="customerLevel" column="fcustomerLevel" />
+		<result property="contactName" column="fcontactName" />
+	</resultMap>
+	<sql id="selectPartSQL">
+		bf.fid,
+		bf.fcreateuser,
+		bf.fupdateuser,
+		bf.fupdatetime,
+		bf.fcreatetime,
+		bf.fwaybillNumber,
+		bf.ftranType,
+		bf.fcustomerType,
+		bf.fcustomerNum,
+		bf.fcustomerName,
+		bf.fwaybillAmount,
+		bf.fapplyAmount,
+		bf.foutboundTime,
+		bf.ffinanceDept,
+		fd.fdeptname ffinanceDeptName,
+		bf.fapplyReason,
+		bf.fapplicant,
+		ap.fempname fapplicantName,
+		dp.fdeptname,
+		bf.fapplyDept,
+		dp.fdeptname fapplyDeptName,
+		bf.fapplyTime,
+		bf.fapplyStatus,
+		bf.foaWorkflowNum,
+		bf.fverifyTime,
+		bf.fverifier,
+		vf.fempname fverifierName,
+		bf.fsubsidiary,
+		bf.fpaymentType,
+		bf.fstowageDept,
+		sd.fdeptname fstowageDeptName,
+		bf.fcustomerLevel,
+		bf.fcontactName
+	</sql>
+	<sql id="conditionSql">
+		<where>
+			<if test="null != waybillNumbers and '' != waybillNumbers">
+				<!-- AND FWAYBILLNUMBER = #{waybillNumber} -->
+				bf.fwaybillnumber in
+				<foreach collection="waybillNumbers" item="waybillNumber"
+					open="(" close=")" separator=",">
+					#{waybillNumber}
+				</foreach>
+
+			</if>
+			<if test="null != tranType and '' != tranType">
+				AND bf.FTRANTYPE = #{tranType}
+			</if>
+			<if test="null != subsidiary and '' != subsidiary">
+				AND bf.FSUBSIDIARY like '%'||#{subsidiary,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="null != applyStatus and '' != applyStatus">
+				AND bf.FAPPLYSTATUS = #{applyStatus}
+			</if>
+			<if test="null != applyDept and '' != applyDept">
+				AND bf.FAPPLYDEPT = #{applyDept}
+			</if>
+			<if test="null != paymentType and '' != paymentType">
+				AND bf.FPAYMENTTYPE = #{paymentType}
+			</if>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(bf.FCREATETIME) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(bf.FCREATETIME) &lt;= #{endDate}
+			</if>
+		</where>
+	</sql>
+
+
+	<!-- 保存退运费 -->
+	<insert id="addBackFreight"
+		parameterType="com.deppon.crm.module.backfreight.shared.domain.BackFreight">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">		
+		<![CDATA[ 
+		 	select	SEQ_ID_BACKFREIGHT_ID.nextval id from dual 
+		 ]]>
+		</selectKey>
+		<![CDATA[
+		insert into t_rec_backfreight (
+		fid,
+		fcreateuser,
+		fupdateuser,
+		fupdatetime,
+		fcreatetime,
+		fwaybillNumber,
+		ftrantype,
+		fcustomerType,
+		fcustomerNum,
+  		fcustomerName,
+  		fwaybillAmount,
+  		fapplyAmount,
+  		foutboundTime,
+  		ffinanceDept,
+  		fapplyReason,
+ 		fapplicant,
+  		fapplyDept,
+  		fapplyTime,
+  		fapplyStatus,
+  		foaWorkflowNum,
+  		fverifyTime,
+  		fverifier,
+  		fsubsidiary,
+  		fpaymentType,
+  		fstowageDept,
+  		fcustomerLevel,
+		fcontactName
+  		)
+		values(
+		#{id},
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=TIMESTAMP},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{waybillNumber,jdbcType=VARCHAR},
+		#{tranType,jdbcType=VARCHAR},
+		#{customerType,jdbcType=VARCHAR},
+		#{customerNum,jdbcType=VARCHAR},
+		#{customerName,jdbcType=VARCHAR},
+		#{waybillAmount,jdbcType=NUMERIC},
+		#{applyAmount,jdbcType=NUMERIC},
+		#{outboundTime,jdbcType=TIMESTAMP},
+		#{financeDept,jdbcType=VARCHAR},
+		#{applyReason,jdbcType=VARCHAR},
+		#{applicant,jdbcType=VARCHAR},
+		#{applyDept,jdbcType=VARCHAR},
+		#{applyTime,jdbcType=TIMESTAMP},
+		#{applyStatus,jdbcType=VARCHAR},
+		#{oaWorkflowNum,jdbcType=VARCHAR},
+		#{verifyTime,jdbcType=TIMESTAMP},
+		#{verifier,jdbcType=VARCHAR},
+		#{subsidiary,jdbcType=VARCHAR},
+		#{paymentType,jdbcType=VARCHAR},
+		#{stowageDept,jdbcType=VARCHAR},
+		#{customerLevel,jdbcType=VARCHAR},
+		#{contactName,jdbcType=VARCHAR}
+		)
+		]]>
+	</insert>
+	<select id="searchBackFreightByCondition"
+		parameterType="com.deppon.crm.module.backfreight.shared.domain.BackFreightSearchCondition"
+		resultMap="backFreightResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_backfreight bf
+		left join t_org_employee
+		ap on bf.fapplicant=ap.fid
+		left join t_org_employee vf on
+		bf.fverifier=vf.fid
+		left join
+		t_org_department dp on
+		bf.fapplyDept=dp.fid
+		left join t_org_department fd on
+		bf.ffinanceDept=fd.fid
+		left join t_org_department sd on
+		bf.fstowageDept=sd.fid
+		
+		<include refid="conditionSql" />
+		order by bf.fapplyTime desc
+
+	</select>
+	<select id="countBackFreightByCondition"
+		parameterType="com.deppon.crm.module.backfreight.shared.domain.BackFreightSearchCondition"
+		resultType="int">
+		select count('x') from t_rec_backfreight bf
+		<include refid="conditionSql" />
+	</select>
+
+	<select id="getBackFreightById" parameterType="string"
+		resultMap="backFreightResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_backfreight bf
+		left join t_org_employee
+		ap on bf.fapplicant=ap.fid
+		left join t_org_employee vf on
+		bf.fverifier=vf.fid
+		left join
+		t_org_department dp on
+		bf.fapplyDept=dp.fid
+		left join t_org_department fd on
+		bf.ffinanceDept=fd.fid
+		left join t_org_department sd on
+		bf.fstowageDept=sd.fid
+		where
+		bf.fid=#{backFreightId}
+	</select>
+
+	<select id="findValidBackFreightByNum" parameterType="string"
+		resultMap="backFreightResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_backfreight bf
+		left join t_org_employee ap on bf.fapplicant=ap.fid
+		left join t_org_employee vf on bf.fverifier=vf.fid
+		left join
+		t_org_department dp on bf.fapplyDept=dp.fid
+		left join t_org_department fd on
+		bf.ffinanceDept=fd.fid
+		left join t_org_department sd on
+		bf.fstowageDept=sd.fid
+		where
+		bf.fwaybillnumber=#{waybillNum} and
+		bf.FAPPLYSTATUS not in ('UNAGREE')
+
+	</select>
+
+	<select id="findBackFreightByOaWorkflowNum" parameterType="string"
+		resultMap="backFreightResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_backfreight bf
+		left join t_org_employee ap on bf.fapplicant=ap.fid
+		left join t_org_employee vf on bf.fverifier=vf.fid
+		left join
+		t_org_department dp on bf.fapplyDept=dp.fid
+		left join t_org_department fd on
+		bf.ffinanceDept=fd.fid
+		left join t_org_department sd on
+		bf.fstowageDept=sd.fid
+		where
+		bf.foaworkflownum=#{oaWorkflowNum}
+	</select>
+
+	<update id="updateBackFreightWorkflowNum">
+		update t_rec_backfreight bf set
+		bf.foaworkflownum=#{workflowNum}
+		where bf.fid=#{id}
+	</update>
+
+	<update id="updateBackFreight"
+		parameterType="com.deppon.crm.module.backfreight.shared.domain.BackFreightSearchCondition">
+		update t_rec_backfreight bf set
+		<if test="null != applyStatus and '' != applyStatus">
+			bf.fapplyStatus=#{applyStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="null != verifyTime and '' != verifyTime">
+			bf.fverifyTime=#{verifyTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="null != verifier and '' != verifier">
+			bf.fverifier=#{verifier,jdbcType=VARCHAR}
+		</if>
+		where bf.fid=#{id}
+	</update>
+
+	<delete id="deleteById" parameterType="string">
+		delete from
+		t_rec_backfreight bf where bf.fid=#{id}
+	</delete>
+
+</mapper>

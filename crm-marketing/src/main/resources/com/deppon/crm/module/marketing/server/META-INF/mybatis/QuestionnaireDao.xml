@@ -1,0 +1,1021 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.questionnaire">
+	<!-- 问卷管理查询结果列表-->
+    <resultMap id="questionnaireInfoMap"
+        type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireInfo">
+		<result column="FID" property="id" jdbcType="NUMERIC" javaType="String"/>
+		<result column="FSURVERYNUM" property="questionnaireCode" jdbcType="VARCHAR" javaType="String"/>       
+        <result column="FSURVERYNAME" property="questionnaireName" jdbcType="VARCHAR" javaType="String"/>        
+        <result column="FEFFECTIVETIME" property="effectiveTime" jdbcType="DATE" />
+        <result column="FINVALIDTIME" property="invalidTime" jdbcType="DATE" />
+        <result column="FCREATETIME" property="createDate" jdbcType="DATE" />
+        <result column="FLASTMODIFYTIME" property="modifyDate" jdbcType="DATE" />
+        <result column="FSURVEYTYPE" property="useRange" jdbcType="VARCHAR" />
+        <result column="FSURVEYDESC" property="desc" jdbcType="VARCHAR" />
+        <result column="FSTATUS" property="status" jdbcType="VARCHAR" />
+        <result column="FCREATEUSERID" property="createUserId" jdbcType="NUMERIC" javaType="String"/>
+        <result column="FMODIFYEMPNAME" property="modifyUser" jdbcType="VARCHAR" javaType="String"/>
+        <result column="FCREATOREMPNAME" property="createUser" jdbcType="VARCHAR" javaType="String"/>
+        <result column="FLASTMODIFYUSERID" property="lastModifyUserId" jdbcType="NUMERIC" javaType="String"/>
+        <result column="FUSETIMES" property="useTimes" javaType="int" />
+        <result column="FVISITID" property="visitId" jdbcType="NUMERIC" />
+        <result column="FMARKETINGDATE" property="marketingDate"/>
+        <result column="FEXECUTORNAME" property="executorName"/>
+        <result column="FMARKETINGWAY" property="marketingWay"/>
+        <result column="FLINKMANNAME" property="linkManName" />
+        <result column="FPLANTOPIC" property="planTopic" />
+        <result column="FCUSTSURVEYID" property="questionnaireId" />
+    </resultMap>
+    <!-- 问题统计结果集 -->
+    <resultMap id="QuestionResultMap" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail">
+		<id property="id" column="FID" />
+		<result property="questionTitle" column="FTITLE" />
+		<result property="questionType" column="FQUESTIONTYPE" />
+		<result property="useRange" column="FRANGE" />
+		<result property="createUser" column="FCREATORNAME" />
+		<result property="createUserId" column="FCREATORID" />
+		<result property="modifyUser" column="FMODIFIERNAME" />
+		<result property="lastModifyUserId" column="FMODIFIERID" />
+		<result property="createDate" column="FCREATEDATE" />
+		<result property="modifyDate" column="FLASTMODIFYDATE" />
+		<result property="questionCode" column="FQUESTIONCODE" />
+		<result property="questionContent" column="FQUESTIONCONTENT" />
+		<result property="frequency" column="FREQUENCY" />
+		<result property="elseOption" column="FISHASBLANK" />
+		<result property="questionSeq" column="FQUESTIONSEQ" />
+		<result property="questionnaireId" column="FSURVEYID" />
+		<result property="staticStartTime" column="FSTATICSTARTTIME" jdbcType="TIMESTAMP"/>
+		<result property="staticEndTime" column="FSTATICENDTIME" jdbcType="TIMESTAMP" />
+		<collection property="options" column="{questionId = FID,surveyId=FSURVEYID,staticStartTime=FSTATICSTARTTIME,staticEndTime=FSTATICENDTIME}" ofType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionOption" select="searchOptionByQuestionId">
+		</collection>
+	</resultMap>
+	<!-- 问题答案结果集 -->
+    <resultMap id="QuestionAnswerMap" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail">
+		<id property="id" column="FID" />
+		<result property="questionTitle" column="FTITLE" />
+		<result property="questionType" column="FQUESTIONTYPE" />
+		<result property="useRange" column="FRANGE" />
+		<result property="createUser" column="FCREATORNAME" />
+		<result property="createUserId" column="FCREATORID" />
+		<result property="modifyUser" column="FMODIFIERNAME" />
+		<result property="lastModifyUserId" column="FMODIFIERID" />
+		<result property="createDate" column="FCREATEDATE" />
+		<result property="modifyDate" column="FLASTMODIFYDATE" />
+		<result property="questionCode" column="FQUESTIONCODE" />
+		<result property="questionContent" column="FQUESTIONCONTENT" />
+		<result property="frequency" column="FREQUENCY" />
+		<result property="elseOption" column="FISHASBLANK" />
+		<result property="questionSeq" column="FQUESTIONSEQ" />
+		<result property="questionnaireId" column="FSURVEYID" />
+		<result property="visitId" column="FVISITID" />
+		<collection property="options" column="{questionId = FID,surveyId=FSURVEYID,visitId=FVISITID,questionType=FQUESTIONTYPE}" ofType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionOption" select="searchOptionByVisitId">
+		</collection>
+	</resultMap>
+    <!-- 问题选项统计结果集 -->
+    <resultMap id="OptionMap" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionOption">
+			<id property="id" column="FID" />
+			<result property="questionFid" column="FQUESTIONFID" />
+			<result property="optionDes" column="FOPTIONDES" />
+			<result property="optionSeq" column="FOPTIONSEQ" />
+			<result property="createDate" column="FCREATEDATE" />
+			<result property="modifyDate" column="FMODIFYDATE" />
+			<result property="creatorId" column="FCREATORID" />
+			<result property="modifierId" column="FMODIFIERID" />
+			<result property="countTimes" column="AMOUNT" javaType="string"/>
+			<result property="percentage" column="PERCENTAGE"/>
+			<result property="isSelected" column="ISSELECTED"/>
+			<result property="answer" column="FANSWERDES"/>
+	</resultMap>
+	<!-- 客户问卷回访详情结果集 -->
+    <resultMap id="custQuestionnaireDetail" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.CustQuestionnaireDetail">
+			<result property="businessGroup" column="FBUSINESSGROUP" />
+			<result property="businessUnit" column="FBUSINESSUNIT" />
+			<result property="bigRegion" column="FBIGREGION" />
+			<result property="smallRegion" column="FSMALLREGION" />
+			<result property="businessDepartment" column="FBUSINESSDEPARTMENT" />
+			<result property="custCode" column="FCUSTCODE" />
+			<result property="custName" column="FCUSTNAME" />
+			<result property="custAttribute" column="FCUSTNATURE" />
+			<result property="custType" column="FCUSTTYPE" />
+			<result property="custLevel" column="FCUSTLEVEL" />
+			<result property="visitDate" column="FVISITDATE" />
+			<result property="answer1" column="ANSWER1" />
+			<result property="answer2" column="ANSWER2" />
+			<result property="answer3" column="ANSWER3" />
+			<result property="answer4" column="ANSWER4" />
+			<result property="answer5" column="ANSWER5" />
+			<result property="answer6" column="ANSWER6" />
+			<result property="answer7" column="ANSWER7" />
+			<result property="answer8" column="ANSWER8" />
+			<result property="answer9" column="ANSWER9" />
+			<result property="answer10" column="ANSWER10" />
+			<result property="answer11" column="ANSWER11" />
+			<result property="answer12" column="ANSWER12" />
+			<result property="answer13" column="ANSWER13" />
+			<result property="answer14" column="ANSWER14" />
+			<result property="answer15" column="ANSWER15" />
+			<result property="answer16" column="ANSWER16" />
+			<result property="answer17" column="ANSWER17" />
+			<result property="answer18" column="ANSWER18" />
+			<result property="answer19" column="ANSWER19" />
+			<result property="answer20" column="ANSWER20" />
+	</resultMap>
+    <!-- 问题信息列表-->
+    <resultMap id="QuestionInfoListMap" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail">
+			<id property="id" column="FID" />
+			<result property="questionTitle" column="FTITLE" />
+			<result property="questionType" column="FQUESTIONTYPE" />
+			<result property="useRange" column="FRANGE" />
+			<result property="createUser" column="FCREATORNAME" />
+			<result property="createUserId" column="FCREATORID" />
+			<result property="modifyUser" column="FMODIFIERNAME" />
+			<result property="lastModifyUserId" column="FMODIFIERID" />
+			<result property="createDate" column="FCREATEDATE" />
+			<result property="modifyDate" column="FLASTMODIFYDATE" />
+			<result property="questionCode" column="FQUESTIONCODE" />
+			<result property="questionContent" column="FQUESTIONDES" />
+			<result property="frequency" column="FREQUENCY" />
+			<result property="elseOption" column="FISHASBLANK" />
+			<result property="questionSeq" column="FQUESTIONSEQ" />	
+	</resultMap>
+    <!-- 查询问卷管理结果列表-->
+    <select id="searchQuestionnaireInfoList" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireQueryCondi"
+        resultMap="questionnaireInfoMap">
+            SELECT SU.FID FID,
+            	 SU.FSURVERYNUM FSURVERYNUM,
+		         SU.FSURVERYNAME FSURVERYNAME,
+		         SU.FSURVEYDESC FSURVEYDESC,
+		         SU.FSURVEYTYPE FSURVEYTYPE,
+		         SU.FSTATUS FSTATUS,
+		         SU.FEFFECTIVETIME FEFFECTIVETIME,
+		         SU.FINVALIDTIME FINVALIDTIME,
+		         SU.FCREATETIME FCREATETIME,
+		         SU.FLASTMODIFYTIME FLASTMODIFYTIME,
+		         SU.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+		         EM.FEMPNAME FMODIFYEMPNAME,
+		         EMM.FEMPNAME FCREATOREMPNAME,
+		         (SELECT COUNT(1)
+		            FROM T_CUST_DEVELOPMAINTAINLIST P
+		           WHERE P.FSURVEYID = SU.FID) FUSETIMES
+		    FROM T_MARK_SURVEY SU
+		    LEFT JOIN T_ORG_EMPLOYEE EM ON SU.FLASTMODIFYUSERID = EM.FID
+		    LEFT JOIN T_ORG_EMPLOYEE EMM ON SU.FCREATEUSERID = EMM.FID
+		   WHERE 1=1
+		   <choose>
+                <!-- 当问卷编号不为空 -->
+                <when test="questionnaireCode != null and questionnaireCode != ''">
+                    AND SU.FSURVERYNUM = #{questionnaireCode}
+                </when>
+                <otherwise>
+                	<!-- 问卷名称不为空 -->
+                    <if test="questionnaireName != null and questionnaireName != ''">
+                        AND SU.FSURVERYNAME LIKE #{questionnaireName}
+                    </if>
+                    <!-- 适用范围不为空 -->
+                    <if test="useRange != null and useRange != ''">
+                        AND SU.FSURVEYTYPE =  #{useRange}
+                    </if>
+                    <!-- 问卷id不为空 -->
+                    <if test="questionnaireId != null and questionnaireId != ''">
+                        AND SU.FID = #{questionnaireId}
+                    </if>
+                    <!-- 创建时间-->
+                  	<if test="createStartDate != null and createEndDate != null and createStartDate != '' and createEndDate != ''">
+						<![CDATA[
+							AND SU.FCREATETIME BETWEEN TRUNC(#{createStartDate, jdbcType=DATE})
+							AND TRUNC(#{createEndDate, jdbcType=DATE})+1
+				       ]]>
+					</if>
+					
+					<!-- 有效时间-->
+                  	<if test="validStartDate != null and validEndDate != null and validStartDate != '' and validEndDate != ''">
+						<![CDATA[
+							AND SU.FEFFECTIVETIME <= #{validStartDate, jdbcType=DATE}
+							AND SU.FINVALIDTIME >= #{validEndDate, jdbcType=DATE}
+							]]>
+					</if> 
+					<!-- 问卷状态-->
+                  	<if test="questionnaireStatus != null and questionnaireStatus != ''">
+						<![CDATA[
+							AND SU.FSTATUS = #{questionnaireStatus}
+				       ]]>
+					</if>
+					
+					<!-- 选择问卷时只查询出特定状态的问卷-->
+                  	<if test="questionnaireStatusType == 'SPECIAL' and (questionnaireStatus == null or  questionnaireStatus == '')">
+						<![CDATA[
+							AND SU.FSTATUS in ('USING','VALID')
+				       ]]>
+					</if>
+					
+                </otherwise>
+           </choose>
+           ORDER BY SU.FCREATETIME DESC
+    </select>
+   
+    
+    <!-- 查询问卷管理结果列表的总条数-->
+    <select id="searchQuestionnaireInfoCount" resultType="int" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireQueryCondi">
+    	SELECT COUNT(1)
+		    FROM T_MARK_SURVEY SU
+		    LEFT JOIN T_ORG_EMPLOYEE EM ON SU.FLASTMODIFYUSERID = EM.FID
+		   WHERE 1=1
+		   <choose>
+                <!-- 当问卷编号不为空 -->
+                <when test="questionnaireCode != null and questionnaireCode != ''">
+                    AND SU.FSURVERYNUM = #{questionnaireCode}
+                </when>
+                <otherwise>
+                	<!-- 问卷名称不为空 -->
+                    <if test="questionnaireName != null and questionnaireName != ''">
+                        AND SU.FSURVERYNAME LIKE #{questionnaireName}
+                    </if>
+                    <!-- 适用范围不为空 -->
+                    <if test="useRange != null and useRange != ''">
+                        AND SU.FSURVEYTYPE =  #{useRange}
+                    </if>
+                    <!-- 问卷id不为空 -->
+                    <if test="questionnaireId != null and questionnaireId != ''">
+                        AND SU.FID = #{questionnaireId}
+                    </if>
+                    <!-- 创建时间-->
+                  	<if test="createStartDate != null and createEndDate != null and createStartDate != '' and createEndDate != ''">
+						<![CDATA[
+							AND SU.FCREATETIME BETWEEN TRUNC(#{createStartDate, jdbcType=DATE})
+							AND TRUNC(#{createEndDate, jdbcType=DATE})+1
+				       ]]>
+					</if>
+					<!-- 问卷状态-->
+                  	<if test="questionnaireStatus != null and questionnaireStatus != ''">
+						<![CDATA[
+							AND SU.FSTATUS = #{questionnaireStatus}
+				       ]]>
+					</if>
+					
+					<!-- 选择问卷时只查询出特定状态的问卷-->
+                  	<if test="questionnaireStatusType == 'SPECIAL' and (questionnaireStatus == null or  questionnaireStatus == '')">
+						<![CDATA[
+							AND SU.FSTATUS in ('USING','VALID')
+				       ]]>
+					</if>
+					
+					<!-- 有效时间-->
+                  	<if test="validStartDate != null and validEndDate != null and validStartDate != '' and validEndDate != ''">
+						<![CDATA[
+							AND SU.FEFFECTIVETIME <= #{validStartDate, jdbcType=DATE}
+							AND SU.FINVALIDTIME >= #{validEndDate, jdbcType=DATE}
+				       ]]>
+					</if>
+                </otherwise>
+           </choose>
+           ORDER BY SU.FCREATETIME DESC
+    </select>
+    
+    <!-- 生成问卷时，插入问卷主体信息 -->
+	<insert id="insertQuestionnaire" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireInfo">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_SURVEY.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_SURVEY
+			  (FID,
+			   FSURVERYNAME,
+			   FSURVERYNUM,
+			   FEFFECTIVETIME,
+			   FINVALIDTIME,
+			   FSURVEYTYPE,
+			   FSURVEYDESC,
+			   FSTATUS,
+			   FCREATETIME,
+			   FCREATEUSERID,
+			   FLASTMODIFYTIME,
+			   FLASTMODIFYUSERID)
+			VALUES
+			  (#{id,jdbcType=VARCHAR},
+			   #{questionnaireName,jdbcType=VARCHAR},
+			   #{questionnaireCode,jdbcType=VARCHAR},
+			   #{effectiveTime,jdbcType=DATE},
+			   #{invalidTime,jdbcType=DATE},
+			   #{useRange,jdbcType=VARCHAR},
+			   #{desc,jdbcType=VARCHAR},
+			   #{status,jdbcType=VARCHAR},
+			   SYSDATE,
+			   #{createUserId,jdbcType=VARCHAR},
+			   SYSDATE,
+			   #{lastModifyUserId,jdbcType=VARCHAR})
+		  ]]>
+	</insert>
+	
+	<!-- 生成问卷时，插入问卷问题映射信息 -->
+	<insert id="insertQuestionMapper" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireMapper">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_SURVEY_QUESTION.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_SURVEY_QUESTION
+			  (FID,
+			   FSURVEYID,
+			   FQUESTIONID,
+			   FQUESTIONSEQ,
+			   FCREATETIME,
+			   FCREATEUSERID,
+			   FLASTMODIFYTIME,
+			   FLASTMODIFYUSERID)
+			VALUES
+			  (#{id,jdbcType=VARCHAR},
+			   #{questionnaireId,jdbcType=VARCHAR},
+			   #{questionId,jdbcType=VARCHAR},
+			   #{questionSeq,jdbcType=NUMERIC},
+			   SYSDATE,
+			   #{createUser,jdbcType=VARCHAR},
+			   SYSDATE,
+			   #{modifyUser,jdbcType=VARCHAR})
+		  ]]>
+	</insert>
+	
+	<!-- 问卷主体信息删除 -->
+	<delete id="deleteQuestionnaire" parameterType="list">
+		<![CDATA[
+			DELETE FROM T_MARK_SURVEY SUR WHERE 
+		]]>
+		<![CDATA[ SUR.FID in ]]>
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+		<![CDATA[	#{id,jdbcType=VARCHAR}  ]]>
+		</foreach>
+	</delete>
+	
+	<!-- 问卷问题映射信息删除 -->
+	<delete id="deleteQuestionnaireMapper" parameterType="list">
+		<![CDATA[
+			DELETE FROM T_MARK_SURVEY_QUESTION QQ WHERE  
+		]]>
+		<![CDATA[ QQ.FSURVEYID IN ]]>
+		<foreach collection="array" open="(" close=")" separator="," item="questionnaireId">
+		<![CDATA[	#{questionnaireId,jdbcType=VARCHAR}  ]]>
+		</foreach>
+	</delete>
+	
+	<!-- 问卷主体信息修改-->
+	<update id="updateQuestionnaire" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireInfo">
+		<![CDATA[
+			UPDATE T_MARK_SURVEY SUR
+			   SET SUR.FEFFECTIVETIME = #{effectiveTime,jdbcType=DATE},
+			       SUR.FINVALIDTIME = #{invalidTime,jdbcType=DATE},
+			       SUR.FSURVEYTYPE = #{useRange,jdbcType=VARCHAR},
+			       SUR.FSURVEYDESC = #{desc,jdbcType=VARCHAR},
+			       SUR.FLASTMODIFYTIME = SYSDATE,
+			       SUR.FSTATUS = #{status,jdbcType=VARCHAR},
+			       SUR.FLASTMODIFYUSERID = #{lastModifyUserId,jdbcType=VARCHAR}
+			 WHERE SUR.FID = #{id,jdbcType=VARCHAR}
+		]]>
+	</update>
+	
+	<!-- 查询即将生成的问卷的问卷编号-->
+    <select id="searchQuestionnaireCode" resultType="string">
+            SELECT DECODE(FSURVERYNUM,
+			              NULL,
+			              'Q' || TO_CHAR(SYSDATE, 'YYYYMMDD') || '01',
+			              DECODE(SIGN(TO_NUMBER(SUBSTR(FSURVERYNUM, 9) - 99)),
+			                     0,
+			                     'EXCEED',
+			                     'Q' || TO_CHAR(SYSDATE, 'YYYYMMDD') ||
+			                     LPAD(TO_NUMBER(SUBSTR(FSURVERYNUM, 9)) + 1, 2, '0')))
+			  FROM (SELECT MAX(SUBSTR(SUR.FSURVERYNUM, 2)) FSURVERYNUM
+			          FROM T_MARK_SURVEY SUR
+			         WHERE SUR.FSURVERYNUM LIKE 'Q' || TO_CHAR(SYSDATE, 'YYYYMMDD') || '%')
+    </select>
+    
+    <!-- 根据问卷名称精确查询出匹配的问卷信息-->
+    <select id="searchQuestionnaireByName" parameterType="string" resultMap="questionnaireInfoMap">
+          <![CDATA[
+            SELECT SU.FID,
+            	 SU.FSURVERYNUM,
+		         SU.FSURVERYNAME,
+		         SU.FSURVEYDESC,
+		         SU.FSURVEYTYPE,
+		         SU.FSTATUS,
+		         SU.FEFFECTIVETIME,
+		         SU.FINVALIDTIME,
+		         SU.FCREATETIME,
+		         SU.FLASTMODIFYUSERID
+ 			FROM T_MARK_SURVEY SU WHERE 
+ 			SU.FSURVERYNAME = #{surveyName,jdbcType=VARCHAR}
+ 			AND ROWNUM <= 1
+ 		]]>
+    </select>
+    <!-- 根据回访id精确查询出匹配的问卷信息-->
+    <select id="searchQuestionnaireByVisitId" parameterType="string" resultMap="questionnaireInfoMap">
+          <![CDATA[
+            SELECT DISTINCT SU.FID,
+               SU.FSURVERYNUM,
+             SU.FSURVERYNAME,
+             SU.FSURVEYDESC,
+             SU.FSURVEYTYPE,
+             SU.FSTATUS,
+             SU.FEFFECTIVETIME,
+             SU.FINVALIDTIME,
+             SU.FCREATETIME,
+             SU.FLASTMODIFYUSERID
+     		  FROM T_MARK_SURVEY SU JOIN T_MARK_CUST_ANSWER CA ON CA.FSURVEYID = SU.FID
+      		 WHERE  CA.FVISITID = #{visitId}
+ 		]]>
+    </select>
+    
+    <!-- 根据问卷id查询问题信息列表-->
+    <select id="searchQuestionListByQuestionnaireId" parameterType="com.deppon.crm.module.marketing.shared.domain.Plan" resultMap="QuestionInfoListMap">
+            SELECT Q.FID FID,
+		       Q.FTITLE FTITLE,
+		       Q.FCREATETIME FCREATEDATE,
+		       EC.FEMPNAME       FCREATORNAME,
+		       Q.FLASTMODIFYTIME FLASTMODIFYDATE,
+		       Q.FRANGE FRANGE,
+		       SQ.FQUESTIONSEQ,
+		       Q.FQUESTIONTYPE FQUESTIONTYPE,
+		       Q.FISHASBLANK FISHASBLANK,
+		       EM.FEMPNAME       FMODIFIERNAME,
+		       (SELECT COUNT(1) FROM T_MARK_SURVEY_QUESTION SQQ WHERE SQQ.FQUESTIONID = Q.FID) FREQUENCY
+		  FROM T_MARK_SURVEY_QUESTION SQ
+		  LEFT JOIN T_MARK_QUESTION Q ON SQ.FQUESTIONID = Q.FID
+		  LEFT JOIN T_ORG_EMPLOYEE EC ON EC.FID = Q.FCREATEUSERID
+		  LEFT JOIN T_ORG_EMPLOYEE EM ON EM.FID = Q.FLASTMODIFYUSERID
+		 WHERE SQ.FSURVEYID = #{questionnaireId,jdbcType=VARCHAR}
+		 ORDER BY SQ.FQUESTIONSEQ ASC
+    </select>
+     <!-- 根据问卷id查询问卷结果  -->
+	<select id="staticsQuestionsBySurveyId" parameterType="map" resultMap="QuestionResultMap">
+		<![CDATA[
+		SELECT FID,
+       FTITLE,
+       FRANGE,
+       FCREATORNAME,
+       FCREATORID,
+       FMODIFIERNAME,
+       FMODIFIERID,
+       FCREATEDATE,
+       FLASTMODIFYDATE,
+       FQUESTIONDES,
+       FISHASBLAN,
+       RESPONDENTS,
+       FSURVEYID,
+       (#{staticStartTime,jdbcType=DATE}) FSTATICSTARTTIME,
+       (#{staticEndTime,jdbcType=DATE}) FSTATICENDTIME,
+       REST.FQUESTIONTYPE,
+       ROWNUM FQUESTIONSEQ FROM (
+		      SELECT DISTINCT Q.FID FID,
+                Q.FTITLE FTITLE,
+                Q.FQUESTIONTYPE,
+                DECODE(Q.FQUESTIONTYPE,
+                       'RADIO',
+                       '单选',
+                       'MULTIPLE_CHOICE',
+                       '多选',
+                       'QUESTION_ANSWER',
+                       '简答') FQUESTIONTYPECONVERT,
+                DECODE(Q.FRANGE, 'VISIT', '回访') FRANGE,
+                E.FEMPNAME FCREATORNAME,
+                Q.FCREATEUSERID FCREATORID,
+                EE.FEMPNAME FMODIFIERNAME,
+                Q.FLASTMODIFYUSERID FMODIFIERID,
+                Q.FCREATETIME FCREATEDATE,
+                Q.FLASTMODIFYTIME FLASTMODIFYDATE,
+                Q.FQUESTIONCONTENT FQUESTIONDES,
+                Q.FISHASBLANK FISHASBLAN,
+                DECODE(RES.RESPONDENTS,NULL,0,RES.RESPONDENTS) RESPONDENTS,
+                S.FID FSURVEYID,
+                 SQ.FQUESTIONSEQ SEQ
+                
+		  FROM T_MARK_SURVEY S
+		  JOIN T_MARK_SURVEY_QUESTION SQ ON SQ.FSURVEYID = S.FID
+		  JOIN T_MARK_QUESTION Q ON SQ.FQUESTIONID = Q.FID
+		  JOIN T_ORG_EMPLOYEE E ON E.FID = Q.FCREATEUSERID
+		  LEFT JOIN T_ORG_EMPLOYEE EE ON EE.FID = Q.FLASTMODIFYUSERID
+		  LEFT JOIN (SELECT COUNT(CAA.FID) RESPONDENTS, CAA.FQUESTIONID FQUESTIONID
+		          FROM T_MARK_CUST_ANSWER CAA WHERE CAA.FSURVEYID = #{surveyId,jdbcType=VARCHAR}]]>
+		  	<if test="staticStartTime != null and staticEndTime != null and staticStartTime != '' and staticEndTime != ''">
+						<![CDATA[
+							 AND TRUNC(CAA.FCREATETIME) BETWEEN #{staticStartTime,jdbcType=DATE} AND #{staticEndTime,jdbcType=DATE}
+				       ]]>
+			</if>        
+		<![CDATA[         
+		         GROUP BY CAA.FQUESTIONID) RES ON RES.FQUESTIONID = Q.FID
+		         WHERE Q.FQUESTIONTYPE IN ('RADIO', 'MULTIPLE_CHOICE') AND S.FID = #{surveyId,jdbcType=VARCHAR}
+		         ORDER BY SEQ)REST  ORDER BY FQUESTIONSEQ
+		]]>
+	</select>
+    <!-- 根据问题id查询问题对应的选项基本信息 -->
+	<select id="searchOptionByQuestionId" parameterType="map" resultMap="OptionMap">
+			SELECT QO.FID FID,
+			       QO.FQUESTIONFID FQUESTIONFID,
+			       QO.FOPTIONDES FOPTIONDES,
+			       QO.FOPTIONSEQ FOPTIONSEQ,
+			       QO.FCREATORID FCREATORID, 
+			       QO.FCREATEDATE FCREATEDATE,
+			       QO.FMODIFIERID FMODIFIERID,
+			       QO.FMODIFYDATE FMODIFYDATE,
+			       DECODE(RO.AMOUNT,NULL,0,RO.AMOUNT) AMOUNT,
+			       S.FID FSURVEY,
+			       NVL((RO.AMOUNT / RO.FCUSTIDCOUNT), 0) PERCENTAGE
+			  FROM T_MARK_SURVEY S
+			  JOIN T_MARK_SURVEY_QUESTION SQ ON S.FID = SQ.FSURVEYID
+			  JOIN T_MARK_QUESTION Q ON Q.FID = SQ.FQUESTIONID
+			  JOIN T_MARK_QUESTION_OPTION QO ON QO.FQUESTIONFID = Q.FID
+			LEFT JOIN
+			 (SELECT CA.FSURVEYID,
+			 		 CA.FQUESTIONID,
+			 		 COUNT(CA.FQUESTIONID) AMOUNT,
+			 		 A.FANSWER,
+			 		 (SELECT COUNT(DISTINCT CAA.FVISITID)
+                       FROM T_MARK_CUST_ANSWER CAA
+                      WHERE CAA.FSURVEYID = #{surveyId}
+                        AND CAA.FQUESTIONID = #{questionId}
+                         <if test="staticStartTime != null and staticEndTime != null and staticStartTime != '' and staticEndTime != ''">
+                        AND TRUNC(CAA.FCREATETIME) BETWEEN #{staticStartTime,jdbcType=DATE} AND #{staticEndTime,jdbcType=DATE}
+                        </if>  ) FCUSTIDCOUNT
+			   FROM T_MARK_CUST_ANSWER  CA
+			   JOIN T_MARK_ANSWER A ON A.FANSWERINFOFID = CA.FID
+			   WHERE A.FANSWER IS NOT NULL AND CA.FSURVEYID = #{surveyId}
+		
+		 <if test="staticStartTime != null and staticEndTime != null and staticStartTime != '' and staticEndTime != ''">
+						<![CDATA[
+							 AND TRUNC(CA.FCREATETIME) BETWEEN #{staticStartTime,jdbcType=DATE} AND #{staticEndTime,jdbcType=DATE}
+				       ]]>
+		 </if>   
+		 <![CDATA[    
+			  GROUP BY CA.FSURVEYID, CA.FQUESTIONID,A.FANSWER)RO ON QO.FID = RO.FANSWER
+			   WHERE S.FID = #{surveyId} AND QO.FQUESTIONFID = #{questionId}
+			   ORDER BY QO.FOPTIONSEQ
+		]]>
+	</select>
+	<!-- 根据问卷id，问题id以及选项标志查找选项被选择的次数 -->
+	<select id="countOfOption" parameterType="map" resultType="String">
+		<![CDATA[
+		SELECT COUNT(FANSWER)
+          FROM T_MARK_CUST_ANSWER CA
+          JOIN T_MARK_ANSWER A ON A.FANSWERINFOFID = CA.FID
+         WHERE 1=1]]>
+         <if test="surveyId != null and surveyId != '' ">
+						<![CDATA[
+							AND CA.FSURVEYID = #{surveyId,jdbcType=VARCHAR}
+				       ]]>
+		</if>
+		<if test="questionId != null and questionId != '' ">
+						<![CDATA[
+							AND CA.FQUESTIONID = #{questionId,jdbcType=VARCHAR}
+				       ]]>
+		</if>
+		<if test="optionFlag != null and optionFlag != '' ">
+						<![CDATA[
+							AND A.FANSWER = #{optionFlag,jdbcType=VARCHAR}
+				       ]]>
+		</if>
+	</select>
+	<!-- 根据问卷id，查询出回答了该问卷客户的基本信息和答案-->
+	<select id="exportCustQuestionnaireDetail" parameterType="map" resultMap="custQuestionnaireDetail">
+		<![CDATA[
+			 SELECT BB.FDEPTNAME FBUSINESSGROUP,
+        SYB.FDEPTNAME FBUSINESSUNIT,
+        DQ.FDEPTNAME FBIGREGION,
+        XQ.FDEPTNAME FSMALLREGION,
+        DEPT.FDEPTNAME FBUSINESSDEPARTMENT,
+        CUST.FCUSTNAME FCUSTNAME,
+        CUST.FCUSTNUMBER FCUSTCODE,
+        DECODE(CUST.FCUSTNATURE,
+               'LEAVE_CUSTOMER',
+               '出发客户',
+               'ARRIVE_CUSTOMER',
+               '到达客户',
+               'LEAVE_ARRIVE_CUSTOMER',
+               '出发和到达客户') FCUSTNATURE,
+        DECODE(CUST.FCUSTGROUP,
+               'SC_CUSTOMER',
+               '散客',
+               'PC_CUSTOMER',
+               '潜客',
+               'RC_CUSTOMER',
+               '固定客户') FCUSTTYPE,
+        DECODE(CUST.FDEGREE,
+               'NORMAL',
+               '普通客户',
+               'GOLD',
+               '黄金客户',
+               'PLATINUM',
+               '铂金客户',
+               'DIAMOND',
+               '钻石客户') FCUSTLEVEL,
+        MAX(R.FCREATETIME) FVISITDATE,
+        MAX(R.ANSWER1) ANSWER1,
+        MAX(R.ANSWER2) ANSWER2,
+        MAX(R.ANSWER3) ANSWER3,
+        MAX(R.ANSWER4) ANSWER4,
+        MAX(R.ANSWER5) ANSWER5,
+        MAX(R.ANSWER6) ANSWER6,
+        MAX(R.ANSWER7) ANSWER7,
+        MAX(R.ANSWER8) ANSWER8,
+        MAX(R.ANSWER9) ANSWER9,
+        MAX(R.ANSWER10) ANSWER10,
+        MAX(R.ANSWER11) ANSWER11,
+        MAX(R.ANSWER12) ANSWER12,
+        MAX(R.ANSWER13) ANSWER13,
+        MAX(R.ANSWER14) ANSWER14,
+        MAX(R.ANSWER15) ANSWER15,
+        MAX(R.ANSWER16) ANSWER16,
+        MAX(R.ANSWER17) ANSWER17,
+        MAX(R.ANSWER18) ANSWER18,
+        MAX(R.ANSWER19) ANSWER19,
+        MAX(R.ANSWER20) ANSWER20
+   FROM (SELECT MAX(CA.FCUSTID) FCUSTID,
+   				CA.FVISITID FVISITID,
+                TO_CHAR(MAX(CA.FCREATETIME), 'YYYY-MM-DD') FCREATETIME,
+                Q.FTITLE FTITLE,
+                SQ.FQUESTIONSEQ FQUESTIONSEQ,
+                DECODE(SQ.FQUESTIONSEQ,
+                       1,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER1,
+                DECODE(SQ.FQUESTIONSEQ,
+                       2,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER2,
+                DECODE(SQ.FQUESTIONSEQ,
+                       3,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER3,
+                DECODE(SQ.FQUESTIONSEQ,
+                       4,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER4,
+                DECODE(SQ.FQUESTIONSEQ,
+                       5,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER5,
+                DECODE(SQ.FQUESTIONSEQ,
+                       6,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER6,
+                DECODE(SQ.FQUESTIONSEQ,
+                       7,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER7,
+                DECODE(SQ.FQUESTIONSEQ,
+                       8,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER8,
+                DECODE(SQ.FQUESTIONSEQ,
+                       9,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER9,
+                DECODE(SQ.FQUESTIONSEQ,
+                       10,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER10,
+                DECODE(SQ.FQUESTIONSEQ,
+                       11,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER11,
+                DECODE(SQ.FQUESTIONSEQ,
+                       12,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER12,
+                DECODE(SQ.FQUESTIONSEQ,
+                       13,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER13,
+                DECODE(SQ.FQUESTIONSEQ,
+                       14,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER14,
+                DECODE(SQ.FQUESTIONSEQ,
+                       15,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER15,
+                DECODE(SQ.FQUESTIONSEQ,
+                       16,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER16,
+                DECODE(SQ.FQUESTIONSEQ,
+                       17,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER17,
+                DECODE(SQ.FQUESTIONSEQ,
+                       18,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER18,
+                DECODE(SQ.FQUESTIONSEQ,
+                       19,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER19,
+                DECODE(SQ.FQUESTIONSEQ,
+                       20,
+                       TO_CHAR(wmsys.wm_concat(O.FOPTIONDES)) || A.FANSWERDES,
+                       NULL) ANSWER20
+           FROM T_MARK_CUST_ANSWER CA
+           JOIN T_MARK_ANSWER A ON A.FANSWERINFOFID = CA.FID
+           LEFT JOIN T_MARK_QUESTION_OPTION O ON O.FID = A.FANSWER
+           JOIN T_MARK_QUESTION Q ON Q.FID = CA.FQUESTIONID
+           LEFT JOIN T_MARK_SURVEY_QUESTION SQ ON SQ.FQUESTIONID =
+                                                  CA.FQUESTIONID AND CA.FSURVEYID = SQ.FSURVEYID
+          WHERE CA.FSURVEYID = #{surveyId,jdbcType=VARCHAR}
+          GROUP BY CA.FVISITID,
+                   CA.FQUESTIONID,
+                   Q.FTITLE,
+                   SQ.FQUESTIONSEQ,
+                   A.FANSWERDES) R
+   JOIN T_CUST_CUSTBASEDATA CUST ON R.FCUSTID = CUST.FID
+   JOIN T_ORG_DEPARTMENT DEPT ON CUST.FDEPTID = DEPT.FID
+   JOIN T_ORG_DEPARTMENT XQ ON DEPT.FPARENTID = XQ.FID
+   JOIN T_ORG_DEPARTMENT DQ ON XQ.FPARENTID = DQ.FID
+   JOIN T_ORG_DEPARTMENT SYB ON DQ.FPARENTID = SYB.FID
+   JOIN T_ORG_DEPARTMENT BB ON SYB.FPARENTID = BB.FID WHERE 1=1]]>
+    <if test="staticStartTime != null and staticEndTime != null and staticStartTime != '' and staticEndTime != ''">
+						<![CDATA[
+						  AND TO_DATE(R.FCREATETIME,'YYYY-MM-DD') BETWEEN #{staticStartTime} AND #{staticEndTime}
+				       ]]>
+		 </if>   
+  <![CDATA[GROUP BY R.FCUSTID,
+  		   R.FVISITID,
+           BB.FDEPTNAME,
+           SYB.FDEPTNAME,
+           DQ.FDEPTNAME,
+           XQ.FDEPTNAME,
+           DEPT.FDEPTNAME,
+           BB.FDEPTNAME,
+           CUST.FCUSTNAME,
+           CUST.FCUSTNUMBER,
+           CUST.FCUSTNATURE,
+           CUST.FCUSTGROUP,
+           CUST.FDEGREE
+		]]>
+	</select>
+	<!-- 问卷回访时向用户问卷答案信息主表中插入数据 -->
+	<insert id="insertSurveyMainAnswer" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.AnswerMainInfo">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CUST_ANSWER.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_CUST_ANSWER
+			  (FID,
+			   FSURVEYID,
+			   FCUSTID,
+			   FQUESTIONID,
+			   FVISITID,
+			   FCREATETIME,
+			   FCREATEUSERID,
+			   FLASTMODIFYTIME,
+			   FLASTMODIFYUSERID)
+			VALUES
+			  (
+			   #{id,jdbcType=VARCHAR},
+			   #{questionnaireId,jdbcType=VARCHAR},
+			   #{custId,jdbcType=VARCHAR},
+			   #{questionId,jdbcType=VARCHAR},
+			   #{visitId,jdbcType=VARCHAR},
+			   SYSDATE,
+			   #{createUser,jdbcType=VARCHAR},
+			   SYSDATE,
+			   #{modifyUser,jdbcType=VARCHAR}
+			  )
+		]]>
+	</insert>
+	
+	<!-- 问卷回访时向用户问卷答案信息明细表中插入数据 -->
+	<insert id="insertSurveyDetailAnswer" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.AnswerDetailInfo">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_ANSWER.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_MARK_ANSWER
+			  (
+			   FID, 
+			   FANSWERINFOFID, 
+			   FANSWER, 
+			   FANSWERDES
+			  )
+			VALUES
+			  (
+			   #{id,jdbcType=VARCHAR},
+			   #{answerMainInfoId,jdbcType=VARCHAR},
+			   #{answer,jdbcType=VARCHAR},
+			   #{answerRemark,jdbcType=VARCHAR}
+			  )
+		]]>
+	</insert>
+	
+	<!-- 根据问卷id更新问卷状态-->
+	<update id="updateQuestionnaireStatusById" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireInfo">
+		<![CDATA[
+			UPDATE T_MARK_SURVEY SUR
+			   SET 
+			       SUR.FSTATUS = #{status,jdbcType=VARCHAR}
+			       
+			 WHERE SUR.FID = #{id,jdbcType=VARCHAR}
+		]]>
+	</update>
+	
+	<!-- 根据客户id查询问卷信息列表 盛诗庆 -->
+	<select id="queryQuestionnaireListByCustid" parameterType="string" resultMap = "questionnaireInfoMap" >
+	<![CDATA[
+			WITH RES AS
+		(SELECT DISTINCT CA.FVISITID FVISITID,
+		                  S.FID FCUSTSURVEYID,
+		                  S.FSURVERYNUM FSURVERYNUM,
+		                  S.FSURVERYNAME FSURVERYNAME,
+		                  S.FSURVEYTYPE FSURVEYTYPE,
+		                  S.FSURVEYDESC FSURVEYDESC,
+		                  S.FSTATUS FSTATUS,
+		                  S.FCREATETIME FCREATETIME,
+		                  S.FCREATEUSERID FCREATEUSERID,
+		                  S.FLASTMODIFYTIME FLASTMODIFYTIME,
+		                  S.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+		                  RV.FLINKMANNAME FLINKMANNAME,
+		                  RV.FWAY FMARKETINGWAY,
+		                  E.FEMPNAME FEXECUTORNAME,
+		                  S.FINVALIDTIME FINVALIDTIME,
+		                  S.FEFFECTIVETIME EFFECTIVETIME,
+		                  RV.FCREATETIME FMARKETINGDATE,
+		                  DM.FTOPIC FPLANTOPIC
+		          FROM T_MARK_CUST_ANSWER CA
+		          JOIN T_MARK_SURVEY S ON S.FID = CA.FSURVEYID
+		          JOIN T_CUST_RETURNVISIT RV ON CA.FVISITID = RV.FID
+		          JOIN T_ORG_EMPLOYEE E ON E.FID = RV.FEXECUSERID
+		          JOIN T_CUST_DEVELOPMAINTAINLIST DM ON DM.FID = RV.FPLANID
+		         WHERE CA.FCUSTID = #{_parameter}),
+		REST AS (SELECT COUNT(FSURVEYID) USETIME,P.FSURVEYID FSURVEYID
+		           FROM T_CUST_DEVELOPMAINTAINLIST P 
+		           JOIN RES ON RES.FCUSTSURVEYID = P.FSURVEYID GROUP BY P.FSURVEYID)     
+		SELECT   RES.FVISITID,
+		         RES.FCUSTSURVEYID,
+		         RES.FSURVERYNUM,
+		         RES.FSURVERYNAME,
+		         RES.FSURVEYTYPE,
+		         RES.FSURVEYDESC,
+		         RES.FSTATUS,
+		         RES.FCREATETIME,
+		         RES.FCREATEUSERID,
+		         RES.FLASTMODIFYTIME,
+		         RES.FLASTMODIFYUSERID,
+		         RES.FLINKMANNAME,
+		         RES.FMARKETINGWAY,
+		         RES.FEXECUTORNAME,
+		         RES.FINVALIDTIME,
+		         RES.EFFECTIVETIME,
+		         RES.FMARKETINGDATE,
+		         RES.FPLANTOPIC,
+		         REST.USETIME FUSETIMES
+		   FROM RES JOIN REST ON RES. FCUSTSURVEYID = REST.FSURVEYID
+	]]>
+	</select>
+	<!-- 根据客户id查询该客户答过的问卷总数  盛诗庆 -->
+	<select id="countQuestionnaireListByCustid" parameterType="string" resultType = "int" >
+	<![CDATA[
+	 	SELECT COUNT(DISTINCT CA.FVISITID)
+		  FROM T_MARK_CUST_ANSWER CA
+		  JOIN T_MARK_SURVEY S ON S.FID = CA.FSURVEYID
+		  JOIN T_CUST_RETURNVISIT RV ON CA.FVISITID = RV.FID
+		  JOIN T_ORG_EMPLOYEE E ON E.FID = RV.FEXECUSERID
+		  JOIN T_CUST_DEVELOPMAINTAINLIST DM ON DM.FID = RV.FPLANID
+		 WHERE CA.FCUSTID = #{_parameter}
+	]]>
+	</select>
+	<!-- 根据回访id查询问卷回访结果  盛诗庆 -->
+	<select id="viewQuestionnaireByVisitId" parameterType="string" resultMap = "QuestionAnswerMap">
+		SELECT DISTINCT Q.FID FID,
+	       Q.FTITLE FTITLE,
+	       Q.FRANGE FRANGE,
+	       Q.FQUESTIONCONTENT FQUESTIONCONTENT,
+	       Q.FQUESTIONTYPE FQUESTIONTYPE,
+	       Q.FISHASBLANK FISHASBLANK,
+	       S.FID FSURVEYID,
+	       SQ.FQUESTIONSEQ FQUESTIONSEQ,
+	       CA.FVISITID FVISITID
+		   FROM T_MARK_CUST_ANSWER CA
+		   JOIN T_MARK_SURVEY S ON S.FID = CA.FSURVEYID
+		   JOIN T_MARK_SURVEY_QUESTION SQ ON SQ.FSURVEYID = S.FID
+		   JOIN T_MARK_QUESTION Q ON SQ.FQUESTIONID = Q.FID
+		   WHERE CA.FVISITID = #{_parameter}
+		   ORDER BY SQ.FQUESTIONSEQ
+	</select>
+	<!-- 根据回访id查询问卷选项结果 盛诗庆 -->
+	<select id="searchOptionByVisitId" parameterType="map" resultMap = "OptionMap">
+		 <choose>
+		 <when test="questionType == 'QUESTION_ANSWER'">
+						<![CDATA[
+						    SELECT DISTINCT CUSTANSWER.FID CAFID,
+		                    ANSWER.FID AFID,
+		                    CUSTANSWER.FQUESTIONID FQUESTIONID,
+		                    NULL FOPTIONDES,
+              				NULL FOPTIONSEQ,
+		                    ANSWER.FANSWERINFOFID FANSWERINFOFID,
+		                    DECODE(ANSWER.FANSWERDES, NULL, '', ANSWER.FANSWERDES) FANSWERDES,
+			                CASE
+			                  WHEN ANSWER.FANSWER IS NOT NULL THEN
+			                   '1'
+			                  ELSE
+			                   '0'
+			                END ISSELECTED
+							  FROM T_MARK_CUST_ANSWER CUSTANSWER
+							  LEFT JOIN T_MARK_ANSWER ANSWER ON ANSWER.FANSWERINFOFID = CUSTANSWER.FID
+							 WHERE CUSTANSWER.FVISITID = #{visitId}
+							   AND CUSTANSWER.FQUESTIONID = #{questionId}
+				       ]]>
+		</when>
+		<otherwise>
+			SELECT DISTINCT CUSTANSWER.FID CAFID,
+	                ANSWER.FID AFID,
+	                CUSTANSWER.FQUESTIONID FQUESTIONID,
+	                QOPTION.FOPTIONDES FOPTIONDES,
+	                QOPTION.FOPTIONSEQ FOPTIONSEQ,
+	                DECODE(ANSWER.FANSWERDES, NULL, '', ANSWER.FANSWERDES) FANSWERDES,
+	                ANSWER.FANSWERINFOFID FANSWERINFOFID,
+	                DECODE(ANSWER.FANSWERDES, NULL, '', ANSWER.FANSWERDES),
+	                CASE
+	                  WHEN ANSWER.FANSWER IS NOT NULL THEN
+	                   '1'
+	                  ELSE
+	                   '0'
+	                END ISSELECTED
+			  FROM T_MARK_CUST_ANSWER CUSTANSWER
+			 RIGHT JOIN T_MARK_ANSWER ANSWER ON ANSWER.FANSWERINFOFID = CUSTANSWER.FID
+			
+			 RIGHT JOIN T_MARK_QUESTION_OPTION QOPTION ON CUSTANSWER.FQUESTIONID =
+			                                              QOPTION.FQUESTIONFID
+			                                          AND ANSWER.FANSWER = QOPTION.FID
+			
+			 WHERE CUSTANSWER.FVISITID = #{visitId}
+			   AND CUSTANSWER.FQUESTIONID = #{questionId}
+			UNION
+			SELECT DISTINCT CUSTANSWER.FID CAFID,
+			                ANSWER.FID AFID,
+			                CUSTANSWER.FQUESTIONID FQUESTIONID,
+			                QOPTION.FOPTIONDES FOPTIONDES,
+			                QOPTION.FOPTIONSEQ FOPTIONSEQ,
+			                DECODE(ANSWER.FANSWERDES, NULL, '', ANSWER.FANSWERDES) FANSWERDES,
+			                ANSWER.FANSWERINFOFID FANSWERINFOFID,
+			                ANSWER.FANSWERDES FANSWERDES,
+			                CASE
+			                  WHEN ANSWER.FANSWER IS NOT NULL THEN
+			                   '1'
+			                  ELSE
+			                   '0'
+			                END ISSELECTED
+			  FROM T_MARK_CUST_ANSWER CUSTANSWER
+			
+			  LEFT JOIN T_MARK_QUESTION_OPTION QOPTION ON CUSTANSWER.FQUESTIONID =
+			                                              QOPTION.FQUESTIONFID
+			
+			  LEFT JOIN T_MARK_ANSWER ANSWER ON ANSWER.FANSWERINFOFID = CUSTANSWER.FID
+			                                AND ANSWER.FANSWER = QOPTION.FID
+			 WHERE CUSTANSWER.FVISITID =  #{visitId}
+			   AND CUSTANSWER.FQUESTIONID = #{questionId}
+			   AND ANSWER.FANSWER IS NULL
+		</otherwise>
+		</choose>
+		ORDER BY FOPTIONSEQ
+	</select>
+	<!-- 定时更新问卷状态-->
+	<update id="updateSurveyStatus" parameterType="map">
+		<![CDATA[
+			UPDATE T_MARK_SURVEY SUR
+			   SET SUR.FSTATUS = #{status,jdbcType=VARCHAR}
+			       
+			       
+			 WHERE 1 = 1
+			 ]]>
+			 <if test="compareStatus == 'OVERDUE'">
+				<![CDATA[ 
+				 AND SUR.FSTATUS IN ('VALID', 'USING','WAITINGVALID') AND
+       				SYSDATE > TRUNC(SUR.FINVALIDTIME + 1)
+				]]>
+			</if>
+			<if test="compareStatus == 'VALID'">
+				<![CDATA[ 
+				 AND SUR.FSTATUS = 'WAITINGVALID'
+			   AND SYSDATE BETWEEN TRUNC(SUR.FEFFECTIVETIME) AND
+			       TRUNC(SUR.FINVALIDTIME + 1)
+				]]>
+			</if>
+			<if test="compareStatus != 'VALID' and compareStatus != 'OVERDUE'">
+				<![CDATA[ 
+				 AND 1 != 1
+				]]>
+			</if>
+	</update>
+	
+	<select id="queryQuestionnaireById" parameterType="String" resultMap="questionnaireInfoMap">
+		 <![CDATA[
+            SELECT SU.FID,
+            	 SU.FSURVERYNUM,
+		         SU.FSURVERYNAME,
+		         SU.FSURVEYDESC,
+		         SU.FSURVEYTYPE,
+		         SU.FSTATUS,
+		         SU.FEFFECTIVETIME,
+		         SU.FINVALIDTIME,
+		         SU.FCREATETIME,
+		         SU.FLASTMODIFYUSERID
+ 			FROM T_MARK_SURVEY SU WHERE 
+ 			SU.FID = #{id,jdbcType=NUMERIC}
+ 		]]>
+	</select>
+</mapper>

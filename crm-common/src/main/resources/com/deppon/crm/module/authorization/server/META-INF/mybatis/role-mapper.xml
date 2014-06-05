@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.Role">
+
+	<!-- 角色结果映射配置 -->
+	<resultMap id="roleResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.Role">
+		<id property="id" column="MASTER_ID" />
+		<result property="roleName" column="MASTER_ROLENAME" />
+		<result property="roleDesc" column="MASTER_ROLEDESC" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- 角色结果信息 -->
+	<sql id="select_param">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FROLENAME AS MASTER_ROLENAME,
+		MASTER.FROLEDESC AS MASTER_ROLEDESC,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE
+	</sql>
+	
+	<!-- 角色与功能ID结果映射配置 -->
+	<resultMap id="detailRoleMap"
+		type="com.deppon.crm.module.authorization.shared.domain.Role">
+		<id property="id" column="MASTER_ID" />
+		<result property="roleName" column="MASTER_ROLENAME" />
+		<result property="roleDesc" column="MASTER_ROLEDESC" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<collection property="functionIds" column="ENTRY_0_FUNCID" ofType="string">
+			<result column="ENTRY_0_FUNCID"/>
+		</collection>
+	</resultMap>
+
+	<!-- 角色功能ID结果信息 -->
+	<sql id="detail_param">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FROLENAME AS MASTER_ROLENAME,
+		MASTER.FROLEDESC AS MASTER_ROLEDESC,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE,
+		ENTRY_0.FFUNCID AS ENTRY_0_FUNCID
+	</sql>
+
+	<!-- 角色单表查询结果映射配置 -->
+	<resultMap id="roleSimpleResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.Role">
+		<id property="id" column="ID" />
+		<result property="roleName" column="ROLENAME" />
+		<result property="roleDesc" column="ROLEDESC" />
+		<result property="createUser" column="CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- 角色插入参数配置信息 -->
+	<sql id="select_simple_param">
+		FID AS ID,
+		FROLENAME AS ROLENAME,
+		FROLEDESC AS ROLEDESC,
+		FCREATEUSERID AS CREATEUSER,
+		FCREATETIME AS CREATEDATE,
+		FLASTMODIFYUSERID AS MODIFYUSER,
+		FLASTUPDATETIME AS MODIFYDATE
+	</sql>
+
+	<!-- 角色插入参数配置信息 -->
+	<sql id="insert_param">
+		FID,
+		FROLENAME,
+		FROLEDESC,
+		FCREATEUSERID,
+		FCREATETIME,
+		FLASTMODIFYUSERID,
+		FLASTUPDATETIME
+	</sql>
+	
+	<!-- 缓存加载所有角色与功能ID -->
+	<select id="getAllRole" resultMap="detailRoleMap" parameterType="String">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="detail_param" />
+		<![CDATA[
+  			FROM T_AUTH_ROLE MASTER
+ 			LEFT JOIN T_AUTH_FUNCTIONROLE ENTRY_0
+ 			ON ENTRY_0.fROLEID = MASTER.fid
+		]]>
+		<if test="value !=null and value != ''">WHERE MASTER.FID=#{value}</if>
+	</select>
+	
+	<!-- 通过角色ID得到角色对象 -->
+	<select id="getById" resultMap="roleSimpleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_ROLE WHERE FID=#{id}
+		]]>
+	</select>
+	
+	<!-- 通过角色ID得到角色对象 -->
+	<select id="getIdByName" resultType="list"
+		parameterType="string">
+		SELECT FID
+		FROM T_AUTH_ROLE WHERE FROLENAME=#{roleName}
+	</select>
+	
+	<!-- 通过角色ID集合得到角色对象集合 -->
+	<select id="getByIds" resultMap="roleSimpleResultMap"
+		parameterType="list">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_ROLE WHERE FID IN
+		]]>
+		<foreach collection="list" item="functionIds" open="(" close=")"
+			separator=",">
+			#{roleIds}
+		</foreach>
+	</select>
+
+	<!-- 得到可授权的角色对象集合 -->
+	<select id="getAllChooesRoleByUserId" resultMap="roleResultMap" parameterType="string">
+	<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<!-- 修改前-->
+		<!--
+		<![CDATA[
+			FROM T_AUTH_ROLE MASTER where FID NOT IN(  
+			SELECT FROLEID FROM T_AUTH_USERAUTHROLE WHERE FUSERID=#{userId})
+		]]>
+		-->
+		<!-- 
+		修改后
+			修改人:ztjie
+			修改时间：2012-04-18
+			修改说明：增加了不是超级管理员时的判断
+		-->
+		<if test="currentUserId!=null and userId!=''">
+			<![CDATA[
+				FROM T_AUTH_ROLE MASTER
+				RIGHT JOIN T_AUTH_USERAUTHROLE ENTITY_0
+				ON MASTER.FID = ENTITY_0.FROLEID
+	 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+	 			AND MASTER.FID NOT IN (
+	 			SELECT FROLEID 
+	 			FROM T_AUTH_USERAUTHROLE 
+	 			WHERE FUSERID=#{userId})
+			]]>
+		</if>
+		<if test="currentUserId==null and userId!=''">
+			<![CDATA[
+				FROM T_AUTH_ROLE MASTER where FID NOT IN(  
+				SELECT FROLEID FROM T_AUTH_USERAUTHROLE WHERE FUSERID=#{userId})
+			]]>
+		</if>
+	</select>
+	
+	<!-- 得到已授权的角色对象集合 -->
+	<select id="getAllAuthorizedRoleByUserId" resultMap="roleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<!-- 修改前-->
+		<!--
+		<![CDATA[
+			FROM T_AUTH_ROLE MASTER where FID NOT IN(  
+			SELECT FROLEID FROM T_AUTH_USERAUTHROLE WHERE FUSERID=#{userId})
+		]]>
+		-->
+		<!-- 
+		修改后
+			修改人:ztjie
+			修改时间：2012-04-18
+			修改说明：增加了不是超级管理员时的判断
+		-->
+		<if test="currentUserId!=null and userId!=''">
+			<![CDATA[
+				FROM T_AUTH_ROLE MASTER
+				RIGHT JOIN T_AUTH_USERAUTHROLE ENTITY_0
+				ON MASTER.FID = ENTITY_0.FROLEID
+	 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+	 			AND MASTER.FID IN (
+	 			SELECT FROLEID 
+	 			FROM T_AUTH_USERAUTHROLE 
+	 			WHERE FUSERID=#{userId})
+			]]>
+		</if>
+		<if test="currentUserId==null and userId!=''">
+			<![CDATA[
+				FROM T_AUTH_ROLE MASTER where FID IN(  
+				SELECT FROLEID FROM T_AUTH_USERAUTHROLE WHERE FUSERID=#{userId})
+			]]>
+		</if>
+	</select>
+
+	<!-- 根据条件得到所有角色对象集合 -->
+	<select id="getAll" resultMap="roleResultMap"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Role">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_ROLE MASTER
+		]]>
+		<where>
+			<if test="id!=null and id!=''">
+				MASTER.FID LIKE #{id}
+			</if>
+			<if test="roleName!=null and roleName!=''">
+				AND MASTER.FROLENAME LIKE #{roleName}
+			</if>
+		</where>
+	</select>
+
+	<!-- 根据条件统计角色数量 -->
+	<select id="count" resultType="Long"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Role">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_AUTH_ROLE MASTER
+		]]>
+		<where>
+			<if test="id!=null and id!=''">
+				MASTER.FID LIKE #{id}
+			</if>
+			<if test="roleName!=null and roleName!=''">
+				AND MASTER.FROLENAME LIKE #{roleName}
+			</if>
+		</where>
+	</select>
+
+	<!-- 保存角色对象 -->
+	<insert id="insert"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Role">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT ROLE_SEQ.NEXTVAL AS
+			id FROM DUAL
+		</selectKey>
+		<![CDATA[
+			insert into T_AUTH_ROLE(
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) values (
+		]]>
+		#{id},
+		<choose>
+			<when test="roleName != null">
+				#{roleName},
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="roleDesc != null">
+				#{roleDesc},
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="createUser !=null and createUser !=''">
+				#{createUser},
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		sysdate,
+		<choose>
+			<when test="modifyUser !=null and modifyUser !=''">
+				#{modifyUser},
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		sysdate
+		)
+	</insert>
+
+	<!-- 修改角色对象 -->
+	<update id="update">
+		UPDATE T_AUTH_ROLE
+		<set>
+			<if test="roleName!=null and roleName!=''">
+				FROLENAME = #{roleName},
+	    	</if>
+			<if test="roleDesc!=null and roleDesc!=''">
+				FROLEDESC = #{roleDesc},
+	    	</if>
+			<if test="modifyUser != null and modifyUser != '' ">
+				FLASTMODIFYUSERID = #{modifyUser},
+        	</if>
+			FLASTUPDATETIME = sysdate
+		</set>
+		WHERE FID = #{id}
+	</update>
+
+	<!-- 根据角色ID删除角色对象 -->
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_ROLE WHERE FID = #{id}
+		]]>
+	</delete>
+
+	<!-- 得到最后更新时间 -->
+	<select id="getLastModifyTime" resultType="date">
+		SELECT MAX(FLASTUPDATETIME)
+		FROM T_AUTH_ROLE
+	</select>
+	
+	<!-- 得到非当前用户分配的角色ID集合 -->
+	<select id="getRoleIdsNoCurrentUserAuthRole" resultType="string"  parameterType="map">
+		<![CDATA[
+			SELECT MASTER.FROLEID
+    		FROM T_AUTH_USERROLE MASTER
+   			WHERE MASTER.FUSERID = #{currentUserId}
+     		AND MASTER.FROLEID NOT IN (
+     			SELECT FROLEID
+                FROM T_AUTH_USERAUTHROLE
+                WHERE FUSERID = #{userId})
+		]]>
+	</select>
+	
+	<!-- 得到可分配的角色对象集合 -->
+	<select id="getLeftRoleByUserId" resultMap="roleResultMap"  parameterType="map">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_ROLE MASTER
+			RIGHT JOIN T_AUTH_USERAUTHROLE ENTITY_0
+			ON MASTER.FID = ENTITY_0.FROLEID
+ 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+ 			AND MASTER.FID NOT IN (
+ 			SELECT FROLEID 
+ 			FROM T_AUTH_USERROLE
+ 			WHERE FUSERID=#{userId})
+		]]>
+	</select>
+	
+	<!-- 得到已分配的角色对象集合 -->
+	<select id="getAuthedRoleByUserId" resultMap="roleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_ROLE MASTER
+			RIGHT JOIN T_AUTH_USERAUTHROLE ENTITY_0
+			ON MASTER.FID = ENTITY_0.FROLEID
+ 			WHERE ENTITY_0.FUSERID = #{currentUserId}
+ 			AND MASTER.FID IN (
+ 			SELECT FROLEID 
+ 			FROM T_AUTH_USERROLE 
+ 			WHERE FUSERID=#{userId})
+		]]>
+	</select>
+	
+	<!-- 得到登录用户所有角色对象集合 -->
+	<select id="getAllAuthRoleByUserId" resultMap="roleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_ROLE MASTER
+ 			RIGHT JOIN T_AUTH_USERAUTHROLE ENTITY_0
+			ON MASTER.FID = ENTITY_0.FROLEID
+			WHERE ENTITY_0.FUSERID = #{currentUserId}
+		]]>
+	</select>
+	
+	<!--  -->
+	<select id="queryRoleByVirtualPositionName" parameterType="Map" resultMap="roleResultMap">
+		select 
+		<include refid="select_param"/>
+	  from t_auth_role master
+	  <!-- 未映射 -->
+	  <if test="isMap!=null and isMap=='NO'">
+	   where master.fid not in (select r.froleid
+                           			 from t_crm_virtualpositionrole r
+                           			 where r.fvpid = #{virtualPositionId,jdbcType=VARCHAR})
+	  	 <if test="roleName!=null and roleName!=''">
+		  	 and master.frolename like '%'||#{roleName,jdbcType=VARCHAR}||'%'
+		 </if>
+	  </if>
+	  <if test="isMap!=null and isMap=='YES'">
+		  join t_crm_virtualpositionrole vpr
+		    on master.fid = vpr.froleid
+		  join t_crm_virtualpostion vp
+		    on vpr.fvpid = vp.fid
+		   where vp.fid= #{virtualPositionId,jdbcType=VARCHAR}	  	
+	  </if>
+	</select>
+</mapper>

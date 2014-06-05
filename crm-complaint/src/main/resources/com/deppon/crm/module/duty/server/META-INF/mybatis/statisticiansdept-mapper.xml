@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.organization.shared.domain.StatisticiansDeptMap">
+
+	<!-- 部门表返回的结果集，多表联查 -->
+	<resultMap id="statisticiansDeptMap"
+		type="com.deppon.crm.module.organization.shared.domain.Department">
+		<id property="id" column="FID" />
+		<result property="deptCode" column="FDEPTCODE" />
+		<result property="deptName" column="FDEPTNAME" />
+		<result property="standardCode" column="FSTANDARDCODE" />
+	</resultMap>
+
+	<!--查询的字段 -->
+	<sql id="select_param">
+		D.FID AS FID
+		,D.FDEPTCODE AS FDEPTCODE
+		,D.FDEPTNAME AS FDEPTNAME
+		,D.FSTANDARDCODE AS FSTANDARDCODE
+	</sql>
+    <!--根据条件查询对象 -->
+	<select id="searchStatisticiansDept" parameterType="map" 
+		resultMap="statisticiansDeptMap">
+		SELECT  
+    	<include refid="select_param" />
+    		FROM T_ORG_DEPARTMENT D WHERE D.FID IN(
+    		   SELECT E.FDEPTID FROM T_ORG_EMPLOYEE E WHERE E.FEMPCODE IN(
+    		       SELECT U.FEMPCODE FROM T_AUTH_USER U WHERE U.FID IN(
+    		            SELECT T.FUSERID FROM T_AUTH_USERROLE T WHERE T.FROLEID = #{roleId}
+    		       )
+    		   ) AND E.FSTATUS = 1 
+    		) AND D.FSTATUS = 1
+	</select>
+	
+ 
+</mapper>

@@ -1,0 +1,28 @@
+#if($contendType=="sendWithFile")
+<font face="微软雅黑">您好:</font></p>
+<font face="微软雅黑">
+领导您好！<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;附件为$warnTime生成的流失预警客户名单，此份名单中包含您查询权限下所有流失预警客户的信息，查询权限规则如下表所示：<br/>
+<table border="1" cellpadding="0" cellspacing="0">
+<tr><th>序号</th><th>角色名称</th><th>描述</th><th>备注</th></tr>
+<tr><td width = 40>1</td><td>区域经理</td><td>在企业邮箱中接收并查看所负责小区内黄金等级及以上流失预警客户名单</td><td rowspan = 4>每周周一推送一次，系统自动发送</td></tr>
+<tr><td>2</td><td>大区总经理</td><td>在企业邮箱中接收并查看所负责大区内铂金等级及以上流失预警客户名单</td></tr>
+<tr><td>3</td><td>事业部总裁</td><td>在企业邮箱中接收并查看所负责事业部内钻石等级及以上流失预警客户名单</td></tr>
+<tr><td>4</td><td>快递大区负责人</td><td>在企业邮箱中接收并查看权限部门下所有流失预警客户名单</td></tr>
+</table>	
+<br/>如果您想获得有关流失预警客户的更多信息，请登录CRM系统进行查看！<br/>
+
+此邮件是由系统自动生成，如果您发现此邮件发送不正确, 请上报IT服务平台。
+</font></p>
+#elseif($contendType=="sendWithoutFile")
+<font color="#FF0000" face="微软雅黑">$mgrEmpName($mgrEmpcode)</font>您好:</p>
+<font face="微软雅黑">
+领导您好！<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;$warnTime生成的流失预警客户名单，由于文件大小超过10M，故不便进行附件发送。由此为你工作带来的不便，敬请谅解！如果您想获得有关流失预警客户的更多信息，请登录CRM系统进行查看！
+
+此邮件是由系统自动生成，如果您发现此邮件发送不正确, 请上报IT服务平台。
+</font></p>
+#end
+<font color="#999999" face="微软雅黑" size="-1">
+<li>此邮件无需回复。</li>
+</font>

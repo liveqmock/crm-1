@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WorkFlowServiceService" targetNamespace="http://www.primeton.com/WorkFlowService" xmlns:ns0="http://common.workflow.dip" xmlns:ns1="http://www.w3.org/2001/XMLSchema" xmlns:nns="http://www.primeton.com/WorkFlowService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://common.workflow.dip" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="WorkFlowException">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="errorCode" nillable="true" type="ns1:string"/>
+          <xsd:element minOccurs="0" name="errorMessage" nillable="true" type="ns1:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WorkFlowService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="createWorkFlow_WorkFlowException" type="ns0:WorkFlowException"/>
+      <xsd:element name="deleteWorkFlow_WorkFlowException" type="ns0:WorkFlowException"/>
+      <xsd:element name="drawbackWorkFlow_WorkFlowException" type="ns0:WorkFlowException"/>
+      <xsd:element name="createWorkFlow">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="in0" nillable="true" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="in1" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="createWorkFlowResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="out1" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="deleteWorkFlow">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="in0" nillable="true" type="xsd:string"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="in1" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="deleteWorkFlowResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="out1" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="drawbackWorkFlow">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="in0" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="drawbackWorkFlowResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="out1" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="drawbackWorkFlowResponse">
+    <wsdl:part name="drawbackWorkFlowResponse" element="nns:drawbackWorkFlowResponse"/>
+  </wsdl:message>
+  <wsdl:message name="createWorkFlowResponse">
+    <wsdl:part name="createWorkFlowResponse" element="nns:createWorkFlowResponse"/>
+  </wsdl:message>
+  <wsdl:message name="drawbackWorkFlow_WorkFlowException">
+    <wsdl:part name="WorkFlowException" element="nns:drawbackWorkFlow_WorkFlowException"/>
+  </wsdl:message>
+  <wsdl:message name="createWorkFlow">
+    <wsdl:part name="createWorkFlow" element="nns:createWorkFlow"/>
+  </wsdl:message>
+  <wsdl:message name="deleteWorkFlowResponse">
+    <wsdl:part name="deleteWorkFlowResponse" element="nns:deleteWorkFlowResponse"/>
+  </wsdl:message>
+  <wsdl:message name="drawbackWorkFlow">
+    <wsdl:part name="drawbackWorkFlow" element="nns:drawbackWorkFlow"/>
+  </wsdl:message>
+  <wsdl:message name="deleteWorkFlow_WorkFlowException">
+    <wsdl:part name="WorkFlowException" element="nns:deleteWorkFlow_WorkFlowException"/>
+  </wsdl:message>
+  <wsdl:message name="deleteWorkFlow">
+    <wsdl:part name="deleteWorkFlow" element="nns:deleteWorkFlow"/>
+  </wsdl:message>
+  <wsdl:message name="createWorkFlow_WorkFlowException">
+    <wsdl:part name="WorkFlowException" element="nns:createWorkFlow_WorkFlowException"/>
+  </wsdl:message>
+  <wsdl:portType name="WorkFlowService">
+    <wsdl:operation name="createWorkFlow">
+      <wsdl:input name="createWorkFlow" message="nns:createWorkFlow"/>
+      <wsdl:output name="createWorkFlowResponse" message="nns:createWorkFlowResponse"/>
+      <wsdl:fault name="createWorkFlow_WorkFlowException" message="nns:createWorkFlow_WorkFlowException"/>
+    </wsdl:operation>
+    <wsdl:operation name="deleteWorkFlow">
+      <wsdl:input name="deleteWorkFlow" message="nns:deleteWorkFlow"/>
+      <wsdl:output name="deleteWorkFlowResponse" message="nns:deleteWorkFlowResponse"/>
+      <wsdl:fault name="deleteWorkFlow_WorkFlowException" message="nns:deleteWorkFlow_WorkFlowException"/>
+    </wsdl:operation>
+    <wsdl:operation name="drawbackWorkFlow">
+      <wsdl:input name="drawbackWorkFlow" message="nns:drawbackWorkFlow"/>
+      <wsdl:output name="drawbackWorkFlowResponse" message="nns:drawbackWorkFlowResponse"/>
+      <wsdl:fault name="drawbackWorkFlow_WorkFlowException" message="nns:drawbackWorkFlow_WorkFlowException"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

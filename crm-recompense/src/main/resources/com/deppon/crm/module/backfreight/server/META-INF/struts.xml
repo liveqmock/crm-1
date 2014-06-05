@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="backfreight" namespace="/backfreight" extends="crm-default">
+	   
+	   <!--1. 退运费新增页面-->
+		<action name ="addBackfreight" >							
+			<result name ="success" >addBackfreight.html</result >
+		</action>
+		
+		<!--2. 退运费查询页面-->
+		<action name ="queryBackfreight" >							
+			<result name ="success" >queryBackfreight.html</result >
+		</action>
+		
+		<!--3. 根据运单号查询运单信息-->
+		<action name ="searchWaybillByNum" class="backFreightAction" method="searchWaybillByNum">							
+			<result name ="success" type="json"></result >
+		</action>
+		
+		<!--4. 根据页面信息新增退运费-->
+		<action name ="submitBackFreight" class="backFreightAction" method="submitBackFreight">							
+			<result name ="success" type="json"></result >
+		</action>
+		
+		<!--5. 根据输入条件查询退运费-->
+		<action name ="searchBackFreightByCondition" class="backFreightAction" method="searchBackFreightByCondition">							
+			<result name ="success" type="json"></result >
+		</action>
+		
+		<!--5. 根据选择行退运费的ID查询退运费-->
+		<action name ="findBackFreightById" class="backFreightAction" method="findBackFreightById">							
+			<result name ="success" type="json"></result >
+		</action>
+		
+		<!--6. 根据查询条件导出信息-->
+		<action name ="exportBackFreightByCondition" class="backFreightAction" 
+				method="exportBackFreightByCondition">							
+			<result name ="success" type="json"></result >
+		</action>
+		
+	</package>
+
+</struts>

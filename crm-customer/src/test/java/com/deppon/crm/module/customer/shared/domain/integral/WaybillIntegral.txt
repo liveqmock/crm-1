@@ -1,0 +1,16 @@
+score,FCOUNT,NUMERIC
+type,ftype,VARCHAR
+contact.id,flinkid,VARCHAR
+id,fid,VARCHAR
+number,fnumber,VARCHAR
+bizDate,fbizDate,DATE
+leavedeptName,fleavedeptName,VARCHAR
+ladingstationName,fladingstationName,VARCHAR
+transType,ftransType,VARCHAR
+payMent,fpayMent,VARCHAR
+ditch,fditch,VARCHAR
+totalMoney,ftotalMoney,VARCHAR
+rate,frate,VARCHAR
+role,frole,VARCHAR
+pointdesc,fpointdesc,VARCHAR
+integDate,fcreatetime,DATE

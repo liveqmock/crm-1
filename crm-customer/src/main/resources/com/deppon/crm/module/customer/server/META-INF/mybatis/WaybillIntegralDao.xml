@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.WaybillIntegral">
+	
+	
+	<resultMap id="WaybillIntegralRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.WaybillIntegral">
+		<result property="score" column="FCOUNT" jdbcType = "NUMERIC" />
+		<result property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="number" column="FNUMBER" jdbcType = "VARCHAR" />
+		<result property="bizDate" column="FBIZDATE" jdbcType = "DATE" />
+		<result property="leavedeptName" column="FLEAVEDEPTNAME" jdbcType = "VARCHAR" />
+		<result property="ladingstationName" column="FLADINGSTATIONNAME" jdbcType = "VARCHAR" />
+		<result property="transType" column="FTRANSTYPE" jdbcType = "VARCHAR" />
+		<result property="payMent" column="FPAYMENT" jdbcType = "VARCHAR" />
+		<result property="ditch" column="FDITCH" jdbcType = "VARCHAR" />
+		<result property="totalMoney" column="FTOTALMONEY" jdbcType = "VARCHAR" />
+		<result property="rate" column="FRATE" jdbcType = "VARCHAR" />
+		<result property="role" column="FROLE" jdbcType = "VARCHAR" />
+		<result property="pointdesc" column="FPOINTDESC" jdbcType = "VARCHAR" />
+		<result property="integDate" column="FCreatetime" jdbcType = "DATE" />
+		<association property="contact" column="flinkid" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+	</resultMap>
+	
+	<select id="countSearchWaybillIntegralForContactId" parameterType="map" resultType="long">
+		<![CDATA[
+				SELECT count(*)
+		]]>
+		<include refid="searchWaybillIntegralForContactIdCondition"/>
+	</select>
+	
+	<select id="searchWaybillIntegralForContactId" parameterType="map" resultMap="WaybillIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="WaybillIntegral_column"/>
+		<include refid="searchWaybillIntegralForContactIdCondition"/>
+	</select>
+	
+	<sql id="searchWaybillIntegralForContactIdCondition">
+		FROM T_CRM_INTEGRALDETAIL
+		<where>
+			<if test="contactIdList != null and contactIdList != ''">
+				<![CDATA[ AND flinkid in (${contactIdList})]]>
+			</if>
+		</where>
+	</sql>	
+	
+	<select id="countSearchWaybillIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.WaybillIntegral" resultType="long" >
+		SELECT
+		count(*)
+		<include refid="searchWaybillIntegralsCondition"/>
+	</select>
+	
+	<select id="searchWaybillIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.WaybillIntegral" resultMap="WaybillIntegralRM">
+		SELECT
+		<include refid="WaybillIntegral_column"/>
+		<include refid="searchWaybillIntegralsCondition"/>
+	</select>
+	
+	<sql id="searchWaybillIntegralsCondition">
+		FROM T_CRM_INTEGRALDETAIL
+		<where>
+		<if test=" score != null  and score != ''  ">
+		<![CDATA[and FCOUNT=#{score,jdbcType=NUMERIC}]]>
+		</if>
+		<if test="contact != null and contact.id != null  and contact.id != ''  ">
+		<![CDATA[and flinkid=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" number != null  and number != ''  ">
+		<![CDATA[and FNUMBER=#{number,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bizDate != null  and bizDate != ''  ">
+		<![CDATA[and FBIZDATE=#{bizDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" leavedeptName != null  and leavedeptName != ''  ">
+		<![CDATA[and FLEAVEDEPTNAME=#{leavedeptName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ladingstationName != null  and ladingstationName != ''  ">
+		<![CDATA[and FLADINGSTATIONNAME=#{ladingstationName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" transType != null  and transType != ''  ">
+		<![CDATA[and FTRANSTYPE=#{transType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" payMent != null  and payMent != ''  ">
+		<![CDATA[and FPAYMENT=#{payMent,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ditch != null  and ditch != ''  ">
+		<![CDATA[and FDITCH=#{ditch,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" totalMoney != null  and totalMoney != ''  ">
+		<![CDATA[and FTOTALMONEY=#{totalMoney,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" rate != null  and rate != ''  ">
+		<![CDATA[and FRATE=#{rate,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" role != null  and role != ''  ">
+		<![CDATA[and FROLE=#{role,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" pointdesc != null  and pointdesc != ''  ">
+		<![CDATA[and FPOINTDESC=#{pointdesc,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" integDate != null  and integDate != ''  ">
+		<![CDATA[and TRUNC(FCreatetime)=TRUNC(#{integDate,jdbcType=DATE})]]>
+		</if>
+		</where>
+	</sql>
+	
+	<sql id="WaybillIntegral_column">
+		FCOUNT,
+		flinkid,
+		FID,
+		FNUMBER,
+		FBIZDATE,
+		FLEAVEDEPTNAME,
+		FLADINGSTATIONNAME,
+		FTRANSTYPE,
+		FPAYMENT,
+		FDITCH,
+		FTOTALMONEY,
+		FRATE,
+		FROLE,
+		FPOINTDESC,
+		FCreatetime
+	</sql>
+	
+	<select id="getWaybillIntegralById" parameterType="string" resultMap="WaybillIntegralRM">
+		SELECT
+		<include refid="WaybillIntegral_column"/>
+		FROM T_CRM_INTEGRALDETAIL
+		WHERE FID = #{id}
+	</select>
+
+</mapper>

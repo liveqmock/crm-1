@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.ComplaintInfo" >
+	
+	<insert id="insertComplaintInfoList" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintInfo">
+         INSERT INTO T_CUST_COMPLAINTINFO 
+          	(FID, 
+          	 FEMPCODE, 
+          	 FCOMPLAINTCOUNT,
+          	 FISSEND,
+          	 FFAILURECOUNT,
+          	 fcreatetime)
+         VALUES
+         	(SEQ_T_CUST_COMPLAINTINFO.nextval,
+             #{empCode},
+             #{complaintCount},
+             #{isSend},
+             #{failureCount},
+             #{createtime, jdbcType=TIMESTAMP}
+             )
+         
+         /* ComplaintInfo : com.deppon.crm.module.complaint.shared.domain.ComplaintInfo.insertComplaintInfoList (justin.xu) */
+     </insert>
+     
+	 <select id="inquireComplaintInfo" resultType="com.deppon.crm.module.complaint.shared.domain.ComplaintInfo"
+	 		 parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintInfo">
+	    select FID					AS id,
+	    	   FEMPCODE 			AS empCode,
+	    	   FCOMPLAINTCOUNT		AS complaintCount,
+	    	   FISSEND				AS isSend,
+	    	   FFAILURECOUNT		AS failureCount
+	    from T_CUST_COMPLAINTINFO 
+	    where 1=1
+	    AND FISSEND='0'
+	    <![CDATA[
+	    	AND rownum<=#{perCount}
+	    ]]>
+	    
+	     /* ComplaintInfo : com.deppon.crm.module.complaint.shared.domain.ComplaintInfo.inquireComplaintInfo (justin.xu) */
+	  </select>
+	  
+	  <update id="updateComplaintInfoInfo" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintInfo">
+	  	 update T_CUST_COMPLAINTINFO
+	  	 set FISSEND			=#{isSend},
+	  	 	 FFAILURECOUNT		=#{failureCount},
+	  	 	 flastupdatetime	=#{lastupdatetime, jdbcType=TIMESTAMP}
+	  	 where FID=#{id}
+	  	 
+	  	 /* ComplaintInfo : com.deppon.crm.module.complaint.shared.domain.ComplaintInfo.updateComplaintInfoInfo (justin.xu) */
+	  </update>
+	  
+	    <update id="updateSusComplaintInfoList" parameterType="list">
+	  	
+	  	 update T_CUST_COMPLAINTINFO
+	  	 	set FISSEND='1',
+	  	 	 flastupdatetime=sysdate
+	  	 	 where FID  in 
+	  	 <foreach collection="list" open="(" close=")" item="item"
+			separator=",">
+	  	 	  #{item,jdbcType=VARCHAR}	
+	
+		
+		</foreach>
+	  	 
+	  </update>
+	  <update id="updateFailComplaintInfoList" parameterType="list">
+	  	
+	  	 update T_CUST_COMPLAINTINFO
+	  	 	set FFAILURECOUNT=FFAILURECOUNT+1,
+	  	 	 flastupdatetime=sysdate
+	  	 	 where FID  in 
+	  	 <foreach collection="list" open="(" close=")" item="item"
+			separator=",">
+	  	 	  #{item,jdbcType=VARCHAR}	
+		
+		</foreach>
+	  	 
+	  </update>
+</mapper>

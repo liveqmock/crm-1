@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Detail">
+  
+
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="detailResultMap"
+		type="com.deppon.crm.module.common.shared.domain.Detail">
+		<id property="id" column="DETAIL_ID" />
+		<result property="parentId" column="DETAIL_PARENTID" />
+		<result property="codeType" column="DETAIL_CODETYPE" />
+		<result property="code" column="DETAIL_CODE" />
+		<result property="codeDesc" column="DETAIL_CODEDESC" />
+		<result property="status" column="DETAIL_STATUS" javaType="java.lang.Boolean"
+			jdbcType="VARCHAR" />
+		<result property="codeSeq" column="DETAIL_CODESEQ" />
+		<result property="language" column="DETAIL_LANGUAGE" />
+		
+		<result property="createUser" column="DETAIL_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="DETAIL_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="DETAIL_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="DETAIL_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+				
+	    <result property="invaliTime" column="DETAIL_INVALITIME" 
+	    javaType="Date" jdbcType="TIMESTAMP"/>	
+	</resultMap>
+
+	<!-- 数据字典详细结果信息 -->
+	<sql id="detail_select_param">
+		DETAIL.FID AS DETAIL_ID,
+		DETAIL.FPARENTID AS DETAIL_PARENTID,
+		DETAIL.FCODETYPE AS DETAIL_CODETYPE,
+		DETAIL.FCODE AS DETAIL_CODE,
+		DETAIL.FCODEDESC AS DETAIL_CODEDESC,
+		CASE 
+          WHEN DETAIL.FSTATUS = 'A' 
+             THEN 1 
+          ELSE 0 
+        END AS DETAIL_STATUS,
+		DETAIL.FCODESEQ AS DETAIL_CODESEQ,
+		DETAIL.FLANGUAGE AS DETAIL_LANGUAGE,
+		DETAIL.FCREATEUSERID AS DETAIL_CREATEUSER,
+		DETAIL.FCREATETIME AS DETAIL_CREATEDATE,
+		DETAIL.FLASTMODIFYUSERID AS DETAIL_MODIFYUSER,
+		DETAIL.FLASTUPDATETIME AS DETAIL_MODIFYDATE,
+		DETAIL.FINVALIDTIME AS DETAIL_INVALITIME
+	</sql>
+	
+	<sql id="detail_select_condition">
+	  <if test="parentId !=null and parentId!=''" >
+	     AND DETAIL.FPARENTID = #{parentId,jdbcType=NUMERIC}
+	   </if>
+	    <if test="id!=null and id!=''" >
+	     AND DETAIL.FID = #{id,jdbcType=NUMERIC}
+	   </if>
+	     <if test="codeDesc !=null and codeDesc!=''" >
+	     AND DETAIL.FCODEDESC like '%'||#{codeDesc,jdbcType=NUMERIC}||'%'
+	   </if>
+	    <if test="codeType!=null and codeType!=''" >
+	     AND DETAIL.FCODETYPE = #{codeType,,jdbcType=VARCHAR}
+	   </if>
+	    <if test="status!=null and status!=''" >
+	       <if test="status == true">
+	          AND DETAIL.FSTATUS = 'A'
+	       </if> 
+	      
+	   </if>
+	</sql>
+	
+	<!-- 获取最新的修改时间 -->
+	<select id="getLastModifyTime" resultType="date">
+		<![CDATA[
+			SELECT MAX(FLASTUPDATETIME) FROM T_CODE_DETAIL
+		]]>
+	</select>
+	
+	<select id="getDetail" parameterType="com.deppon.crm.module.common.shared.domain.Detail" resultMap="detailResultMap">
+	  select 
+	   <include refid="detail_select_param"/>
+	   from T_CODE_DETAIL DETAIL
+	  <![CDATA[ where (DETAIL.FINVALIDTIME is null or  DETAIL.FINVALIDTIME > SYSDATE) ]]>
+	   <include refid="detail_select_condition"/>
+	</select>
+	
+	<select id="getDetailCount" parameterType="com.deppon.crm.module.common.shared.domain.Detail" resultType="Integer">
+	  select count(*) from  T_CODE_DETAIL DETAIL
+	  <![CDATA[ where (DETAIL.FINVALIDTIME is null or  DETAIL.FINVALIDTIME > SYSDATE) ]]>
+	  <include refid="detail_select_condition"/>
+	</select>
+	
+	<insert id="insertDetail" parameterType="com.deppon.crm.module.common.shared.domain.Detail">
+	   insert into T_CODE_DETAIL (FID, FPARENTID, FCODETYPE, FCODE, FCODEDESC, 
+  FSTATUS, FCODESEQ, FLANGUAGE, FCREATETIME, FCREATEUSERID, 
+  FLASTUPDATETIME)
+values 
+    (SEQ_ID_DETAIL.nextval,#{parentId,JDBCTYPE=NUMERIC},#{codeType,JDBCTYPE=VARCHAR},#{code,JDBCTYPE=VARCHAR},#{codeDesc,JDBCTYPE=VARCHAR},
+    'A',#{codeSeq,JDBCTYPE=NUMERIC},#{language,JDBCTYPE=VARCHAR},SYSDATE,#{createUser,JDBCTYPE=NUMERIC},
+    SYSDATE
+    )
+	</insert>
+    
+     <update id="updateDetail" parameterType="com.deppon.crm.module.common.shared.domain.Detail">
+        update T_CODE_DETAIL DETAIL set DETAIL.FLASTUPDATETIME=SYSDATE,DETAIL.FLASTMODIFYUSERID=#{modifyUser}
+          <if test="codeDesc!=null and codeDesc !=''">
+             ,DETAIL.FCODEDESC = #{codeDesc}
+          </if>
+          
+           <if test="status!=null and status!=''">
+             ,DETAIL.FSTATUS = #{status}
+          </if>
+           <if test="codeSeq!=null and codeSeq!=''">
+             ,DETAIL.FCODESEQ = #{codeSeq}
+          </if>
+          <if test="language!=null and clanguage!=''">
+             ,DETAIL.FLANGUAGE = #{codeSeq}
+          </if>
+     where  DETAIL.FCODE=#{code}
+     
+     </update>
+     <!-- 修改数据字典详细，根据id -->
+      <update id="updateDetail_new" parameterType="com.deppon.crm.module.common.shared.domain.Detail">
+        update T_CODE_DETAIL DETAIL set DETAIL.FLASTUPDATETIME=SYSDATE,DETAIL.FLASTMODIFYUSERID=#{modifyUser}
+          <if test="codeDesc!=null and codeDesc !=''">
+             ,DETAIL.FCODEDESC = #{codeDesc}
+          </if>
+           <if test="codeType!=null and codeType !=''">
+             ,DETAIL.FCODETYPE = #{codeType}
+          </if>
+           <if test="code!=null and code!=''">
+             ,DETAIL.FCODE = #{code}
+          </if>
+           <if test="codeSeq!=null and codeSeq!=''">
+             ,DETAIL.FCODESEQ = #{codeSeq}
+          </if>
+          <if test="language!=null and language!=''">
+             ,DETAIL.FLANGUAGE = #{language}
+          </if>
+     where  DETAIL.FID=#{id}
+     </update>
+     
+      <update id="delDetail" parameterType="com.deppon.crm.module.common.shared.domain.Detail">
+        update T_CODE_DETAIL DETAIL 
+            set DETAIL.FLASTUPDATETIME=SYSDATE,
+                DETAIL.FLASTMODIFYUSERID=#{modifyUser},
+                DETAIL.FSTATUS='N'
+          <if test="invaliTime!=null and invaliTime!=''">
+             ,DETAIL.FINVALIDTIME = #{invaliTime,jdbcType=TIMESTAMP}
+          </if>
+    where 
+      <if test="id!=null and id != ''">
+            DETAIL.fid=#{id}
+       </if>
+     </update>
+     
+     <select id="queryMapCodeDesc" parameterType="Map" resultType="Map">
+         select detail.fcodedesc,d.fcodedesc PARENT_DESC 
+         from t_code_detail detail 
+              inner join t_code_detail d on d.fid=detail.fparentid
+         where detail.fcodetype=#{codeType} 
+              and  detail.fcodedesc in (${codeDescs})
+     </select>
+    <!-- 删除数据字典信息 -->
+    <delete id="deleteDetail" parameterType="com.deppon.crm.module.common.shared.domain.Detail">
+		delete from T_CODE_DETAIL DETAIL where DETAIL.fid=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+
+	<!-- 映射 -->
+	<resultMap id="resultMap"
+		type="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+		<id property="id" column="LD_FID" />
+		<result property="createDate" column="LD_FCREATETIME" />
+		<result property="createUser" column="LD_FCREATEUSERID" />
+		<result property="modifyDate" column="LD_FLASTUPDATETIME" />
+		<result property="modifyUser" column="LD_FLASTMODIFYUSERID" />
+		<result property="ifReceive" column="LD_FISRECEIVE" jdbcType="VARCHAR" />
+		<result property="resource" column="LD_FRESOURCE" jdbcType="VARCHAR" />
+		<result property="beginDepName" column="BEGINNAME" jdbcType="VARCHAR" />
+		<result property="acceptDepName" column="ACCEPTNAME" jdbcType="VARCHAR" />
+		<result property="createUserName" column="CREATORNAME" jdbcType="VARCHAR" />
+		<result property="modifyUserName" column="MODIFIERNAME" jdbcType="VARCHAR" />
+		
+		<!-- 新增始发网点和受理部门的标杆编码对应关系，非关联字段，只用于显示和查询 added by 邢悦 -->
+		<result property="beginDeptStandardCode" column="BEGIN_STANDARDCODE" jdbcType="VARCHAR" />
+		<result property="acceptDeptStandCode" column="ACCEPT_STANDARDCODE" jdbcType="VARCHAR" />
+		<!-- 结束 -->
+		<!-- 2012.7.10新增有效性字段标志位，有效位1，无效为0 -->
+		<result property="isValid" column="IS_VALID" jdbcType="INTEGER" />
+		<!-- 结束 -->
+		<association property="acceptDept" column="LD_ACCEPTDEPT"
+			select="com.deppon.crm.module.common.shared.domain.BussinessDept.getById"
+			javaType="com.deppon.crm.module.common.shared.domain.BussinessDept" />
+		<association property="beginLading" column="LD_BEGINLADING"
+			select="com.deppon.crm.module.common.shared.domain.BussinessDept.getById"
+			javaType="com.deppon.crm.module.common.shared.domain.BussinessDept" />
+		<association property="acceptDeptN" column="LD_ACCEPTDEPT_DEPT"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />
+		<association property="beginLadingDeptN" column="LD_BEGINLADING_DEPT"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department" />			
+			
+	</resultMap>
+	
+	
+
+	<!-- 表所有字段 -->
+	<sql id="tableFields">
+	<![CDATA[
+		 LD.FID               LD_FID,
+       LD.FCREATETIME       LD_FCREATETIME,
+       LD.FCREATEUSERID     LD_FCREATEUSERID,
+       LD.FLASTUPDATETIME   LD_FLASTUPDATETIME,
+       LD.FLASTMODIFYUSERID LD_FLASTMODIFYUSERID,
+       NVL(LD.FISRECEIVE, 0) LD_FISRECEIVE,
+       LD.FRESOURCE         LD_FRESOURCE,
+       LD.FBEGINLADINGID    LD_BEGINLADING,
+       LD.FACCEPTDEPTID     LD_ACCEPTDEPT,
+       LD.FBEGINLADINGID_DEPT  LD_BEGINLADING_DEPT,
+       LD.FACCEPTDEPTID_DEPT   LD_ACCEPTDEPT_DEPT
+		]]>
+	</sql>
+	
+	
+	
+
+
+	<!-- 保存 -->
+	<insert id="save"
+		parameterType="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT
+			SEQ_ID_LADINGSTATIONDEPARTMENT.nextval as id FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_REL_LADINGSTATION_DEPARTMENT(FID, FCREATETIME,
+		FCREATEUSERID, FLASTUPDATETIME,
+		FLASTMODIFYUSERID , FISRECEIVE,
+		FRESOURCE ,FBEGINLADINGID, FACCEPTDEPTID,FBEGINLADINGID_DEPT,FACCEPTDEPTID_DEPT,IS_VALID
+		)
+		values
+		(#{id,jdbcType=VARCHAR},
+		sysdate,
+		#{createUser,jdbcType=VARCHAR},
+		sysdate,
+		#{modifyUser,jdbcType=VARCHAR},
+		#{ifReceive,jdbcType=VARCHAR},
+		#{resource,jdbcType=VARCHAR},
+		#{beginLading.id,jdbcType=VARCHAR},
+		#{acceptDept.id,jdbcType=VARCHAR},
+		#{beginLadingDeptN.id,jdbcType=VARCHAR},
+		#{acceptDeptN.id,jdbcType=VARCHAR},
+		1
+		)
+	</insert>
+
+	<!-- 修改 -->
+	<update id="update"
+		parameterType="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+		UPDATE T_REL_LADINGSTATION_DEPARTMENT SET
+		<if test="ifReceive != null and ifReceive != ''">
+			FISRECEIVE=#{ifReceive,jdbcType=VARCHAR},
+		</if>
+		<if test="resource != null and resource != ''">
+			FRESOURCE=#{resource,jdbcType=VARCHAR},
+		</if>
+		<if test=" beginLadingDeptN != null and beginLadingDeptN.id != null and beginLadingDeptN.id != ''">
+			FBEGINLADINGID_DEPT=#{beginLadingDeptN.id,jdbcType=VARCHAR},
+		</if>
+		<if test="acceptDeptN != null and acceptDeptN.id != null and acceptDeptN.id != ''">
+			FACCEPTDEPTID_DEPT=#{acceptDeptN.id,jdbcType=VARCHAR},
+		</if>
+		<if test="createDate != null and createDate != ''">
+			FCREATETIME=#{createDate,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createUser != null and createUser != ''">
+			FCREATEUSERID=#{createUser,jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null and modifyUser != ''">
+			FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR},
+		</if>
+		<if test="isValid !=null">
+			IS_VALID=#{isValid, jdbcType=INTEGER},
+		</if>
+		
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{id}
+	</update>
+
+	<!-- 删除_根据订单ID -->
+	<delete id="deleteById"
+		parameterType="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+		DELETE FROM
+		T_REL_LADINGSTATION_DEPARTMENT
+		WHERE FID =
+		#{id,jdbcType=VARCHAR}
+	</delete>
+
+	<!-- 查询订单_根据ID -->
+	<select id="getById" resultMap="resultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		FROM
+		T_REL_LADINGSTATION_DEPARTMENT LD
+		LEFT JOIN T_ORG_DEPARTMENT
+		BEGINLADING ON
+		LD.FBEGINLADINGID=BEGINLADING.FID LEFT
+		JOIN
+		T_ORG_DEPARTMENT ACCEPTDEPT
+		ON
+		LD.FACCEPTDEPTID=ACCEPTDEPT.FID
+		<where>
+			ld.FID=#{id}
+		</where>
+	</select>
+
+	<!-- 查询订单_根据条件 -->
+	<select id="searchByCondition" resultMap="resultMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+		SELECT
+		<include refid="tableFields" />
+        ,BEGINLADING.fdeptname BEGINNAME 
+        ,ACCEPTDEPT.fdeptname ACCEPTNAME
+        ,createEmp.FEMPNAME CREATORNAME
+        ,modifyEmp.FEMPNAME MODIFIERNAME
+		FROM T_REL_LADINGSTATION_DEPARTMENT LD 
+		left join T_ORG_DEPARTMENT BEGINLADING on LD.FBEGINLADINGID_DEPT = BEGINLADING.fid
+		left join t_ORG_DEPARTMENT ACCEPTDEPT on LD.FACCEPTDEPTID_DEPT = ACCEPTDEPT.fid
+		left join T_AUTH_USER createUser on createUser.fid=LD.FCREATEUSERID
+		left join T_AUTH_USER modifyUser on modifyUser.fid=LD.FLASTMODIFYUSERID
+		left join T_ORG_EMPLOYEE createEmp on createEmp.FEMPCODE=createUser.FEMPCODE 
+		left join T_ORG_EMPLOYEE modifyEmp on modifyEmp.FEMPCODE=modifyUser.FEMPCODE
+		<where>
+			LD.IS_VALID=1
+			<if test="id != null and id != ''">
+				and	LD.FID=#{id,jdbcType=VARCHAR}
+			</if>
+			<if test="beginDeptStandardCode != null and beginDeptStandardCode!= ''">
+				and BEGINLADING.Fstandardcode=#{beginDeptStandardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="acceptDeptStandCode != null and acceptDeptStandCode != ''">
+				and ACCEPTDEPT.Fstandardcode=#{acceptDeptStandCode,jdbcType=VARCHAR}
+			</if>			
+			<if test="resource != null and resource != ''">
+				and LD.FRESOURCE=#{resource,jdbcType=VARCHAR}
+			</if>
+			<if test="ifReceive != null and ifReceive != ''">
+				and LD.FISRECEIVE=#{ifReceive,jdbcType=VARCHAR}
+			</if>
+			<if test="createDateBegin != null and createDateBegin!= ''">
+				<![CDATA[
+					and LD.FCREATETIME >=#{createDateBegin,jdbcType=DATE}
+				]]>
+			</if>			
+			<if test="createDateEnd != null and createDateEnd != ''">
+				<![CDATA[
+					and LD.FCREATETIME <=#{createDateEnd,jdbcType=DATE}
+				]]>
+			</if>
+						
+		</where>
+		order by LD.FLASTUPDATETIME DESC
+	</select>
+
+	<!-- 查询订单条数_根据条件 -->
+	<select id="getCountByCondition" resultType="java.lang.Long" parameterType="map">
+		SELECT COUNT(LD.FID)
+		FROM T_REL_LADINGSTATION_DEPARTMENT LD
+		LEFT JOIN T_ORG_DEPARTMENT BEGINLADING ON LD.FBEGINLADINGID_DEPT=BEGINLADING.FID 
+		LEFT JOIN T_ORG_DEPARTMENT ACCEPTDEPT ON LD.FACCEPTDEPTID_DEPT=ACCEPTDEPT.FID
+		<where>
+			LD.IS_VALID=1
+			<if test="id != null and id != ''">
+				and	LD.FID=#{id,jdbcType=VARCHAR}
+			</if>
+			<if test="beginDeptStandardCode != null and beginDeptStandardCode!= ''">
+				and BEGINLADING.Fstandardcode=#{beginDeptStandardCode,jdbcType=VARCHAR}
+			</if>
+			<if test="acceptDeptStandCode != null and acceptDeptStandCode != ''">
+				and ACCEPTDEPT.Fstandardcode=#{acceptDeptStandCode,jdbcType=VARCHAR}
+			</if>			
+			<if test="resource != null and resource != ''">
+				and LD.FRESOURCE=#{resource,jdbcType=VARCHAR}
+			</if>
+			<if test="ifReceive != null and ifReceive != ''">
+				and LD.FISRECEIVE=#{ifReceive,jdbcType=VARCHAR}
+			</if>
+			<if test="createDateBegin != null and createDateBegin!= ''">
+				<![CDATA[
+					and LD.FCREATETIME >=#{createDateBegin,jdbcType=DATE}
+				]]>
+			</if>			
+			<if test="createDateEnd != null and createDateEnd != ''">
+				<![CDATA[
+					and LD.FCREATETIME <=#{createDateEnd,jdbcType=DATE}
+				]]>
+			</if>						
+		</where>
+	</select>
+	
+	<select id="getAcceptDeptByLeaveBusDeptName" resultMap="resultMap"
+		parameterType="map">
+		SELECT
+		<include refid="tableFields" />
+		FROM T_REL_LADINGSTATION_DEPARTMENT LD 
+		WHERE LD.FBEGINLADINGID_DEPT = #{deptId,jdbcType=VARCHAR} 
+		AND (LD.FISRECEIVE = #{isReceiveGoods,jdbcType=VARCHAR}  OR LD.FISRECEIVE = 'ALL') 
+		AND (LD.FRESOURCE=#{resource,jdbcType=VARCHAR} OR LD.FRESOURCE='ALL')
+		AND  LD.IS_VALID=1
+	</select>
+	
+	<select id="getAllLadStation" resultMap="resultMap" parameterType="map">
+		SELECT
+		<include refid="tableFields" />
+        ,d.fdeptname BEGINNAME 
+        ,o.fdeptname ACCEPTNAME
+        ,createEmp.FEMPNAME CREATORNAME
+        ,modifyEmp.FEMPNAME MODIFIERNAME
+		FROM T_REL_LADINGSTATION_DEPARTMENT LD 
+		left join t_org_department d on LD.FBEGINLADINGID_DEPT = d.fid
+		left join t_org_department o on LD.FACCEPTDEPTID_DEPT = o.fid
+		left join t_auth_user createUser on createUser.fid=LD.FCREATEUSERID
+		left join t_auth_user modifyUser on modifyUser.fid=LD.FLASTMODIFYUSERID
+		left join t_org_employee createEmp on createEmp.FEMPCODE=createUser.FEMPCODE 
+		left join t_org_employee modifyEmp on modifyEmp.FEMPCODE=modifyUser.FEMPCODE
+		WHERE LD.IS_VALID=1 
+		order by LD.FLASTUPDATETIME DESC
+	
+	</select>
+	
+	<select id="getAllLadStationCount" resultType="java.lang.Long" parameterType="map">
+		SELECT
+			count(LD.FID)
+		FROM T_REL_LADINGSTATION_DEPARTMENT LD 
+		left join t_org_department d on LD.FBEGINLADINGID_DEPT = d.fid
+		left join t_org_department o on LD.FACCEPTDEPTID_DEPT = o.fid
+		WHERE LD.IS_VALID=1 
+		order by FBEGINLADINGID	
+	
+	</select>	
+	
+	<!-- 根据条件查询网点数 -->
+	<select id="searchExistsByCondition" resultType="int"
+		parameterType="com.deppon.crm.module.common.shared.domain.LadingstationDepartment">
+		SELECT
+		COUNT(1)
+		FROM T_REL_LADINGSTATION_DEPARTMENT LD
+		WHERE  LD.IS_VALID=1
+			<if test="id != null and id != ''">
+				AND LD.FID != #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="ifReceive != null and ifReceive != ''">
+				AND FISRECEIVE=#{ifReceive,jdbcType=VARCHAR}
+			</if>
+			<if test="resource != null and resource != ''">
+				AND FRESOURCE=#{resource,jdbcType=VARCHAR}
+			</if>
+			<if
+				test=" beginLadingDeptN != null and beginLadingDeptN.id != null and beginLadingDeptN.id != ''">
+				AND FBEGINLADINGID_DEPT=#{beginLadingDeptN.id,jdbcType=VARCHAR}
+			</if>
+	</select>
+</mapper>

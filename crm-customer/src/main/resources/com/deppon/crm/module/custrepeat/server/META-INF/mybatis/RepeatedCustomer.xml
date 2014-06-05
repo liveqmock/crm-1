@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.custrepeat.shared.domain.RepeatedCustomer">
+
+	<sql id="where_searchRepeatCust">
+		<where>
+  			1 = 1
+  			<if test="isRandomOneGroup != null and isRandomOneGroup == 1">
+  			 	and t.fpushmaincustid in 
+  			 	(select fpushmaincustid from t_cust_repeated where fismaincust=1 and rownum = 1)
+  			</if>
+  			<if test="mainCustId != null">
+	  			and t.fpushmaincustid = #{mainCustId}
+	  		</if>
+  			<if test="deptId != null and deptId !='' and deptLevel != null">
+  				<!-- 普通部门 -->
+  				<if test="deptLevel == 'DEPT_ORDINARY'">
+  					and t.fdeptId = #{deptId}
+  				</if>
+  				<!-- 小区 -->
+				<if test="deptLevel == 'DEPT_SMALL_REGION'">
+					and t.fsmallregiondeptid = #{deptId}
+  				</if>
+  				<!-- 大区 -->
+  				<if test="deptLevel == 'DEPT_BIG_REGION'">
+  					and t.fbigregiondeptid = #{deptId}
+  				</if>
+  			</if>
+  			<if test="isMainCust != null and isMainCust == 1">
+  				and t.fismaincust = #{isMainCust}
+  			</if>
+  			<if test="custCode != null and custCode !=''">
+  				and t.fcustid =(select fpushmaincustid from t_cust_repeated where fcustCode = #{custCode})
+  			</if>
+  			<if test="custCode == null or custCode ==''">
+  				<if test="(custName != null and custName !='') or (telephone != null and telephone !='')">
+	  			and t.fcustid in (
+	  				select fpushmaincustid from t_cust_repeated  where 1 = 1 
+		  				<if test="custName != null and custName !=''">
+		  					and fcustname = #{custName}
+		  				</if>
+			  			<if test="telephone != null and telephone !=''">
+			  				and ftelephone = #{telephone}
+			  			</if>
+	  				)
+	  			</if>
+  			</if>
+  			<if test="custIdList != null">
+  				and t.fcustId in 
+  				<foreach collection="custIdList" open="(" close=")" separator="," item="cust">
+						#{cust.custId}
+				</foreach>
+  			</if>
+  		</where>
+	</sql>
+	
+	<!-- 查询用到的相同的字段 -->
+	<sql id="search_sameFields">
+		t.fcustid as custId,
+		t.fcustname as custName,
+		t.fbankaccount as bankAccount,
+		t.ftelephone as telephone,
+		t.fcustcode as custCode,
+		t.fcustgroup as custGroup,
+		t.fcustlevel as custLevel,
+		t.fisbigcustomer as isBigCustomer,
+		t.fcusttype as custType,
+		t.flinkmainame as linkMainName,
+		t.fdeptid as deptId,
+		t.fdeptname as deptName,
+		t.fsmallregiondeptid as smallregiondeptId,
+		t.fsmallregiondeptname as smallregiondeptName,
+		t.fbigregiondeptid as bigregiondeptId,
+		t.fbigregiondeptname as bigregiondeptName,
+		t.fbussdeptid as bussdeptId,
+		t.fbussdeptname as bussdeptName,
+		t.fisContractCust as isContractCust,
+		t.fexistvalidcontract as isExistvalidcontract,
+		t.fexisthistorycontract as isExisthistorycontract,
+		t.fcustcreatetime	as custCreateTime,
+		sp_crm_repeatCust.fn_threeMoneyDeliveryTotal(t.fcustcode) as deliverymoneyTotal,
+	</sql>
+	<!-- 查询疑似重复客户列表 -->
+	<select id="searchRepeatCustList" parameterType="com.deppon.crm.module.custrepeat.shared.domain.SearchCondition" 
+		resultType="com.deppon.crm.module.custrepeat.shared.domain.RepeatedCustomer">
+		select 
+			<include refid="search_sameFields"/>
+			t.fpushmaincustid as mainCustId,
+			t.fismaincust as isMainCust,
+			st.frepetitivestatus as repeatStatus
+	      from t_cust_repeated t left join t_cust_repetitive_status st
+	      on t.fcustid = st.fcustid
+  		<include refid="where_searchRepeatCust"/>
+  		order by t.fismaincust desc
+	</select>
+	<!-- 查询客户信息 -->
+	<select id="searchCustomerList" parameterType="com.deppon.crm.module.custrepeat.shared.domain.SearchCondition" 
+		resultType="com.deppon.crm.module.custrepeat.shared.domain.RepeatedCustomer">
+		select 
+			<include refid="search_sameFields"/>
+			'1' as isAdd
+		from v_cust_repeat t
+		<if test="searchStatus != null and searchStatus =='status_mobile'">
+			inner join (
+				<!-- 处于商机中的客户 -->
+				select fcustid from t_mark_businessopportunity
+                where fbusinessstatus in ('ONGOING','EXTENDED','DORMANT') group by fcustid
+                union
+                <!-- 处于日程中的客户（日程包含计划，计划包含流失预警） -->
+                select fcustid from t_cust_schedule
+                where fstatus in ('10','15','20') group by fcustid
+			) t_tmp on t_tmp.fcustid = t.fcustId
+		</if>
+		<where>
+			1=1
+			<if test="custStatus != null and custName !=2">
+  				and t.fcuststatus = #{custStatus}
+  			</if>
+			<if test="custCode != null and custCode !=''">
+  				and t.fcustcode = #{custCode}
+  			</if>
+  			<if test="custName != null and custName !=''">
+  				and t.fcustname = #{custName}
+  			</if>
+  			
+  			<if test="custIdList != null">
+  				and t.fcustId in 
+  				<foreach collection="custIdList" open="(" close=")" separator="," item="cust">
+					#{cust.custId}
+				</foreach>
+  			</if>
+		</where>
+	</select>
+	<!-- 查询疑似重复客户列表 count -->
+	<select id="searchRepeatCustCount" parameterType="com.deppon.crm.module.custrepeat.shared.domain.SearchCondition" 
+		resultType="long">
+		select count(*) from t_cust_repeated t
+		<include refid="where_searchRepeatCust"/>
+	</select>
+	
+	<!-- 查询疑似客户-所属部门数据- 查询点部 -->
+	<sql id="dept_select_dianbu">
+		(
+	    	select * from (
+	          select t.fid,t.fdeptname,t.fstandardcode
+	          from t_org_department t 
+	          where t.fstatus = 1 and t.fstandardcode is not null
+	          start with t.fdeptname = #{currtDeptName}
+	          connect by prior t.fid = t.fparentid
+	        ) where fdeptname like '%点部'
+	    ) dianbu
+	    left join t_crm_expresspointbusinessdept ed on dianbu.fstandardcode = ed.fexpresspointcode
+	    left join t_org_department dept on dept.fstandardcode = ed.fbusinessdeptcode
+	    where dept.fdeptname like '%' || #{deptName} ||'%'
+	</sql>
+	
+	<!-- 查询疑似客户-所属部门数据- 查询营运、普通 -->
+	<sql id="dept_select_other">
+		(
+	      select t.fid,t.fdeptname,t.fstandardcode
+	      from t_org_department t 
+	      where t.fstatus = 1 and t.fstandardcode is not null
+	      <if test="deptType == 'DEPT_SPECIAL'">
+	         start with t.fdeptname = #{currtDeptName}
+	      </if>
+	      <if test="deptType == 'DEPT_ORDINARY'">
+	         start with t.fdeptname like '%' || #{currtDeptName}
+	      </if>
+	      connect by prior t.fid = t.fparentid
+	    ) dept
+	    where fdeptname not like '%快递%' and (
+	          fdeptname like '%营业部' or fdeptname like '%派送部' 
+	          or fdeptname like '%营业区' or fdeptname like '%大区'
+	          or fdeptname = '400销售管理组' or fdeptname like '%派送中心'
+	    ) and fdeptname like '%' || #{deptName} ||'%'
+	</sql>
+	
+	<!-- 查询疑似客户-所属部门数据 -->
+	<select id="searchRepeatCustDeptList" parameterType="com.deppon.crm.module.custrepeat.shared.domain.SearchCondition"
+		resultType="com.deppon.crm.module.organization.shared.domain.Department">
+		
+		<if test="deptType == 'DEPT_EXPRESS'">
+			select 
+			dept.fid as id,dept.fdeptname as deptName,
+			dept.fstandardcode as standardCode
+			from <include refid="dept_select_dianbu"/>
+		</if>
+		
+		<if test="deptType !='DEPT_EXPRESS'">
+			select 
+			dept.fid as id,dept.fdeptname as deptName,
+			dept.fstandardcode as standardCode
+			from <include refid="dept_select_other"/>
+		</if>
+	</select>
+	
+	
+	<!-- 查询疑似客户-所属部门数据 count -->
+	<select id="searchRepeatCustDeptCount" parameterType="com.deppon.crm.module.custrepeat.shared.domain.SearchCondition"
+		resultType="integer">
+		<if test="deptType == 'DEPT_EXPRESS'">
+			select count(*) from <include refid="dept_select_dianbu"/>
+		</if>
+		
+		<if test="deptType !='DEPT_EXPRESS'">
+			select count(*) from <include refid="dept_select_other"/>
+		</if>
+	</select>
+	
+	<!-- 标记疑似重复客户  -->
+	<insert id="markCustRepeat" parameterType="string">
+		insert into t_cust_repetitive_status (fcustid, frepetitivestatus) 
+		values (#{custId},'FLAGGED')
+	</insert>
+	
+	<!-- value 可以公共的字段 -->
+	<sql id="history_insert_sameFields">
+		fcustid,
+		fcustname,
+		fbankaccount,
+		ftelephone,
+		fcustcode,
+		fcustgroup,
+		fcustlevel,
+		fcusttype,
+		fisbigcustomer,
+		flinkmainame,
+		fdeptid,
+		fdeptname,
+		fsmallregiondeptid,
+		fsmallregiondeptname,
+		fbigregiondeptid,
+		fbigregiondeptname,
+		fbussdeptid,
+		fbussdeptname,
+		fisContractCust,
+		fexistvalidcontract,
+		fexisthistorycontract,
+		FcustCREATETIME,
+	</sql>
+	
+	<!-- 新建疑似重复客户-->
+	<insert id="AddNew_RepeatCust" parameterType="com.deppon.crm.module.custrepeat.shared.domain.RepeatedCustomer">
+		insert into t_cust_repeated (
+			<include refid="history_insert_sameFields"/>
+			fdeliverymoneyTotal,
+			fpushmaincustid,
+			fismaincust,
+			fcreatetime
+		)
+		select 
+			<include refid="history_insert_sameFields"/>
+			#{deliveryMoneyTotal,jdbcType=VARCHAR},
+			#{mainCustId},
+			#{isMainCust},
+			sysdate
+		from v_cust_repeat vcu 
+		where vcu.fcuststatus = 0 and vcu.fcustId = #{custId}
+	</insert>
+	
+	<!-- 疑似重复客户历史表新增数据-数据来源-疑似重复客户表 -->
+	<insert id="AddRepeatCust_toHistory" parameterType="com.deppon.crm.module.custrepeat.shared.domain.RepeatedCustomer">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_ID_REPEADTED_HISTORY.nextval AS
+				id FROM DUAL
+		</selectKey>
+		insert into t_cust_repeated_history (
+			<include refid="history_insert_sameFields"/>
+			fdeliverymoneyTotal,
+			fpushmaincustid,
+			fismaincust,
+			fcreatetime,
+			fid
+		)
+		select 
+			<include refid="history_insert_sameFields"/>
+			fdeliverymoneyTotal,
+			fpushmaincustid,
+			fismaincust,
+			fcreatetime,
+			#{id}
+		from t_cust_repeated cu 
+		where cu.fcustId = #{custId}
+	</insert>
+	<!-- 批量删除疑似重复客户数据 -->
+	<delete id="deleteRepeatCustList">
+		delete t_cust_repeated where fcustId in 
+		<foreach collection="list" open="(" close=")" separator="," item="cust">
+				#{cust.custId}
+		</foreach>
+	</delete>
+	<!-- 查询当前客户是否存在疑似重复列表中 -->
+	<select id="custIsExistsRepeat" parameterType="string" resultType="integer">
+		select count(*) from t_cust_repeated t where t.fcustId = #{custId}
+	</select>
+	
+	<!-- 定时器：检索、赛选疑似重复客户数据，并找出每组数据的主客户 -->
+	<select id="disposeRepeatCustData">
+	  	{call sp_crm_repeatCust.main_repeatCustDataDispose}  
+	</select>
+	
+	<!-- 定时器：清除疑似重复标记状态 - 清除数据 -->
+	<select id="clearALLRepeatCustMark">
+	  	delete t_cust_repetitive_status
+	</select>
+	
+	<!-- 根据客户编号，删除已标记的客户 -->
+	<delete id="deleteMarkCustByCustId">
+		delete t_cust_repetitive_status where fcustId = #{custId}
+	</delete>
+	
+	<!-- 保存疑似重复工作流信息详情 -->
+	<insert id="saveWorkFlowInfo" parameterType="com.deppon.crm.module.custrepeat.shared.domain.RepetitiveCustWorkFlowInfo">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_ID_REPETIVITEWORKFLOW.nextval AS
+				id FROM DUAL
+		</selectKey>
+		insert into T_CUST_REPETITIVEWORKFLOWINFO(
+  				FID,
+  				FWORKFLOWID,
+  				FCUSTMERCODE,
+  				FCUSTMERNAME,
+  				FTELPHONENUM,
+  				FDEPTID,
+				FDEPTNAME,
+				FAREANAME,
+				FREGIONNAME,
+				FBUSSDEPTNAME,
+				FCUSTGROUP,
+				FDEGREE,
+				FBIGCUST,
+				FCONTRACT,
+				FHISTRYCONTRACT,
+				FTHREEMONMONEY,
+				FBANKCARD,
+				FWORKFLOWSTATUS,
+				FPROPOSER,
+				FCREATETIME,
+				FDISPOSEOPINION
+		)values(
+			#{id,jdbcType=VARCHAR},
+			#{repetitveCustWorkFlowId,jdbcType=VARCHAR},
+			#{customerCode,jdbcType=VARCHAR},
+			#{customerName,jdbcType=VARCHAR},
+			#{telphoneNum,jdbcType=VARCHAR},
+			#{deptId,jdbcType=VARCHAR},
+			#{deptName,jdbcType=VARCHAR},
+			#{areaName,jdbcType=VARCHAR},
+			#{regionName,jdbcType=VARCHAR},
+			#{bussDeptName,jdbcType=VARCHAR},
+			#{customerGroup,jdbcType=VARCHAR},
+			#{customerLevel,jdbcType=VARCHAR},
+			#{bigCust,jdbcType=NUMERIC},
+			#{contract,jdbcType=NUMERIC},
+			#{histryContract,jdbcType=NUMERIC},
+			#{threeMonMoney,jdbcType=NUMERIC},
+			#{bankCard,jdbcType=VARCHAR},
+			#{repetitveCustWorkFlowStatus,jdbcType=VARCHAR},
+			#{proposer,jdbcType=VARCHAR},
+			sysdate,
+			#{disposeOpinion,jdbcType=VARCHAR}
+		)
+	</insert>
+	<resultMap id="DeptSearchForRepeat"
+			type="com.deppon.crm.module.organization.shared.domain.Department" >
+		<result column="DEPTID" property="id" jdbcType="VARCHAR"/>
+		<result column="DEPTNAME" property="deptName" jdbcType="VARCHAR"/>
+		<result column="STANDARDCODE" property="standardcode" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="searchUnderDeptsById" parameterType="com.deppon.crm.module.custrepeat.shared.domain.SearchDeptCondition"
+		resultMap="DeptSearchForRepeat">
+		 select distinct(tt.fstandardcode) as standardCode,tt.fdeptname as deptName,tt.fid as deptId from (
+           select * from t_org_department  t
+           start with t.fid = #{deptId}
+           connect by prior t.fid = t.fparentid
+    	) tt where tt.fstatus = 1  and  tt.fstandardcode is not null and (
+    	   tt.fdeptname like '%'||#{salesDept} or tt.fdeptname like  '%'||#{sendDept}
+     	   or tt.fdeptname like '%'||#{regionDept} or tt.fdeptname like '%'||#{areaDept})
+	</select>
+	<resultMap type="com.deppon.crm.module.custrepeat.shared.domain.RepetitiveCustWorkFlowInfo" id="repetitiveCustWorkFlow">
+		<result column="FWORKFLOWID" property="repetitveCustWorkFlowId" jdbcType="VARCHAR"/>
+		<result column="FCUSTMERCODE" property="customerCode" jdbcType="VARCHAR"/>
+		<result column="FCUSTMERNAME" property="customerName" jdbcType="VARCHAR"/>
+		<result column="FTELPHONENUM" property="telphoneNum" jdbcType="VARCHAR"/>
+		<result column="FDEPTID" property="deptId" jdbcType="VARCHAR"/>
+		<result column="FDEPTNAME" property="deptName" jdbcType="VARCHAR"/>
+		<result column="FAREANAME" property="areaName" jdbcType="VARCHAR"/>
+		<result column="FREGIONNAME" property="regionName" jdbcType="VARCHAR"/>
+		<result column="FBUSSDEPTNAME" property="bussDeptName" jdbcType="VARCHAR"/>
+		<result column="FCUSTGROUP" property="customerGroup" jdbcType="VARCHAR"/>
+		<result column="FDEGREE" property="customerLevel" jdbcType="VARCHAR"/>
+		<result column="FBIGCUST" property="bigCust" jdbcType="VARCHAR"/>
+		<result column="FCONTRACT" property="contract" jdbcType="VARCHAR"/>
+		<result column="FHISTRYCONTRACT" property="histryContract" jdbcType="VARCHAR"/>
+		<result column="FTHREEMONMONEY" property="threeMonMoney" jdbcType="NUMERIC"/>
+		<result column="FBANKCARD" property="bankCard" jdbcType="VARCHAR"/>
+		<result column="FWORKFLOWSTATUS" property="repetitveCustWorkFlowStatus" jdbcType="VARCHAR"/>
+		<result column="FPROPOSER" property="proposer" jdbcType="VARCHAR"/>
+		<result column="FCREATETIME" property="createTime" jdbcType="DATE"/>
+		<result column="FDISPOSEOPINION" property="disposeOpinion" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="findRepetitiveCustWorkFlowInfoByWorkNo" parameterType="string"
+		resultMap="repetitiveCustWorkFlow">
+		SELECT FID,FWORKFLOWID,FCUSTMERCODE,FCUSTMERNAME,FTELPHONENUM,FDEPTID,
+			FDEPTNAME,FAREANAME,FREGIONNAME,FBUSSDEPTNAME,FCUSTGROUP,FBUSSDEPTNAME,
+			FDEGREE,FBIGCUST,FCONTRACT,FHISTRYCONTRACT,FTHREEMONMONEY
+			,FBANKCARD,FWORKFLOWSTATUS,FPROPOSER,FCREATETIME,FDISPOSEOPINION 
+		FROM T_CUST_REPETITIVEWORKFLOWINFO W WHERE W.FWORKFLOWID =#{bizCode}
+	</select>
+	<!-- 更新工作流状态 -->
+	<update id="updateRepetitiveCustWorkFlowInfo" parameterType="com.deppon.crm.module.custrepeat.shared.domain.RepetitiveCustWorkFlowInfo">
+		update T_CUST_REPETITIVEWORKFLOWINFO f set f.fworkflowstatus = #{repetitveCustWorkFlowStatus}
+		where f.fworkflowid = #{repetitveCustWorkFlowId}
+	</update>
+	
+	<!-- 更新疑似重复主客户ID 和 是否为主客户 -->
+	<update id="updateRepeatCustStatus" parameterType="com.deppon.crm.module.custrepeat.shared.domain.RepeatedCustomer">
+		update t_cust_repeated set fpushmaincustid=#{mainCustId}
+		<if test="isMainCust != null and isMainCust != 0">
+			,fismaincust='1'
+		</if> 
+		where fcustid = #{custId}
+	</update>
+	
+	<select id="selectCustIsRepeatMarked" parameterType="string" resultType="integer">
+		select count(1) from t_cust_repetitive_status where fcustid = #{custId}
+	</select>
+	
+	<select id="selectWorkFlowNoByCustId" parameterType="string" resultType="string">
+		select re.fworkflowid from t_cust_repetitiveworkflowinfo re where re.fcustmercode =#{custCode}
+	</select>
+</mapper>

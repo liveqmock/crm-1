@@ -1,0 +1,318 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- <parent>
+		<groupId>com.deppon.crm</groupId>
+		<artifactId>crm-parent</artifactId>
+		<version>0.2-SNAPSHOT</version>
+		<relativePath>../crm-parent</relativePath>
+	</parent> -->
+	<groupId>com.deppon.crm</groupId>
+	<artifactId>crm-interface-thirdlib</artifactId>
+	<version>3.1.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cxf.version>2.4.2</cxf.version>
+	</properties>
+	<dependencies>
+		<!-- axis 费控 -->
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis-jaxrpc</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+  					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-core</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-tools-wsdlto-test</artifactId>
+			<version>2.4.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-codegen-plugin</artifactId>
+			<version>${cxf.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>http://192.168.17.183:8081/nexus/content/repositories/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://192.168.17.183:8081/nexus/content/repositories/snapshots/</url>
+			<layout>default</layout>
+		</snapshotRepository>
+	</distributionManagement>
+	<build>
+		<plugins>
+			<!-- <plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<executions>
+				<execution>
+						<id>process-classes</id>
+						<phase>process-classes</phase>
+						<configuration>
+							<sourceRoot>${basedir}/src/main/java</sourceRoot>
+							<wsdlOptions> -->
+							<!-- ERP-->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.14.181:8080/eas544ws/services/erp2crmService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/erp/date.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.erp.waybill</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.203:8080/eas2fin/services/erp2crmService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/erp/date1.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.erp.waybill</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- ERP订单状态对比 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.14.67:8080/eas544ws/services/orderAndCustService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/erp/date2.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.erp.custAndOrder</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+
+								<!-- ESB 接货单新增、电商订单状态更新、常规理赔、多赔、合同工作流 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.142:8080/esb/webservice/workflow/apply?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.esb.ws</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.142:8080/esb/webservice/deppon/syncService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.esb.sync</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- <wsdlOption>
+									<wsdl>http://localhost:9090/sync?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.esb.sync</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- OA -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.250:8080/eos-default/WorkFlowService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.oa.workflow</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.120:8080/dipApp/WorkFlowService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.oa.deleteWorkflow</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.250:8080/eos-default/ErrorService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.oa.error</extraarg>
+									</extraargs>
+								</wsdlOption> 
+								<wsdlOption>
+									<wsdl>http://192.168.17.44/portal/TaskService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.oa.task</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.19.33:8080/eos-default/QueryWorkFlowStateService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/OA/date1.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.oa.workflow</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								
+								<!-- 网厅 -->
+							<!-- 	 <wsdlOption>
+									<wsdl>http://192.168.14.44:8082/webWsPro/webservice/userforCutNubmer?wsdl</wsdl>
+									<bindingFile>${basedir}/src/main/resources/BHO/date.xml</bindingFile>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.bho.customer</extraarg>
+									</extraargs>
+								</wsdlOption>  -->
+
+								<!-- 费控 -->
+								<!-- <wsdlOption> <wsdl>http://192.168.14.8:6888/ormrpc/services/WSFinanceForCrmFacade?wsdl 
+									</wsdl> </wsdlOption> -->
+
+								<!-- 后勤 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.103:8085/dipApp/IApplyGiftService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.lms.workflow</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+
+								<!-- 报表 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.14.19:8080/eos-default/CRM_CusStaByNumService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/BI/date.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.bi.leave</extraarg>
+									</extraargs>
+								</wsdlOption>
+								<wsdlOption>
+									<wsdl>http://192.168.14.19:8080/eos-default/CRM_CusArrStaByNumService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/BI/date1.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.bi.arrived</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- 电商 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.251:8251/alibaba/webservice/orderStatusUpdateService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/BI/date.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.ebm</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- 电子地图 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.104:8080/dpbaidumap/crm/map2crm?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.map.baidu</extraarg>
+									</extraargs>
+								</wsdlOption>  -->
+								<!-- 呼叫中心 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.11.41:8080/depponcc/services/receiveWorkOrderIdService?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.cc.complaint</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- 结算 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.14.46:8080/eas544ws/services/DepClaimsBillService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/erp/date3.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.erp.payment</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+							<!-- 	<wsdlOption>
+									<wsdl>http://192.168.17.203:8080/eas2fin/services/erp2crmMsgService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/erp/date4.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.erp.payment</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- 电商状态对比 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.14.31:8080/alibaba/webservice/queryOrderStatusService?wsdl</wsdl>
+									<bindingFiles>
+										<bindingFile>${basedir}/src/main/resources/EBM/date1.xml</bindingFile>
+									</bindingFiles>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.ebm</extraarg>
+									</extraargs>
+								</wsdlOption> -->
+								<!-- 财务 标杆编码 -->
+								<!-- <wsdlOption>
+									<wsdl>http://192.168.17.124:9888/ormrpc/services/EASLogin?wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.deppon.fin</extraarg>
+									</extraargs>
+								</wsdlOption>-->
+							<!-- </wsdlOptions>  
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions> 
+			</plugin>  -->
+			
+		</plugins>
+	</build>
+</project>

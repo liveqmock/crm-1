@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.shared.domain.LadingStation">
+
+	<!-- 创建时间，更新时间 -->
+	<sql id="Creat_Update_columns">
+		<![CDATA[
+			#{id}, 
+			sysdate, #{createUser, jdbcType=VARCHAR}, 
+			sysdate, #{modifyUser, jdbcType=VARCHAR},
+		]]>			
+	</sql>
+	<select id="queryCRMLadingStationByErpID" parameterType="String" 
+			resultType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">
+		<![CDATA[
+			SELECT CL.FDEPTNAME 		DEPTNAME,
+			       CL.FDEPTADDR 		DEPTADDR,
+			       CL.FREMARK 			REMARK,
+			       CL.FCONTACT 			CONTACT,
+			       CL.FISOUTFIELD 		ISOUTFIELD,
+			       CL.FISTRANSIT 		ISTRANSIT,
+			       CL.FISENABLE 		ISENABLE,
+			       CL.FAREA 			AREA,
+			       CL.FNEWPROVINCEID 	PROVINCEID,
+			       CL.FNEWCITYID 		CITYID,
+			       CL.FNEWAREAID 		AREAID,
+			       CL.FISOPEN 			ISOPEN,
+			       CL.FORGID 			ORGID,
+			       CL.FISARRIVE 		ISARRIVE,
+			       CL.FISLEAVE 			ISLEAVE,
+			       CL.FISHOMEDELIVERY	ISHOMEDELIVERY,
+			       CL.FISSELFDELIVERY 	ISSELFDELIVERY,
+			       CL.FISOUTWARD 		ISOUTWARD,
+			       CL.FISTEAM 			ISTEAM,
+			       CL.FISHAVEPDA 		ISHAVEPDA,
+			       CL.FERPID 			ERPID,
+			       CL.FSTANDARDCODE 	STANDARDCODE
+			  FROM T_CRM_LADINGSTATION CL
+			 WHERE CL.FERPID = #{erpId}
+		]]>
+	</select>
+	
+	<!-- 根据日期查询ERP网点数据 -->
+	<select id="queryERPLadingStation" parameterType="date" 
+			resultType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">
+		<![CDATA[
+		SELECT BL.FNAME_L2            DEPTNAME,
+		       BL.FSTATIONADDRESS     DEPTADDR,
+		       BL.FDESCRIPTION_L2     REMARK,
+		       BL.FSTATIONTEL         CONTACT,
+		       NVL(BB.FISOUTSTORAGE, 0)      ISOUTFIELD,
+		       NVL(BB.FISTRANSFER, 0) ISTRANSIT,
+		       NVL(BB.FISUSED, 0)     ISENABLE,
+		       0			  		  AREA,
+		       NVL(P.FID, TMP2.FID)   PROVINCEID,
+		       NVL(C.FID, TMP1.FID)   CITYID,
+		       A.FID				  AREAID,
+		       NVL(BB.FISONLINE,  CASE
+	               WHEN BL.FDELETESTATUS <> 1 THEN
+	                1
+	               ELSE
+	                0
+	             END
+	            )   					ISOPEN,
+		       OD.FID                 ORGID,
+		       CASE
+	             WHEN BL.FISCANCELARRIVE <> 1 THEN
+	              1
+	             ELSE
+	              0
+	           END ISARRIVE,
+		       NVL(BB.FISRECEIVEGOODS, 0) ISLEAVE,
+		       NVL(BL.FISDELIVER, 0)   ISHOMEDELIVERY,
+		       NVL(BL.FISBEPICK, 0)    ISSELFDELIVERY,
+		       NVL(BL.FLADINGSORT, 0)  ISOUTWARD,
+		       0                       ISTEAM,
+		       0                       ISHAVEPDA,
+		       NVL(BB.FID, BL.FID) ERPID,
+		       NVL(TRIM(OD.FSTANDARDCODE), TRIM(BB.FSTANDARDCODE))   STANDARDCODE
+		  FROM T_BAS_LADINGSTATION BL
+		  LEFT JOIN T_BAS_BUSINESSDEPT BB ON BL.FID = BB.FID
+		  LEFT JOIN T_ORG_DEPARTMENT OD ON TRIM(BB.FSTANDARDCODE) = TRIM(OD.FSTANDARDCODE)
+		  LEFT JOIN (SELECT P1.FID NEWPROVINCE, P2.FID FROM T_BAS_PROVINCE P1 
+		  				INNER JOIN T_CRM_PROVINCE P2 ON P1.FADMINCODE = P2.FNUMBER) P ON BB.FNEWPROVINCE = P.NEWPROVINCE
+		  LEFT JOIN (SELECT C1.FID NEWCITY, C2.FID FROM T_BAS_CITY C1 
+		  				INNER JOIN T_CRM_CITY C2 ON C1.FADMINCODE = C2.FNUMBER) C ON BB.FNEWCITY = C.NEWCITY
+		  LEFT JOIN (SELECT A1.FID NEWAREA, A2.FID FROM T_BAS_AREA A1 
+		  				INNER JOIN T_CRM_AREA A2 ON A1.FADMINCODE = A2.FNUMBER) A ON BB.FNEWAREA = A.NEWAREA
+		  LEFT JOIN (SELECT CC.FID, BC.FID DESTCITYID, CC.FNAME
+               FROM T_BD_CITY BC, T_CRM_CITY CC
+              WHERE REGEXP_LIKE(CC.FNAME, '^' || BC.FNAME_L2)) TMP1 ON BL.FDESTCITYID =
+                                                                       TMP1.DESTCITYID
+  		  LEFT JOIN (SELECT CP.FID, BP.FID PROVINCEID, CP.FNAME
+               FROM T_BD_PROVINCE BP, T_CRM_PROVINCE CP
+              WHERE REGEXP_LIKE(CP.FNAME, '^' || BP.FNAME_L2)) TMP2 ON BL.FPROVINCEID =
+                                                                       TMP2.PROVINCEID
+		WHERE BL.FID NOT IN (SELECT FERPID FROM T_CRM_LADINGSTATION)
+			AND (BL.FCREATETIME >= #{UPDATEDATE}
+    		OR BL.FLASTUPDATETIME >= #{UPDATEDATE})
+		]]>
+	</select>
+
+	<!-- 根据日期查询ERP部门数据 - 不包含车队-->
+	<select id="queryERPBusinessDept" parameterType="date" 
+			resultType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">
+		<![CDATA[
+		SELECT NVL(BB.FNAME_L2, '')            DEPTNAME,
+		       NVL(BL.FSTATIONADDRESS, BB.FDEPTADDRESS)     DEPTADDR,
+		       NVL(BL.FDESCRIPTION_L2, '')     REMARK,
+		       NVL(BL.FSTATIONTEL, '')         CONTACT,
+		       NVL(BB.FISOUTSTORAGE, 0)       ISOUTFIELD,
+		       NVL(BB.FISTRANSFER, 0)         ISTRANSIT,
+		       NVL(BB.FISUSED, 0)             ISENABLE,
+		       0			  		  AREA,
+		       P.FID 				  PROVINCEID,
+		       C.FID				  CITYID,
+		       A.FID				  AREAID,
+		       NVL(BB.FISONLINE, 1)   ISOPEN,
+		       OD.FID                 ORGID,
+               CASE
+	             WHEN BL.FISCANCELARRIVE <> 1 THEN
+	              1
+	             ELSE
+	              0
+	           END ISARRIVE,
+		       NVL(BB.FISRECEIVEGOODS, 0) ISLEAVE,
+		       NVL(BL.FISDELIVER, 0)   ISHOMEDELIVERY,
+		       NVL(BL.FISBEPICK, 0)    ISSELFDELIVERY,
+		       NVL(BL.FLADINGSORT, 0)  ISOUTWARD,
+	           0                     ISTEAM,
+		       0                       ISHAVEPDA,
+		       BB.FID 					ERPID,
+		       NVL(TRIM(OD.FSTANDARDCODE), TRIM(BB.FSTANDARDCODE))   STANDARDCODE
+		  FROM T_BAS_BUSINESSDEPT BB
+		  LEFT JOIN T_BAS_LADINGSTATION BL ON BL.FID = BB.FID
+		  LEFT JOIN T_ORG_DEPARTMENT OD ON TRIM(BB.FSTANDARDCODE) = TRIM(OD.FSTANDARDCODE)
+		  LEFT JOIN (SELECT P1.FID NEWPROVINCE, P2.FID FROM T_BAS_PROVINCE P1 
+		  				INNER JOIN T_CRM_PROVINCE P2 ON P1.FADMINCODE = P2.FNUMBER) P ON BB.FNEWPROVINCE = P.NEWPROVINCE
+		  LEFT JOIN (SELECT C1.FID NEWCITY, C2.FID FROM T_BAS_CITY C1 
+		  				INNER JOIN T_CRM_CITY C2 ON C1.FADMINCODE = C2.FNUMBER) C ON BB.FNEWCITY = C.NEWCITY
+		  LEFT JOIN (SELECT A1.FID NEWAREA, A2.FID FROM T_BAS_AREA A1 
+		  				INNER JOIN T_CRM_AREA A2 ON A1.FADMINCODE = A2.FNUMBER) A ON BB.FNEWAREA = A.NEWAREA
+		WHERE  BB.FSTANDARDCODE IS NOT NULL
+           AND REGEXP_INSTR(BB.FNAME_L2, '车队$') = 0
+           AND (BB.FCREATETIME >= #{updateDate}
+		       OR BB.FLASTUPDATETIME >= #{updateDate})      
+		]]>
+	</select>
+	
+	<!-- 根据日期查询ERP部门数据 - 仅车队-->
+	<select id="queryERPBusinessDept_Car" parameterType="date" 
+			resultType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">
+		<![CDATA[
+		SELECT NVL(BB.FNAME_L2, '')            DEPTNAME,
+		       NVL(BL.FSTATIONADDRESS, BB.FDEPTADDRESS)     DEPTADDR,
+		       NVL(BL.FDESCRIPTION_L2, '')     REMARK,
+		       NVL(BL.FSTATIONTEL, '')         CONTACT,
+		       NVL(BB.FISOUTSTORAGE, 0)       ISOUTFIELD,
+		       NVL(BB.FISTRANSFER, 0)         ISTRANSIT,
+		       NVL(BB.FISUSED, 0)             ISENABLE,
+		       0			  		  AREA,
+		       P.FID 				  PROVINCEID,
+		       C.FID				  CITYID,
+		       A.FID				  AREAID,
+		       NVL(BB.FISONLINE, 1)   ISOPEN,
+		       OD.FID                 ORGID,
+               CASE
+	             WHEN BL.FISCANCELARRIVE <> 1 THEN
+	              1
+	             ELSE
+	              0
+	           END ISARRIVE,
+		       NVL(BB.FISRECEIVEGOODS, 0) ISLEAVE,
+		       NVL(BL.FISDELIVER, 0)   ISHOMEDELIVERY,
+		       NVL(BL.FISBEPICK, 0)    ISSELFDELIVERY,
+		       NVL(BL.FLADINGSORT, 0)  ISOUTWARD,
+	           1                     ISTEAM,
+		       0                       ISHAVEPDA,
+		       BB.FID 					ERPID,
+		       NVL(TRIM(OD.FSTANDARDCODE), TRIM(BB.FSTANDARDCODE))   STANDARDCODE
+		  FROM T_BAS_BUSINESSDEPT BB
+		  LEFT JOIN T_BAS_LADINGSTATION BL ON BL.FID = BB.FID
+		  LEFT JOIN T_ORG_DEPARTMENT OD ON TRIM(BB.FSTANDARDCODE) = TRIM(OD.FSTANDARDCODE)
+		  LEFT JOIN (SELECT P1.FID NEWPROVINCE, P2.FID FROM T_BAS_PROVINCE P1 
+		  				INNER JOIN T_CRM_PROVINCE P2 ON P1.FADMINCODE = P2.FNUMBER) P ON BB.FNEWPROVINCE = P.NEWPROVINCE
+		  LEFT JOIN (SELECT C1.FID NEWCITY, C2.FID FROM T_BAS_CITY C1 
+		  				INNER JOIN T_CRM_CITY C2 ON C1.FADMINCODE = C2.FNUMBER) C ON BB.FNEWCITY = C.NEWCITY
+		  LEFT JOIN (SELECT A1.FID NEWAREA, A2.FID FROM T_BAS_AREA A1 
+					INNER JOIN T_CRM_AREA A2 ON A1.FADMINCODE = A2.FNUMBER) A ON BB.FNEWAREA = A.NEWAREA
+		  INNER JOIN T_BAS_MOTOCADE M ON M.FGROUPNAMEID = BB.FID
+		WHERE  BB.FSTANDARDCODE IS NOT NULL
+           AND REGEXP_INSTR(BB.FNAME_L2, '车队$') > 0
+           AND ((BB.FCREATETIME >= #{updateDate}
+		       OR BB.FLASTUPDATETIME >= #{updateDate})
+           OR (M.FCREATETIME >= #{updateDate}
+		       OR M.FLASTUPDATETIME >= #{updateDate}))
+		]]>
+	</select>
+	
+	<insert id="insertLadingStation_Self" 
+		parameterType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">		
+
+		<![CDATA[
+			INSERT INTO T_CRM_LADINGSTATION 
+			VALUES(
+		]]>		
+		<include refid="Creat_Update_columns" />
+		<![CDATA[		
+			#{deptName, jdbcType=VARCHAR}, 		#{detpAddress, jdbcType=VARCHAR}, 	#{remark, jdbcType=VARCHAR}, 	#{contact, jdbcType=VARCHAR}, 
+			#{isOutfield, jdbcType=VARCHAR}, 	#{isTransit, jdbcType=VARCHAR}, 	#{isEnable, jdbcType=VARCHAR}, 	#{area, jdbcType=VARCHAR}, 
+			#{provinceId, jdbcType=VARCHAR}, 	#{cityId, jdbcType=VARCHAR}, 		#{areaId, jdbcType=VARCHAR}, 	#{isOpen, jdbcType=VARCHAR},
+			#{orgId, jdbcType=NUMERIC}, 		#{isArrive, jdbcType=VARCHAR}, 		#{isLeave, jdbcType=VARCHAR}, 	#{isHomeDelivery, jdbcType=VARCHAR}, 
+			#{isSelfDelivery, jdbcType=VARCHAR}, #{isOutward, jdbcType=VARCHAR}, 	#{isTeam, jdbcType=VARCHAR}, 	#{isHavePDA, jdbcType=VARCHAR}, 
+			#{erpId, jdbcType=VARCHAR}, #{standardCode, jdbcType=VARCHAR}
+		   )
+		]]>		
+	</insert>
+	
+	<insert id="insertLadingStation_OUT" 
+		parameterType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">		
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_LADINGSTATIONDEPARTMENT.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CRM_LADINGSTATION 
+			VALUES(
+		]]>		
+		<include refid="Creat_Update_columns" />
+		<![CDATA[		
+			#{deptName, jdbcType=VARCHAR}, 		#{detpAddress, jdbcType=VARCHAR}, 	#{remark, jdbcType=VARCHAR}, 	#{contact, jdbcType=VARCHAR}, 
+			#{isOutfield, jdbcType=VARCHAR}, 	#{isTransit, jdbcType=VARCHAR}, 	#{isEnable, jdbcType=VARCHAR}, 	#{area, jdbcType=VARCHAR}, 
+			#{provinceId, jdbcType=VARCHAR}, 	#{cityId, jdbcType=VARCHAR}, 		#{areaId, jdbcType=VARCHAR}, 	#{isOpen, jdbcType=VARCHAR},
+			#{orgId, jdbcType=NUMERIC}, 		#{isArrive, jdbcType=VARCHAR}, 		#{isLeave, jdbcType=VARCHAR}, 	#{isHomeDelivery, jdbcType=VARCHAR}, 
+			#{isSelfDelivery, jdbcType=VARCHAR}, #{isOutward, jdbcType=VARCHAR}, 	#{isTeam, jdbcType=VARCHAR}, 	#{isHavePDA, jdbcType=VARCHAR}, 
+			#{erpId, jdbcType=VARCHAR}, #{standardCode, jdbcType=VARCHAR}
+		   )
+		]]>		
+	</insert>
+	
+	<update id="updateLadingStation" 
+		parameterType="com.deppon.crm.module.scheduler.shared.domain.LadingStation">
+		<![CDATA[
+			UPDATE T_CRM_LADINGSTATION 
+				SET FLASTUPDATETIME = sysdate
+		]]>	
+		<if test="deptName != null and deptName != ''">
+			<![CDATA[
+				, FDEPTNAME = #{deptName, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="detpAddress != null and detpAddress != ''">
+			<![CDATA[
+				, FDEPTADDR = #{detpAddress, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="remark != null and remark != ''">
+			<![CDATA[
+				, FREMARK = #{remark, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="contact != null and contact != ''">
+			<![CDATA[
+				, FCONTACT = #{contact, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isOutfield != null and isOutfield != ''">
+			<![CDATA[
+				, FISOUTFIELD = #{isOutfield, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isTransit != null and isTransit != ''">
+			<![CDATA[
+				, FISTRANSIT = #{isTransit, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isEnable != null and isEnable != ''">
+			<![CDATA[
+				, FISENABLE = #{isEnable, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="area != null and area != ''">
+			<![CDATA[
+				, FAREA = #{area, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="provinceId != null and provinceId != ''">
+			<![CDATA[
+				, FNEWPROVINCEID = #{provinceId, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="cityId != null and cityId != ''">
+			<![CDATA[
+				, FNEWCITYID = #{cityId, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="areaId != null and areaId != ''">
+			<![CDATA[
+				, FNEWAREAID = #{areaId, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isOpen != null and isOpen != ''">
+			<![CDATA[
+				, FISOPEN = #{isOpen, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="orgId != null and orgId != ''">
+			<![CDATA[
+				, FORGID = #{orgId, jdbcType=NUMERIC}
+			]]>		
+		</if>
+		<if test="isArrive != null and isArrive != ''">
+			<![CDATA[
+				, FISARRIVE = #{isArrive, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isLeave != null and isLeave != ''">
+			<![CDATA[
+				, FISLEAVE = #{isLeave, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isHomeDelivery != null and isHomeDelivery != ''">
+			<![CDATA[
+				, FISHOMEDELIVERY = #{isHomeDelivery, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isSelfDelivery != null and isSelfDelivery != ''">
+			<![CDATA[
+				, FISSELFDELIVERY = #{isSelfDelivery, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isOutward != null and isOutward != ''">
+			<![CDATA[
+				, FISOUTWARD = #{isOutward, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isTeam != null and isTeam != ''">
+			<![CDATA[
+				, FISTEAM = #{isTeam, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="isHavePDA != null and isHavePDA != ''">
+			<![CDATA[
+				, FISHAVEPDA = #{isHavePDA, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<if test="standardCode != null and standardCode != ''">
+			<![CDATA[
+				, FSTANDARDCODE = #{standardCode, jdbcType=VARCHAR}
+			]]>		
+		</if>
+		<!-- 		
+		<if test="erpId != null and erpId != ''">
+			<![CDATA[
+				, FERPID = #{erpId}
+			]]>		
+		</if> 
+		-->		
+		<![CDATA[
+			WHERE FERPID = #{erpId, jdbcType=VARCHAR}
+		]]>
+	</update>
+
+
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,71 @@
+.treeNodeLeafIcon
+{
+	background-image: url(../../images/login/treeNodeLeafIcon.png) !important;
+}
+
+.treeNodePackageIcon
+{
+	background-image: url(../../images/login/treeNodePackage.png) !important;
+}
+
+.closeCurrentTab
+{
+	background-image: url(../../images/login/closeCurrentTab.png) !important;
+}
+
+.closeOtherTab
+{
+	background-image: url(../../images/login/closeOtherTab.png) !important;
+}
+
+.refreshIcon
+{
+	background-image: url(../../images/login/refreshIcon.png) !important;
+}
+
+.deliverIcon
+{
+	background-image: url(../../images/login/folder_go.png) !important;
+}
+
+.sysmanagemenu {
+	background-image: url(../../images/login/sysmanagemenu.png);!important;
+	background-repeat: no-repeat ;	
+	height:19;
+}
+
+.home {
+	background-image: url(../../images/login/homemanage.gif);!important;
+	background-repeat: no-repeat ;	
+	height:19;
+}
+
+.root1 {
+	background-image: url(../../images/login/root1.gif);!important;
+	background-repeat: no-repeat ;
+	height:19;
+}
+
+.root2 {
+	background-image: url(../../images/login/root2.gif);!important;
+	background-repeat: no-repeat ;
+	height:19;
+}
+
+.root3 {
+	background-image: url(../../images/login/root3.gif);!important;
+	background-repeat: no-repeat ;
+	height:19;
+}
+
+.root4 {
+	background-image: url(../../images/login/root4.gif);!important;
+	background-repeat: no-repeat ;
+	height:19;
+}
+
+.root5 {
+	background-image: url(../../images/login/root5.gif);!important;
+	background-repeat: no-repeat ;
+	height:19;
+}

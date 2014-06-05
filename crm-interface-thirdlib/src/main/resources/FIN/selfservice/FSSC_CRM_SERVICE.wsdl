@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="FSSC_CRM_SERVICE" 
+targetNamespace="http://www.deppon.com/fssc/remote/crm" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:tns="http://www.deppon.com/fssc/remote/crm"
+xmlns:tns_domain="http://www.deppon.com/fssc/remote/crm/domain" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+>
+    <wsdl:types>
+	    <xsd:schema targetNamespace="http://www.deppon.com/fssc/remote/crm/domain">
+	    	<xsd:include schemaLocation="FSSC_GENERATE_CLAIMSAPBILL.xsd" />
+	    	<xsd:include schemaLocation="FSSC_QUERY_CASHIERACCOUNT.xsd" />
+	    </xsd:schema>
+	</wsdl:types>
+	
+    <wsdl:message name="generate_claimsapbillRequest">
+    	<wsdl:part name="generate_claimsapbillRequest" element="tns_domain:generate_claimsapbillRequest">
+    		<wsdl:documentation>生成报账报销单接口,请求参数</wsdl:documentation>
+    	</wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="generate_claimsapbillResponse">
+    	<wsdl:part name="generate_claimsapbillResponse" element="tns_domain:generate_claimsapbillResponse">
+    		<wsdl:documentation>生成报账报销单接口,响应参数</wsdl:documentation>
+    	</wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="query_cashieraccountRequest">
+    	<wsdl:part name="query_cashieraccountRequest" element="tns_domain:query_cashieraccountRequest">
+    		<wsdl:documentation>查询收银员账号接口,请求参数</wsdl:documentation>
+    	</wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="query_cashieraccountResponse">
+    	<wsdl:part name="query_cashieraccountResponse" element="tns_domain:query_cashieraccountResponse">
+    		<wsdl:documentation>查询收银员账号接口,响应参数</wsdl:documentation>
+    	</wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:portType name="CrmService">
+    	<wsdl:operation name="generate_claimsapbill">
+    		<wsdl:input message="tns:generate_claimsapbillRequest" name="generate_claimsapbillRequest"></wsdl:input>
+    		<wsdl:output message="tns:generate_claimsapbillResponse" name="generate_claimsapbillResponse"></wsdl:output>
+        </wsdl:operation>
+    	<wsdl:operation name="query_cashieraccount">
+    		<wsdl:input message="tns:query_cashieraccountRequest" name="query_cashieraccountRequest"></wsdl:input>
+    		<wsdl:output message="tns:query_cashieraccountResponse" name="query_cashieraccountResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="CrmInterfaceImplSoapBinding" type="tns:CrmService">
+    	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	    <wsdl:operation name="generate_claimsapbill">
+	      <soap:operation soapAction="" style="document"/>
+	      <wsdl:input name="generate_claimsapbillRequest">
+	        <soap:body use="literal"/>
+      	  </wsdl:input>
+	      <wsdl:output name="generate_claimsapbillResponse">
+	        <soap:body use="literal"/>
+	      </wsdl:output>
+    	</wsdl:operation>
+    	<wsdl:operation name="query_cashieraccount">
+	      <soap:operation soapAction="" style="document"/>
+	      <wsdl:input name="query_cashieraccountRequest">
+	        <soap:body use="literal"/>
+      	  </wsdl:input>
+	      <wsdl:output name="query_cashieraccountResponse">
+	        <soap:body use="literal"/>
+	      </wsdl:output>
+    	</wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="CrmService">
+		<wsdl:documentation>生成报账报销单接口</wsdl:documentation>
+		<wsdl:port name="CrmSOAP" binding="tns:CrmInterfaceImplSoapBinding">
+			<soap:address location="http://localhost:8088/crmService" />
+		</wsdl:port>
+	</wsdl:service>
+	
+</wsdl:definitions>

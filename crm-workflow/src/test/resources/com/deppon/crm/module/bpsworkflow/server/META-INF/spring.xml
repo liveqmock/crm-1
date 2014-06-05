@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url"
+			value="jdbc:oracle:thin:@192.168.20.142:1521:crmtest" />
+		<property name="username" value="dpcrm" />
+		<property name="password" value="dpcrm2014" />
+	</bean>
+	<bean id="dataSourceLog"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url"
+			value="jdbc:oracle:thin:@192.168.20.142:1521:crmtest" />
+		<property name="username" value="dpcrm" />
+		<property name="password" value="dpcrm2014" />
+	</bean>
+
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="transportType">
+			<util:constant static-field="com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP" />
+		</property>
+		<property name="queueManager" value="QM_APP" />
+		<property name="hostName" value="192.168.17.141" />
+		<property name="channel" value="CRM.CLIENT" />
+		<property name="port" value="1428" />
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+
+	<!-- 日志队列配置开始 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.deppon" />
+
+
+
+	<bean id="crmWorkflowManager" scope="singleton"
+		class="com.deppon.crm.module.bpsworkflow.server.manager.impl.CRMWorkflowManager">
+		<property name="contractService" ref="contractService" />
+		<property name="userService" ref="userService" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="marketActivityManager" ref="marketActivityManager" />
+		<property name="keyCustomerManager" ref="keyCustomerManager" />
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+		<property name="workflowApproveOperate" ref="workflowApproveOperate" />
+	</bean>
+	<bean id="workflowApproveOperate" scope="prototype"
+		class="com.deppon.crm.module.bpsworkflow.server.manager.impl.WorkflowApproveOperate">
+		<property name="marketActivityManager" ref="marketActivityManager" />
+		<property name="keyCustomerManager" ref="keyCustomerManager" />
+		<property name="contractApproveOperate" ref="contractApproveOperate" />
+		<property name="normalClaimManager" ref="normalClaimManager" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+	</bean>
+	<bean id="workflowAction" scope="prototype"
+		class="com.deppon.crm.module.bpsworkflow.server.action.WorkflowAction">
+		<property name="crmWorkflowManager" ref="crmWorkflowManager" />
+	</bean>
+
+</beans>

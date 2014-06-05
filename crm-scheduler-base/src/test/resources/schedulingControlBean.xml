@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop" />
+	</bean>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/crm/module/scheduler/server/META-INF/mybatis/SchedulingControlMapper.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="schedulingControlDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SchedulingControlDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="schedulingControlService" class="com.deppon.crm.module.scheduler.server.service.impl.SchedulingControlService">
+		<property name="schedulingControlDao" ref="schedulingControlDao" />
+	</bean>
+
+	<bean id="timerSchedulingControl" class="com.deppon.crm.module.scheduler.server.manager.TimerSchedulingControl">
+		<property name="schedulingControlService" ref="schedulingControlService" />
+	</bean>
+
+</beans>
+

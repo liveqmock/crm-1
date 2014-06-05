@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="activity" namespace="/marketing" extends="crm-default">
+	
+		<!--查询活动主信息  -->
+		<action name="queryActivityMain" class ="activityOperateAction" method="queryActivityMain">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--新增活动主信息  -->
+		<action name="saveMarketActivity" class ="activityOperateAction" method="saveMarketActivity">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--初始化活动  -->
+		<action name="initMarketActivity" class ="activityOperateAction" method="initMarketActivity">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--查询活动全部信息  -->
+		<action name="queryActivityAll" class ="activityOperateAction" method="queryActivityAll">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--保存附件  -->
+		<action name="saveFileInfo" class ="activityOperateAction" method="saveFileInfo">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--删除附件  -->
+		<action name="deleteFileInfo" class ="activityOperateAction" method="deleteFileInfo">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--查询部门性质 -->
+		<action name="gainUserDeptCharacter" class ="activityOperateAction" method="gainUserDeptCharacter">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--加载部门树 -->
+		<action name="loadMarket" class ="activityOperateAction" method="loadMarket">
+			<result name="success" type="json" >
+			</result>
+		</action>
+		
+		<!--查询未使用的客户群  -->
+		<action name="searchActivityClientByName" class ="activityOperateAction" method="searchActivityClientByName">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--通过部门名称模糊查询部门  -->
+		<action name="searchDeptListByName" class ="activityOperateAction" method="searchDeptListByName">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--通过工号模糊查询联系人  -->
+		<action name="searchEmpByCondition" class ="activityOperateAction" method="searchEmpByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--通过一级行业查询二级行业  -->
+		<action name="searchSecondTradesByList" class ="activityOperateAction" method="searchSecondTradesByList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--保存线路信息  -->
+		<action name="saveLineInformation" class ="activityOperateAction" method="saveLineInformation">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--保存参与部门信息  -->
+		<action name="saveActivityDept" class ="activityOperateAction" method="saveActivityDept">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--修改市场推广活动客户群  -->
+		<action name="updateMarketActivityClient" class ="activityOperateAction" method="updateMarketActivityClient">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--下发客户群  -->
+		<action name="issuedClient" class ="activityOperateAction" method="issuedClient">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--加载该活动使用中的客户群  -->
+		<action name="loadUsedClientBase" class ="activityOperateAction" method="loadUsedClientBase">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--加载线路树 -->
+		<action name="loadDeliverOrArriveTree" class ="activityOperateAction" method="loadDeliverOrArriveTree">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  工作流号码验证 -->
+		<action name="workFlowNumVerify" class ="activityOperateAction" method="workFlowNumVerify">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  初始化部门负责人信息 -->
+		<action name="intiPrincipal" class ="activityOperateAction" method="intiPrincipal">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  营销计划创建时查询现在可用的市场推广活动 -->
+		<action name="searchMarketActivityForMarketPlan" class ="activityOperateAction" method="searchMarketActivityForMarketPlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  营销计划创建时查询市场推广活动下的优惠券抵扣类型与数量 -->
+		<action name="searchActivityOptionByActivityIdAndType" class ="activityOperateAction" method="searchActivityOptionByActivityIdAndType">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  判断活动名称是否重复 -->
+		<action name="checkHaveSamNameMarketActivity" class ="activityOperateAction" method="checkHaveSamNameMarketActivity">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  计算部门数量-->
+		<action name="countActivityDeptNum" class ="activityOperateAction" method="countActivityDeptNum">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--  一次性保存所有活动信息-->
+		<action name="saveMarketActivityAndDepts" class ="activityOperateAction" method="saveMarketActivityAndDepts">
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+</struts>

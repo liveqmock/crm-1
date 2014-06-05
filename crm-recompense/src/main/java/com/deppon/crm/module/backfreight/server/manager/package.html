@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>package</title>
+<style type="text/css">
+<!--
+.STYLE1 {color: #FF0000}
+-->
+</style>
+</head>
+<body>
+	<a name="biz">
+		<fieldset>
+			<legend>退运费相关业务</legend>
+		</fieldset>
+	</a>
+	<a name="StatusMap" id="StatusMap">
+		<fieldset>
+			<legend>问题跟进</legend>
+
+		</fieldset>
+	</a>
+	<a name="recoveryModel" id="recoveryModel">
+		<fieldset>
+			<legend>退运费模型</legend>
+			<img alt="" src="doc-files/退运费模型.jpg">
+		</fieldset>
+	</a>
+<a name="caseRule1" id="caseRule1">
+		<fieldset>
+			<legend>退运费新增 </legend>			
+			
+	<table border="1" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="100" valign="top"><p align="center">序号 </p></td>
+        <td valign="top"><p align="center">描述 </p></td>
+        <td width="100" valign="top"><p align="center">备注</p></td>
+      </tr>
+      <tr>
+        <td valign="top"><p>RULE-A1 </p></td>
+        <td valign="top"><p>输入运单号系统自动忽略运单号前后的空格，光标离开运单号输入框，系统校验： </p>
+            <ol>
+              <li>系统中是否存在相应的运单号，不存在则在输入框下方显示提示“输入的运单号不存在，请重新输入”，点击输入框后，提示消失。原运单号不清除。 </li>
+              <li>存在相应的运单号，则校验该运单号是否已签收，若尚未签收则在输入框下方提示“该单号尚未签收，不允许申请退运费”。 </li>
+              <li>如该运单已签收则需根据运输性质和付款方式检查： </li>
+              <li>只有运输性质为精准空运和精准城运才允许申请退运费，否则提示“退运费只适用于精准空运或精准城运。” </li>
+              <li>运输性质为精准空运，申请部门为收货部门；运输性质为精准城运，付款方式为现金/银行卡/月结/临时欠款时，申请部门为收货部门，付款方式为到付时，申请部门为到达部门。否则当输入框失去焦点时弹出提示“此运单号的申请部门不是您所在部门，您无权申请”； </li>
+              <li>再校验该运单号是否超出申请期限： </li>
+              <li>运输性质为精准空运时，该单号的签收时间（不含出库当天）至申请时间不超过7天（含），遇法定节假日和周六周日则顺延； </li>
+              <li>运输性质为精准城运时，该单号的签收时间（不含出库当天）至申请时间不超过14天（含），遇法定节假日和周六周日则顺延；； </li>
+              <li>如果超期则在输入框附近显示提示“该运单已超出退运费申请期限，不允许申请”。 </li>
+              <li>如满足以上条件则需校验运单号是否重复申请。若该运单号已存在退运费申请记录，且该申请记录的状态为“已同意”、    “已提交”，不允许再次新增退运费，且在输入框附近提示“该运单已申请过退运费，请勿重复申请”；如果申请记录的状态为“未同意”，则可以新增退运费。 </li>
+              <li>继续校验如果该单号已存在理赔单，理赔单任何状态都不允许新增，且在输入框附近提示“该运单已申请过理赔，不允许减免运费”。 </li>
+              <li>如果该单号没有申请理赔，则校验是否存在服务补救申请记录，且服务补救申请记录的申请状态为“已同意”、“已提交”，不允许新增退运费申请，且在输入框附近提示“该运单已申请服务补救，不允许退运费”；如果申请记录的状态为“未同意”，则可以新增退运费。 </li>
+              <li>如果该单号没有服务补救，则需校验是否存在时效延误差错记录，如果有差错记录无论状态即不能申请服务补救，提示“该运费已上报过时效延误差错，不允许服务补救”。 </li>
+              <li>如果该单号没有时效延误差错记录，则校验是否存在是否存在坏账记录，如果该运单已上报坏账，任何状态都不允许申请退运费，否则弹出提示“该运单号已上报坏账，不允许退运费”。 </li>
+            </ol>
+          <p>成功输入运单号后，自动带出运输性质、客户信息、付款方式、纯运费（不含其他增值费用、劳务费）、签收时间。 <br>
+            其中客户信息，如果是出发部门申请即带出发货人的信息，如果是到达部门申请即带出收货客户信息。如果客户为固定客户，客户信息中显示包括客户名称、客户编码、联系人名称、客户等级；如果客户为散客则带出发货/收货联系人名称即可。 </p></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top"><p>RULE-A2 </p></td>
+        <td valign="top"><p>用户输入金额后，系统对金额进行检查： </p>
+            <ol>
+              <li>申请金额不能为空，否则点击“提交”的时候提示“申请金额不能为空，请输入金额”。 </li>
+              <li>输入的申请金额必须是大于0的正整数，如果输入数字不合法，提示：“申请金额必须为大于0的正整数，请重新输入！”； </li>
+              <li>运输性质为精准空运，申请金额不能大于该运单号的纯运费，否则提示：提示“申请金额不能大于运费，请重新输入！”； </li>
+              <li>运输性质为精准城运，申请金额不能超出该运单号纯运费的3倍，否则提示“申请金额不能大于3倍运单运费，请重新输入！”； </li>
+            </ol>
+          <p> PS:运费是纯运费，不包含其他费用。 </p></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top"><p>RULE-A3 </p></td>
+        <td valign="top"><p>输入申请事由后，上传附件： </p>
+            <ol>
+              <li>申请事由不能为空，否则点击“提交”时提示：“申请事由不能为空，请输入申请事由”    。 </li>
+              <li>附件不能为空，否则点击“提交”是提示：“附件不能为空，请上传附件”。 </li>
+              <li>文件上传类型需要过滤（可上传图片【.jpg，.jpeg，.gif，.png，.dmp】、文本.txt、.pdf、*.doc、*.docx,*.xls,*.xlsx，.rar，不能上传.exe、.bat、.dll、.ini文件），上传附件个数超过10个时附件“增加”按钮禁用，上传附件总大小不超过30MB，否则，当附件大小超出时提示：“上传附件总大小不能超过30MB”； </li>
+            </ol></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top"><p>RULE-A4 </p></td>
+        <td valign="top"><p>点击“提交”时需校验对以上描述是否满足： <br>
+          1、每一项数据都填满并校验成功，方能提交，否则提交失败并提示相应的错误信息，参见RULE-A1、RULE-A2、RULE-A3中的描述。 <br>
+          2、提交成功，保存一条申请状态为“提交”状态的退运费申请记录，对接OA生成退运费申请工作流，同时OA返回生成的工作流号，把OA工作流号保存到退运费申请记录中。 </p></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+    </table>
+		</fieldset>
+	</a>
+	<a name="caseRule2" id="caseRule2">
+		<fieldset>
+			<legend>退运费查询 </legend>
+
+		    <table border="1" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="100" valign="top"><p align="center">序号 </p></td>
+                <td valign="top"><p align="center">描述 </p></td>
+                <td width="100" valign="top"><p align="center">备注</p></td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A1</p></td>
+                <td valign="top"><p>进入退运费查询界面： </p>
+                    <ol>
+                      <li>申请时间：起始时间默认为当前日期前31天的00:00:00；截止时间默认为当前日期的23:59:59；查询申请时间范围不超过90天，否则提示“查询范围不能超过90天”，申请时间不可删除。 </li>
+                      <li>申请部门默认为本部门，并显示出营业部名称，为灰色不可改。（权限用户可以却换部门并查询）； </li>
+                      <li>所属子公司，默认为本部门的所属子公司并显示，灰色不可修改，（权限用户可以却换子公司并查询）； </li>
+                      <li>运输性质默认为全部，下拉框内为公共数据字段、全部； </li>
+                      <li>付款方式默认为全部，下拉框内为现金、银行卡、临时欠款、月结、到付、全部； </li>
+                      <li>申请状态默认为全部，下拉框内为已提交、已同意、未同意、全部 </li>
+                      <li>以上条件：申请时间、部门、客户类别、减免类别、申请状态为组合查询。 </li>
+                      <li>运单号： </li>
+                    </ol>
+                  <p>a、输入运单号时，系统自动忽略运单号前后的空格； <br>
+                    b、输入的运单号的个数不能超过10个； <br>
+                    c、运单之间用半角逗号隔开。 </p>
+                  <ol>
+                    <li>以运单号为准确查询条件的，其他查询条件全部无效。 </li>
+                  </ol></td>
+                <td valign="top">&nbsp;</td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A2</p></td>
+                <td valign="top"><ol>
+                  <li>系统根据选择的查询条件查询数据，并显示在退运费申请列表界面； </li>
+                  <li>查询出记录后，再次查询时原查询结果清空； </li>
+                </ol></td>
+                <td valign="top">&nbsp;</td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A3</p></td>
+                <td valign="top"><p>查询结果在退运费申请列表中体现： </p>
+                    <ol>
+                      <li>查询结果默认以申请时间从早到晚，倒序摆列，申请时间最近的排在最上面。 </li>
+                      <li>列表包括：勾选框、运单号、工作流号、部门名称、所属子公司、客户名称、运输性质、付款方式、申请金额、运费、签收时间、申请人、申请时间、申请状态、审批人、审批时间。 </li>
+                      <li>列表中如无值，则显示“--” </li>
+                      <li>双击列表头可以排序。 </li>
+                    </ol></td>
+                <td valign="top">&nbsp;</td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A4</p></td>
+                <td valign="top"><ol>
+                  <li>导出的数据以EXCEL表格的形式显示，带出所有查询结果所有列表信息； </li>
+                </ol></td>
+                <td valign="top">&nbsp;</td>
+              </tr>
+            </table>
+		</fieldset>
+</a>
+	<a name="caseRule3" id="caseRule3">
+		<fieldset>
+			<legend>退运费查看 </legend>
+
+		</fieldset>
+	</a>
+
+
+
+
+
+
+
+	<div id="caseImg1">
+		<fieldset>
+			<legend>
+				<a name="caseImg11" id="caseImg11" href="#caseRule1">退运费新增序列图</a>
+			</legend>
+			<img alt="" src="doc-files/退运费新增.jpg">
+		    <img alt="" src="doc-files/OA工作流回调.jpg">
+		</fieldset>
+	</div>
+	<div id="caseImg2">
+		<fieldset>
+			<legend>
+				<a name="caseImg22" id="caseImg22" href="#caseRule2">退运费查询序列图</a>
+			</legend>
+			<img alt="" src="doc-files/退运费查询.jpg">
+			<img alt="" src="doc-files/退运费导出.jpg">
+		</fieldset>
+	</div>
+	<div id="caseImg3">
+		<fieldset>
+			<legend>
+				<a name="caseImg33" id="caseImg33" href="#caseRule3">退运费查看序列图</a>
+			</legend>
+		</fieldset>
+	</div>
+
+
+
+
+	<a name="">
+		<fieldset>
+			<legend>保存前检查流程</legend>
+		</fieldset>
+	</a>
+
+	<div id="DAO">
+		<fieldset>
+			<legend>DAO说明</legend>
+		</fieldset>
+	</div>
+
+	<div id="domain">
+		<fieldset>
+			<legend>domain说明</legend>
+		</fieldset>
+	</div>
+</body>
+</html>

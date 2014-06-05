@@ -1,0 +1,1113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workflow PUBLIC "-//OpenSymphony Group//DTD OSWorkflow 2.8//EN" "http://www.opensymphony.com/osworkflow/workflow_2_8.dtd">
+<workflow>
+  <meta name="lastModified">Wed Apr 11 10:42:52 CST 2012</meta>
+  <meta name="generator">OSWOrkflow Designer</meta>
+  <initial-actions>
+    <action id="100" name="启动理赔工作流">
+      <restrict-to>
+        <conditions>
+          <condition type="spring">
+            <arg name="role">3</arg>
+            <arg name="bean.name">roleOnly</arg>
+          </condition>
+        </conditions>
+      </restrict-to>
+      <pre-functions>
+        <function type="spring">
+          <arg name="nextRole">3,4</arg>
+          <arg name="bean.name">findNextOwnerFunction</arg>
+        </function>
+      </pre-functions>
+      <results>
+        <unconditional-result id="100" old-status="Finished" status="Creating" step="200" owner="${3},${4}"/>
+      </results>
+    </action>
+  </initial-actions>
+  <common-actions>
+    <action id="9010" name="理赔专员免赔处理">
+      <restrict-to>
+        <conditions type="AND">
+          <condition type="spring">
+            <arg name="type">normal,fast</arg>
+            <arg name="bean.name">recompenseTypeOnly</arg>
+          </condition>
+          <condition type="spring">
+            <arg name="role">4</arg>
+            <arg name="bean.name">roleOnly</arg>
+          </condition>
+        </conditions>
+      </restrict-to>
+      <pre-functions>
+        <function type="spring">
+          <arg name="bean.name">exemptRecompenseFunction</arg>
+        </function>
+      </pre-functions>
+      <results>
+        <unconditional-result id="9011" old-status="Finished" status="Exempted" step="10000">
+          <post-functions>
+            <function type="spring">
+              <arg name="recompenseStatus">Exempted</arg>
+              <arg name="bean.name">updateRecompenseStatusFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+  </common-actions>
+  <steps>
+    <step id="200" name="业务经理理赔上报">
+      <actions>
+        <action id="210" name="保存提交理赔申请">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Creating</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="role">3</arg>
+                <arg name="bean.name">roleOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="bean.name">createRecompenseFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="nextRole">4,5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <result id="211" old-status="Finished" status="Approved" step="400" owner="${5}">
+              <conditions type="AND">
+                <condition type="beanshell">
+                  <arg name="script"><![CDATA[  
+                                    "fast".equals(transientVars.get("recomepseType")) 
+                                    ]]></arg>
+                </condition>
+                <condition type="beanshell">
+                  <arg name="script"><![CDATA[  
+                                    (Boolean)transientVars.get("assigned") == true
+                                    ]]></arg>
+                </condition>
+              </conditions>
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Approved</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </result>
+            <result id="212" old-status="Finished" status="Handled" step="300" owner="${4}">
+              <conditions>
+                <condition type="beanshell">
+                  <arg name="script"><![CDATA[  
+                                    "fast".equals(transientVars.get("recomepseType")) 
+                                    ]]></arg>
+                </condition>
+              </conditions>
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </result>
+            <unconditional-result id="213" old-status="Finished" status="Submited" step="200" owner="${3}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Submited</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="220" name="保存上报理赔申请">
+          <restrict-to>
+            <conditions type="AND">
+              <conditions>
+                <condition name="check.status" type="class">
+                  <arg name="status">Submited,RefuseOnline</arg>
+                  <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+                </condition>
+              </conditions>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="bean.name">saveRecompenseReportFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="221" old-status="Finished" status="Submited" step="200" owner="${3}"/>
+          </results>
+        </action>
+        <action id="230" name="删除上报理赔申请">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Submited</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="recompenseType">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="bean.name">deleteRecompenseFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="231" old-status="Finished" status="Deleted" step="10000"/>
+          </results>
+        </action>
+        <action id="240" name="拒绝在线理赔申請">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Submited</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="recompenseType">online</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="bean.name">deleteRecompenseFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="241" old-status="Finished" status="Deleted" step="10000" owner="${3}"/>
+          </results>
+        </action>
+        <action id="250" name="理赔专员资料确认">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Submited</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="251" old-status="Finished" status="DocConfirmed" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">DocConfirmed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="260" name="理赔专员在线理赔审批通过">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Submited</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">online</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="261" old-status="Finished" status="InPayment" step="500" owner="${3}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">InPayment</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+                <function type="spring">
+                  <arg name="bean.name">submitRecompensePaymentApprovalFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="270" name="理赔专员在线理赔审批退回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Submited</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">online</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="271" old-status="Finished" status="RefuseOnline" step="200" owner="${3}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">RefuseOnline</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="280" name="在线理赔重新付款">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">OnlinePayFailed</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">online</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="281" old-status="Finished" status="InPayment" step="500" owner="${3}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">InPayment</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+                <function type="spring">
+                  <arg name="bean.name">submitRecompensePaymentApprovalFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="300" name="理赔专员理赔处理">
+      <actions>
+<common-action id="9010" />
+        <action id="310" name="理赔专员资料确认退回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">DocConfirm</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">3</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="311" old-status="Finished" status="Submited" step="200" owner="${3}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Submited</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="320" name="理赔专员保存提交理赔处理">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">DocConfirm,Handled</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="bean.name">saveRecompenseProcessFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="nextRole">4,5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <result id="321" old-status="Finished" status="Apprvoed" step="400" owner="${5}">
+              <conditions>
+                <condition type="beanshell">
+                  <arg name="script"><![CDATA[  
+                                    "fast".equals(transientVars.get("recomepseType")) 
+                                    ]]></arg>
+                </condition>
+              </conditions>
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Apprvoed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </result>
+            <unconditional-result id="322" old-status="Finished" status="Handled" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="330" name="理赔专员初步处理退回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Handled</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="331" old-status="Finished" status="DocConfirmed" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">DocConfirmed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="340" name="业务经理理赔金额确认">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Handled</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="341" old-status="Finished" status="AmountConfirmed" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">AmountConfirmed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="350" name="业务经理提交多赔申请">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Handled</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="bean.name">saveRecompenseOverpayFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="351" old-status="Finished" status="InOverpayApprove" step="500">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">InOverpayApprove</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+                <function type="spring">
+                  <arg name="bean.name">submitRecompenseOaApprovalFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="360" name="理赔专员金额确认退回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">AmountConfirmed</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="361" old-status="Finished" status="Handled" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="370" name="理赔专员金额确认后提交审批">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">AmountConfirmed</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="class">
+              <arg name="class.name">saveRecompenseProcessFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="371" old-status="Finished" status="InOaApprove" step="500">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">inOaApprove</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+                <function type="spring">
+                  <arg name="bean.name">submitRecompenseOaApprovalFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="380" name="理赔专员审批完成后多赔处理">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">OverpayApproved</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="class">
+              <arg name="class.name">saveRecompenseProcessFunction</arg>
+            </function>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="381" old-status="Finished" status="Approved" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Approved</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="390" name="理赔专员多賠處理退回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">OverpayApproved</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="391" old-status="Finished" status="Handled" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="400" name="收银员提交付款申请">
+      <actions>
+        <action id="410" name="收银员提交冲账申请">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Approved,BalanceFailed</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="412" old-status="Finished" status="InBalance" step="600" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">InBalance</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+                <function type="spring">
+                  <arg name="bean.name">submitRecompenseBalanceApprovalFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="420" name="收银员提交付款申请">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Approved,BalanceFailed,Balanced,PayFailed</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="412" old-status="Finished" status="InPayment" step="700" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">InPayment</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+                <function type="spring">
+                  <arg name="bean.name">submitRecompensePaymentApprovalFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="430" name="取消快速理赔">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Approved</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">fast</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="bean.name">roleDepartmentOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="431" old-status="Finished" status="Handled" step="300" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="440" name="理赔专员免赔处理 ">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">Approved</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="type">normal,fast</arg>
+                <arg name="bean.name">recompenseTypeOnly</arg>
+              </condition>
+              <condition type="spring">
+                <arg name="role">4</arg>
+                <arg name="bean.name">roleOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="bean.name">exemptRecompenseFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="441" old-status="Finished" status="Exempted" step="10000">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Exempted</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="500" name="OA工作流审核理赔申请">
+      <actions>
+        <action id="510" name="OA工作流审核通过">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InOaApprove</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4,5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="512" old-status="Finished" status="Approved" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Approved</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="520" name="OA工作流审核驳回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InOaApprove</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4,5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="522" old-status="Finished" status="Handled" step="400" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="530" name="OA多赔工作流审核通过">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InOverpayApprove</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="512" old-status="Finished" status="OverpayApproved" step="400" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">OverpayApproved</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="540" name="OA工作流审核驳回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InOverpayApprove</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">4,5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="541" old-status="Finished" status="Handled" step="400" owner="${4}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Handled</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="600" name="ERP审批">
+      <actions>
+        <action id="610" name="ERP冲账审批通过">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InBalance</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="611" old-status="Finished" status="Balanced" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Balanced</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="620" name="ERP冲账审批驳回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InBalance</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="621" old-status="Finished" status="BalanceFailed" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">BalanceFailed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="700" name="费控系统付款审批">
+      <actions>
+        <action id="710" name="费控系统付款审批通过">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InPayment</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <unconditional-result id="711" old-status="Finished" status="Paid" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">Paid</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="720" name="费控系统付款审批驳回">
+          <restrict-to>
+            <conditions type="AND">
+              <condition name="check.status" type="class">
+                <arg name="status">InPayment</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+              <condition name="bsh.condition" type="beanshell">
+                <arg name="script"><![CDATA[true]]></arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <result id="721" old-status="Finished" status="OnlinePayFailed" step="300">
+              <conditions>
+                <condition type="spring">
+                  <arg name="type">online</arg>
+                  <arg name="bean.name">recompenseTypeOnly</arg>
+                </condition>
+              </conditions>
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">OnlinePayFailed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </result>
+            <unconditional-result id="721" old-status="Finished" status="PayFailed" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">PayFailed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="730" name="汇款失败">
+          <restrict-to>
+            <conditions>
+              <condition name="check.status" type="class">
+                <arg name="status">Paid</arg>
+                <arg name="class.name">com.deppon.crm.module.common.server.workflow.AllowStatusesOnly</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <pre-functions>
+            <function type="spring">
+              <arg name="nextRole">5</arg>
+              <arg name="bean.name">findNextOwnerFunction</arg>
+            </function>
+          </pre-functions>
+          <results>
+            <result id="731" old-status="Finished" status="OnlinePayFailed" step="300">
+              <conditions>
+                <condition type="spring">
+                  <arg name="type">online</arg>
+                  <arg name="bean.name">recompenseTypeOnly</arg>
+                </condition>
+              </conditions>
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">OnlinePayFailed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </result>
+            <unconditional-result id="732" old-status="Finished" status="PayFailed" step="400" owner="${5}">
+              <post-functions>
+                <function type="spring">
+                  <arg name="recompenseStatus">PayFailed</arg>
+                  <arg name="bean.name">updateRecompenseStatusFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="10000" name="理赔结束">
+    </step>
+  </steps>
+</workflow>

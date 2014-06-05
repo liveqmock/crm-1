@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.order.shared.domain.RuleLog">
+	<resultMap type="com.deppon.crm.module.order.shared.domain.RuleLog" id="RuleLogResult">
+		<result column="FID" property="id"/>
+		<result column="FEVENT" property="event"/>
+		<result column="FCONTENT" property="content"/>
+		<result column="FOPERATORUSERID" property="operatorUserId"/>
+		<result column="FOPERATOREMPNAME" property="operatorEmpName"/>
+		<result column="FOPERATORDEPTNAME" property="operatorDeptName"/>
+		<result column="FOPERATETIME" property="operateTime"/>
+		<result column="FORDERNUMBERRULEID" property="orderNumberRuleId"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.deppon.crm.module.order.shared.domain.RuleLog">
+	insert into T_ORD_RULELOG(FID,FEVENT,FCONTENT,FOPERATORUSERID,FOPERATOREMPNAME,FOPERATORDEPTNAME,FOPERATETIME,FORDERNUMBERRULEID)
+	values(#{id},#{event},#{content},#{operatorUserId},#{operatorEmpName},#{operatorDeptName},#{operateTime},#{orderNumberRuleId})
+	</insert>
+</mapper>

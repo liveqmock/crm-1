@@ -1,0 +1,14 @@
+id,fid,VARCHAR
+createDate,FCREATETIME,DATE
+createUser,FCREATEUSERID,VARCHAR
+modifyDate,FLASTUPDATETIME,DATE
+modifyUser,FLASTMODIFYUSERID,VARCHAR
+custNumber,fcustNumber,VARCHAR
+custName,fcustName,VARCHAR
+linkName,flinkName,VARCHAR
+linkPhone,flinkPhone,VARCHAR
+linkTel,flinkTel,VARCHAR
+currentLevel,fcurrentLevel,VARCHAR
+targetLevel,ftargetLevel,VARCHAR
+belongDeptId,fbelongDeptId,VARCHAR
+belongDeptName,fbelongDeptName,VARCHAR

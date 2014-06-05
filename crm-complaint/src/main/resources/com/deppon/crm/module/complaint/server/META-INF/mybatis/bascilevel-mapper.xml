@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.BasciLevel">
+	<resultMap id="baseResultMap"
+		type="com.deppon.crm.module.complaint.shared.domain.BasciLevel">
+		<id column="fid" property="fid" jdbcType="DECIMAL" />
+		<result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+		<result column="FCREATEUSERID" property="createuserid"
+			jdbcType="DECIMAL" />
+		<result column="FLASTUPDATETIME" property="lastupdatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="lastmodifyuserid"
+			jdbcType="DECIMAL" />
+		<result column="FPARENTID" property="parentid" jdbcType="DECIMAL" />
+		<result column="FLEVELNAME" property="levelname" jdbcType="VARCHAR" />
+		<result column="FLEVEL" property="level"
+			jdbcType="VARCHAR" />
+		<result column="FBASCILEVELNAME" property="bascilevelname"
+			jdbcType="VARCHAR" />
+		<result column="FTYPE" property="type"
+			jdbcType="VARCHAR" />
+		<result column="FUSEYN" property="type"
+			jdbcType="VARCHAR" />			
+	</resultMap>
+
+	<resultMap id="basicLevelView"
+		type="com.deppon.crm.module.complaint.shared.domain.BasciLevelView">
+		<result column="fatherId" property="fatherId" jdbcType="DECIMAL" />
+		<result column="childId" property="childId" jdbcType="DECIMAL" />
+		<result column="fatherBLName" property="fatherBLName"
+			jdbcType="VARCHAR" />
+		<result column="chiledBLName" property="chiledBLName" jdbcType="VARCHAR" />
+		<result column="report" property="type" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectBasciLevel" resultMap="baseResultMap"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.BasciLevelSearchCondition">
+		SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+		FLASTMODIFYUSERID, FPARENTID, FLEVEL ,FBASCILEVELNAME ,FUSEYN
+		FROM T_CRM_BASCI_LEVEL BS
+		WHERE 1=1
+		<if test=" parentid != null">
+			AND FPARENTID=#{parentid}
+		</if>
+	    <if test=" useYn != null and useYn !='' ">
+	    	AND FUSEYN =#{useYn}
+	    </if>
+	    	AND EXISTS(SELECT 1 FROM T_CRM_PROCRESULT WHERE FLEVELID = BS.FID)	
+		ORDER BY FCREATETIME,FLASTUPDATETIME
+	</select>
+<!-- 查询业务范围 -->
+	<select id="getFBasiciLevel" resultMap="baseResultMap"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.BasciLevelSearchCondition">
+		SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+		FLASTMODIFYUSERID, FPARENTID, FLEVEL ,FBASCILEVELNAME,FUSEYN 
+		FROM T_CRM_BASCI_LEVEL BI
+		WHERE FPARENTID IS NULL
+	    <if test=" type != null and type !='' ">
+	    	AND FTYPE =#{type}
+	    </if>
+	    <if test=" useYn != null and useYn !='' ">
+	    	AND FUSEYN =#{useYn}
+	    </if>
+	    AND EXISTS(SELECT 1 FROM T_CRM_BASCI_LEVEL BS WHERE BS.FPARENTID = BI.FID AND BS.FUSEYN ='1' 
+	    AND EXISTS( SELECT 1 FROM T_CRM_PROCRESULT BT WHERE BT.FLEVELID=BS.FID))	    
+		ORDER BY FCREATETIME,FLASTUPDATETIME
+	</select>
+	
+	<!-- 查询基础资料层级 -->
+	<select id="getBasicLevelView" resultMap="basicLevelView"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.BasciLevelSearchCondition">
+		SELECT F.FID fatherId,F.FBASCILEVELNAME fatherBLName,C.FID childId,C.FBASCILEVELNAME chiledBLName, C.FTYPE REPORT
+		FROM T_CRM_BASCI_LEVEL F,T_CRM_BASCI_LEVEL C
+	    WHERE F.FID=C.FPARENTID AND F.FID != C.FID
+	    <if test="ifparent != null and ifparent ==0">
+	    	<if test="bascilevelname != null and bascilevelname !='' ">
+	    	AND F.FBASCILEVELNAME LIKE '%'||#{bascilevelname}||'%'
+	    	</if>
+	    </if>
+	    <if test="ifparent != null and ifparent ==1">
+	    	<if test="bascilevelname != null and bascilevelname !='' ">
+	    	AND C.FBASCILEVELNAME LIKE '%'||#{bascilevelname}||'%'
+	    	</if>
+	    </if>
+	    <if test="type != null and type !='' ">
+	    	AND C.ftype =#{type}
+	    </if>
+	    and F.FUSEYN='1'
+	    and C.FUSEYN='1'
+	</select>
+	
+	<insert id="saveBasciLevel" parameterType="com.deppon.crm.module.complaint.shared.domain.BasciLevel">
+		<selectKey keyProperty="fid" resultType="DECIMAL" order="BEFORE">
+			SELECT SEQ_ID_BASIC_LEVEL.nextval AS
+			fid FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_BASCI_LEVEL
+  				(FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID, 
+  				FPARENTID, FLEVEL, FBASCILEVELNAME, FTYPE)
+		VALUES(
+			#{fid},
+			sysdate,
+			#{createuserid, jdbcType=DECIMAL},
+			sysdate,
+			#{lastmodifyuserid, jdbcType=DECIMAL},
+			#{parentid, jdbcType=DECIMAL},
+			#{level, jdbcType=VARCHAR},
+			#{bascilevelname, jdbcType=VARCHAR},
+			#{type, jdbcType=VARCHAR}
+		)
+	</insert>
+	<delete  id="deleteBasciLevelById" parameterType="integer">
+		<![CDATA[
+		delete from T_CRM_BASCI_LEVEL where fid=#{fid}
+		]]>
+	</delete>
+	
+	<update  id="deleteBasciLevelByParentId" parameterType="integer">
+		UPDATE T_CRM_BASCI_LEVEL 
+		SET FUSEYN		='0'
+		WHERE FPARENTID = #{fid}
+    	OR FID = #{fid}
+	</update>
+	
+	<update id="deleteBasicTypeById" parameterType="integer">
+		UPDATE T_CRM_BASCI_LEVEL
+		SET FUSEYN		='0'
+		WHERE FID = #{id}
+		
+		/* com.deppon.crm.module.complaint.shared.domain.BasciLevel.deleteBasicTypeById (justin.xu)*/
+	</update>
+	
+	<select id="selectBasciLevelById" resultMap="basicLevelView"
+		parameterType="map">
+		SELECT F.FID fatherId,F.FBASCILEVELNAME fatherBLName,C.FID childId,C.FBASCILEVELNAME chiledBLName, C.FTYPE REPORT
+		FROM T_CRM_BASCI_LEVEL F,T_CRM_BASCI_LEVEL C
+	    WHERE F.FID=C.FPARENTID AND F.FID != C.FID
+	    <if test=" null !=basciLevelId  and '' != basciLevelId">
+	    <![CDATA[ and	c.fid=#{basciLevelId} ]]>
+	    </if>
+	</select>
+	
+	<select id="getBasicLevelById" resultMap="baseResultMap">
+			SELECT 
+			FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+		FLASTMODIFYUSERID, FPARENTID, FLEVEL ,FBASCILEVELNAME
+		FROM T_CRM_BASCI_LEVEL 
+	    WHERE  FID = #{id}
+		</select>
+		
+		<update id="updateBasciLevel" >
+			update t_crm_basci_level
+		    set flastupdatetime = sysdate,
+		        flastmodifyuserid = #{lastmodifyuserid, jdbcType=DECIMAL},
+		        fparentid = #{parentid, jdbcType=DECIMAL},
+		        flevel = #{level, jdbcType=VARCHAR},
+		        fbascilevelname = #{bascilevelname, jdbcType=VARCHAR},
+		        ftype = #{type, jdbcType=VARCHAR}
+		  	where fid = #{fid}
+		</update>
+	<!-- 新基础资料查询 -->
+	<resultMap id="BasicBusScopeVO" type="com.deppon.crm.module.complaint.shared.domain.BasicBusScopeVO" >
+		<id column="busItemId" property="busItemId"/>
+		<result column="busItemName" property="busItemName"/>
+		<result column="busScopeId" property="busScopeId"/>
+		<result column="busScopeName" property="busScopeName"/>
+		<result column="reportType" property="reportType"/>
+		<collection property="busTypes" ofType="com.deppon.crm.module.complaint.shared.domain.BasicBusType" 
+			javaType="ArrayList" resultMap="busType">		
+		</collection>
+	</resultMap>
+	<resultMap id="busType" type="com.deppon.crm.module.complaint.shared.domain.BasicBusType" >
+			<id column="busTypeId" property="id"/>
+			<result column="levelId" property="levelId"/>
+			<result column="dealLanguage" property="dealLanguage"/>
+			<result column="feedbackLimit" property="feedbackLimit"/>
+			<result column="procLimit" property="procLimit"/>
+			<result column="busType" property="busType"/>
+	</resultMap>
+	<select id="searchBasicBusScopeVO" parameterType="com.deppon.crm.module.complaint.shared.domain.BasicBusScopeVO" 
+		resultMap="BasicBusScopeVO">
+			SELECT
+			   BI.FID busItemId,
+			   BI.FBASCILEVELNAME busItemName,
+			   BS.FID busScopeId,
+			   BS.FBASCILEVELNAME busScopeName,
+			   BI.FTYPE reportType,
+			   BT.FID busTypeId,
+			   BT.FLEVELID levelId,
+			   BT.FDEALLAN dealLanguage,
+			   BT.FEEDBACKLIMIT feedbackLimit,
+			   BT.PROCLIMIT procLimit,
+			   BT.FBUSTYPE busType
+		FROM
+			T_CRM_BASCI_LEVEL BI
+			LEFT JOIN T_CRM_BASCI_LEVEL BS
+			ON BI.FID = BS.FPARENTID
+			LEFT JOIN T_CRM_PROCRESULT BT
+			ON BS.FID = BT.FLEVELID
+			WHERE
+			   BI.FID = #{busItemId}			   
+			   AND BI.FUSEYN = 1
+			   AND (BS.FUSEYN = 1 OR BS.FUSEYN IS NULL)
+			   <if test="busScopeId != null and busScopeId != ''">
+			   		AND BS.FID = #{busScopeId}
+			   </if>
+	</select>
+	<select id="searchBusScopeByBusItemId" resultType="com.deppon.crm.module.complaint.shared.domain.BasicInfo">
+		SELECT FID busScopeId,
+			   FBASCILEVELNAME busScopeName,
+			   FTYPE reportType
+		FROM T_CRM_BASCI_LEVEL BS
+		WHERE FPARENTID = #{id}
+			  AND FUSEYN = 1
+			  AND FLEVEL = 1		
+	</select>
+	<select id="searchCountBasicInfo" parameterType="com.deppon.crm.module.complaint.shared.domain.BasicSearchCondition"
+		resultType="int">
+		<![CDATA[
+		SELECT COUNT(1)
+		FROM
+			(
+			SELECT DISTINCT 
+	        BI.FID busItemId,
+	        BI.FBASCILEVELNAME busItemName,
+	        case BS.FUSEYN WHEN '1' THEN BS.FID else null end busScopeId,
+	        case BS.FUSEYN WHEN '1' THEN BS.FBASCILEVELNAME else null end busScopeName,
+	        case BS.FUSEYN WHEN '1' THEN BT.FID else null end busTypeId,
+	        case BS.FUSEYN WHEN '1' THEN BT.FBUSTYPE else null end busTypeName,
+	        BI.FTYPE reportType,
+	        case BS.FUSEYN WHEN '1' THEN BT.FDEALLAN else null end dealLanguage,
+	        case BS.FUSEYN WHEN '1' THEN BT.PROCLIMIT else null end procLimit,
+	        case BS.FUSEYN WHEN '1' THEN BT.FEEDBACKLIMIT else null end feedbackLimit	       
+			FROM
+				T_CRM_BASCI_LEVEL BI
+				LEFT JOIN T_CRM_BASCI_LEVEL BS
+				ON BI.FID = BS.FPARENTID
+				LEFT JOIN T_CRM_PROCRESULT BT
+				ON BS.FID = BT.FLEVELID	
+				WHERE BI.FPARENTID IS NULL	
+				AND BI.FUSEYN = '1'
+        		AND (BS.FUSEYN = '1' OR BS.FUSEYN IS NULL OR ( BS.FUSEYN = '0'
+        		AND NOT EXISTS(SELECT 1 FROM T_CRM_BASCI_LEVEL WHERE FPARENTID = BI.FID AND FUSEYN='1')))
+			]]>
+			<if test="basicType != null and basicType !='' and basicType==&quot;001&quot;
+						and basicContent !=null and basicContent !=''">
+				<![CDATA[
+					AND BI.FBASCILEVELNAME LIKE '%'||#{basicContent}||'%'
+				]]>
+			</if>
+			<if test="basicType != null and basicType !='' and basicType==&quot;002&quot;
+						and basicContent != null and basicContent !=''">
+				<![CDATA[
+					AND BS.FBASCILEVELNAME LIKE '%'||#{basicContent}||'%'
+				]]>
+			</if>
+			<if test="basicType != null and basicType !='' and basicType==&quot;003&quot;
+						and basicContent != null and basicContent != ''">
+				<![CDATA[
+					AND BT.FBUSTYPE LIKE '%'||#{basicContent}||'%'
+				]]>
+			</if>
+			<![CDATA[
+				)
+			]]>
+	</select>
+	<select id="searchBusItemByType" resultType="com.deppon.crm.module.complaint.shared.domain.BasicInfo">
+		<![CDATA[
+			SELECT
+				FID busItemId,
+				FBASCILEVELNAME busItemName,
+				FTYPE reportType
+				FROM
+				T_CRM_BASCI_LEVEL BI
+				WHERE				
+					BI.FUSEYN = 1
+					AND BI.FPARENTID IS NULL
+		]]>
+			<if test="value != null and value != ''">
+				AND FTYPE = #{reportType}
+			</if>
+	</select>
+	<select id="searchBasicInfo" parameterType="com.deppon.crm.module.complaint.shared.domain.BasicSearchCondition"
+		resultType="com.deppon.crm.module.complaint.shared.domain.BasicInfo">
+		<![CDATA[
+			SELECT DISTINCT 
+	        BI.FID busItemId,
+	        BI.FBASCILEVELNAME busItemName,
+	        case BS.FUSEYN WHEN '1' THEN BS.FID else null end busScopeId,
+	        case BS.FUSEYN WHEN '1' THEN BS.FBASCILEVELNAME else null end busScopeName,
+	        case BS.FUSEYN WHEN '1' THEN BT.FID else null end busTypeId,
+	        case BS.FUSEYN WHEN '1' THEN BT.FBUSTYPE else null end busTypeName,
+	        BI.FTYPE reportType,
+	        case BS.FUSEYN WHEN '1' THEN BT.FDEALLAN else null end dealLanguage,
+	        case BS.FUSEYN WHEN '1' THEN BT.PROCLIMIT else null end procLimit,
+	        case BS.FUSEYN WHEN '1' THEN BT.FEEDBACKLIMIT else null end feedbackLimit,
+	        COALESCE(BT.FLASTUPDATETIME,BS.FLASTUPDATETIME,BI.FLASTUPDATETIME,to_date('1970-1-1','YYYY-MM-DD')) lastUpdateTime
+			FROM
+				T_CRM_BASCI_LEVEL BI
+				LEFT JOIN T_CRM_BASCI_LEVEL BS
+				ON BI.FID = BS.FPARENTID
+				LEFT JOIN T_CRM_PROCRESULT BT
+				ON BS.FID = BT.FLEVELID	
+				WHERE BI.FPARENTID IS NULL	
+				AND BI.FUSEYN = '1'
+        		AND (BS.FUSEYN = '1' OR BS.FUSEYN IS NULL OR ( BS.FUSEYN = '0'
+        		AND NOT EXISTS(SELECT 1 FROM T_CRM_BASCI_LEVEL WHERE FPARENTID = BI.FID AND FUSEYN='1')))
+			]]>
+			<if test="basicType != null and basicType !='' and basicType==&quot;001&quot;
+						and basicContent !=null and basicContent !=''">
+				<![CDATA[
+					AND BI.FBASCILEVELNAME LIKE '%'||#{basicContent}||'%'
+				]]>
+			</if>
+			<if test="basicType != null and basicType !='' and basicType==&quot;002&quot;
+						and basicContent != null and basicContent !=''">
+				<![CDATA[
+					AND BS.FBASCILEVELNAME LIKE '%'||#{basicContent}||'%'
+				]]>
+			</if>
+			<if test="basicType != null and basicType !='' and basicType==&quot;003&quot;
+						and basicContent != null and basicContent != ''">
+				<![CDATA[
+					AND BT.FBUSTYPE LIKE '%'||#{basicContent}||'%'
+				]]>
+			</if>
+			<![CDATA[
+			ORDER BY lastUpdateTime DESC
+			]]>
+	</select>
+	<insert id="saveBasicLevel" parameterType="com.deppon.crm.module.complaint.shared.domain.BasicLevel" >
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT SEQ_ID_BASIC_LEVEL.nextval AS
+			id FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CRM_BASCI_LEVEL(
+					FID, 
+					FCREATETIME, 
+					FCREATEUSERID, 
+					FLASTUPDATETIME, 
+					FLASTMODIFYUSERID, 
+		  			FPARENTID, 
+		  			FLEVEL, 
+		  			FBASCILEVELNAME, 
+		  			FTYPE
+				) VALUES(
+					#{id},
+					#{createTime},
+					#{createUserId},
+					#{lastUpdateTime},
+					#{lastModifyUserId},
+					#{parentId,jdbcType=VARCHAR},
+					#{level,jdbcType=VARCHAR},
+					#{basciLevelName,jdbcType=VARCHAR},
+					#{type,jdbcType=VARCHAR}
+				)
+		]]>
+	</insert>
+	<update id="updateBasicLevelById" parameterType="com.deppon.crm.module.complaint.shared.domain.BasicLevel">
+		<![CDATA[
+			UPDATE 
+			T_CRM_BASCI_LEVEL
+		]]>
+			<set>
+				<if test="lastUpdateTime!=null and lastUpdateTime != ''">
+					FLASTUPDATETIME = #{lastUpdateTime},
+				</if>
+				<if test="lastModifyUserId != null and lastModifyUserId != ''">
+					FLASTMODIFYUSERID = #{lastModifyUserId},
+				</if>
+				<if test="parentId != null and parentId != ''">
+					FPARENTID = #{parentId},
+				</if>
+				<if test="level != null and level != ''">
+					FLEVEL = #{level},
+				</if>
+				<if test="type != null and type != ''">
+					FTYPE = #{type},
+				</if>
+				<if test="basciLevelName != null and basciLevelName != ''">
+					FBASCILEVELNAME = #{basciLevelName}
+				</if>
+			</set>			
+		<![CDATA[
+			WHERE FID=#{id}
+		]]>
+	</update>
+	<update id="updateBasicLevelByParentId" parameterType="com.deppon.crm.module.complaint.shared.domain.BasicLevel">
+		<![CDATA[
+			UPDATE 
+			T_CRM_BASCI_LEVEL
+		]]>
+			<set>
+				<if test="lastUpdateTime!=null and lastUpdateTime != ''">
+					FLASTUPDATETIME = #{lastUpdateTime},
+				</if>
+				<if test="lastModifyUserId != null and lastModifyUserId != ''">
+					FLASTMODIFYUSERID = #{lastModifyUserId},
+				</if>
+				<if test="parentId != null and parentId != ''">
+					FPARENTID = #{parentId},
+				</if>
+				<if test="level != null and level != ''">
+					FLEVEL = #{level},
+				</if>
+				<if test="type != null and type != ''">
+					FTYPE = #{type},
+				</if>
+				<if test="basciLevelName != null and basciLevelName != ''">
+					FBASCILEVELNAME = #{basciLevelName}
+				</if>
+			</set>			
+		<![CDATA[
+			WHERE FPARENTID=#{parentId}
+		]]>
+	</update>
+	<update id="deleteBusItem" parameterType="list">
+		<![CDATA[
+			UPDATE
+			T_CRM_BASCI_LEVEL
+			SET
+			FUSEYN ='0'
+			WHERE
+			FID IN
+		]]>
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+			OR FPARENTID IN
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>	
+	</update>
+	<update id="deleteBusScope" parameterType="String">
+		<![CDATA[
+			UPDATE
+			T_CRM_BASCI_LEVEL
+			SET
+			FUSEYN ='0'
+			WHERE
+			FID = #{id}
+			AND NOT EXISTS (
+				SELECT 1 FROM
+				T_CRM_PROCRESULT
+				WHERE FLEVELID = #{id}
+			)
+		]]>
+	</update>
+	
+</mapper>

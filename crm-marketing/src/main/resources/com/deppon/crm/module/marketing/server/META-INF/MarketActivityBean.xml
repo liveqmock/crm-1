@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="marketActivityDao" class="com.deppon.crm.module.marketing.server.dao.impl.MarketActivityDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="marketActivityService" class="com.deppon.crm.module.marketing.server.service.impl.MarketActivityService">
+		<property name="marketActivityDao" ref="marketActivityDao"/>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="marketActivityManager" class="com.deppon.crm.module.marketing.server.manager.impl.MarketActivityManager">
+		<property name="marketActivityService" ref="marketActivityService"></property>
+		<property name="clientBaseManager" ref="clientBaseManager"></property>
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="esbToFossAsyOperateImpl" ref="esbToFossAsyOperate"></property>
+	</bean>
+</beans>

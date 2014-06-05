@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.client.sync.domain.OrderRightInfo">
+	<insert id="insertOrderRightInfo"
+		parameterType="com.deppon.crm.module.client.sync.domain.OrderRightInfo">
+		<![CDATA[
+			INSERT INTO 
+				T_CRM_ORDERRIGHT
+			(FID,FORDERTEAM,FDEPARTMENT,FOPERATETIME,FCREATETIME,FSTATUS)
+			values
+			(seq_id_orderright.nextval,#{orderTeam,jdbcType=VARCHAR},#{department,jdbcType=VARCHAR},
+			#{operateTime,jdbcType=TIMESTAMP},sysdate,1)
+		]]>
+	</insert>
+
+	<update id="cancelOrderRightInfo">
+		<![CDATA[
+			UPDATE 
+				T_CRM_ORDERRIGHT
+			SET 
+				FSTATUS = 2,FOPERATETIME=#{operateTime,jdbcType=TIMESTAMP}
+			WHERE 
+				FORDERTEAM = #{orderTeam,jdbcType=VARCHAR} 
+				AND	FDEPARTMENT=#{department,jdbcType=VARCHAR}
+		]]>
+	</update>
+
+	<insert id="insertSiteReceiveRequest"
+		parameterType="com.deppon.crm.module.client.sync.domain.SiteReceiveRequest">
+		<![CDATA[INSERT INTO T_CRM_LADINGSTATION
+			(FID,FDEPTNAME,FNEWPROVINCEID,FNEWCITYID,FNEWAREAID,FDEPTADDR,FREMARK,
+			FCONTACT,FISOUTFIELD,FISTRANSIT,FISENABLE,FISOPEN,FORGID,
+			FISARRIVE,FISLEAVE,FISHOMEDELIVERY,FISSELFDELIVERY,FISOUTWARD,FISTEAM,
+			FISHAVEPDA,FSTANDARDCODE,FCREATETIME,FLASTUPDATETIME,FCREATEUSERID,FLASTMODIFYUSERID)
+			values
+			(seq_id_ladingstationdepartment.nextval,
+			#{deptName,jdbcType=VARCHAR},#{deptProvince,jdbcType=VARCHAR},
+			#{deptCity,jdbcType=VARCHAR},#{deptArea,jdbcType=VARCHAR},
+			#{deptAddress,jdbcType=VARCHAR},#{descript,jdbcType=VARCHAR},
+			
+			#{contactWay,jdbcType=VARCHAR},#{leaveOutDept,jdbcType=VARCHAR},
+			#{leaveMiddleChange,jdbcType=VARCHAR},#{isUsed,jdbcType=VARCHAR},
+			#{isOpen,jdbcType=VARCHAR},	#{organisationId,jdbcType=VARCHAR},
+			
+			#{isArrived,jdbcType=VARCHAR},#{isLeave,jdbcType=VARCHAR},
+			#{isSendToHome,jdbcType=VARCHAR},#{isGetBySelf,jdbcType=VARCHAR},
+			#{isOutSend,jdbcType=VARCHAR},#{isCarTeam,jdbcType=VARCHAR},
+			
+			#{isHasPDA,jdbcType=VARCHAR},#{standardCode,jdbcType=VARCHAR},
+			SYSDATE,SYSDATE,1,1)
+		]]>
+	</insert>
+
+
+</mapper>

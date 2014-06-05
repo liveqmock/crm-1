@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.Question">
+	<resultMap id="QuestionResultMap" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail">
+			<id property="id" column="FID" />
+			<result property="questionTitle" column="FTITLE" />
+			<result property="questionType" column="FQUESTIONTYPE" />
+			<result property="useRange" column="FRANGE" />
+			<result property="createUser" column="FCREATORNAME" />
+			<result property="createUserId" column="FCREATORID" />
+			<result property="modifyUser" column="FMODIFIERNAME" />
+			<result property="lastModifyUserId" column="FMODIFIERID" />
+			<result property="createDate" column="FCREATEDATE" />
+			<result property="modifyDate" column="FLASTMODIFYDATE" />
+			<result property="questionCode" column="FQUESTIONCODE" />
+			<result property="questionContent" column="FQUESTIONCONTENT" />
+			<result property="frequency" column="FREQUENCY" />
+			<result property="elseOption" column="FISHASBLANK" />
+			<result property="questionSeq" column="FQUESTIONSEQ" />
+			<result property="questionnaireId" column="FSURVEYID" />
+			<collection property="options" column="FID" ofType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionOption" select="searchOptionByQuestionId">
+			</collection> 	
+	</resultMap>
+	<resultMap id="OptionMap" type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionOption">
+			<id property="id" column="FID" />
+			<result property="questionFid" column="FQUESTIONFID" />
+			<result property="optionDes" column="FOPTIONDES" />
+			<result property="optionSeq" column="FOPTIONSEQ" />
+			<result property="createDate" column="FCREATEDATE" />
+			<result property="modifyDate" column="FMODIFYDATE" />
+			<result property="creatorId" column="FCREATORID" />
+			<result property="modifierId" column="FMODIFIERID" />
+	</resultMap>
+	<!-- 问卷管理查询结果列表-->
+    <resultMap id="questionnaireInfoMap"
+        type="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionnaireInfo">
+		<result column="FID" property="id" jdbcType="NUMERIC" javaType="String"/>
+		<result column="FSURVERYNUM" property="questionnaireCode" jdbcType="VARCHAR" javaType="String"/>       
+        <result column="FSURVERYNAME" property="questionnaireName" jdbcType="VARCHAR" javaType="String"/>        
+        <result column="FEFFECTIVETIME" property="effectiveTime" jdbcType="DATE" />
+        <result column="FINVALIDTIME" property="invalidTime" jdbcType="DATE" />
+        <result column="FCREATETIME" property="createDate" jdbcType="DATE" />
+        <result column="FLASTMODIFYTIME" property="modifyDate" jdbcType="DATE" />
+        <result column="FSURVEYTYPE" property="useRange" jdbcType="VARCHAR" />
+        <result column="FSURVEYDESC" property="desc" jdbcType="VARCHAR" />
+        <result column="FSTATUS" property="status" jdbcType="VARCHAR" />
+        <result column="FCREATEUSERID" property="createUserId" jdbcType="NUMERIC" javaType="String"/>
+        <result column="FMODIFYEMPNAME" property="modifyUser" jdbcType="VARCHAR" javaType="String"/>
+        <result column="FCREATOREMPNAME" property="createUser" jdbcType="VARCHAR" javaType="String"/>
+        <result column="FLASTMODIFYUSERID" property="lastModifyUserId" jdbcType="NUMERIC" javaType="String"/>
+        <result column="FUSETIMES" property="useTimes" javaType="int" />
+        <result column="FVISITID" property="visitId" jdbcType="NUMERIC" />
+        <result column="FMARKETINGDATE" property="marketingDate"/>
+        <result column="FEXECUTORNAME" property="executorName"/>
+        <result column="FMARKETINGWAY" property="marketingWay"/>
+        <result column="FLINKMANNAME" property="linkManName" />
+        <result column="FPLANTOPIC" property="planTopic" />
+        <result column="FCUSTSURVEYID" property="questionnaireId" />
+    </resultMap>
+<!-- 根据条件查询问题列表 todo:不必要子查询太多需要优化 -->
+<select id="searchQuestionsByCondition" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionQueryCondition" resultMap="QuestionResultMap">
+		<![CDATA[
+		      SELECT E1.FEMPNAME     FCREATORNAME,
+			       E2.FEMPNAME     FMODIFIERNAME,
+			       Q.FID           FID,
+			       Q.FTITLE        FTITLE,
+			       Q.FQUESTIONTYPE FQUESTIONTYPE,
+			       Q.FQUESTIONCONTENT FQUESTIONCONTENT,
+			       Q.FRANGE FRANGE,
+			       Q.FISHASBLANK FISHASBLANK,
+			       Q.FCREATETIME FCREATEDATE,
+			       Q.FCREATEUSERID FCREATEUSERID,
+			       Q.FLASTMODIFYTIME FLASTMODIFYDATE,
+			       Q.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+			       SQQ.FREQUENCY FREQUENCY
+			  FROM T_MARK_QUESTION Q
+			  LEFT JOIN T_ORG_EMPLOYEE E1 on E1.FID = Q.FCREATEUSERID
+			  LEFT JOIN T_ORG_EMPLOYEE E2 on E2.FID = Q.FLASTMODIFYUSERID
+			  LEFT JOIN (SELECT COUNT(SQ.FQUESTIONID) FREQUENCY,
+			                    SQ.FQUESTIONID FQUESTIONID,
+			                    Q.FID FID
+			               FROM T_MARK_QUESTION Q
+			               LEFT JOIN T_MARK_SURVEY_QUESTION SQ ON Q.FID = SQ.FQUESTIONID
+			              GROUP BY Q.FID, SQ.FQUESTIONID) SQQ ON SQQ.FID = Q.FID
+	              WHERE 1=1	   
+		]]>
+		<if test="questionTitle != null and questionTitle != ''">
+			<![CDATA[ 
+			 AND Q.FTITLE LIKE '%'||#{questionTitle,jdbcType=VARCHAR}||'%'
+			]]>
+		</if>
+		<if test="useRange != null and useRange != ''">
+			<![CDATA[ 
+			 AND Q.FRANGE = #{useRange,jdbcType=VARCHAR}
+			]]>
+		</if>
+		<if test="questionType != null and questionType != ''">
+			<![CDATA[ 
+			 AND Q.FQUESTIONTYPE = #{questionType,jdbcType=VARCHAR}
+			]]>
+		</if>
+		<if test="createStartDate != null">
+			<![CDATA[ 
+			 AND TRUNC(Q.FCREATETIME) >= #{createStartDate}
+			]]>	
+		</if>
+		<if test="createEndDate != null">
+			<![CDATA[ 
+			 AND TRUNC(Q.FCREATETIME) <= #{createEndDate}
+			]]>	
+		</if>
+		ORDER BY Q.FCREATETIME DESC
+</select>
+<!-- 根据条件统计问题总数 -->
+<select id="countQuestionsByCondition" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionQueryCondition" resultType="String">
+		<![CDATA[
+		SELECT COUNT(*) FROM T_MARK_QUESTION Q
+		WHERE 1 = 1
+		]]>
+		<if test="questionTitle != null and questionTitle != ''">
+			<![CDATA[ 
+			 AND Q.FTITLE LIKE '%'||#{questionTitle,jdbcType=VARCHAR}||'%'
+			]]>
+		</if>
+		<if test="useRange != null and useRange != ''">
+			<![CDATA[ 
+			 AND Q.FRANGE = #{useRange,jdbcType=VARCHAR}
+			]]>
+		</if>
+		<if test="questionType != null and questionType != ''">
+			<![CDATA[ 
+			 AND Q.FQUESTIONTYPE = #{questionType,jdbcType=VARCHAR}
+			]]>
+		</if>
+		<if test="createStartDate != null">
+			<![CDATA[ 
+			 AND TRUNC(Q.FCREATETIME) >= #{createStartDate}
+			]]>	
+		</if>
+		<if test="createEndDate != null">
+			<![CDATA[ 
+			 AND TRUNC(Q.FCREATETIME) <= #{createEndDate}
+			]]>	
+		</if>
+		ORDER BY Q.FCREATETIME DESC
+</select>
+<!-- 根据问题查询问题对应的选项 -->
+<select id="searchOptionByQuestion" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail" resultMap="OptionMap">
+		<![CDATA[
+		SELECT *
+  		FROM T_MARK_QUESTION Q
+ 	 	LEFT JOIN T_MARK_QUESTION_OPTION QO ON QO.FQUESTIONFID = Q.FID
+		 WHERE 1 = 1
+		]]>
+		<if test="id != null and id!=''">
+			<![CDATA[ 
+			 AND QO.FQUESTIONFID = #{id}
+			]]>	
+		</if>
+		ORDER BY QO.FOPTIONSEQ ASC
+</select>
+<!-- 根据问题查询问题对应的选项 -->
+<select id="searchOptionByQuestionId" parameterType="String" resultMap="OptionMap">
+		<![CDATA[
+		SELECT *
+  		FROM T_MARK_QUESTION_OPTION QO 
+		 WHERE QO.FQUESTIONFID = #{_parameter}
+		 ORDER BY QO.FOPTIONSEQ ASC
+		]]>
+</select>
+<!-- 根据问题id列表或者问卷id查询问题对应选项 -->
+<select id="searchOptionByQuestionIds" parameterType="map" resultMap="QuestionResultMap">
+	<![CDATA[
+		SELECT 
+	]]>
+		<if test="questionnaireId != null and questionnaireId !=''">
+         	<![CDATA[ SQ.FQUESTIONSEQ, SQ.FSURVEYID,]]>
+         </if>
+	<![CDATA[
+		Q.*
+		FROM T_MARK_QUESTION Q
+ 	]]>
+		<choose>
+            <!-- 当问卷ID不为空 -->
+            <when test="questionnaireId != null and questionnaireId != ''">
+            	<![CDATA[
+	            	LEFT JOIN T_MARK_SURVEY_QUESTION SQ ON Q.FID = SQ.FQUESTIONID
+	 				WHERE SQ.FSURVEYID = #{questionnaireId,jdbcType=VARCHAR}
+	 				ORDER BY SQ.FQUESTIONSEQ
+ 				]]>
+            </when>
+            <otherwise>
+            	<![CDATA[
+            		WHERE Q.FID IN 
+            	]]>
+	            <foreach collection="list" item="item" open="(" separator="," close=")">
+					#{item,jdbcType=VARCHAR}
+				</foreach>
+            </otherwise>
+	    </choose>
+</select>
+<!-- 创建问题，向问题表中插入一条记录 -->
+	<insert id="createQuestion" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_QUESTION.nextval as id FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO t_mark_question
+		VALUES(#{id},#{questionTitle,jdbcType=VARCHAR},#{useRange,jdbcType=VARCHAR},
+			   #{questionContent,jdbcType=VARCHAR},#{questionType,jdbcType=VARCHAR},#{elseOption,jdbcType=VARCHAR},
+			   sysdate,#{createUserId,jdbcType=VARCHAR},null,null
+			   )
+		]]>
+	</insert>
+	<!-- 创建问题，向问题选项表中插入一条记录 -->
+	<insert id="createQuestionOption" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionOption">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_QUESTION_OPTION.nextval as id FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO t_mark_question_option
+		VALUES(#{id},#{questionFid,jdbcType=VARCHAR},#{optionDes,jdbcType=VARCHAR},
+			   #{optionSeq,jdbcType=VARCHAR},#{creatorId,jdbcType=VARCHAR},sysdate,
+			   null,null
+			   )
+		]]>
+	</insert>
+	<!-- 根据问题id删除对应问题 -->
+	<delete id="deleteQuestion" parameterType="String">
+		<![CDATA[
+			DELETE FROM T_MARK_QUESTION WHERE FID = #{_parameter,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<!-- 根据问题id删除对应选项 -->
+	<delete id="deleteOption" parameterType="String">
+		<![CDATA[
+			DELETE FROM T_MARK_QUESTION_OPTION WHERE FQUESTIONFID = #{_parameter,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<!-- 根据问题id更新问题详情 -->
+	<update id="updateQuestion" parameterType="com.deppon.crm.module.marketing.shared.domain.questionnaire.QuestionDetail">
+		<![CDATA[
+			UPDATE t_mark_question 
+			SET FLASTMODIFYTIME = sysdate,
+				FRANGE=#{useRange,jdbcType=VARCHAR},
+				FQUESTIONCONTENT=#{questionContent,jdbcType=VARCHAR},
+				FQUESTIONTYPE=#{questionType,jdbcType=VARCHAR},
+				FTITLE=#{questionTitle,jdbcType=VARCHAR}
+		]]>
+		<if test="lastModifyUserId!=null and lastModifyUserId !=''">
+			<![CDATA[,FLASTMODIFYUSERID=#{lastModifyUserId}]]>
+		</if>  
+         <if test="elseOption != null and elseOption !=''">
+         	<![CDATA[ , FISHASBLANK = #{elseOption, jdbcType=VARCHAR} ]]>
+         </if>	
+			WHERE FID = #{id, jdbcType=VARCHAR}
+	</update>
+	<!-- 根据问题id查出引用该问题的问卷信息 -->
+	<select id="searchQuestionnaireByQuestionId" parameterType="String" resultMap="questionnaireInfoMap">
+		<![CDATA[
+			SELECT SU.FID FID,
+		       SU.FSURVERYNUM FSURVERYNUM,
+		       SU.FSURVERYNAME FSURVERYNAME,
+		       SU.FSURVEYDESC FSURVEYDESC,
+		       SU.FSURVEYTYPE FSURVEYTYPE,
+		       SU.FSTATUS FSTATUS,
+		       SU.FEFFECTIVETIME FEFFECTIVETIME,
+		       SU.FINVALIDTIME FINVALIDTIME,
+		       SU.FCREATETIME FCREATETIME,
+		       SU.FLASTMODIFYTIME FLASTMODIFYTIME,
+		       SU.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+		       EM.FEMPNAME FMODIFYEMPNAME,
+		       EMM.FEMPNAME FCREATOREMPNAME,
+		       (SELECT COUNT(1)
+		          FROM T_CUST_DEVELOPMAINTAINLIST P
+		         WHERE P.FSURVEYID = SU.FID) FUSETIMES
+		  FROM T_MARK_SURVEY SU
+		  LEFT JOIN T_ORG_EMPLOYEE EM ON SU.FLASTMODIFYUSERID = EM.FID
+		  LEFT JOIN T_ORG_EMPLOYEE EMM ON SU.FCREATEUSERID = EMM.FID
+		 WHERE SU.FID IN (SELECT SQ.FSURVEYID
+		                    FROM T_MARK_SURVEY_QUESTION SQ
+		                   WHERE SQ.FQUESTIONID = #{_parameter,jdbcType=VARCHAR})
+		]]>
+	</select>
+	<!-- 根据问题名称查询问题详情 -->
+	<select id="searchQuestionDetailByQuestionName" parameterType="String" resultMap="QuestionResultMap">
+		<![CDATA[
+		SELECT *
+  		FROM T_MARK_QUESTION Q 
+		WHERE Q.FTITLE = #{_parameter}
+		]]>
+	</select>
+
+</mapper>

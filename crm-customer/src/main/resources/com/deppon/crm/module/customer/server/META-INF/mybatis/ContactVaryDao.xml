@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.ContactVary">
+	
+	<select id="getContactVaryId" resultType="string">
+		select SEQ_ID_contactvary.nextval as id from dual
+	</select>
+	
+	<insert id="insertContactVary" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactVary" >
+		insert into t_cust_contactvary(
+		FID,FCREATETIME,FCREATEUSERID,
+		FCONTACTNUMBER,FMEMBERNUMBER,FFROMMEMBERINTEGRALID,FTOMEMBERINTEGRALID,
+		FWORKFLOWID)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{contactNumber,jdbcType=VARCHAR},#{memberNumber,jdbcType=VARCHAR},
+		#{fromMemberIntegral.id,jdbcType=VARCHAR},#{toMemberIntegral.id,jdbcType=VARCHAR},
+		#{workflowId,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<resultMap id="ContactVaryRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.ContactVary">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="contactNumber" column="FCONTACTNUMBER" jdbcType = "VARCHAR" />
+		<result property="memberNumber" column="FMEMBERNUMBER" jdbcType = "VARCHAR" />
+		<result property="workflowId" column="FWORKFLOWID" jdbcType = "NUMERIC" />
+		<association property="fromMemberIntegral" column="FFROMMEMBERINTEGRALID" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral.getMemberIntegralById"/>
+		<association property="toMemberIntegral" column="FTOMEMBERINTEGRALID" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral.getMemberIntegralById"/>
+	</resultMap>
+	
+	<select id="searchContactVarys" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactVary" resultMap="ContactVaryRM">
+		SELECT
+		<include refid="ContactVary_column"/>
+		FROM T_CUST_CONTACTVARY V 
+		<where>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactNumber != null  and contactNumber != ''  ">
+		<![CDATA[and FCONTACTNUMBER=#{contactNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" memberNumber != null  and memberNumber != ''  ">
+		<![CDATA[and FMEMBERNUMBER=#{memberNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" fromMemberIntegral != null and fromMemberIntegral.id != null  and fromMemberIntegral.id != ''  ">
+		<![CDATA[and FFROMMEMBERINTEGRALID=#{fromMemberIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" toMemberIntegral != null and toMemberIntegral.id != null  and toMemberIntegral.id != ''  ">
+		<![CDATA[and FTOMEMBERINTEGRALID=#{toMemberIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workflowId != null  and workflowId != ''  ">
+		<![CDATA[and FWORKFLOWID=#{workflowId,jdbcType=NUMERIC}]]>
+		</if>
+		</where>
+	</select>
+		<!-- 变更联系人目标会员审批中信息 -->
+	<select id="queryContactVaryByMemberId" parameterType="String" resultMap="ContactVaryRM">
+		SELECT
+		<include refid="ContactVary_column"/>
+		FROM T_CUST_CONTACTVARY V 
+		LEFT JOIN T_CRM_TODOWORKFLOW W ON V.FWORKFLOWID = W.FWORKFLOWID 
+		WHERE W.FTODOFLAG = 'TODO'
+		AND EXISTS (SELECT 1
+			FROM T_CUST_CUSTBASEDATA T
+			WHERE EXISTS (SELECT 1 FROM T_CUST_MEMBERPOINT P WHERE T.FID = P.FMEMBERID AND  V.FTOMEMBERINTEGRALID = P.FID )
+			AND T.FID = #{id}
+        )
+	</select>
+	<!-- 变更联系人目标会员审批中信息 -->
+	<select id="isContactVary2Member" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactVary" resultMap="ContactVaryRM">
+		SELECT
+		<include refid="ContactVary_column"/>
+		FROM T_CUST_CONTACTVARY V 
+		LEFT JOIN T_CRM_TODOWORKFLOW W ON V.FWORKFLOWID = W.FWORKFLOWID 
+		WHERE W.FTODOFLAG = 'TODO'
+		<choose>
+			<when test=" toMemberIntegral != null and toMemberIntegral.member != null and  toMemberIntegral.member.id != null and toMemberIntegral.member.id != ''  ">
+				<![CDATA[ 
+					AND EXISTS (SELECT 1
+						FROM T_CUST_CUSTBASEDATA T
+						WHERE EXISTS (SELECT 1 FROM T_CUST_MEMBERPOINT P WHERE T.FID = P.FMEMBERID AND  V.FTOMEMBERINTEGRALID = P.FID )
+						AND T.FID = #{toMemberIntegral.member.id,jdbcType=VARCHAR}
+			        )
+				]]>
+			</when>
+			<otherwise>
+				<if test=" id != null  and id != ''  ">
+				<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" createDate != null  and createDate != ''  ">
+				<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+				</if>
+				<if test=" createUser != null  and createUser != ''  ">
+				<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" modifyDate != null  and modifyDate != ''  ">
+				<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+				</if>
+				<if test=" modifyUser != null  and modifyUser != ''  ">
+				<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" contactNumber != null  and contactNumber != ''  ">
+				<![CDATA[and FCONTACTNUMBER=#{contactNumber,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" memberNumber != null  and memberNumber != ''  ">
+				<![CDATA[and FMEMBERNUMBER=#{memberNumber,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" fromMemberIntegral != null and fromMemberIntegral.id != null  and fromMemberIntegral.id != ''  ">
+				<![CDATA[and FFROMMEMBERINTEGRALID=#{fromMemberIntegral.id,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" toMemberIntegral != null and toMemberIntegral.id != null  and toMemberIntegral.id != ''  ">
+				<![CDATA[and FTOMEMBERINTEGRALID=#{toMemberIntegral.id,jdbcType=VARCHAR}]]>
+				</if>
+				<if test=" workflowId != null  and workflowId != ''  ">
+				<![CDATA[and FWORKFLOWID=#{workflowId,jdbcType=NUMERIC}]]>
+				</if>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<update id="updateContactVary" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactVary">
+		UPDATE
+	    T_CUST_CONTACTVARY
+		SET FLASTUPDATETIME = sysdate 
+		,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[,FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactNumber != null  and contactNumber != ''  ">
+		<![CDATA[,FCONTACTNUMBER=#{contactNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" memberNumber != null  and memberNumber != ''  ">
+		<![CDATA[,FMEMBERNUMBER=#{memberNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" fromMemberIntegral.id != null  and fromMemberIntegral.id != ''  ">
+		<![CDATA[,FFROMMEMBERINTEGRALID=#{fromMemberIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" toMemberIntegral.id != null  and toMemberIntegral.id != ''  ">
+		<![CDATA[,FTOMEMBERINTEGRALID=#{toMemberIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workflowId != null  and workflowId != ''  ">
+		<![CDATA[,FWORKFLOWID=#{workflowId,jdbcType=NUMERIC}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+	
+	<sql id="ContactVary_column">
+		V.FID,
+		V.FCREATETIME,
+		V.FCREATEUSERID,
+		V.FLASTUPDATETIME,
+		V.FLASTMODIFYUSERID,
+		V.FCONTACTNUMBER,
+		V.FMEMBERNUMBER,
+		V.FFROMMEMBERINTEGRALID,
+		V.FTOMEMBERINTEGRALID,
+		V.FWORKFLOWID
+	</sql>
+	
+	<delete id="deleteContactVary" parameterType="String">
+	  delete t_cust_contactvary where fid = #{id}
+	</delete>
+	
+	<select id="getContactVaryById" parameterType="string" resultMap="ContactVaryRM">
+		SELECT
+		<include refid="ContactVary_column"/>
+		FROM T_CUST_CONTACTVARY V 
+		WHERE FID = #{id}
+	</select>
+		
+</mapper>

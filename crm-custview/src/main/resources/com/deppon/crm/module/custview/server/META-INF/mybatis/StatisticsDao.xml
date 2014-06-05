@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.custview.shared.domain">
+	<!-- 理赔分析数据结果集映射 -->
+	<resultMap id="RecStatisticsResultMap" type="com.deppon.crm.module.custview.shared.domain.RecStatistics">
+		<result property="id" column="FID" />
+		<result property="custId" column="FCUSTID" />
+		<result property="date" column="FDATE" />
+		<result property="impersonator" column="FIMPERSONATOR" />
+		<result property="breakageforpay" column="FBREAKAGEFORPAY" />
+		<result property="dampforpay" column="FDAMPFORPAY" />
+		<result property="polluteforpay" column="FPOLLUTEFORPAY" />
+		<result property="othersforpay" column="FOTHERSFORPAY" />
+		<result property="pieceslost" column="FPIECESLOST" />
+		<result property="billlost" column="FBILLLOST" />
+		<result property="goodslack" column="FGOODSLACK" />
+		<result property="total" column="FTOTAL" />
+	</resultMap>
+
+	<!-- 理赔分析数据结果集字段 -->
+	<sql id="RecStatisticsFeilds">
+		sum(FIMPERSONATOR) AS FIMPERSONATOR,
+		sum(FBREAKAGEFORPAY) AS FBREAKAGEFORPAY,
+		sum(FDAMPFORPAY) AS FDAMPFORPAY,
+		sum(FPOLLUTEFORPAY) AS FPOLLUTEFORPAY,
+		sum(FOTHERSFORPAY) AS
+		FOTHERSFORPAY,
+		sum(FPIECESLOST) AS FPIECESLOST,
+		sum(FBILLLOST) AS FBILLLOST,
+		sum(FGOODSLACK) AS
+		FGOODSLACK,
+		sum(FTOTAL) AS FTOTAL
+	</sql>
+	<!-- <sql id="RecStatisticsFeilds"> -->
+	<!-- FID,FCUSTID,FDATE,FIMPERSONATOR,FBREAKAGEFORPAY,FDAMPFORPAY, -->
+	<!-- FPOLLUTEFORPAY,FOTHERSFORPAY,FPIECESLOST,FBILLLOST,FGOODSLACK,FTOTAL -->
+	<!-- </sql> -->
+
+	<!--根据客户ID获得理赔分析数据 -->
+	<select id="getRecStatisticsListByCustId" resultMap="RecStatisticsResultMap" parameterType="string">
+		SELECT
+		<include refid="RecStatisticsFeilds" />
+		FROM T_CRM_360RECOMPENSE
+		WHERE FCUSTID=#{custId}
+	</select>
+
+	<!-- 投诉分析数据结果集映射 -->
+	<resultMap id="ComplaintStatisticsResultMap" type="com.deppon.crm.module.custview.shared.domain.ComplaintStatistics">
+		<result property="id" column="FID" />
+		<result property="custId" column="FCUSTID" />
+		<result property="date" column="FDATE" />
+		<result property="insuranceclaims" column="FINSURANCECLAIMS" />
+		<result property="agencyproblem" column="FAGENCYPROBLEM" />
+		<result property="notcomplaint" column="FNOTCOMPLAINT" />
+		<result property="costcomplaint" column="FCOSTCOMPLAINT" />
+		<result property="service" column="FSERVICE" />
+		<result property="billingerror" column="FBILLINGERROR" />
+		<result property="customerReminder" column="FCUSTOMERREMINDER" />
+		<result property="customerReason" column="FCUSTOMERREASON" />
+		<result property="innerComplaints" column="FINNERCOMPLAINTS" />
+		<result property="personalityProblem" column="FPERSONALITYPROBLEM" />
+		<result property="timeLiness" column="FTIMELINESS" />
+		<result property="businessError" column="FBUSINESSERROR" />
+		<result property="total" column="FTOTAL" />
+	</resultMap>
+
+	<!-- 投诉分析数据结果集字段 -->
+	<sql id="ComplaintStatisticsFeilds">
+		sum(FINSURANCECLAIMS) AS FINSURANCECLAIMS,
+		sum(FAGENCYPROBLEM) AS FAGENCYPROBLEM,
+		sum(FNOTCOMPLAINT) AS FNOTCOMPLAINT,
+		sum(FCOSTCOMPLAINT) AS FCOSTCOMPLAINT,
+		sum(FSERVICE) AS FSERVICE,
+		sum(FBILLINGERROR) AS FBILLINGERROR,
+		sum(FCUSTOMERREMINDER) AS FCUSTOMERREMINDER,
+		sum(FCUSTOMERREASON) AS FCUSTOMERREASON,
+		sum(FINNERCOMPLAINTS) AS FINNERCOMPLAINTS,
+		sum(FPERSONALITYPROBLEM) AS FPERSONALITYPROBLEM,
+		sum(FTIMELINESS) AS FTIMELINESS,
+		sum(FBUSINESSERROR)
+		AS FBUSINESSERROR,
+		sum(FTOTAL) AS FTOTAL
+	</sql>
+	<!-- <sql id="ComplaintStatisticsFeilds"> -->
+	<!-- FID,FCUSTID,FDATE,FINSURANCECLAIMS,FAGENCYPROBLEM,FNOTCOMPLAINT,FCOSTCOMPLAINT, -->
+	<!-- FSERVICE,FBILLINGERROR,FCUSTOMERREMINDER,FCUSTOMERREASON,FINNERCOMPLAINTS, -->
+	<!-- FPERSONALITYPROBLEM,FTIMELINESS,FBUSINESSERROR,FTOTAL -->
+	<!-- </sql> -->
+
+	<!--根据客户ID获得投诉分析数据 -->
+	<select id="getComplaintStatisticsListByCustId" resultMap="ComplaintStatisticsResultMap"
+		parameterType="string">
+		SELECT
+		<include refid="ComplaintStatisticsFeilds" />
+		FROM T_CRM_360COMPLAINT
+		WHERE FCUSTID=#{custId}
+	</select>
+
+	<select id="getComplaintStatisticsByCustId" resultType="hashMap">
+		select bas.fbascilevelname as bascilevelname, count(*) as count
+		from t_cust_complaint p
+		left join
+		t_crm_basci_level bas on bas.fid = p.fparabascilevelid
+		where p.frecomcode is null and (bas.fbascilevelname is not null) and
+		p.fcomplainid=#{custId}
+		and p.freporttype = 'COMPLAINT'
+		group by
+		p.fcomplainid, bas.fbascilevelname
+	</select>
+
+	<!-- 营运分析数据结果集映射 零担 -->
+	<resultMap id="OperationAnalysisResultMap" type="com.deppon.crm.module.custview.shared.domain.OperationAnalysis">
+		<result property="id" column="FID" />
+		<result property="custId" column="FCUSTID" />
+		<result property="custNumber" column="FCUSTNUMBER" />
+		<result property="date" column="FDATE" />
+		<result property="yearMonth" column="YEARMONTH" />
+		<result property="leaveWeight" column="FLEAVEWEIGHT" />
+		<result property="arriveWeight" column="FARRIVEWEIGHT" />
+		<result property="leaveBill" column="FLEAVEBILL" />
+		<result property="arriveBill" column="FARRIVEBILL" />
+		<result property="advantageBusiRate" column="FADVANTAGEBUSIRATE" />
+		<result property="motorRate" column="FMOTORRATE" />
+		<result property="leaveMoney" column="FLEAVEMONEY" />
+		<result property="insurance" column="FINSURANCE" />
+		<result property="insuranceRate" column="FINSURANCERATE" />
+		<result property="claimsMoney" column="FCLAIMSMONEY" />
+		<result property="fpackage" column="FPACKAGE" />
+		<result property="packageRate" column="FPACKAGERATE" />
+		<result property="agentreceivePay" column="FAGENTRECEIVEPAY" />
+		<result property="agentreceivepayRate" column="FAGENTRECEIVEPAYRATE" />
+		<result property="wtvoteRate" column="FWTVOTERATE" />
+		<result property="callvoteRate" column="FCALLVOTERATE" />
+		<result property="yytvoteRate" column="FYYTVOTERATE" />
+		<result property="othervoteRate" column="FOTHERVOTERATE" />
+		<result property="arriveMoney" column="FARRIVEMONEY" />
+	</resultMap>
+	
+	<!-- 营运分析数据结果集字段 -->
+	<sql id="OperationAnalysisFeilds">
+		FID,FCUSTID,FCUSTNUMBER,FDATE,FLEAVEWEIGHT,FARRIVEWEIGHT,
+		FLEAVEBILL,FARRIVEBILL,FADVANTAGEBUSIRATE,FMOTORRATE,FLEAVEMONEY,
+		FINSURANCE,FINSURANCERATE,FCLAIMSMONEY,FPACKAGE,FPACKAGERATE,
+		FAGENTRECEIVEPAY,FAGENTRECEIVEPAYRATE,FWTVOTERATE,FCALLVOTERATE,
+		FYYTVOTERATE,FOTHERVOTERATE,FARRIVEMONEY
+	</sql>
+	<!--根据客户ID获得营运分析数据 -->
+	<select id="getOperationAnalysisListByCustId" resultMap="OperationAnalysisResultMap"
+		parameterType="map">
+		SELECT TO_CHAR(FDATE, 'YYYY-MM') YEARMONTH ,
+		<include refid="OperationAnalysisFeilds" />
+		FROM T_CRM_OPERATIONANALYSIS
+		WHERE FCUSTID=#{custId}
+		<if test="startDate!=null">
+			and trunc(FDATE,'mm')>=trunc(#{startDate},'mm')
+		</if>
+		<if test="endDate!=null">
+			and trunc(FDATE,'mm') &lt;trunc(#{endDate},'mm')
+		</if>
+		ORDER BY FDATE
+	</select>
+	
+	<!-- 营运分析数据结果集映射 快递 -->	
+	<resultMap id="OperationAnalysisExpResultMap" type="com.deppon.crm.module.custview.shared.domain.OperationAnalysis">
+		<result property="id" column="FID" />
+<!-- 		<result property="custId" column="FCUSTID" /> -->
+		<result property="custNumber" column="FCUSTNUMBER" />
+		<result property="date" column="FDATE" />
+		<result property="yearMonth" column="YEARMONTH" />
+		<result property="leaveWeight" column="FLEAVEWEIGHT" />
+		<result property="arriveWeight" column="FARRIVEWEIGHT" />
+		<result property="leaveBill" column="FLEAVEBILL" />
+		<result property="arriveBill" column="FARRIVEBILL" />
+<!-- 		<result property="advantageBusiRate" column="FADVANTAGEBUSIRATE" /> -->
+<!-- 		<result property="motorRate" column="FMOTORRATE" /> -->
+		<result property="leaveMoney" column="FLEAVEMONEY" />
+		<result property="insurance" column="FINSURANCE" />
+		<result property="insuranceRate" column="FINSURANCERATE" />
+		<result property="claimsMoney" column="FCLAIMSMONEY" />
+		<result property="fpackage" column="FPACKAGE" />
+		<result property="packageRate" column="FPACKAGERATE" />
+		<result property="agentreceivePay" column="FAGENTRECEIVEPAY" />
+		<result property="agentreceivepayRate" column="FAGENTRECEIVEPAYRATE" />
+		<result property="wtvoteRate" column="FWTVOTERATE" />
+		<result property="callvoteRate" column="FCALLVOTERATE" />
+		<result property="yytvoteRate" column="FYYTVOTERATE" />
+		<result property="othervoteRate" column="FOTHERVOTERATE" />
+		<result property="arriveMoney" column="FARRIVEMONEY" />
+	</resultMap>
+	<!-- 营运分析数据结果集字段  快递-->
+	<sql id="OperationAnalysisExpFeilds">
+		FID,FCUSTNUMBER,FDATE,FLEAVEWEIGHT,FARRIVEWEIGHT,
+		FLEAVEBILL,FARRIVEBILL,FLEAVEMONEY,
+		FINSURANCE,FINSURANCERATE,FCLAIMSMONEY,FPACKAGE,FPACKAGERATE,
+		FAGENTRECEIVEPAY,FAGENTRECEIVEPAYRATE,FWTVOTERATE,FCALLVOTERATE,
+		FYYTVOTERATE,FOTHERVOTERATE,FARRIVEMONEY
+	</sql>
+	
+	<!--根据客户ID获得营运分析数据 快递 -->
+	<select id="getOperationAnalysisListExpByCustId" resultMap="OperationAnalysisExpResultMap"
+		parameterType="map">
+		SELECT TO_CHAR(FDATE, 'YYYY-MM') YEARMONTH ,
+		<include refid="OperationAnalysisExpFeilds" />
+		FROM T_CRM_OPERATIONANALYSISEXPRESS
+		WHERE FCUSTNUMBER=#{custNo}
+		<if test="startDate!=null">
+			and trunc(FDATE,'mm')>=trunc(#{startDate},'mm')
+		</if>
+		<if test="endDate!=null">
+			and trunc(FDATE,'mm') &lt;trunc(#{endDate},'mm')
+		</if>
+		ORDER BY FDATE
+	</select>
+	
+	<!-- 最近交易日期 -->
+	<resultMap id="LatelyTradeResultMap" type="com.deppon.crm.module.custview.shared.domain.LatelyTrade">
+		<result property="custId" column="FCUSTID" />
+		<result property="latelyTradeDate" column="FLATELYTRADEDATE" />
+		<result property="duration" column="FINTERVALLTT" />
+		<result property="latelyTradeDateExpress" column="FLASTEPRESSDATE" />
+		<result property="durationExpress" column="FINTERVALEPRESS" />
+	</resultMap>
+	<sql id='LatelyTradeFields'>
+		FCUSTID,FLATELYTRADEDATE,FINTERVALLTT,FLASTEPRESSDATE,FINTERVALEPRESS 
+	</sql>
+	<!--根据客户ID获得客户最近一次交易日期 -->
+	<select id="getCustLatelyTradeDateByCustId" resultMap="LatelyTradeResultMap" parameterType="string">
+		SELECT
+			<include refid='LatelyTradeFields'/>
+		FROM T_CRM_TRADEDATE
+		WHERE FCUSTID=#{custId}
+	</select>
+	
+	<resultMap id="CM_ResultMap" type="com.deppon.crm.module.custview.shared.domain.CrossMapping">
+		<result property="createTime" 	column="FCREATETIME"/>
+		<result property="userName" 	column="FUSERNAME"/>
+		<result property="orderSource" column="FORDERSOURCE"/>
+	</resultMap>
+	<!-- 查询交叉映射 -->
+	<select id="getCrossMappingByErpId" resultMap="CM_ResultMap" parameterType="String">
+		SELECT 
+			UC.FCREATETIME,
+			UC.FUSERNAME,
+			UC.FORDERSOURCE
+		FROM T_USER_CONTACTBIND UC 
+		WHERE UC.FCONTACTID IN(
+			SELECT 
+				CCL.FID
+			FROM t_cust_custlinkman CCL
+			WHERE CCL.FCUSTID=#{custId}
+		)
+	</select>
+	
+	
+	<!-- 营运分析数据结果集映射 快递 -->	
+	<resultMap id="LAMoneyMap" type="com.deppon.crm.module.custview.shared.domain.OperationAnalysis">
+		<result property="yearMonth" column="YEARMONTH" /> 
+		<result property="leaveWeight" column="FLEAVEWEIGHT" />
+		<result property="arriveWeight" column="FARRIVEWEIGHT" />
+		<result property="leaveBill" column="FLEAVEBILL" />
+		<result property="arriveBill" column="FARRIVEBILL" />
+		<result property="leaveMoney" column="FLEAVEMONEY" />
+		<result property="arriveMoney" column="FARRIVEMONEY" />
+	</resultMap>
+	
+	<!-- 查询客户除本月外的近6个月的发货金额 -->
+	<select id="getLMoneyByCondtion" parameterType="map"
+		resultMap="LAMoneyMap">
+		SELECT
+		SUM(NVL(T.FFPREPAYAMOUNT,0))
+		+ SUM(NVL(T.FARRIVEDAOUNT,0))
+		-
+		SUM(NVL(T.FREFUNDRABATE,0))
+		- SUM(NVL(T.FAGENTRECEIVEPAY,0))
+		FLEAVEMONEY,
+		SUM(NVL(T.FAIRVOTE,0) + NVL(T.FSHORTVOTE,0) + NVL(T.FLONGVOTE,0)
+			+ NVL(T.FAIRCARDVOTE,0) + NVL(T.FCITYTRANVOTE,0) + NVL(T.FPARTIALLINEVOTE,0))
+		FLEAVEBILL,
+		(T.FYEAR || '-' || T.FMONTH) YEARMONTH
+		FROM
+		T_CRM_CUSTANALYSEBYDAY T 
+		
+		<where>
+		 	T.FCANALYSETYPE = 1 and
+			TO_DATE(T.FYEAR || '-' || T.FMONTH || '-' || T.FDAY, 'YYYY-MM-DD') BETWEEN
+		    TRUNC(#{startDate}) AND #{endDate}
+			AND T.FCUSTID = #{custId}
+			
+		</where>
+		<![CDATA[ 
+			GROUP BY
+			T.FYEAR,T.FMONTH
+			ORDER BY T.FYEAR,T.FMONTH 
+		]]>
+		
+	</select>
+	<!-- 查询客户除本月外的近6个月的到货金额 -->
+	<select id="getAMoneyByCondtion" parameterType="map"
+		resultMap="LAMoneyMap">
+		SELECT
+		SUM(NVL(T.FFPREPAYAMOUNT,0))
+		+ SUM(NVL(T.FARRIVEDAOUNT,0))
+		-
+		SUM(NVL(T.FREFUNDRABATE,0))
+		- SUM(NVL(T.FAGENTRECEIVEPAY,0))
+		FARRIVEMONEY,
+		SUM(NVL(T.FAIRVOTE,0) + NVL(T.FSHORTVOTE,0) + NVL(T.FLONGVOTE,0)
+			+ NVL(T.FAIRCARDVOTE,0) + NVL(T.FCITYTRANVOTE,0) + NVL(T.FPARTIALLINEVOTE,0))
+		FARRIVEBILL,
+		(T.FYEAR || '-' || T.FMONTH) YEARMONTH
+		FROM
+		T_CRM_CUSTANALYSEBYDAY T 
+		
+		WHERE T.FCANALYSETYPE = 2 and
+			TO_DATE(T.FYEAR || '-' || T.FMONTH || '-' || T.FDAY, 'YYYY-MM-DD') BETWEEN
+		    TRUNC(#{startDate}) AND #{endDate}
+			AND T.FCUSTID = #{custId}
+			GROUP BY
+			T.FYEAR,T.FMONTH
+			ORDER BY T.FYEAR,T.FMONTH
+	</select>
+	
+	<!-- 查询客户除本月外的近6个月的快递发货金额 -->
+	<select id="getLMoneyExpByCondtion" parameterType="map"
+		resultMap="LAMoneyMap">
+		SELECT
+		SUM(NVL(T.FFPREPAYAMOUNT,0))
+		+ SUM(NVL(T.FARRIVEDAOUNT,0))
+		-
+		SUM(NVL(T.FREFUNDRABATE,0))
+		- SUM(NVL(T.FAGENTRECEIVEPAY,0))
+		FLEAVEMONEY,
+		SUM(NVL(T.EXPRESSCOUNT,0)) FLEAVEBILL,
+		(T.FYEAR || '-' || T.FMONTH) YEARMONTH
+		FROM
+		T_CRM_CUSTANALYSEBYDAY_EXPRESS T 
+		WHERE T.FCANALYSETYPE = 1 
+		AND TO_DATE(T.FYEAR || '-' || T.FMONTH || '-' || T.FDAY, 'YYYY-MM-DD') BETWEEN
+	    TRUNC(#{startDate}) AND #{endDate}
+		AND T.FCUSTID = #{custId}
+		GROUP BY
+		T.FYEAR,T.FMONTH
+		ORDER BY T.FYEAR,T.FMONTH
+	</select>
+	
+	<!-- 查询客户除本月外的近6个月的快递到货金额 -->
+	<select id="getAMoneyExpByCondtion" parameterType="map"
+		resultMap="LAMoneyMap">
+		SELECT
+		SUM(NVL(T.FFPREPAYAMOUNT,0))
+		+ SUM(NVL(T.FARRIVEDAOUNT,0))
+		-
+		SUM(NVL(T.FREFUNDRABATE,0))
+		- SUM(NVL(T.FAGENTRECEIVEPAY,0))
+		FARRIVEMONEY,
+		SUM(NVL(T.EXPRESSCOUNT,0)) FARRIVEBILL,
+		(T.FYEAR || '-' || T.FMONTH) YEARMONTH
+		FROM
+		T_CRM_CUSTANALYSEBYDAY_EXPRESS T 
+		WHERE T.FCANALYSETYPE = 2 
+		AND TO_DATE(T.FYEAR || '-' || T.FMONTH || '-' || T.FDAY, 'YYYY-MM-DD') BETWEEN
+	    TRUNC(#{startDate}) AND #{endDate}
+		AND T.FCUSTID = #{custId}
+		GROUP BY
+		T.FYEAR,T.FMONTH
+		ORDER BY T.FYEAR,T.FMONTH
+	</select>
+</mapper>

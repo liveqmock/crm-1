@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="messageBundle" class="com.deppon.foss.framework.server.web.message.MessageBundle"></bean>
+
+	<bean id="todoWorkflowManager"
+		class="com.deppon.crm.module.common.server.manager.impl.TodoWorkflowManager">
+		<property name="todoWorkflowService" ref="todoWorkflowService" />
+	</bean>
+	<bean id="todoWorkflowDao" class="com.deppon.crm.module.common.server.dao.impl.TodoWorkflowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="todoWorkflowService" class="com.deppon.crm.module.common.server.service.impl.TodoWorkflowService">
+		<property name="todoWorkflowDao" ref="todoWorkflowDao"></property>
+	</bean>
+
+	<bean id="ladingstationDepartmentDao" class="com.deppon.crm.module.common.server.dao.impl.LadingstationDepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="ladingstationDepartmentService" class="com.deppon.crm.module.common.server.service.impl.LadingstationDepartmentService">
+		<property name="ladingstationDepartmentDao" ref="ladingstationDepartmentDao"></property>
+	</bean>
+	<bean id="ladingstationDepartmentManager" class="com.deppon.crm.module.common.server.manager.impl.LadingstationDepartmentManager">
+	 	<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService"></property>
+	</bean>
+
+ 	<bean id="performanceLog"
+		class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+	</bean>
+	<!-- <bean id="exceptionLog" 
+		class="com.deppon.foss.framework.server.components.logger.ExceptionLogBuffer"></bean> -->
+			<bean id="branchRuleManager"
+		class="com.deppon.crm.module.bps.server.rule.BranchRuleManagerImpl" />
+	<bean id="participantRuleManager"
+		class="com.deppon.crm.module.bps.server.rule.ParticipantRuleManagerImpl" />
+	<bean id="bpsWorkflowManager"
+		class=" com.deppon.crm.module.bps.server.manager.impl.BpsWorkflowManager">
+		<property name="branchRuleManager" ref="branchRuleManager"></property>
+		<property name="participantRuleManager" ref="participantRuleManager"></property>
+		<property name="amountConfigService" ref="amountConfigService"></property>
+	</bean>
+	<bean id="amountConfigService"
+		class="com.deppon.crm.module.bps.server.service.impl.AmountConfigServiceImpl">
+		<property name="amountConfigDao" ref="amountConfigDao"></property>
+	</bean>
+	<bean id="amountConfigDao"
+		class="com.deppon.crm.module.bps.server.dao.impl.AmountConfigDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="contractBranch" class="com.deppon.crm.module.customer.bpsworkflow.branch.ContractBranch"/>
+	<bean id="exceptionConvert" class="com.deppon.foss.framework.server.components.exception.ExceptionConvert"/>
+	<bean id="messageSendDao" class="com.deppon.crm.module.marketing.server.dao.impl.MessageSendDao"/>
+		<bean id="sysMailSendDao" class="com.deppon.crm.module.sysmail.server.dao.impl.SysMailSendDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="sysMailSendService" class="com.deppon.crm.module.sysmail.server.service.impl.SysMailSendService">
+		<property name="sysMailSendDao" ref="sysMailSendDao"/>
+	</bean>
+	
+	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+		<property name="host" value="smtp.deppon.com"/>
+		<property name="userName" value="CRM@deppon.com"/>
+		<property name="password" value="dp31350606"/>
+	</bean>
+	
+	<bean id="sysMailSendManager" class="com.deppon.crm.module.sysmail.server.manager.impl.SysMailSendManager">
+		<property name="mailSenderService" ref="mailSenderService"/>
+		<property name="sysMailSendService" ref="sysMailSendService"/>
+	</bean>
+	
+		<!-- dao层配置 -->
+	<!-- service层配置 -->
+	<bean id="messageSendService" class="com.deppon.crm.module.marketing.server.service.impl.MessageSendService">
+		<property name="messageSendDao" ref="messageSendDao"/>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="messageSendManager" class="com.deppon.crm.module.marketing.server.manager.impl.MessageSendManager">
+		<property name="messageSendService" ref="messageSendService"></property>
+		<property name="smsSender" ref="smsInfoSender"></property>
+	</bean>	
+</beans>

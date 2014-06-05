@@ -1,0 +1,51 @@
+@charset "utf-8";
+body{
+	width:100%;
+	height:100%;
+	margin:0;
+	background-repeat:no-repeat;
+	font-size:12px;
+	padding-top:35px;
+	}
+.todo{
+	height:35px;
+	background-image:url(../../images/login/todobg.png);
+	background-repeat:repeat-x;
+	position: relative;;
+	z-index: 10;
+	top:-925px;
+	left:280px;
+	width:855px;
+	}
+.todo .item{
+	margin:0;
+	color:#3A3D64;
+	clear:right;
+	float:left;
+	padding:0 5px;
+	}
+.todo .item:hover{
+	background-color:#3A3D64;
+	color:#fff;
+	cursor:pointer;
+	
+	}
+.todo .item h1{
+	font-size:13px;
+	display:inline;
+	font-family:微软雅黑;
+	}
+.todo .item img{
+	margin-bottom:10px;
+	}
+.num{
+	color:#F00;
+	font-size:16px;
+	font-weight:bold;
+	}
+#td .x-btn-default-toolbar-small-icon-text-left .x-btn-inner ,#tbOrder .x-btn-default-toolbar-small-icon-text-left .x-btn-inner{
+	padding-left: 10px;
+}
+#tbOrder .x-btn{
+	width: 100%;
+}

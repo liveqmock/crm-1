@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="regionPartitionDao" class="com.deppon.crm.module.marketing.server.dao.impl.RegionPartitionDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="regionPartitionService" class="com.deppon.crm.module.marketing.server.service.impl.RegionPartitionService">
+		<property name="regionPartitionDao" ref="regionPartitionDao"/>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="regionPartitionManager" class="com.deppon.crm.module.marketing.server.manager.impl.RegionPartitionManager">
+		<property name="regionPartitionService" ref="regionPartitionService"></property>
+	</bean>
+</beans>

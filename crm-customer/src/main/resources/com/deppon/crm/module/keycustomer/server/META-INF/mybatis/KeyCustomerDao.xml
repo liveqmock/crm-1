@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomer">
+	<!-- 大客户准入or退出列表RM --> 
+	<resultMap id="keyCustomerListRM"
+		type="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomer">
+		<result property="id" column="FID" />
+		<result property="deptId" column="FDEPTID" />
+		<result property="deptName" column="FDEPTNAME" />
+		<result property="custId" column="FCUSTID" />
+		<result property="customerNum" column="FCUSTNUMBER" />
+		<result property="customerName" column="FCUSTNAME" />
+		<result property="sumAmount" column="FSUMAMOUNT" />
+		<result property="amountOfSignMent" column="FAMOUNTOFSIGNMENT" />
+		<result property="creditTimes" column="FCREDITTIMES" />
+		<result property="contactNum" column="FNUMBER" />
+		<result property="contactName" column="FNAME" />
+		<result property="custDegree" column="FDEGREE" />
+		<result property="type" column="FTYPE" />
+	</resultMap>
+	<!-- 大客户工作流审批历史RM -->
+	<resultMap id="keyCustomerWorkflowInfoRM"
+		type="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerWorkflowInfo">
+		<result property="id" column="FID" />
+		<result property="busino" column="FBUSNO" />
+		<result property="deptId" column="FDEPTID" />
+		<result property="deptName" column="FDEPTNAME" />
+		<result property="custId" column="FCUSTID" />
+		<result property="amountOfSignMent" column="FAMOUNTOFSIGNMENT" />
+		<result property="custPotential" column="FCUSTPOTENTIAL" />
+		<result property="cooperate" column="FCOOPERATE" />
+		<result property="applicationReason" column="FAPPLICATIONREASON" />
+		<result property="isSpecialKeyCustomer" column="FISSPECIALKEYCUSTOMER" />
+		<result property="workFlowType" column="FWORKFLOWTYPE" />
+		<result property="status" column="FSTATUS" />
+		<result property="approvalSuggestin" column="FAPPROVALSUGGESTION" />
+		<result property="approvalTime" column="FAPPROVALTIME" />
+		<result property="lastApprover" column="FLASTAPPROVER" />
+		<result property="creditTimes" column="FCREDITTIMES" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATUSERID" />
+		<result property="modifyDate" column="FLASTMODIFYTIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+		<result property="contactNum" column="FNUMBER" />
+		<result property="contactName" column="FNAME" />
+		<result property="customerNum" column="FCUSTNUMBER" />
+		<result property="customerName" column="FCUSTNAME" />
+		<result property="custDegree" column="FDEGREE" />
+	</resultMap>
+	<sql id="keycustomerworkflow_column">
+		BI.FID FID,
+		BI.FBUSNO FBUSNO ,
+		BI.FDEPTID FDEPTID,
+		D.FDEPTNAME FDEPTNAME,
+		BI.FCUSTID FCUSTID,
+		BI.FAMOUNTOFSIGNMENT
+		FAMOUNTOFSIGNMENT,
+		BI.FCUSTPOTENTIAL FCUSTPOTENTIAL,
+		BI.FCOOPERATE FCOOPERATE,
+		BI.FAPPLICATIONREASON FAPPLICATIONREASON,
+		BI.FISSPECIALKEYCUSTOMER FISSPECIALKEYCUSTOMER,
+		BI.FWORKFLOWTYPE FWORKFLOWTYPE,
+		BI.FSTATUS FSTATUS,
+		BI.FAPPROVALSUGGESTION FAPPROVALSUGGESTION,
+		BI.FAPPROVALTIME FAPPROVALTIME,
+		BI.FLASTAPPROVER FLASTAPPROVER,
+		BI.FCREDITTIMES FCREDITTIMES,
+		BI.FCREATETIME FCREATETIME,
+		BI.FCREATUSERID FCREATUSERID,
+		BI.FLASTMODIFYTIME FLASTMODIFYTIME,
+		BI.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+		CL.FNUMBER FNUMBER,
+		CL.FNAME FNAME,
+		CB.FCUSTNUMBER FCUSTNUMBER,
+		CB.FCUSTNAME FCUSTNAME,
+		CB.FDEGREE 	FDEGREE
+	</sql>
+	<sql id="keycustomer_column">
+		BL.FID FID,
+		BL.FDEPTID FDEPTID,
+		BL.FDEPTNAME FDEPTNAME,
+		BL.FCUSTID FCUSTID,
+		BL.FCUSTNUMBER FCUSTNUMBER,
+		BL.FCUSTNAME FCUSTNAME,
+		BL.FSUMAMOUNT FSUMAMOUNT,
+		BL.FAMOUNTOFSIGNMENT FAMOUNTOFSIGNMENT,
+		BL.FCREDITTIMES FCREDITTIMES,
+		CL.FNUMBER FNUMBER,
+		CL.FNAME FNAME,
+		CB.FDEGREE FDEGREE,
+		BL.FTYPE FTYPE
+	</sql>
+
+
+	<!-- 查询大客户列表 -->
+	<select id="selectKeyCustomerListByCondition" resultMap="keyCustomerListRM"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerSearchCondition">
+		SELECT
+		<include refid="keycustomer_column" />
+		FROM T_CUST_KEYCUSTOMERLIST BL
+		LEFT JOIN T_CUST_CUSTBASEDATA CB
+		ON
+		CB.FID=BL.FCUSTID
+		LEFT JOIN T_CUST_CUSTLINKMAN CL
+		ON BL.FCUSTID =CL.FCUSTID
+		WHERE CL.FISMAINLINKMAN = '1'
+		<if test="belongDept != null and belongDept != '' ">
+			<![CDATA[ 
+				AND BL.FDEPTID = #{belongDept}
+			]]>
+		</if>
+		<if test="custNum != null and custNum != '' ">
+			<![CDATA[
+				AND BL.FCUSTNUMBER = #{custNum} 
+			]]>
+		</if>
+		<if test="custName != null and custName != '' ">
+			<![CDATA[ 
+				AND BL.FCUSTNAME like '%'||#{custName}||'%'
+			]]>
+		</if>
+		<if test="contactName != null and contactName != '' ">
+			<![CDATA[
+				AND CL.FNAME like '%'||#{contactName}||'%' 
+				]]>
+		</if>
+		<if test="contactNum != null and contactNum != '' ">
+			<![CDATA[
+				AND CL.FNUMBER = #{contactNum}
+				]]>
+		</if>
+
+		<if test="type != null and type != '' ">
+			<![CDATA[
+				AND BL.FTYPE = #{type}
+				]]>
+		</if>
+		<if test="listStatus != null and listStatus != '' ">
+			<![CDATA[
+				AND BL.FSTATUS = #{listStatus}
+				]]>
+		</if>
+		order by BL.FSUMAMOUNT desc
+	</select>
+	<!-- 统计大客户列表条数 -->
+	<select id="countKeyCustomerListByCondition" resultType="int"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerSearchCondition">
+		SELECT
+		COUNT(DISTINCT BL.FID)
+		FROM T_CUST_KEYCUSTOMERLIST BL
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CB
+		ON CB.FID=BL.FCUSTID
+		LEFT JOIN T_CUST_CUSTLINKMAN
+		CL
+		ON BL.FCUSTID = CL.FCUSTID
+		WHERE CL.FISMAINLINKMAN = '1'
+		<if test="belongDept != null and belongDept != '' ">
+			<![CDATA[ 
+				AND BL.FDEPTID = #{belongDept}
+			]]>
+		</if>
+		<if test="custNum != null and custNum != '' ">
+			<![CDATA[
+				AND BL.FCUSTNUMBER = #{custNum} 
+			]]>
+		</if>
+		<if test="custName != null and custName != '' ">
+			<![CDATA[ 
+				AND BL.FCUSTNAME = #{custName}
+			]]>
+		</if>
+		<if test="contactName != null and contactName != '' ">
+			<![CDATA[
+				AND CL.FNAME = #{contactName} 
+				]]>
+		</if>
+		<if test="contactNum != null and contactNum != '' ">
+			<![CDATA[
+				AND CL.FNUMBER = #{contactNum}
+				]]>
+		</if>
+		<if test="type != null and type != '' ">
+			<![CDATA[
+				AND BL.FTYPE = #{type}
+				]]>
+		</if>
+		<if test="listStatus != null and listStatus != '' ">
+			<![CDATA[
+				AND BL.FSTATUS = #{listStatus}
+				]]>
+		</if>
+	</select>
+
+	<select id="selectKeyCustomerWorkflowInfoByCondition" resultMap="keyCustomerWorkflowInfoRM"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerSearchCondition">
+		SELECT
+		<include refid="keycustomerworkflow_column" />
+		FROM T_CUST_KEYCUSTOMERWORKFLOWINFO BI
+		LEFT JOIN T_CUST_CUSTBASEDATA CB
+		ON CB.FID=BI.FCUSTID
+		LEFT JOIN T_CUST_CUSTLINKMAN CL
+		ON BI.FCUSTID =
+		CL.FCUSTID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON BI.FDEPTID=D.FID
+		WHERE
+		CL.FISMAINLINKMAN = '1' 
+		<if test="belongDept != null and belongDept != '' ">
+			<![CDATA[ 
+				AND BI.FDEPTID = #{belongDept}
+			]]>
+		</if>
+		<if test="custNum != null and custNum != '' ">
+			<![CDATA[
+				AND CB.FCUSTNUMBER = #{custNum} 
+			]]>
+		</if>
+		<if test="custName != null and custName != '' ">
+			<![CDATA[ 
+				AND CB.FCUSTNAME like '%'||#{custName}||'%'
+			]]>
+		</if>
+		<if test="contactName != null and contactName != '' ">
+			<![CDATA[
+				AND CL.FNAME like '%'||#{contactName}||'%' 
+				]]>
+		</if>
+		<if test="contactNum != null and contactNum != '' ">
+			<![CDATA[
+				AND CL.FNUMBER = #{contactNum}
+				]]>
+		</if>
+		<if test="approvalStatus != null and approvalStatus != '' ">
+			<![CDATA[
+				AND BI.FSTATUS = #{approvalStatus}
+				]]>
+		</if>
+		<if test="null != startDate and '' != startDate">
+			AND trunc(BI.FCREATETIME) >= #{startDate}
+		</if>
+		<if test="null != endDate and '' != endDate">
+			AND trunc(BI.FCREATETIME) &lt;= #{endDate}
+		</if>
+			order by BI.FCREATETIME DESC
+		
+	</select>
+
+	<select id="countKeyCustomerWorkflowInfoByCondition" resultType="int"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerSearchCondition">
+		SELECT
+		count(1)
+		FROM T_CUST_KEYCUSTOMERWORKFLOWINFO BI
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CB
+		ON CB.FID=BI.FCUSTID
+		LEFT JOIN T_CUST_CUSTLINKMAN
+		CL
+		ON BI.FCUSTID =
+		CL.FCUSTID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON
+		BI.FDEPTID=D.FID
+		WHERE
+		CL.FISMAINLINKMAN = '1' 
+		<if test="belongDept != null and belongDept != '' ">
+			<![CDATA[ 
+				AND BI.FDEPTID = #{belongDept}
+			]]>
+		</if>
+		<if test="custNum != null and custNum != '' ">
+			<![CDATA[
+				AND CB.FCUSTNUMBER = #{custNum} 
+			]]>
+		</if>
+		<if test="custName != null and custName != '' ">
+			<![CDATA[ 
+				AND CB.FCUSTNAME = #{custName}
+			]]>
+		</if>
+		<if test="contactName != null and contactName != '' ">
+			<![CDATA[
+				AND CL.FNAME = #{contactName} 
+				]]>
+		</if>
+		<if test="contactNum != null and contactNum != '' ">
+			<![CDATA[
+				AND CL.FNUMBER = #{contactNum}
+				]]>
+		</if>
+		<if test="approvalStatus != null and approvalStatus != '' ">
+			<![CDATA[
+				AND BI.FSTATUS = #{approvalStatus}
+				]]>
+		</if>
+		<if test="null != startDate and '' != startDate">
+			AND trunc(BI.FCREATETIME) >= #{startDate}
+		</if>
+		<if test="null != endDate and '' != endDate">
+			AND trunc(BI.FCREATETIME) &lt;= #{endDate}
+		</if>
+	</select>
+	<select id="selectKeyCustomerWorkflowInfoByCustId" resultMap="keyCustomerWorkflowInfoRM" parameterType="int">
+		SELECT
+		<include refid="keycustomerworkflow_column" />
+		FROM T_CUST_KEYCUSTOMERWORKFLOWINFO BI
+		LEFT JOIN T_CUST_CUSTBASEDATA CB
+		ON CB.FID=BI.FCUSTID
+		LEFT JOIN
+		T_CUST_CUSTLINKMAN CL
+		ON BI.FCUSTID =
+		CL.FCUSTID
+		LEFT JOIN
+		T_ORG_DEPARTMENT D
+		ON BI.FDEPTID=D.FID
+		WHERE
+		CL.FISMAINLINKMAN ='1'
+		and BI.FCUSTID = #{custId}
+		order by BI.FCREATETIME DESC
+		
+	</select>
+	<select id="findWorkflowInfoByBusino" resultMap="keyCustomerWorkflowInfoRM"
+		parameterType="string">
+		SELECT
+		<include refid="keycustomerworkflow_column" />
+		FROM T_CUST_KEYCUSTOMERWORKFLOWINFO BI
+		LEFT JOIN T_CUST_CUSTBASEDATA CB
+		ON CB.FID=BI.FCUSTID
+		LEFT JOIN T_CUST_CUSTLINKMAN CL
+		ON BI.FCUSTID =
+		CL.FCUSTID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON BI.FDEPTID=D.FID
+		WHERE
+		CL.FISMAINLINKMAN = '1'
+		and CL.fstatus='0'
+		and BI.FBUSNO = #{busino}
+	</select>
+	<select id="countKeyCustomerWorkflowInfoByCustId" resultType="int"
+		parameterType="string">
+		SELECT
+		count(1)
+		FROM T_CUST_KEYCUSTOMERWORKFLOWINFO BI
+		LEFT JOIN T_CUST_CUSTBASEDATA CB
+		ON CB.FID=BI.FCUSTID
+		LEFT JOIN
+		T_CUST_CUSTLINKMAN CL
+		ON BI.FCUSTID =
+		CL.FCUSTID
+		LEFT JOIN
+		T_ORG_DEPARTMENT D
+		ON BI.FDEPTID=D.FID
+		WHERE
+		CL.FISMAINLINKMAN ='1'
+		and BI.FCUSTID = #{custId}
+		
+	</select>
+
+	<!--保存工作流信息 -->
+	<insert id="insertKeyCustomerWorkflowInfo"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerWorkflowInfo">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">		
+		<![CDATA[ 
+		 	select	SEQ_ID_KEYWROKFLOW.nextval id from dual 
+		 ]]>
+		</selectKey>
+      <![CDATA[  
+         INSERT INTO T_CUST_KEYCUSTOMERWORKFLOWINFO
+         (
+          FID                   ,
+		  FBUSNO                ,
+		  FDEPTID               ,
+		  FCUSTID               ,
+		  FAMOUNTOFSIGNMENT     ,
+		  FCUSTPOTENTIAL        ,
+		  FCREDITTIMES          ,
+		  FCOOPERATE            ,
+		  FAPPLICATIONREASON    ,
+		  FISSPECIALKEYCUSTOMER ,
+		  FWORKFLOWTYPE         ,
+		  FSTATUS               ,
+		  FAPPROVALSUGGESTION   ,
+		  FAPPROVALTIME        ,
+		  FLASTAPPROVER         ,
+		  FCREATETIME           ,
+		  FCREATUSERID          ,
+		  FLASTMODIFYTIME       ,
+		  FLASTMODIFYUSERID     
+		 )
+         VALUES
+         (#{id},
+          #{busino,jdbcType=VARCHAR},
+          #{deptId,jdbcType=NUMERIC},
+          #{custId,jdbcType=NUMERIC},
+          #{amountOfSignMent,jdbcType=VARCHAR},
+          #{custPotential,jdbcType=VARCHAR},
+          #{creditTimes,jdbcType=NUMERIC},
+          #{cooperate,jdbcType=VARCHAR},
+          #{applicationReason,jdbcType=VARCHAR},
+          #{isSpecialKeyCustomer,jdbcType=NUMERIC},
+          #{workFlowType,jdbcType=VARCHAR},
+          #{status,jdbcType=NUMERIC},
+          #{approvalSuggestin,jdbcType=VARCHAR},
+          #{approvalTime,jdbcType=TIMESTAMP},
+          #{lastApprover,jdbcType=VARCHAR},
+		 #{createDate,jdbcType=TIMESTAMP},
+          #{createUser,jdbcType=NUMERIC},
+		 #{modifyDate,jdbcType=TIMESTAMP},
+		 #{modifyUser,jdbcType=NUMERIC}
+          )
+      ]]>
+	</insert>
+
+	<update id="updateKeyCustomerWorkInfo"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerWorkflowInfo">
+		update T_CUST_KEYCUSTOMERWORKFLOWINFO BI set BI.FBUSNO=#{busino,jdbcType=VARCHAR}
+		<if test="null != status and '' != status">
+			,BI.FSTATUS=#{status,jdbcType=VARCHAR}
+		</if>
+		<if test="null != approvalSuggestin and '' != approvalSuggestin">
+			,BI.FAPPROVALSUGGESTION=#{approvalSuggestin,jdbcType=VARCHAR}
+		</if>
+		<if test="null != approvalTime and '' != approvalTime">
+			,BI.FAPPROVALTIME=#{approvalTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="null != lastApprover and '' != lastApprover">
+			,BI.FLASTAPPROVER=#{lastApprover,jdbcType=VARCHAR}
+		</if>
+		<if test="null != modifyDate and '' != modifyDate">
+			,BI.FLASTMODIFYTIME=#{modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="null != modifyUser and '' != modifyUser">
+			,BI.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		</if>
+		where BI.FBUSNO=#{busino,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateKeyListStatus" parameterType="map">
+		update T_CUST_KEYCUSTOMERLIST BL set
+		<if test="null != status and '' != status">
+			BL.FSTATUS=#{status,jdbcType=NUMERIC}
+		</if>
+		where BL.FCUSTID=#{custId}
+	</update>
+
+	<!-- 查询大客户列表 -->
+	<select id="selectKeyCustomerListByCustId" resultMap="keyCustomerListRM"
+		parameterType="string">
+		SELECT
+		<include refid="keycustomer_column" />
+
+		FROM T_CUST_KEYCUSTOMERLIST BL
+		LEFT JOIN T_CUST_CUSTBASEDATA CB
+		ON
+		CB.FID=BL.FCUSTID
+		LEFT JOIN T_CUST_CUSTLINKMAN CL
+		ON BL.FCUSTID =
+		CL.FCUSTID
+		WHERE CL.FISMAINLINKMAN = '1'
+		and BL.FCUSTID=#{custId}
+		and
+		BL.FSTATUS='1'
+	</select>
+
+
+
+	<insert id="insertKeyCustomer"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerVO">
+		INSERT INTO T_CUST_KEYCUSTOMER
+		(FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCUSTID,
+		FBEKEYCUSTOMERTIME,
+		FISSPECIALKEYCUSTOMER)
+		VALUES
+		( #{createDate,jdbcType=TIMESTAMP},
+		#{createUser,jdbcType=NUMERIC},
+		#{modifyDate,jdbcType=TIMESTAMP},
+		#{modifyUser,jdbcType=NUMERIC},
+  		#{custId,jdbcType=NUMERIC},
+		#{beginKeyCustomerTime,jdbcType=TIMESTAMP},
+		#{isSpecialCustomer,jdbcType=VARCHAR}
+		)
+	</insert>
+ 
+	<update id="updateKeyCustomer"
+		parameterType="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerVO">
+		update T_CUST_KEYCUSTOMER BI set BI.FCUSTID=#{custId}
+		<if test="null != createDate and '' != createDate">
+			,BI.FCREATETIME=#{createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="null != createUser and '' != createUser">
+			,BI.FCREATEUSERID=#{createUser,jdbcType=VARCHAR}
+		</if>
+		<if test="null != modifyDate and '' != modifyDate">
+			,BI.FLASTUPDATETIME=#{modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="null != modifyUser and '' != modifyUser">
+			,BI.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		</if>
+		<if test="null != beginKeyCustomerTime and '' != beginKeyCustomerTime">
+			,BI.FBEKEYCUSTOMERTIME=#{beginKeyCustomerTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="null != isSpecialCustomer and '' != isSpecialCustomer">
+			,BI.FISSPECIALKEYCUSTOMER=#{isSpecialCustomer,jdbcType=VARCHAR}
+		</if>
+		where BI.FCUSTID=#{custId}
+		</update>
+		<resultMap id="keyCustomerRM"
+		type="com.deppon.crm.module.keycustomer.shared.domain.KeyCustomerVO">
+		<result property="isSpecialCustomer" column="FISSPECIALKEYCUSTOMER" />
+		<result property="beginKeyCustomerTime" column="FBEKEYCUSTOMERTIME" />
+		<result property="custId" column="FCUSTID" />
+	</resultMap>
+		<select id="selectKeyCustomer" resultMap="keyCustomerRM" parameterType="string">
+		SELECT FCUSTID,FBEKEYCUSTOMERTIME,FISSPECIALKEYCUSTOMER FROM T_CUST_KEYCUSTOMER
+		WHERE FCUSTID=#{custId}
+		</select>
+</mapper>

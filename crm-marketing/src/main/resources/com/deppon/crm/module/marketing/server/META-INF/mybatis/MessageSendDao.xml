@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.MessageSend">
+	<insert id="saveMessageSendTask" parameterType="com.deppon.crm.module.marketing.shared.domain.MessageSendTask">
+		<![CDATA[
+			INSERT INTO T_CRM_MESSAGESENDTASK(
+			FID,
+			FILEPATH,
+			FILENAME,
+			FSTATUS,
+			FINTSTATUS,
+			FSTARTROW,
+			FMSGCONTENT,
+			FBEGINDATE,
+			FENDDATE,
+			FSENDDEPT,
+			FSENDUSER,
+			FCREATEDATE,
+			FCREATEUSER,
+			FMODIFYDATE,
+			FMODIFYUSER) VALUES(
+			SEQ_ID_MESSAGESENDTASK.nextval,
+			#{filePath,jdbcType=VARCHAR},
+			#{fileName,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{intStatus,jdbcType=VARCHAR},
+			#{startRow,jdbcType=NUMERIC},
+			#{msgContent,jdbcType=VARCHAR},
+			#{beginDate,jdbcType=TIMESTAMP},
+			#{endDate,jdbcType=TIMESTAMP},
+			#{sendDept,jdbcType=VARCHAR},
+			#{sendUser,jdbcType=VARCHAR},
+			#{createDate,jdbcType=TIMESTAMP},
+			#{createUser,jdbcType=VARCHAR},
+			#{modifyDate,jdbcType=TIMESTAMP},
+			#{modifyUser,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	<update id="updateMessageSendTask" parameterType="com.deppon.crm.module.marketing.shared.domain.MessageSendTask">
+			UPDATE T_CRM_MESSAGESENDTASK
+			<set>
+				<if test="status != null and status != ''">
+					FSTATUS = #{status,jdbcType=VARCHAR},
+				</if>
+				<if test="intStatus != null and intStatus != ''">
+					FINTSTATUS = #{intStatus,jdbcType=VARCHAR},
+				</if>
+				<if test="startRow > 1 ">
+					FSTARTROW = #{startRow,jdbcType=NUMERIC},
+				</if>
+				<if test="msgContent != null and msgContent != '' ">
+					FMSGCONTENT = #{msgContent,jdbcType=VARCHAR},
+				</if>
+				<if test="beginDate != null">
+					FBEGINDATE = #{beginDate,jdbcType=TIMESTAMP},
+				</if>
+				<if test="endDate != null">
+					FENDDATE = #{endDate,jdbcType=TIMESTAMP},
+				</if>
+				<if test="modifyDate != null">
+					FMODIFYDATE = #{modifyDate,jdbcType=TIMESTAMP},
+				</if>
+				<if test="modifyUser != null">
+					FMODIFYUSER = #{modifyUser,jdbcType=TIMESTAMP},
+				</if>
+				<if test="filePath != null and filePath != ''">
+					FILEPATH = #{filePath,jdbcType=VARCHAR},
+				</if>
+			</set>
+			WHERE
+				FID=#{id,jdbcType=VARCHAR}
+	</update>
+	<select id="searchMessageSendTaskForSend" resultType="com.deppon.crm.module.marketing.shared.domain.MessageSendTask">
+		<![CDATA[
+		  SELECT * FROM 
+		     (SELECT 
+		      FID id,
+		      FILEPATH filePath,
+		      FILENAME fileName,
+		      FSTATUS status,
+		      FINTSTATUS intStatus,
+		      FSTARTROW startRow,
+		      FMSGCONTENT msgContent,
+		      FBEGINDATE beginDate,
+		      FENDDATE endDate,
+		      FSENDDEPT sendDept,
+		      FSENDUSER sendUser,
+		      FCREATEDATE createDate,
+		      FCREATEUSER createUser,
+		      FMODIFYDATE modifyDate,
+		      FMODIFYUSER modifyUser
+		      FROM T_CRM_MESSAGESENDTASK
+		      WHERE 
+		      (FSTATUS ='0' OR 
+		      (FSTATUS='1' AND FINTSTATUS='1'))  
+		      ORDER BY FCREATEDATE)
+      	 WHERE ROWNUM=1  
+		]]>
+	</select>
+	<insert id="saveMessageSendDetail" parameterType="com.deppon.crm.module.marketing.shared.domain.MessageSendPhone">
+		<![CDATA[
+			INSERT INTO T_CRM_MESSAGESENDDETAIL(
+				FID,
+				FTASKID,
+				FPHONE,
+				FVALID,
+				FSTATUS,
+				FSENDDATE,
+				FCREATEDATE,
+				FCREATEUSER,
+				FMODIFYDATE,
+				FMODIFYUSER
+			)VALUES(
+				SEQ_ID_MSGSENDDETAIL.NEXTVAL,
+				#{taskId,jdbcType=VARCHAR},
+				#{phone,jdbcType=VARCHAR},
+				#{valid,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				#{sendDate,jdbcType=TIMESTAMP},
+				#{createDate,jdbcType=TIMESTAMP},
+				#{createUser,jdbcType=VARCHAR},
+				#{modifyDate,jdbcType=TIMESTAMP},
+				#{modifyUser,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	<select id="searchMessageSendTaskAll" resultType="com.deppon.crm.module.marketing.shared.domain.MessageSendTask">
+		<![CDATA[
+		  SELECT 
+		      FID id,
+		      FILEPATH filePath,
+		      FILENAME fileName,
+		      FSTATUS status,
+		      FINTSTATUS intStatus,
+		      FSTARTROW startRow,
+		      FMSGCONTENT msgContent,
+		      FBEGINDATE beginDate,
+		      FENDDATE endDate,
+		      FSENDDEPT sendDept,
+		      FSENDUSER sendUser,
+		      FCREATEDATE createDate,
+		      FCREATEUSER createUser,
+		      FMODIFYDATE modifyDate,
+		      FMODIFYUSER modifyUser
+	      FROM T_CRM_MESSAGESENDTASK
+	      ORDER BY FCREATEDATE DESC  		
+		]]>
+	</select>
+	<select id="countMessageSendTaskAll" resultType="int">
+		<![CDATA[
+		  SELECT COUNT(1)
+	      FROM T_CRM_MESSAGESENDTASK	
+		]]>
+	</select>
+	<select id="searchMessageSendDetailByTaskId" resultType="com.deppon.crm.module.marketing.shared.domain.MessageSendPhone">
+		<![CDATA[
+			SELECT 
+				FID id,
+				FTASKID taskId,
+				FPHONE phone,
+				FVALID valid,
+				FSTATUS status,
+				FSENDDATE sendDate,
+				FCREATEDATE createDate,
+				FCREATEUSER createUser,
+				FMODIFYDATE modifyDate,
+				FMODIFYUSER	modifyUser
+			FROM T_CRM_MESSAGESENDDETAIL
+			WHERE FTASKID=#{id}
+			ORDER BY FSTATUS DESC,FSENDDATE DESC,FID 
+		]]>
+	</select>
+	<select id="countMessageSendDetailByTaskId" resultType="int">
+		<![CDATA[
+			SELECT COUNT(1)
+			FROM T_CRM_MESSAGESENDDETAIL
+			WHERE FTASKID=#{id}
+		]]>
+	</select>
+</mapper>

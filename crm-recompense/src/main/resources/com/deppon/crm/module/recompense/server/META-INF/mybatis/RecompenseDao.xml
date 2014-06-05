@@ -1,0 +1,1137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication">
+	<resultMap id="RecSmsInformationMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecSmsInformation">
+		<result property="empName" column="EL_EMPNAME" />
+		<result property="empCode" column="EL_EMPCODE" />
+		<result property="mobileNumber" column="EL_MOBILENUMBER" />
+		<result property="recompenseNum" column="RP_FRECOMPENSENUM" />
+		<result property="recompenseType" column="RP_FRECOMPENSETYPE" />
+		<result property="deptName" column="DP_FDEPTNAME" />
+		<result property="claimDuration" column="claim_Duration" />
+		<result property="recDuration" column="rec_Duration" />
+	</resultMap>
+	
+	<resultMap id="CellphoneMessageInfoMap" type="com.deppon.crm.module.recompense.shared.domain.CellphoneMessageInfo">
+    	<result property="mobile" column="EL_PHONENUMBER" />
+    	<result property="sendDept" column="DP_SENDSTANDARDDEPTCODE" />
+  	</resultMap>
+  
+	<!-- 理赔单表映射 -->
+	<resultMap id="RecompenseApplicationResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication">
+		<id property="id" column="RP_ID" />
+		<result property="workflowId" column="RP_WORKFLOWID" />
+		<result property="recompenseNum" column="RP_RECOMPENSENUM" />
+		<result property="recompenseType" column="RP_RECOMPENSETYPE" />
+		<result property="recompenseMethod" column="RP_RECOMPENSEMETHOD" />
+		<result property="claimParty" column="RP_CLAIMPARTY" />
+		<result property="companyName" column="RP_COMPANYNAME" />
+		<result property="companyPhone" column="RP_COMPANYPHONE" />
+		<result property="companyFax" column="RP_COMPANYFAX" />
+		<result property="recompenseAmount" column="RP_RECOMPENSEAMOUNT" />
+		<result property="realAmount" column="RP_REALAMOUNT" />
+		<result property="normalAmount" column="RP_NORMALAMOUNT" />
+		<result property="costExplain" column="RP_COSTEXPLAIN" />
+		<result property="insurType" column="RP_INSURTYPE" />
+		<result property="insurQuantity" column="RP_INSURQUANTITY" />
+		<result property="deptId" column="RP_DEPTID" />
+		<result property="deptName" column="RP_DEPTNAME" />
+		<result property="reportMan" column="RP_REPORTMAN" />
+		<result property="reportDept" column="RP_REPORTDEPT" />
+		<result property="status" column="RP_STATUS" />
+		<result property="insurDate" column="RP_INSURDATE" />
+		<result property="reportDate" column="RP_REPORTDATE" />
+		<!--配合增加新增字段-->
+		<result property="cashierDept" column="RP_FCASHIERDEPT" />
+		<result property="confirmAmountDept" column="RP_FCONFIRMAMOUNTDEPT" />
+
+		<result property="createUser" column="RP_CREATEUSER" />
+		<result property="createDate" column="RP_CREATEDATE" />
+		<result property="modifyUser" column="RP_MODIFYUSER" />
+		<result property="modifyDate" column="RP_MODIFYDATE" />
+
+		<result property="hastenCount" column="RP_HASTENCOUNT" />
+		<result property="lastHastenTime" column="RP_LASTHASTENTIME" />
+		<result property="sendMsgTime" column="RP_SENDMSGTIME" />
+		<result property="createUserName" column="RP_CREATEUSERNAME" />
+		<result property="modifyUserName" column="RP_LASTMODIFYUSERNAME" />
+		<result property="reportDeptName" column="RP_REPORTDEPTNAME" />
+		<result property="reportManName" column="RP_FREPORTMANNAME" />
+		<result property="duration" column="RP_Duration" />
+		<result property="handledMan" column="RP_FHANDLEDMAN" />
+		<result property="handledTime" column="RP_FHANDLEDTIME" />
+		<result property="lastApprovedMan" column="RP_LASTAPPROVEDMAN" />
+		<result property="bankName" column="FBANKNAME" />	
+		<result property="account" column="FACCOUNT" />	
+		<result property="branchName" column="FBRANCHNAME" />	
+		<result property="openName" column="FOPENNAME" />	
+		<association property="waybill"
+			javaType="com.deppon.crm.module.recompense.shared.domain.Waybill">
+			<result property="waybillNumber" column="RP_WAYBILLNUMBER" />
+			<result property="packaging" column="RP_PACKAGE" />
+			<result property="transType" column="RP_TRANSTYPE" />
+			<result property="goodsName" column="RP_GOODSNAME" />
+			<result property="insured" column="RP_SHIPPER" />
+			<result property="telephone" column="RP_SHIPPERPHONE" />
+			<result property="receiveDept" column="RP_LEAVEDEPTID" />
+			<result property="endStation" column="RP_DESTINATION" />
+			<result property="sendDate" column="RP_BIZDATE" />
+			<result property="pwv" column="RP_PWC" />
+			<result property="insurAmount" column="RP_INSURANCEVALUE" />
+			<result property="startStation" column="RP_DEPARTURE" />
+			<result property="leaveCustomerId" column="RP_LEAVECUSTOMERID" />
+			<result property="arriveCustomerId" column="RP_ARRIVECUSTOMERID" />
+		</association>
+		<association property="overpay" column="RP_FOVERPAYID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.getOverpayById" />
+		<association property="customer" column="RP_CUSTOMERID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById" />
+			
+	</resultMap>
+
+	<!-- 理赔及关联表映射 -->
+	<resultMap id="RecompenseRelevanceResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication"
+		extends="RecompenseApplicationResultMap">
+		<association property="recalledCom" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryRecalledCompByRecompenseId" />
+		<association property="paymentBill" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryPaymentBillByRecompenseId" />
+		<collection property="awardItemList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryAwardItemByRecompenseId" />
+		<collection property="issueItemList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryIssueItemByRecompenseId" />
+		<collection property="goodsTransList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryGoodsTransByRecompenseId" />
+		<collection property="overpayList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.getOverpayByRecompenseId" />
+		<collection property="attachmentList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryAttachmentByRecompenseId" />
+		<collection property="DeptChargeList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryDeptChargeByRecompenseId" />
+		<collection property="responsibleDeptList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryResponsibleDeptByRecompenseId" />
+		<collection property="messageReminderList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryMessageReminderByRecompenseId" />
+		<collection property="messageList" column="RP_ID"
+			select="com.deppon.crm.module.recompense.shared.domain.ListItem.queryMessageByRecompenseId" />
+	</resultMap>
+
+	<resultMap id="RecompenseTodoReminderResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.TodoReminder">
+		<result property="userId" column="userId" />
+		<result property="todoNum" column="todoNum" />
+	</resultMap>
+
+	<sql id="partSql">
+		RP.FID RP_ID,
+		RP.FWORKFLOWID RP_WORKFLOWID,
+		RP.FRECOMPENSENUM
+		RP_RECOMPENSENUM,
+		RP.FCREATETIME RP_CREATEDATE,
+		RP.FCREATEUSERID
+		RP_CREATEUSER,
+		RP.FLASTUPDATETIME RP_MODIFYDATE,
+		RP.FLASTMODIFYUSERID
+		RP_MODIFYUSER,
+		RP.FHASTENCOUNT RP_HASTENCOUNT,
+		RP.FLASTHASTENTIME
+		RP_LASTHASTENTIME,
+		RP.FWAYBILLNUMBER
+		RP_WAYBILLNUMBER,
+		RP.FPACKAGE
+		RP_PACKAGE,
+		RP.FTRANSTYPE RP_TRANSTYPE,
+		RP.FSHIPPER RP_SHIPPER,
+		RP.FSHIPPERPHONE RP_SHIPPERPHONE,
+		RP.FLEAVEDEPTID RP_LEAVEDEPTID,
+		RP.FDESTINATION RP_DESTINATION,
+		RP.FBIZDATE RP_BIZDATE,
+		RP.FGOODSNAME
+		RP_GOODSNAME,
+		RP.FPWC RP_PWC,
+		RP.FINSURANCEVALUE RP_INSURANCEVALUE,
+		RP.FDEPARTURE RP_DEPARTURE,
+		RP.FLEAVECUSTOMERID RP_LEAVECUSTOMERID,
+		RP.FARRIVECUSTOMERID
+		RP_ARRIVECUSTOMERID,
+		RP.FRECOMPENSETYPE
+		RP_RECOMPENSETYPE,
+		RP.FRECOMPENSEMETHOD RP_RECOMPENSEMETHOD,
+		RP.FCLAIMPARTY RP_CLAIMPARTY,
+		RP.FCOMPANYNAME RP_COMPANYNAME,
+		RP.FCOMPANYFAX RP_COMPANYFAX,
+		RP.FCOMPANYPHONE RP_COMPANYPHONE,
+		RP.FRECOMPENSEAMOUNT
+		RP_RECOMPENSEAMOUNT,
+		RP.FNORMALAMOUNT
+		RP_NORMALAMOUNT,
+		RP.FREALAMOUNT
+		RP_REALAMOUNT,
+		RP.FCOSTEXPLAIN
+		RP_COSTEXPLAIN,
+		RP.FINSURTYPE
+		RP_INSURTYPE,
+		RP.FINSURQUANTITY
+		RP_INSURQUANTITY,
+		RP.FDEPTID RP_DEPTID,
+		RP.FDEPTNAME RP_DEPTNAME,
+		RP.FINSURDATE RP_INSURDATE,
+		RP.FREPORTMAN
+		RP_REPORTMAN,
+		RP.FREPORTDEPT
+		RP_REPORTDEPT,
+		RP.FREPORTDATE RP_REPORTDATE,
+		RP.FSTATUS RP_STATUS,
+		RP.FOVERPAYID RP_FOVERPAYID,
+		RP.FSENDMSGTIME
+		RP_SENDMSGTIME,
+		E1.FEMPNAME
+		RP_CREATEUSERNAME,
+		E2.FEMPNAME
+		RP_LASTMODIFYUSERNAME,
+		E3.FEMPNAME
+		RP_FREPORTMANNAME,
+		D1.FDEPTNAME
+		RP_REPORTDEPTNAME,
+		RP.FCUSTOMERID RP_CUSTOMERID,
+		ROUND((SYSDATE -
+		cast(RP.FLASTUPDATETIME as date)) * 1440) RP_Duration,
+		RP.FHANDLEDMAN
+		RP_FHANDLEDMAN,
+		RP.FHANDLEDTIME RP_FHANDLEDTIME,
+		RP.FLASTAPPROVEDMAN
+		RP_LASTAPPROVEDMAN,
+		RP.FCASHIERDEPT RP_FCASHIERDEPT,
+		RP.FCONFIRMAMOUNTDEPT RP_FCONFIRMAMOUNTDEPT
+	</sql>
+
+
+	<select id="generateTodoReminder" resultMap="RecompenseTodoReminderResultMap"
+		parameterType="string">
+		select rd.fuserid userId, count(rp.fwaybillnumber)
+		todoNum
+		from t_rec_roledepartment rd
+		inner join t_rec_recompense rp
+		on
+		rd.fdeptid = rp.fdeptid
+		where rp.fstatus = #{status}
+		and ROUND((SYSDATE
+		- CAST(rp.FLASTUPDATETIME AS DATE)) * 1440) >
+		(2 * 1440)
+		group by
+		rd.fuserid
+	</select>
+
+	<select id="searchRecompenseByCustNum" resultMap="RecompenseApplicationResultMap"
+		parameterType="string">
+		select
+		<include refid="partSql" />
+		FROM T_REC_RECOMPENSE RP
+		LEFT JOIN T_CUST_CUSTBASEDATA CT
+		ON
+		RP.FCUSTOMERID = CT.FID
+		LEFT JOIN T_AUTH_USER U1
+		ON RP.FCREATEUSERID =
+		U1.FID
+		LEFT JOIN T_ORG_EMPLOYEE E1
+		ON U1.FEMPCODE = E1.FEMPCODE
+		LEFT JOIN
+		T_AUTH_USER U2
+		ON RP.FLASTMODIFYUSERID = U2.FID
+		LEFT JOIN T_ORG_EMPLOYEE
+		E2
+		ON U2.FEMPCODE = E2.FEMPCODE
+		LEFT JOIN T_AUTH_USER U3
+		ON RP.FREPORTMAN
+		= U3.FID
+		LEFT JOIN T_ORG_EMPLOYEE E3
+		ON U3.FEMPCODE = E3.FEMPCODE
+		LEFT
+		JOIN T_ORG_DEPARTMENT D1
+		ON RP.FREPORTDEPT = D1.FID
+		where ct.fcustNumber
+		= #{custNumber}
+		ORDER BY RP.FREPORTDATE DESC
+	</select>
+
+	<select id="searchRecompensePageByCustNum" resultMap="RecompenseApplicationResultMap"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseSearchCondition">
+		SELECT
+		<include refid="partSql" />
+		FROM T_REC_RECOMPENSE RP
+		LEFT JOIN T_CUST_CUSTBASEDATA CT
+		ON
+		RP.FCUSTOMERID = CT.FID
+		LEFT JOIN T_AUTH_USER U1
+		ON RP.FCREATEUSERID =
+		U1.FID
+		LEFT JOIN T_ORG_EMPLOYEE E1
+		ON U1.FEMPCODE = E1.FEMPCODE
+		LEFT JOIN
+		T_AUTH_USER U2
+		ON RP.FLASTMODIFYUSERID = U2.FID
+		LEFT JOIN T_ORG_EMPLOYEE
+		E2
+		ON U2.FEMPCODE = E2.FEMPCODE
+		LEFT JOIN T_AUTH_USER U3
+		ON RP.FREPORTMAN
+		= U3.FID
+		LEFT JOIN T_ORG_EMPLOYEE E3
+		ON U3.FEMPCODE = E3.FEMPCODE
+		LEFT
+		JOIN T_ORG_DEPARTMENT D1
+		ON RP.FREPORTDEPT = D1.FID
+		<where>
+			<if test="null != custNum and '' != custNum">
+				AND ct.fcustNumber = #{custNum}
+			</if>
+		</where>
+		ORDER BY RP.FREPORTDATE DESC,CT.FDEGREE ASC
+	</select>
+
+	<select id="getRecompenseCountByCustNum" resultType="int"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseSearchCondition">
+		select count(*)
+		from t_rec_recompense rp
+		left join
+		t_cust_custbasedata ct
+		on
+		rp.fcustomerid=ct.fid
+		where ct.fcustNumber
+		=
+		#{custNum}
+	</select>
+
+	<!-- 根据理赔单ID查询理赔单信息(查询所有信息) -->
+	<select id="queryById" resultMap="RecompenseRelevanceResultMap"
+		parameterType="string">
+	<![CDATA[	select 	]]>
+		<include refid="partSql" />
+		,O.FBANKNAME,O.FACCOUNT,O.FBRANCHNAME,O.FOPENNAME
+		<![CDATA[
+	FROM T_REC_RECOMPENSE RP
+  LEFT JOIN T_CUST_CUSTBASEDATA CT
+    ON RP.FCUSTOMERID = CT.FID
+  LEFT JOIN T_AUTH_USER U1
+    ON RP.FCREATEUSERID = U1.FID
+  LEFT JOIN T_ORG_EMPLOYEE E1
+    ON U1.FEMPCODE = E1.FEMPCODE
+  LEFT JOIN T_AUTH_USER U2
+    ON RP.FLASTMODIFYUSERID = U2.FID
+  LEFT JOIN T_ORG_EMPLOYEE E2
+    ON U2.FEMPCODE = E2.FEMPCODE
+  LEFT JOIN T_AUTH_USER U3
+    ON RP.FREPORTMAN = U3.FID
+  LEFT JOIN T_ORG_EMPLOYEE E3
+    ON U3.FEMPCODE = E3.FEMPCODE
+  LEFT JOIN T_ORG_DEPARTMENT D1
+    ON RP.FREPORTDEPT = D1.FID
+ LEFT  JOIN T_REC_ONLINEAPPLY O
+ ON RP.FWAYBILLNUMBER=O.FWAYBILLNUMBER   
+			where 
+				rp.fid = #{id}
+		]]>
+	</select>
+
+	<!-- 根据运单号查询理赔单 -->
+	<select id="searchRecompenseByWaybillNum" resultMap="RecompenseApplicationResultMap"
+		parameterType="string">
+	<![CDATA[	select 	]]>
+		<include refid="partSql" />
+		<![CDATA[
+ 		  FROM T_REC_RECOMPENSE RP
+  LEFT JOIN T_CUST_CUSTBASEDATA CT
+    ON RP.FCUSTOMERID = CT.FID
+  LEFT JOIN T_AUTH_USER U1
+    ON RP.FCREATEUSERID = U1.FID
+  LEFT JOIN T_ORG_EMPLOYEE E1
+    ON U1.FEMPCODE = E1.FEMPCODE
+  LEFT JOIN T_AUTH_USER U2
+    ON RP.FLASTMODIFYUSERID = U2.FID
+  LEFT JOIN T_ORG_EMPLOYEE E2
+    ON U2.FEMPCODE = E2.FEMPCODE
+  LEFT JOIN T_AUTH_USER U3
+    ON RP.FREPORTMAN = U3.FID
+  LEFT JOIN T_ORG_EMPLOYEE E3
+    ON U3.FEMPCODE = E3.FEMPCODE
+  LEFT JOIN T_ORG_DEPARTMENT D1
+    ON RP.FREPORTDEPT = D1.FID WHERE RP.FWAYBILLNUMBER = #{waybillnumber} 
+		]]>
+	</select>
+
+	<!-- 根据客户ID和理赔ID查询出该客户除此理赔单外的理赔记录 -->
+	<select id="getRecompenseApplicationByCustomerId" resultMap="RecompenseApplicationResultMap"
+		parameterType="map">
+		select
+		<include refid="partSql" />
+		<![CDATA[
+		  FROM T_REC_RECOMPENSE RP
+  LEFT JOIN T_CUST_CUSTBASEDATA CT
+    ON RP.FCUSTOMERID = CT.FID
+  LEFT JOIN T_AUTH_USER U1
+    ON RP.FCREATEUSERID = U1.FID
+  LEFT JOIN T_ORG_EMPLOYEE E1
+    ON U1.FEMPCODE = E1.FEMPCODE
+  LEFT JOIN T_AUTH_USER U2
+    ON RP.FLASTMODIFYUSERID = U2.FID
+  LEFT JOIN T_ORG_EMPLOYEE E2
+    ON U2.FEMPCODE = E2.FEMPCODE
+  LEFT JOIN T_AUTH_USER U3
+    ON RP.FREPORTMAN = U3.FID
+  LEFT JOIN T_ORG_EMPLOYEE E3
+    ON U3.FEMPCODE = E3.FEMPCODE
+  LEFT JOIN T_ORG_DEPARTMENT D1
+    ON RP.FREPORTDEPT = D1.FID
+		where rp.fcustomerid = #{custId}
+		and rp.fid <>#{recompesenId} 
+		]]>
+		<if test="null != startTime and null != endTime "> and trunc(rp.fcreatetime) between #{startTime} and
+			#{endTime}
+		</if>
+	</select>
+
+	<!-- 根据理赔单号查询理赔信息(只包含理赔基本信息) -->
+	<!--<select id="queryByRecompenseNum" resultMap="RecompenseApplicationResultMap"> 
+		select <include refid="partSql" /> <![CDATA[ from t_rec_recompense rp where 
+		rp.frecompensenum= #{recompensenum} ]]> </select> -->
+
+	<!-- left join t_rec_customer ct on ct.fcustomernumber = rp.fcustomerid 
+		left join t_rec_waybill wb on wb.fwaybillid = rp.fwaybillid left join t_rec_issueitem 
+		ii on ii.frecompenseId = rp.fid left join t_rec_goodstrans gt on gt.frecompenseId 
+		= rp.fid left join t_rec_recompenseitem ri on ri.frecompenseId = rp.fid left 
+		join t_rec_recompenseattachment ac on ac.frecompenseId= rp.fid left join 
+		t_rec_DeptCharge dc on dc.frecompenseId= rp.fid left join t_rec_ResponsibleDept 
+		rd on rd.frecompenseId = rp.fid left join t_rec_AwardItem ai on ai.frecompenseId 
+		= rp.fid left join t_rec_MessageReminder mr on mr.frecompenseId = rp.id left 
+		join t_rec_Message mg on mg.frecompenseId = rp.fid -->
+
+	<!-- 保存理赔单信息 (只包含客户ID和运单ID) -->
+	<insert id="insert"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+		 <![CDATA[ 
+		 	select	seq_id_recompense.nextval id	 	from 	dual 
+		 ]]>
+		</selectKey>
+		<![CDATA[ 
+			insert into t_rec_recompense 
+				(fid,fworkflowid,frecompensenum,fcreatetime,
+				
+				fwaybillnumber,fpackage,ftranstype,fshipper,fshipperphone,
+				fleavedeptid,fdeparture,fdestination,fbizdate,fgoodsname,finsurancevalue,
+				fpwc,fleavecustomerid,farrivecustomerid,
+				
+				fnormalAmount,                 
+				frecompensetype,frecompensemethod,fclaimparty,
+				fcompanyname,fcompanyfax,fcompanyphone,frecompenseamount,
+		        finsurtype,finsurquantity,fdeptid,fdeptname,finsurdate,freportman,
+		        freportdept,freportdate,fstatus,FCREATEUSERID,fcustomerid,frealAmount,FSENDMSGTIME,FCOSTEXPLAIN,FcashierDept,FconfirmAmountDept
+		        )
+		values 
+				(#{id},#{workflowId},#{recompenseNum,jdbcType=VARCHAR},#{createDate,jdbcType=VARCHAR},
+			 	#{waybill.waybillNumber,jdbcType=VARCHAR},
+			 	#{waybill.packaging,jdbcType=VARCHAR}, 
+			 	#{waybill.transType,jdbcType=VARCHAR},
+			 	#{waybill.insured,jdbcType=VARCHAR},
+			 	#{waybill.telephone,jdbcType=VARCHAR},
+			 	#{waybill.receiveDept,jdbcType=VARCHAR},
+			 	#{waybill.startStation,jdbcType=VARCHAR},
+			 	#{waybill.endStation,jdbcType=VARCHAR},
+			 	#{waybill.sendDate,jdbcType=TIMESTAMP},
+			 	#{waybill.goodsName,jdbcType=VARCHAR},
+			 	#{waybill.insurAmount,jdbcType=NUMERIC},
+			 	#{waybill.pwv,jdbcType=VARCHAR},
+			 	#{waybill.leaveCustomerId,jdbcType=VARCHAR},
+			 	#{waybill.arriveCustomerId,jdbcType=VARCHAR},
+			 	
+			 	#{normalAmount,jdbcType=NUMERIC},
+			 	#{recompenseType,jdbcType=VARCHAR},
+			 	#{recompenseMethod,jdbcType=VARCHAR},#{claimParty,jdbcType=NUMERIC},
+			 	#{companyName,jdbcType=VARCHAR},#{companyFax,jdbcType=VARCHAR},
+			 	#{companyPhone,jdbcType=VARCHAR},#{recompenseAmount,jdbcType=NUMERIC},	
+			 	#{insurType,jdbcType=NUMERIC},#{insurQuantity,jdbcType=NUMERIC},
+			 	#{deptId,jdbcType=NUMERIC},#{deptName,jdbcType=VARCHAR},	
+			 	#{insurDate,jdbcType=VARCHAR},#{reportMan,jdbcType=VARCHAR},
+			 	#{reportDept,jdbcType=NUMERIC},#{reportDate,jdbcType=VARCHAR},
+			 	#{status,jdbcType=NUMERIC},	#{createUser,jdbcType=VARCHAR},
+			 	#{customer.id,jdbcType=VARCHAR},#{realAmount,jdbcType=NUMERIC},#{sendMsgTime,jdbcType=NUMERIC},#{costExplain,jdbcType=VARCHAR}
+			 	,#{cashierDept,jdbcType=VARCHAR},
+			 	#{confirmAmountDept,jdbcType=VARCHAR}
+			 	)
+		]]>
+	</insert>
+
+	<delete id="delete">
+			<![CDATA[
+			delete from t_rec_recompense
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string"> 
+			<![CDATA[
+			delete from t_rec_recompense
+			where fid=#{id}
+		]]>
+	</delete>
+
+	<!-- 根据id修改理赔单 -->
+	<update id="updateById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication">
+		update t_rec_recompense
+		<set>
+			<if test="null != customer">fcustomerid=#{customer.id},</if>
+			<if test="null != costExplain">FCOSTEXPLAIN=#{costExplain},</if>
+			<if test="null != workflowId">fworkflowId=#{workflowId},</if>
+			<if test="null != companyFax">fcompanyFax=#{companyFax},</if>
+			<if test="null != recompenseType">frecompenseType=#{recompenseType},</if>
+			<if test="null != recompenseMethod">frecompenseMethod=#{recompenseMethod},</if>
+			<if test="null != realAmount">frealAmount=#{realAmount},</if>
+			<if test="null != normalAmount">fnormalamount=#{normalAmount},</if>
+			<if test="null != claimParty">fclaimParty=#{claimParty},</if>
+			<if test="null != companyName">fcompanyName=#{companyName},</if>
+			<if test="null != companyPhone">fcompanyPhone=#{companyPhone},</if>
+			<if test="null != recompenseNum">frecompenseNum=#{recompenseNum},</if>
+			<if test="null != recompenseAmount">frecompenseAmount=#{recompenseAmount},</if>
+			<if test="null != insurType">finsurType=#{insurType},</if>
+			<if test="null != insurQuantity">finsurQuantity=#{insurQuantity},</if>
+			<if test="null != deptId">fdeptId=#{deptId},</if>
+			<if test="null != deptName">fdeptName=#{deptName},</if>
+			<if test="null != reportMan">freportMan=#{reportMan},</if>
+			<if test="null != status">fstatus=#{status},</if>
+			<if test="null != insurDate">finsurDate=#{insurDate},</if>
+			<if test="null != reportDate">freportDate=#{reportDate},</if>
+			<if test="null != modifyUser">FLASTMODIFYUSERID=#{modifyUser},</if>
+			<if test="null != modifyDate">FLASTUPDATETIME=#{modifyDate},</if>
+			<if test="null != hastenCount">FHASTENCOUNT=#{hastenCount},</if>
+			<if test="null != lastHastenTime">FLASTHASTENTIME=#{lastHastenTime},</if>
+			<if test="null != sendMsgTime">FsendMsgTime=#{sendMsgTime}</if>
+		</set>
+		<where>
+			FID=#{id}
+		</where>
+	</update>
+	<!-- 根据id修改理赔单 -->
+	<update id="updateRecompenseStatusInfo"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication">
+		update t_rec_recompense
+		<set>
+			flastupdatetime = sysdate,
+			<if test="null != modifyUser">flastmodifyuserid=#{modifyUser},</if>
+			<if test="null != status">fstatus=#{status},</if>
+			<if test="null != handledTime">fhandledTime=#{handledTime},</if>
+			<if test="null != handledMan">fhandledMan=#{handledMan},</if>
+			<if test="null != docConfirmedTime">fdocConfirmedTime=#{docConfirmedTime},</if>
+			<if test="null != docConfirmedMan">fdocConfirmedMan=#{docConfirmedMan},</if>
+			<if test="null != amountConfirmedTime">famountConfirmedTime=#{amountConfirmedTime},</if>
+			<if test="null != amountConfirmedMan">famountConfirmedMan=#{amountConfirmedMan},</if>
+			<if test="null != normalApproveSubmitTime">fnormalApproveSubmitTime=#{normalApproveSubmitTime},</if>
+			<if test="null != normalApproveSubmitMan">fnormalApproveSubmitMan=#{normalApproveSubmitMan},</if>
+			<if test="null != lastApprovedTime">flastApprovedTime=#{lastApprovedTime},</if>
+			<if test="null != lastApprovedMan">flastApprovedMan=#{lastApprovedMan},</if>
+			<if test="null != paymentSubmitTime">fpaymentSubmitTime=#{paymentSubmitTime},</if>
+			<if test="null != paymentSubmitMan">fpaymentSubmitMan=#{paymentSubmitMan},</if>
+			<if test="null != amountPaidTime">famountPaidTime=#{amountPaidTime},</if>
+			<if test="null != amountPaidMan">famountPaidMan=#{amountPaidMan}</if>
+		</set>
+		<where>
+			FID=#{id}
+		</where>
+	</update>
+
+	<!-- 根据id修改多赔信息 -->
+	<update id="updateRecompenseOverpayById" parameterType="map">
+		UPDATE T_REC_RECOMPENSE
+		<set>
+			<if test="overPayId!=null and overPayId!='' ">
+				FOVERPAYID=#{overPayId},
+			</if>
+			FLASTHASTENTIME=SYSDATE
+		</set>
+		<where>
+			FID=#{recompenseId}
+		</where>
+	</update>
+
+	<!-- 根据条件_查询理赔单_查询结果按报案时间的先后排序。对同一上报时间，按客户等级的高低来显示。 -->
+	<select id="searchRecompenseByCondition" resultMap="RecompenseApplicationResultMap"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseSearchCondition">
+		SELECT
+		<include refid="partSql" />		
+		 ,(case when RP.Fstatus='Submited' then 1 
+               when RP.Fstatus='DocConfirmed' then 2 
+               when RP.Fstatus='AmountConfirmed' then 3   
+               when RP.Fstatus='OverpayApproved' then 4                               
+         end ) as adminOrder
+         ,(case 
+               when RP.Fstatus='PayFailed' then 1 
+               when RP.Fstatus='Approved' then 2 
+               when RP.Fstatus='Handled' then 3 
+               when RP.Fstatus='Submited' then 4
+         end) as managerOrder     		
+		FROM T_REC_RECOMPENSE RP
+		LEFT JOIN T_CUST_CUSTBASEDATA CT
+		ON
+		RP.FCUSTOMERID = CT.FID
+		LEFT JOIN T_AUTH_USER U1
+		ON RP.FCREATEUSERID =
+		U1.FID
+		LEFT JOIN T_ORG_EMPLOYEE E1
+		ON U1.FEMPCODE = E1.FEMPCODE
+		LEFT JOIN
+		T_AUTH_USER U2
+		ON RP.FLASTMODIFYUSERID = U2.FID
+		LEFT JOIN T_ORG_EMPLOYEE
+		E2
+		ON U2.FEMPCODE = E2.FEMPCODE
+		LEFT JOIN T_AUTH_USER U3
+		ON RP.FREPORTMAN
+		= U3.FID
+		LEFT JOIN T_ORG_EMPLOYEE E3
+		ON U3.FEMPCODE = E3.FEMPCODE
+		LEFT
+		JOIN T_ORG_DEPARTMENT D1
+		ON RP.FREPORTDEPT = D1.FID
+		<where>
+			<!-- <if test="null != reportDept and '' != reportDept"> -->
+			<!-- RP.FREPORTDEPT = #{reportDept} -->
+			<!-- </if> -->
+			<if test="null != reportStartTime and '' != reportStartTime">
+				AND trunc(RP.FREPORTDATE) >= #{reportStartTime}
+			</if>
+			<if test="null != reportEndTime and '' != reportEndTime">
+				AND trunc(RP.FREPORTDATE) &lt;= #{reportEndTime}
+			</if>
+			<if test="null != approveStartTime and '' != approveStartTime">
+				AND trunc(RP.FLASTAPPROVEDTIME) >= #{approveStartTime}
+			</if>
+			<if test="null != approveEndTime and '' != approveEndTime">
+				AND trunc(RP.FLASTAPPROVEDTIME) &lt;= #{approveEndTime}
+			</if>
+			<if test="null != createStartTime and '' != createStartTime">
+				AND trunc(RP.FCREATEDATE) >= #{createStartTime}
+			</if>
+			<if test="null != createEndTime and '' != createEndTime">
+				AND trunc(RP.FCREATEDATE) &lt;= #{createEndTime}
+			</if>
+			<if test="null != recompenseType and '' != recompenseType">
+				AND RP.FRECOMPENSETYPE = #{recompenseType}
+			</if>
+			<if test="null != recompenseMethod and  '' != recompenseMethod">
+				AND RP.FRECOMPENSEMETHOD = #{recompenseMethod}
+			</if>
+			<if test="null != reportDeptIdList and  reportDeptIdList.size>0">
+				AND RP.FREPORTDEPT IN
+				<foreach collection="reportDeptIdList" item="item" open="("
+					close=")" separator=",">
+					${item}
+				</foreach>
+			</if>
+			<if test="null != deptIdList and  deptIdList.size>0">
+				AND RP.FDEPTID IN
+				<foreach collection="deptIdList" item="item" open="(" close=")"
+					separator=",">
+					${item}
+				</foreach>
+			</if>
+			<if test="null != recompenseStateList and  recompenseStateList.size>0">
+				AND RP.FSTATUS IN
+				<foreach collection="recompenseStateList" item="item" open="("
+					close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+
+			<if test="null != custNum and  '' != custNum">
+				AND CT.FCUSTNUMBER = #{custNum}
+			</if>
+			<if test="null != custName and  '' != custName">
+				AND CT.FCUSTNAME = #{custName}
+			</if>
+			<if test="null != customerLevel and  '' != customerLevel">
+				AND CT.FDEGREE = #{customerLevel}
+			</if>
+			<if test="true == overpay">
+				AND exists (select * from t_rec_overpay ov where
+				ov.frecompenseid = rp.fid)
+			</if>
+			<if test="null != beginDuration and '' != beginDuration">
+				AND ROUND(SYSDATE - cast(RP.FLASTUPDATETIME as date)) >= #{beginDuration}
+			</if>
+			<if test="null != endDuration and '' != endDuration">
+				AND ROUND(SYSDATE - cast(RP.FLASTUPDATETIME as date)) &lt;= #{endDuration}
+			</if>
+			<if test="null != endRecompenseAmount and '' != endRecompenseAmount and (beginRecompenseAmount == null or beginRecompenseAmount == '')">
+				AND RP.frecompenseamount > 0 and RP.frecompenseamount &lt;= #{endRecompenseAmount}
+			</if>
+			<if test="null != beginRecompenseAmount and '' != beginRecompenseAmount and null != endRecompenseAmount and '' != endRecompenseAmount">
+				AND RP.frecompenseamount > #{beginRecompenseAmount} and RP.frecompenseamount &lt;= #{endRecompenseAmount}
+			</if>
+			<if test="null != beginRecompenseAmount and '' != beginRecompenseAmount and (endRecompenseAmount == null or endRecompenseAmount == '')">
+				AND RP.frecompenseamount > #{beginRecompenseAmount}
+			</if>
+			<if test="null != endRealAmount and '' != endRealAmount and (beginRealAmount == null or beginRealAmount == '')">
+				AND RP.frealamount >= 0 and RP.frealamount &lt;= #{endRealAmount}
+			</if>
+			<if test="null != beginRealAmount and '' != beginRealAmount and null != endRealAmount and '' != endRealAmount">
+				AND RP.frealamount > #{beginRealAmount} and RP.frealamount &lt;= #{endRealAmount}
+			</if>
+			<if test="null != beginRealAmount and '' != beginRealAmount and (endRealAmount == null or endRealAmount == '')">
+				AND RP.frealamount > #{beginRealAmount}
+			</if>
+			<if test="null != recompenseState and '' != recompenseState">
+				AND RP.FSTATUS = #{recompenseState}
+			</if>
+			<if test="null != transType and  '' != transType">
+				AND RP.FTRANSTYPE = #{transType}
+			</if>
+			<if test="null != cashierDept and  '' != cashierDept">
+				AND RP.FCASHIERDEPT = #{cashierDept}
+			</if>
+			<if test="null != confirmAmountDept and  '' != confirmAmountDept">
+				AND RP.FCONFIRMAMOUNTDEPT = #{confirmAmountDept}
+			</if>
+		</where>
+		ORDER BY  
+		<if test="roleType==1">
+				adminOrder, 
+		</if>
+		<if test="roleType==2">
+				managerOrder, 
+		</if>		
+		 RP.FREPORTDATE DESC,CT.FDEGREE ASC
+	</select>
+
+	<!-- 根据条件_查询理赔单记录数 -->
+	<select id="getRecompenseCountByCondition" resultType="int"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseSearchCondition">
+		SELECT COUNT(RP.FID) FROM T_REC_RECOMPENSE RP
+		LEFT JOIN
+		T_CUST_CUSTBASEDATA CT
+		ON
+		RP.FCUSTOMERID=CT.FID
+		<where>
+			<!-- <if test="null != reportDept and '' != reportDept"> -->
+			<!-- RP.FREPORTDEPT = #{reportDept} -->
+			<!-- </if> -->
+			<if test="null != cashierDept and '' != cashierDept">
+				AND trunc(RP.FCASHIERDEPT) = #{cashierDept}
+			</if>
+			<if test="null != reportStartTime and '' != reportStartTime">
+				AND trunc(RP.FREPORTDATE) >= #{reportStartTime}
+			</if>
+			<if test="null != reportEndTime and '' != reportEndTime">
+				AND trunc(RP.FREPORTDATE) &lt;= #{reportEndTime}
+			</if>
+			<if test="null != approveStartTime and '' != approveStartTime">
+				AND trunc(RP.FLASTAPPROVEDTIME) >= #{approveStartTime}
+			</if>
+			<if test="null != approveEndTime and '' != approveEndTime">
+				AND trunc(RP.FLASTAPPROVEDTIME) &lt;= #{approveEndTime}
+			</if>
+			<if test="null != createStartTime and '' != createStartTime">
+				AND trunc(RP.FCREATEDATE) >= #{createStartTime}
+			</if>
+			<if test="null != createEndTime and '' != createEndTime">
+				AND trunc(RP.FCREATEDATE) &lt;= #{createEndTime}
+			</if>
+			<if test="null != recompenseType and '' != recompenseType">
+				AND RP.FRECOMPENSETYPE = #{recompenseType}
+			</if>
+			<if test="null != recompenseMethod and  '' != recompenseMethod">
+				AND RP.FRECOMPENSEMETHOD = #{recompenseMethod}
+			</if>
+			<if test="null != transType and  '' != transType">
+				AND RP.FTRANSTYPE = #{transType}
+			</if>
+			<if test="null != reportDeptIdList and  reportDeptIdList.size>0">
+				AND RP.FREPORTDEPT IN
+				<foreach collection="reportDeptIdList" item="item" open="("
+					close=")" separator=",">
+					${item}
+				</foreach>
+			</if>
+			<if test="null != deptIdList and  deptIdList.size>0">
+				AND RP.FDEPTID IN
+				<foreach collection="deptIdList" item="item" open="(" close=")"
+					separator=",">
+					${item}
+				</foreach>
+			</if>
+			<if test="null != recompenseStateList and  recompenseStateList.size>0">
+				AND RP.FSTATUS IN
+				<foreach collection="recompenseStateList" item="item" open="("
+					close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+
+			<if test="null != custNum and  '' != custNum">
+				AND CT.FCUSTNUMBER = #{custNum}
+			</if>
+			<if test="null != custName and  '' != custName">
+				AND CT.FCUSTNAME = #{custName}
+			</if>
+			<if test="null != customerLevel and  '' != customerLevel">
+				AND CT.FDEGREE = #{customerLevel}
+			</if>
+			<if test="true == overpay">
+				AND exists (select * from t_rec_overpay ov where
+				ov.frecompenseid = rp.fid)
+			</if>
+			
+			<if test="null != beginDuration and '' != beginDuration">
+				AND ROUND(SYSDATE - cast(RP.FLASTUPDATETIME as date)) >= #{beginDuration}
+			</if>
+			<if test="null != endDuration and '' != endDuration">
+				AND ROUND(SYSDATE - cast(RP.FLASTUPDATETIME as date)) &lt;= #{endDuration}
+			</if>
+			<if test="null != endRecompenseAmount and '' != endRecompenseAmount and (beginRecompenseAmount == null or beginRecompenseAmount == '')">
+				AND RP.frecompenseamount > 0 and RP.frecompenseamount &lt;= #{endRecompenseAmount}
+			</if>
+			<if test="null != beginRecompenseAmount and '' != beginRecompenseAmount and null != endRecompenseAmount and '' != endRecompenseAmount">
+				AND RP.frecompenseamount > #{beginRecompenseAmount} and RP.frecompenseamount &lt;= #{endRecompenseAmount}
+			</if>
+			<if test="null != beginRecompenseAmount and '' != beginRecompenseAmount and (endRecompenseAmount == null or endRecompenseAmount == '')">
+				AND RP.frecompenseamount > #{beginRecompenseAmount}
+			</if>
+			<if test="null != endRealAmount and '' != endRealAmount and (beginRealAmount == null or beginRealAmount == '')">
+				AND RP.frealamount >= 0 and RP.frealamount &lt;= #{endRealAmount}
+			</if>
+			<if test="null != beginRealAmount and '' != beginRealAmount and null != endRealAmount and '' != endRealAmount">
+				AND RP.frealamount > #{beginRealAmount} and RP.frealamount &lt;= #{endRealAmount}
+			</if>
+			<if test="null != beginRealAmount and '' != beginRealAmount and (endRealAmount == null or endRealAmount == '')">
+				AND RP.frealamount > #{beginRealAmount}
+			</if>
+			<if test="null != recompenseState and '' != recompenseState">
+				AND RP.FSTATUS = #{recompenseState}
+			</if>
+			<if test="null != confirmAmountDept and  '' != confirmAmountDept">
+				AND RP.FCONFIRMAMOUNTDEPT = #{confirmAmountDept}
+			</if>
+			
+		</where>
+		ORDER BY RP.FREPORTDATE DESC,CT.FDEGREE ASC
+	</select>
+
+	<!-- 根据客户ID查询理赔单基本信息(按理赔时间倒序) -->
+	<select id="getRecompenseListByCustId" resultMap="RecompenseApplicationResultMap"
+		parameterType="string">
+		SELECT
+		<include refid="partSql" />
+		FROM T_REC_RECOMPENSE RP
+		LEFT JOIN T_CUST_CUSTBASEDATA CT
+		ON
+		RP.FCUSTOMERID = CT.FID
+		LEFT JOIN T_AUTH_USER U1
+		ON RP.FCREATEUSERID =
+		U1.FID
+		LEFT JOIN T_ORG_EMPLOYEE E1
+		ON U1.FEMPCODE = E1.FEMPCODE
+		LEFT JOIN
+		T_AUTH_USER U2
+		ON RP.FLASTMODIFYUSERID = U2.FID
+		LEFT JOIN T_ORG_EMPLOYEE
+		E2
+		ON U2.FEMPCODE = E2.FEMPCODE
+		LEFT JOIN T_AUTH_USER U3
+		ON RP.FREPORTMAN
+		= U3.FID
+		LEFT JOIN T_ORG_EMPLOYEE E3
+		ON U3.FEMPCODE = E3.FEMPCODE
+		LEFT
+		JOIN T_ORG_DEPARTMENT D1
+		ON RP.FREPORTDEPT = D1.FID WHERE
+		RP.FCUSTOMERID = #{custId} ORDER BY
+		RP.FREPORTDATE DESC
+	</select>
+	<update id="updatePaymentIdByRecompenseNum" parameterType="map">
+		update T_REC_RECOMPENSE set FPAYMENTID=#{id} where
+		FRECOMPENSENUM=#{recompenseNum}
+	</update>
+	<select id="findPaymentIdByRecompenseNum" parameterType="string"
+		resultType="string">
+		select FPAYMENTID from T_REC_RECOMPENSE where
+		FRECOMPENSENUM=#{recompenseNum}
+	</select>
+	<resultMap id="NewRecompenseApplicationResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecompenseApplication">
+		<id property="id" column="fid" />
+		<result property="reportDept" column="freportdept" />
+		<result property="recompenseNum" column="fwaybillnumber" />
+		<result property="leaveCustomerId" column="fleavecustomerid" />
+		<result property="arriveCustomerId" column="farrivecustomerid" />
+	</resultMap>
+	<!--查询不是完成和InERP状态的理赔单- -->
+	<select id="findInvalidCustRecompenseList" resultMap="NewRecompenseApplicationResultMap">
+		select
+		fid,
+		fleavecustomerid,
+		farrivecustomerid,
+		freportdept,
+		fwaybillnumber
+		from
+		t_rec_recompense r
+		where fstatus not in ('InERP', 'Paid') and
+		frecompensetype not
+		in('unbilled')
+	</select>
+	<update id="updateCustomerInfo" parameterType="map">
+		UPDATE T_REC_RECOMPENSE
+		<set>
+			<if test="leaveCustomerId!=null and leaveCustomerId!='' ">
+				fleavecustomerid=#{leaveCustomerId},
+			</if>
+			<if test="arriveCustomerId!=null and arriveCustomerId!='' ">
+				farrivecustomerid=#{arriveCustomerId}
+			</if>
+		</set>
+		<where>
+			FID=#{recompenseId}
+		</where>
+	</update>
+
+	<select id="getMessageManager" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 1.经理 (报案部门对应的部门经理) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.FRECOMPENSENUM RP_FRECOMPENSENUM, RP.FRECOMPENSETYPE RP_FRECOMPENSETYPE, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_RECOMPENSE RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.FREPORTDEPT = DP.FID
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fid in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getMessageCommissioner" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 2.理赔专员 (报案部门对应事业部营销管理组的理赔专员) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.FRECOMPENSENUM RP_FRECOMPENSENUM, RP.FRECOMPENSETYPE RP_FRECOMPENSETYPE, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_RECOMPENSE RP
+		inner JOIN T_ORG_DEPARTMENT DP ON RP.FREPORTDEPT = DP.FID
+		inner JOIN t_rec_roledepartment RD on rp.fdeptid = rd.fdeptid 
+		inner join t_auth_user au on rd.fuserid = au.fid 
+		inner join T_ORG_EMPLOYEE EL on au.fempcode = el.fempcode  
+		<if test="list != null and list.size() > 0">
+		where rp.fid in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	
+	<select id="getMessageAreaManager" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 3.区域经理 (报案部门所属的营业区区域经理) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.FRECOMPENSENUM RP_FRECOMPENSENUM, RP.FRECOMPENSETYPE RP_FRECOMPENSETYPE, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_RECOMPENSE RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.FREPORTDEPT = DP.FID
+ 		inner join T_ORG_DEPARTMENT dp2 on dp2.fid = dp.fparentid
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp2.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fid in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getMessageGeneralManager" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 4.大区总经理 (报案部门所属的大区总经理) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.FRECOMPENSENUM RP_FRECOMPENSENUM, RP.FRECOMPENSETYPE RP_FRECOMPENSETYPE, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_RECOMPENSE RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.FREPORTDEPT = DP.FID
+ 		inner join T_ORG_DEPARTMENT dp2 on dp2.fid = dp.fparentid
+ 		inner join T_ORG_DEPARTMENT dp3 on dp3.fid = dp2.fparentid
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp3.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fid in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getMessageDirector" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 5.事业部办公室主任 (报案部门所属的事业部办公室主任) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.FRECOMPENSENUM RP_FRECOMPENSENUM, RP.FRECOMPENSETYPE RP_FRECOMPENSETYPE, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_RECOMPENSE RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.FREPORTDEPT = DP.FID
+ 		inner join T_ORG_DEPARTMENT dp2 on dp2.fid = dp.fparentid
+ 		inner join T_ORG_DEPARTMENT dp3 on dp3.fid = dp2.fparentid
+ 		inner join T_ORG_DEPARTMENT dp4 on dp4.fparentid = dp3.fparentid
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp4.fprincipal 
+ 		WHERE dp4.fdeptname LIKE '%办公室'
+ 		<if test="list != null and list.size() > 0">
+		and rp.fid in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getMessagePresident" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 6.事业部总裁 (报案部门所属的事业部总裁) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.FRECOMPENSENUM RP_FRECOMPENSENUM, RP.FRECOMPENSETYPE RP_FRECOMPENSETYPE, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_RECOMPENSE RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.FREPORTDEPT = DP.FID
+ 		inner join T_ORG_DEPARTMENT dp2 on dp2.fid = dp.fparentid
+ 		inner join T_ORG_DEPARTMENT dp3 on dp3.fid = dp2.fparentid
+ 		inner join T_ORG_DEPARTMENT dp4 on dp4.fid = dp3.fparentid
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp4.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fid in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	
+	<select id="getMessageOnline" resultType="string" 
+		parameterType="string">
+		select ROUND(SYSDATE - cast(rec.fcreatetime as date)) rec_Duration from t_rec_onlineapply rec where rec.fwaybillnumber = #{recompenseNum}
+	</select>
+	
+	<select id="getMessageNoOnline" resultMap="RecSmsInformationMap" 
+		parameterType="string">
+		select ROUND(SYSDATE - cast(c.fcreatedate as date)) claim_Duration,
+		ROUND(SYSDATE - cast(r.fcreatetime as date)) rec_Duration from t_rec_recompense r
+		left join t_rec_claim c on r.fwaybillnumber = c.fwaybillnumber
+		where r.fwaybillnumber = #{recompenseNum}
+	</select>
+	
+	<select id="getExpressDelivery" resultMap="CellphoneMessageInfoMap"
+		parameterType="string">
+		select EL.Fmobileno EL_PHONENUMBER, DP.Fstandardcode DP_SENDSTANDARDDEPTCODE from T_ORG_EMPLOYEE EL 
+		inner join t_Org_Department DP on DP.Fprincipal = EL.Fempcode 
+		where DP.Fdeptcode = #{deptCode} AND DP.fstandardcode IS NOT NULL
+	</select>
+	
+	<!--根据手机号码查询理赔历史结果集-->
+	<resultMap id="RecompenseForCCMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecompenseForCC">
+		<result property="waybillNumber" column="R_FWAYBILLNUMBER" />
+		<result property="reportDept" column="D_FDEPTNAME" />
+		<result property="recompenseMethod" column="R_FRECOMPENSEMETHOD" />
+		<result property="recompenseType" column="R_FRECOMPENSETYPE" />
+		<result property="recompenseAmount" column="R_FREALAMOUNT" />
+		<result property="reportDate" column="R_FREPORTDATE" />
+		<result property="status" column="R_FSTATUS" />
+	</resultMap>
+	<!--根据手机号码查询理赔历史-->
+	<select id="searchRecompenseForCC" resultMap="RecompenseForCCMap" 
+		parameterType="string">
+		SELECT R.FWAYBILLNUMBER R_FWAYBILLNUMBER,
+       D.FDEPTNAME D_FDEPTNAME,
+       R.FRECOMPENSEMETHOD R_FRECOMPENSEMETHOD,
+       R.FRECOMPENSETYPE R_FRECOMPENSETYPE,
+       R.FREALAMOUNT R_FREALAMOUNT,
+       R.FREPORTDATE R_FREPORTDATE,
+       R.FSTATUS   R_FSTATUS
+  		FROM T_REC_RECOMPENSE R
+  		LEFT JOIN T_ORG_DEPARTMENT D
+    	ON R.FREPORTDEPT = D.FID      WHERE R.FCOMPANYPHONE =#{phone}  
+	</select>	
+	<select id="countRecompenseForCC" resultType="int"
+		parameterType="string">
+		SELECT count(*)
+  		FROM T_REC_RECOMPENSE R
+  	    WHERE R.FCOMPANYPHONE =#{phone}
+	</select>
+	<select id="getMessageManagerForOnline" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 1.经理 (受理部门对应的部门经理) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER, RP.fwaybillnumber RP_FRECOMPENSENUM, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_ONLINEAPPLY RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.fapplydeptid = DP.FID
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fwaybillnumber in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getMessageAreaManagerForOnline" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 2.区域经理 (受理部门所属的营业区区域经理) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER,RP.fwaybillnumber RP_FRECOMPENSENUM, DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_ONLINEAPPLY RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.fapplydeptid = DP.FID
+ 		inner join T_ORG_DEPARTMENT dp2 on dp2.fid = dp.fparentid
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp2.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fwaybillnumber in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	<select id="getMessageGeneralManagerForOnline" resultMap="RecSmsInformationMap"
+		parameterType="list">
+		<!-- 3.大区总经理 (受理部门所属的大区总经理) -->
+		SELECT distinct(EL.fempcode) EL_EMPCODE, EL.fempname EL_EMPNAME, EL.fmobileno EL_MOBILENUMBER,RP.fwaybillnumber RP_FRECOMPENSENUM,DP.FDEPTNAME DP_FDEPTNAME FROM T_REC_ONLINEAPPLY RP 
+ 		inner JOIN T_ORG_DEPARTMENT DP ON RP.fapplydeptid = DP.FID
+ 		inner join T_ORG_DEPARTMENT dp2 on dp2.fid = dp.fparentid
+ 		inner join T_ORG_DEPARTMENT dp3 on dp3.fid = dp2.fparentid
+ 		inner join T_ORG_EMPLOYEE EL on EL.fempcode = dp3.fprincipal
+ 		<if test="list != null and list.size() > 0">
+		where rp.fwaybillnumber in 
+			<foreach collection="list" item="item" open="("
+				close=")" separator=",">
+				${item}
+			</foreach>
+		</if>
+	</select>
+	<!--根据部门ID查询经理ID-->
+	<select id="getManagerIdByDeptId" resultType="string" parameterType="string">
+		select u.* from t_auth_user u 
+			left join t_org_department d 
+			on  d.fprincipal = u.FLOGINNAME  where d.fid=#{applyDeptId}
+	</select>
+	
+	<select id="getRecByWfNo" resultMap="RecompenseRelevanceResultMap"
+		parameterType="string">
+		<![CDATA[	select 	]]>
+		<include refid="partSql" />
+		<![CDATA[
+			FROM T_REC_RECOMPENSE RP
+		  LEFT JOIN T_CUST_CUSTBASEDATA CT
+		    ON RP.FCUSTOMERID = CT.FID
+		  LEFT JOIN T_AUTH_USER U1
+		    ON RP.FCREATEUSERID = U1.FID
+		  LEFT JOIN T_ORG_EMPLOYEE E1
+		    ON U1.FEMPCODE = E1.FEMPCODE
+		  LEFT JOIN T_AUTH_USER U2
+		    ON RP.FLASTMODIFYUSERID = U2.FID
+		  LEFT JOIN T_ORG_EMPLOYEE E2
+		    ON U2.FEMPCODE = E2.FEMPCODE
+		  LEFT JOIN T_AUTH_USER U3
+		    ON RP.FREPORTMAN = U3.FID
+		  LEFT JOIN T_ORG_EMPLOYEE E3
+		    ON U3.FEMPCODE = E3.FEMPCODE
+		  LEFT JOIN T_ORG_DEPARTMENT D1
+		    ON RP.FREPORTDEPT = D1.FID
+		 LEFT  JOIN T_REC_ONLINEAPPLY O
+		 ON RP.FWAYBILLNUMBER=O.FWAYBILLNUMBER 
+		 LEFT JOIN t_rec_overpay op on rp.fid = op.frecompenseid  
+			where 
+				op.fworkflowno = #{workflowNo}
+		]]>
+	</select>
+</mapper>

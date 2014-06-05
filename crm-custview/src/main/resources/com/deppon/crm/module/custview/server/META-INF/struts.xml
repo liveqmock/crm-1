@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 设置最大上传大小 -->
+	<constant name="struts.multipart.maxSize" value="100000000" />
+	<!-- 设置临时文件夹 -->
+	<constant name="struts.multipart.saveDir" value="D:\temp"></constant>
+	<package name="custview" namespace="/custview" extends="crm-default">
+		<action name="memberViewIndex">
+			<result name="success">memberView.html</result>
+		</action>
+		<action name="simpleMemberViewIndex">
+			<result name="success">simpleMemberView.html</result>
+		</action>
+		<action name="printMemberView">
+			<result name="success">printMemberView.html</result>
+		</action>
+		
+		<!--360视图新增优化 查询客户编码的action-->
+		<action name="findMemberInfoFast" class="memberViewAction" method="findMemberInfoFast">
+			<result name="success" type="json"></result>
+		</action>
+		<!--简版360视图新增优化 查询客户编码的action-->
+		<action name="searchMemberntegrateInfo" class="memberViewAction" method="searchMemberntegrateInfo">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--通过客户编码获取客户综合信息 -->
+		<action name="searchMemberIntegratedInfoViewByCustNum" class="memberViewAction"
+			method="searchMemberIntegratedInfoViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取客户基本信息 -->
+		<action name="searchMemberViewByCustNum" class="memberViewAction"
+			method="searchMemberViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取维护信息 -->
+		<action name="searchIntegratedCustDevViewByCustNum" class="memberViewAction"
+			method="searchIntegratedCustDevViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取客户积分信息 -->
+		<action name="searchMemberPointsViewByCustNum" class="memberViewAction"
+			method="searchMemberPointsViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取投诉理赔信息 -->
+		<action name="searchComplaintRecompenseViewByCustNum" class="memberViewAction"
+			method="searchComplaintRecompenseViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取财务信息 -->
+		<action name="searchAccountViewByCustNum" class="memberViewAction"
+			method="searchAccountViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取订单信息 -->
+		<action name="searchOrderListByCustNum" class="memberViewAction"
+			method="searchOrderListByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户编码获取合同信息 -->
+		<action name="searchContractViewByCustNum" class="memberViewAction"
+			method="searchContractViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过合同id获取合同信息 -->
+		<action name="searchContractByContractId" class="memberViewAction"
+			method="searchContractByContractId">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过联系人id获取联系人信息 -->
+		<action name="searchContactByContactId" class="memberViewAction"
+			method="searchContactByContactId">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户ID获取联系人信息 -->
+		<action name="searchContactViewByCustNum" class="memberViewAction"
+			method="searchContactViewByCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过客户ID获取运营决策信息 -->
+		<action name="searchOperatingDecision" class="memberViewAction"
+			method="searchOperatingDecision">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过财务ID获取财务信息 -->
+		<action name="searchAccountViewById" class="memberViewAction"
+			method="searchAccountViewById">
+			<result name="success" type="json"></result>
+		</action>
+				<!-- 文件下载 -->
+		<action name="downLoad" class="custViewDownLoadAction"
+			method="downLoad">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream;charset=ISO8859-1</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+			</result>
+		</action>
+		
+		<!--查询客户变更详细信息 -->
+		<action name="searchApproveDataList" class="memberViewAction"
+			method="searchApproveDataList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		
+		<!--查询客户信用信息 -->
+		<action name="searchCustCredit" class="memberViewAction"
+			method="searchCustCredit">
+			<result name="success" type="json"></result>
+		</action>
+		<!--查询流失预警信息 -->
+		<action name="searchWarnLostCustList" class="memberViewAction"
+			method="searchWarnLostCustList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--查询客户运单以及营销活动信息 -->
+		<action name="searchWaybillListByCustNum" class="memberViewAction"
+			method="searchWaybillListByCustNum">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!--查询商机信息-->
+		<action name="searchBusinessOpportunityList" class="memberViewAction"
+			method="searchBusinessOpportunityList">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!--查询交叉映射-->
+		<action name="searchCMappingByErpId" class="memberViewAction"
+			method="searchCMappingByErpId">
+			<result name="success" type="json">
+			</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<import resource="./DataSource.xml" />
+	<import resource="./DaoBean.xml" />
+	<import resource="./ServiceManagerBean.xml" />
+	<import resource="./functionBean.xml"/>
+	<import resource="./CommonTest.xml" />
+	<import resource="./workflow-spring.xml" />
+	
+	<bean id="todoWorkflowDao"
+		class="com.deppon.crm.module.common.server.dao.impl.TodoWorkflowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="todoWorkflowService"
+		class="com.deppon.crm.module.common.server.service.impl.TodoWorkflowService">
+		<property name="todoWorkflowDao" ref="todoWorkflowDao"></property>
+	</bean>
+	<bean id="todoWorkflowManager"
+		class="com.deppon.crm.module.common.server.manager.impl.TodoWorkflowManager">
+		<property name="todoWorkflowService" ref="todoWorkflowService" />
+	</bean>
+  
+</beans>

@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- Ext必需的js/css文件  -->
+	<link rel="stylesheet" type="text/css" href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+	
+	<!--自定义CSS文件 -->
+	<link href="../styles/common/loading.css?2012081110.0.1" rel="stylesheet" type="text/css" />
+	<link href="../styles/common/deppon.css?2012081110.0.1" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>	
+	<!--自定义JS文件 -->
+	<script language="javascript" src="../i18n_permission_acess/login/login.js?2012081110.0.1"></script>	
+	<script type="text/javascript">
+		var onLoad = function(){
+			document.title = i18n('i18n.login.page_title');
+			document.getElementById('currentuserloginName').innerHTML = i18n('i18n.login.currentuserloginName')+':';
+			document.getElementById('currentusername').innerHTML = i18n('i18n.login.currentusername')+':';
+			document.getElementById('currentuserdeptname').innerHTML = i18n('i18n.login.currentuserdeptname')+':';
+			document.getElementById('logo').innerHTML = i18n('i18n.login.logo')+'&copy;2011&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
+			Ext.Ajax.request({
+				url : 'bottomRegionMessage.action',
+				success : function(response, opts) {
+					var message = Ext.decode(response.responseText);
+					document.getElementById('currentuserloginNameText').innerHTML = message.currentUserLoginName;
+					document.getElementById('currentusernameText').innerHTML = message.currentUserName;
+					document.getElementById('currentuserdeptnameText').innerHTML = message.currentUserDeptName;
+				}
+			});
+		}
+	</script>
+</head>
+
+<body onload="onLoad()">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="100" align="right"><span id="currentuserloginName" class="MainbottomText"></span></td>
+			<td width="70" align="left"><span id="currentuserloginNameText" class="homeTopSearchName"></span>
+			</td>
+			<td width="70" align="right"><span id="currentusername" class="MainbottomText"></span></td>
+			<td width="70" align="left"><span id="currentusernameText" class="homeTopSearchName"></span>
+			</td>
+			<td width="10" align="left"></td>
+			<td width="70" align="right"><span id="currentuserdeptname" class="MainbottomText"></span>
+			</td>
+			<td width="400" align="left"><span id="currentuserdeptnameText" class="homeTopSearchName"></span>
+			</td>
+			<td align="right"><span id="logo" class="LoginbottomText"></span>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

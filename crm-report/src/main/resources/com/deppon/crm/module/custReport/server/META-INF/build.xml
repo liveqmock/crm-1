@@ -1,0 +1,23 @@
+<project name="build" default="publish" basedir=".">
+
+	<property name="project_home" location="D:\Java_Programs\workspace_deppon2"></property>
+	<property name="projectName" value="crm-report-fbl"></property>
+	<property name="localDir" value="src/main/webapp"></property>
+	<property name="moduleName" value="custReport"></property>
+	<property name="publishPath" value="${project_home}/${projectName}/${localDir}"></property>
+
+	<target name="publish">
+	<!-- 	<copy todir="${publishPath}/images/${moduleName}/">
+			<fileset dir="images"></fileset>
+		</copy> -->
+		<copy todir="${publishPath}/scripts/${moduleName}/">
+			<fileset dir="scripts"></fileset>
+		</copy>
+		<!-- <copy todir="${publishPath}/styles/${moduleName}/">
+			<fileset dir="styles"></fileset>
+		</copy> -->
+		<copy todir="${publishPath}/WEB-INF/pages/${moduleName}/">
+			<fileset dir="pages"></fileset>	
+		</copy>
+	</target>
+</project>

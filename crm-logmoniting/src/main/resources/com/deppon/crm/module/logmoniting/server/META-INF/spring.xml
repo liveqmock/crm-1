@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+			
+	<!--Action-->		
+	<bean id="logControlAction" scope="prototype"
+		class="com.deppon.crm.module.logmoniting.server.action.LogControlAction">
+		<property name="logInfoManager" ref="logInfoManager"/>
+		<property name="exceptionErrorCodeManager" ref="exceptionErrorCodeManager"/>
+		<property name="synchroLogManager" ref="synchroLogManager"/>
+	</bean>
+	
+	<!-- validator -->
+	<bean id="synchronizeLogConValidator" class="com.deppon.crm.module.logmoniting.server.utils.SynchronizeLogConValidator"></bean>
+	<!-- Manager -->
+	<bean id="logInfoManager" class="com.deppon.crm.module.logmoniting.server.manager.impl.LogInfoManager">
+		<property name="logInfoService" ref="logInfoService" />
+		<property name="mailManager" ref="mailManager" />
+		<property name="exceptionErrorCodeService" ref="exceptionErrorCodeService" />
+	</bean>
+	<bean id="mailManager" class="com.deppon.crm.module.logmoniting.server.manager.impl.MailManager">
+		<property name="mailSenderService" ref="mailSenderService" />
+	</bean>
+	<bean id="exceptionErrorCodeManager" class="com.deppon.crm.module.logmoniting.server.manager.impl.ExceptionErrorCodeManager">
+		<property name="exceptionErrorCodeService" ref="exceptionErrorCodeService" />
+	</bean>
+	<bean id="synchroLogManager" class="com.deppon.crm.module.logmoniting.server.manager.impl.SynchroLogManager">
+		<property name="synchroLogService" ref="synchroLogService"/>
+		<property name="synchronizeLogConValidator" ref="synchronizeLogConValidator"></property>
+	</bean>
+	
+	<!--Service -->
+	<bean id="logInfoService" class="com.deppon.crm.module.logmoniting.server.service.impl.LogInfoService">
+		<property name="logInfoDao" ref="logInfoDao" />
+	</bean>
+	<bean id="exceptionErrorCodeService" class="com.deppon.crm.module.logmoniting.server.service.impl.ExceptionErrorCodeService">
+		<property name="exceptionErrorCodeDao" ref="exceptionErrorCodeDao" />
+	</bean>
+	<bean id="synchroLogService" class="com.deppon.crm.module.logmoniting.server.service.impl.SynchroLogService">
+		<property name="synchroLogDao" ref="synchroLogDao"/>
+	</bean>
+	
+	<!-- Dao -->
+	<bean id="logInfoDao" class="com.deppon.crm.module.logmoniting.server.dao.impl.LogInfoDao">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	<bean id="exceptionErrorCodeDao" class="com.deppon.crm.module.logmoniting.server.dao.impl.ExceptionErrorCodeDao">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+		<property name="host" value="smtp.deppon.com"/>
+		<property name="userName" value="CRM@deppon.com"/>
+		<property name="password" value="dp31350606"/>
+	</bean>
+	<bean id="synchroLogDao" class="com.deppon.crm.module.logmoniting.server.dao.impl.SynchroLogDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+ </beans>
+

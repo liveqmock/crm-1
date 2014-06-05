@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/esb/header"
+	xmlns:tns="http://www.deppon.com/esb/header" elementFormDefault="qualified">
+	<complexType name="ESBHeader">
+		<sequence>
+			<element name="version" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>版本号, 编码规则由各应用自行决定</documentation>
+				</annotation>
+			</element>
+
+			<element name="businessId" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>用于两端应用跟踪服务，属于同一个businessId的消息即表示在业务含义上相同。
+					</documentation>
+				</annotation>
+			</element>
+			<element name="businessDesc1" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>业务保留字段1，用于描述业务的辅助信息
+					</documentation>
+				</annotation>
+			</element>
+			<element name="businessDesc2" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>业务保留字段2，用于描述业务的辅助信息
+					</documentation>
+				</annotation>
+			</element>
+			<element name="businessDesc3" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>业务保留字段3，用于描述业务的辅助信息
+					</documentation>
+				</annotation>
+			</element>
+			<element name="requestId" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>用于标识请求消息的唯一性</documentation>
+				</annotation>
+			</element>
+			<element name="responseId" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>用于标识响应消息的唯一性</documentation>
+				</annotation>
+			</element>
+
+			<element name="sourceSystem" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>记录客户端的前端接入系统标识，ESB为每个接入的系统设定固定的常量，如ERP， CRM， OA。。。
+					</documentation>
+				</annotation>
+			</element>
+			<element name="targetSystem" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>记录客户端的后端接入系统标识</documentation>
+				</annotation>
+			</element>
+			<element name="esbServiceCode" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>ESB提供给服务消费端的服务编码</documentation>
+				</annotation>
+			</element>
+			<element name="backServiceCode" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>服务提供端提供给ESB的服务编码</documentation>
+				</annotation>
+			</element>
+
+			<element name="messageFormat" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>消息格式，如SOAP，XML，JSON，Binary等，这些格式可扩展</documentation>
+				</annotation>
+			</element>
+
+			<element name="exchangePattern" type="int" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>1- 请求/响应，2-请求/回调，3-单向（只有请求没有结果返回）</documentation>
+				</annotation>
+			</element>
+
+			<element name="sentSequence" type="int" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>用来标识是否是重发的消息，第一次发送为1，后续每次重发加1</documentation>
+				</annotation>
+			</element>
+
+			<element name="resultCode" minOccurs="0" type="int" maxOccurs="1">
+				<annotation>
+					<documentation>响应结果状态:0-失败，1-成功</documentation>
+				</annotation>
+			</element>
+
+			<element name="authentication" type="tns:AuthInfo" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>用户认证信息</documentation>
+				</annotation>
+			</element>
+
+			<element name="statusList" type="tns:StatusList" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>状态信息，可用于记录执行状态和对应的时间戳</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="AuthInfo">
+		<sequence>
+			<element name="username" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>用户名</documentation>
+				</annotation>
+			</element>
+			<element name="password" type="string" minOccurs="0"
+				maxOccurs="1">
+				<annotation>
+					<documentation>密码</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="StatusList">
+		<sequence>
+			<element name="statusInfo" type="tns:StatusInfo" minOccurs="0"
+				maxOccurs="unbounded">
+				<annotation>
+					<documentation>状态列表</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="StatusInfo">
+		<sequence>
+			<element name="statusId" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>状态码</documentation>
+				</annotation>
+			</element>
+			<element name="timeStamp" type="long" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>自从1970-1-1 以来经过的毫秒数</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<element name="esbHeader" type="tns:ESBHeader"></element>
+
+</schema>

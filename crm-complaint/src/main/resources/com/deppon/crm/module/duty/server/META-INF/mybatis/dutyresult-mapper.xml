@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.DutyResult">
+	<resultMap id="dutyResultMap"
+		type="com.deppon.crm.module.duty.shared.domain.DutyResult">
+		<id column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FDUTYID" property="dutyId" jdbcType="VARCHAR" />
+		<result column="FDIVIDETYPE" property="divideType" jdbcType="VARCHAR" />
+		<result column="FDUTYPERID" property="dutyPerId" jdbcType="VARCHAR" />
+		<result column="FDUTYPERNAME" property="dutyPerName" jdbcType="VARCHAR" />
+		<result column="FREWORPUSTYPE" property="reworpusType" jdbcType="VARCHAR" />
+		<result column="FDUTYDEADLINE" property="dutyDeadLine" jdbcType="TIMESTAMP" />
+		<result column="FBUSASPECT" property="busAspect" jdbcType="VARCHAR" />
+		<result column="FBUSSCOPE" property="busScope" jdbcType="VARCHAR" />
+		<result column="FBUSTYPE" property="busType" jdbcType="VARCHAR" />
+		<result column="FBUSASPECTID" property="busAspectId" jdbcType="VARCHAR" />
+		<result column="FBUSSCOPEID" property="busScopeId" jdbcType="VARCHAR" />
+		<result column="FBUSTYPEID" property="busTypeId" jdbcType="VARCHAR" />
+		<result column="FDEALLANGUAGE" property="dealLanguage" jdbcType="VARCHAR" />
+		<result column="FDUTYSTATUS" property="dutyStatus" jdbcType="VARCHAR" />
+		<result column="FSURVEYRESULT" property="surveyResult" jdbcType="VARCHAR" />
+		<result column="FSTATUS" property="status" jdbcType="VARCHAR" />
+		<result column="FBEFMODDETID" property="befmoddeId" jdbcType="VARCHAR" />
+		<result column="FMODIFYTIME" property="modifyTime" jdbcType="TIMESTAMP" />	
+		<result column="FMODIFYUSERID" property="modifyUser" jdbcType="VARCHAR" />	
+		<result column="FBUSLINK" property="businessLink" jdbcType="VARCHAR" />	
+		<result column="FVIRTUALCODING" property="virtualCode" jdbcType="VARCHAR" />
+		<result column="fduty_department_cc" property="dutyDepartmentCC" jdbcType="VARCHAR" />
+		<result column="fdutydeptId" property="dutyDeptId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="searchDutyResultVOMap"
+		type="com.deppon.crm.module.duty.shared.domain.SearchDutyResultVO">
+		<id column="FID" property="dutyResultId" jdbcType="VARCHAR" />
+		<result column="FDUTYID" property="dutyId" jdbcType="VARCHAR" />
+		<result column="FDIVIDETYPE" property="divideType" jdbcType="VARCHAR" />
+		<result column="FDUTYPERID" property="dutyPerId" jdbcType="VARCHAR" />
+		<result column="FDUTYPERNAME" property="dutyPerName" jdbcType="VARCHAR" />
+		<result column="FDUTYDEADLINE" property="dutyDeadLine" jdbcType="TIMESTAMP" />
+		<result column="FDUTYSTATUS" property="dutyStatus" jdbcType="VARCHAR" />
+		<result column="FSURVEYRESULT" property="surveyResult" jdbcType="VARCHAR" />
+		<result column="VOUCHERNUMBER" property="voucherNumber" jdbcType="VARCHAR" />	
+		<result column="DEALNUMBER" property="dealNumber" jdbcType="VARCHAR" />	
+		<result column="REPORTTYPE" property="reportType" jdbcType="VARCHAR" />	
+		<result column="REBINDNO" property="rebindNo" jdbcType="VARCHAR" />	
+		<result column="CALLER" property="caller" jdbcType="VARCHAR" />	
+		<result column="REPORTER" property="reporter" jdbcType="VARCHAR" />	
+		<result column="REPORTTIME" property="reportTime" jdbcType="TIMESTAMP" />	
+		<result column="APPDUTYUSERID" property="appDutyUserId" jdbcType="VARCHAR" />	
+		<result column="APPDUTYUSER" property="appDutyUser" jdbcType="VARCHAR" />	
+		<result column="APPDUTYTIME" property="appDutyTime" jdbcType="TIMESTAMP" />	
+		<result column="COMPLAINTID" property="complaintid" jdbcType="TIMESTAMP" />			
+		<result column="BUSINESSMODEL" property="businessModel" jdbcType="VARCHAR" />	
+		<result column="fduty_department_cc" property="dutyDepartmentCC" jdbcType="VARCHAR" />
+		<result column="fdutydeptId" property="dutyDeptId" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="SearchDutyResultVo_Column_List" >
+      R.FID AS FID
+      ,R.FDUTYID AS FDUTYID
+      ,R.FDIVIDETYPE AS FDIVIDETYPE
+      ,R.FDUTYPERID AS FDUTYPERID
+      ,R.FDUTYPERNAME AS FDUTYPERNAME
+      ,R.FDUTYDEADLINE AS FDUTYDEADLINE
+      ,R.FDUTYSTATUS AS FDUTYSTATUS
+      ,R.FSURVEYRESULT AS FSURVEYRESULT
+      ,R.fduty_department_cc AS fduty_department_cc
+      ,R.fdutydeptId AS fdutydeptId
+      ,D.FSURVEYRESULT AS FVOUCHERNUMBER
+      ,D.FDEALNUMBER AS DEALNUMBER
+      ,D.FREPORTTYPE AS REPORTTYPE
+      ,D.FREBINDNO AS REBINDNO
+      ,D.FCALLER AS CALLER
+      ,D.FREPORTER AS REPORTER
+      ,D.FAPPDUTYTIME AS APPDUTYTIME
+      ,D.FAPPDUTYUSER AS APPDUTYUSER
+      ,D.FAPPDUTYUSERID AS APPDUTYUSERID
+      ,D.FVOUCHERNUMBER as voucherNumber
+      ,D.FREPORTTIME AS REPORTTIME
+      ,D.FCOMPLAINTID AS COMPLAINTID
+      ,D.FBUSINESSMODEL as BUSINESSMODEL
+    </sql>
+	<sql id="DutyResult_Column_List" >
+      FID
+      ,FDUTYID
+      ,FDIVIDETYPE
+      ,FDUTYPERID
+      ,FDUTYPERNAME
+      ,FREWORPUSTYPE
+      ,FDUTYDEADLINE
+      ,FBUSASPECT
+      ,FBUSSCOPE
+      ,FBUSTYPE
+      ,FBUSASPECTID
+      ,FBUSSCOPEID
+      ,FBUSTYPEID
+      ,FDEALLANGUAGE
+      ,FDUTYSTATUS
+      ,FSURVEYRESULT
+      ,FSTATUS
+      ,FBEFMODDETID
+      ,FMODIFYTIME
+      ,FMODIFYUSERID
+      ,FBUSLINK
+      ,FVIRTUALCODING
+      ,fdutydeptId
+      ,fduty_department_cc
+    </sql>
+    <!--责任反馈主查询 -->
+	<select id="searchDutyFeedBackMain" parameterType="map" 
+		resultMap="searchDutyResultVOMap">
+		SELECT  
+    	<include refid="SearchDutyResultVo_Column_List" />
+    		FROM T_CUST_DUTYRESULT R
+    		LEFT JOIN T_CUST_DUTY D ON R.FDUTYID = D.FID
+    	    WHERE ((R.FDIVIDETYPE = 'department' AND R.FDUTYPERID = #{deptId})
+    			or(R.FDIVIDETYPE = 'employee' AND R.FDUTYPERID = #{empId}))
+    			AND D.FSTATUS = 'ALLOCATED' AND R.FSTATUS  = 'EFFECTIVE' ORDER BY R.FDUTYDEADLINE 
+	</select>
+	
+	
+	    <!--责任反馈主查询count -->
+	<select id="searchDutyFeedBackMainCount" parameterType="map" 
+		resultType="int">
+		SELECT COUNT(1) FROM
+		(SELECT 
+    	<include refid="SearchDutyResultVo_Column_List" />
+    		FROM T_CUST_DUTYRESULT R
+    		LEFT JOIN T_CUST_DUTY D ON R.FDUTYID = D.FID
+    	    WHERE ((R.FDIVIDETYPE = 'department' AND R.FDUTYPERID = #{deptId})
+    	    OR (R.FDIVIDETYPE = 'employee' AND R.FDUTYPERID = #{empId}))
+    	    AND D.FSTATUS = 'ALLOCATED' AND R.FSTATUS = 'EFFECTIVE'
+    	    
+    	)
+	</select>
+    <!--根据条件查询工单责任划分结果 -->
+	<select id="searchDutyResult" parameterType="com.deppon.crm.module.duty.shared.domain.DutyResult" 
+		resultMap="dutyResultMap">
+		SELECT  
+    	<include refid="DutyResult_Column_List" />
+    		FROM T_CUST_DUTYRESULT 
+    	<where>
+	    	<if test="id!=null">
+	    		FID = #{id}
+	    	</if>         
+	   		<if test="dutyId!=null"> 
+				AND FDUTYID  = #{dutyId}        
+	  		</if>  
+	  		<if test="divideType!=null and divideType!=''"> 
+				AND FDIVIDETYPE  = #{divideType}        
+	  		</if>      
+	  		<if test="dutyPerId!=null"> 
+				AND FDUTYPERID = #{dutyPerId}        
+	  		</if>  
+	  		<if test="dutyPerName!=null and dutyPerName!=''"> 
+				AND FDUTYPERNAME = #{dutyPerName}        
+	  		</if>
+  	  		<if test="reworpusType!=null and reworpusType!=''"> 
+				AND FREWORPUSTYPE = #{reworpusType}        
+	  		</if>
+	  		<if test="dutyDeadLine!=null"> 
+				AND FDUTYDEADLINE <![CDATA[<=]]> #{dutyDeadLine}        
+	  		</if>   
+	  		<if test="busAspect!=null and busAspect!=''"> 
+				AND FBUSASPECT = #{busAspect}        
+	  		</if>   
+	  		<if test="busScope!=null and busScope!=''"> 
+				AND FBUSSCOPE = #{busScope}        
+	  		</if>  
+	  		<if test="busType!=null and busType!=''"> 
+				AND FBUSTYPE = #{busType}        
+	  		</if> 
+	  		<if test="busAspectId!=null and busAspectId!=''"> 
+				AND FBUSASPECTID = #{busAspectId}        
+	  		</if>   
+	  		<if test="busScopeId!=null and busScopeId!=''"> 
+				AND FBUSSCOPEID = #{busScopeId}        
+	  		</if>  
+	  		<if test="busTypeId!=null and busTypeId!=''"> 
+				AND FBUSTYPEID = #{busTypeId}        
+	  		</if> 
+	  		<if test="dealLanguage!=null and dealLanguage!=''"> 
+				AND FDEALLANGUAGE = #{dealLanguage}        
+	  		</if>  
+	  		<if test="dutyStatus!=null and dutyStatus!=''"> 
+				AND FDUTYSTATUS = #{dutyStatus}        
+	  		</if>
+	  		<if test="virtualCode!=null and virtualCode!=''"> 
+				AND FVIRTUALCODING = #{virtualCode}        
+	  		</if>    
+	  		<if test="surveyResult!=null and surveyResult!=''"> 
+				AND FSURVEYRESULT = #{surveyResult}        
+	  		</if> 
+	  		<if test="businessLink!=null and businessLink!=''"> 
+				AND FBUSLINK = #{businessLink}        
+	  		</if>   
+	  		<if test="status!=null and status!=''"> 
+				AND FSTATUS = #{status}        
+	  		</if>
+	  		<if test="modifyTime!=null"> 
+				AND FMODIFYTIME = #{modifyTime}        
+	  		</if>
+	  		<if test="modifyUser!=null">
+				AND FMODIFYUSERID = #{modifyUser}        
+	  		</if>
+	  		<if test="befmoddeId!=null">
+				AND FBEFMODDETID = #{befmoddeId}        
+	  		</if>                       
+  		</where> 
+	</select>
+	
+   <!--查询单个工单责任划分结果 -->
+  <select id="selectDutyResultByPrimaryKey" resultMap="dutyResultMap" parameterType="map" >
+  	select 
+    <include refid="DutyResult_Column_List" />
+    from T_CUST_DUTYRESULT
+    where FID = #{id}
+  </select>
+  <!--修改工单责任划分结果 -->
+  <update id="updateDutyResult" parameterType="com.deppon.crm.module.duty.shared.domain.DutyResult" >
+     update T_CUST_DUTYRESULT
+    <set>
+      <if test="dutyId != null" >
+        FDUTYID = #{dutyId},
+      </if>
+      <if test="divideType != null" >
+        FDIVIDETYPE = #{divideType,jdbcType=VARCHAR},
+      </if>
+      <if test="dutyPerId != null" >
+        FDUTYPERID = #{dutyPerId},
+      </if>
+      <if test="dutyPerName != null" >
+        FDUTYPERNAME = #{dutyPerName,jdbcType=VARCHAR},
+      </if>
+       <if test="reworpusType != null" >
+        FREWORPUSTYPE = #{reworpusType,jdbcType=VARCHAR},
+      </if>
+      <if test="dutyDeadLine != null" >
+        FDUTYDEADLINE = #{dutyDeadLine},
+      </if>
+      <if test="busAspect != null" >
+        FBUSASPECT = #{busAspect},
+      </if>
+      <if test="busScope != null" >
+        FBUSSCOPE = #{busScope},
+      </if>
+      <if test="busType != null" >
+        FBUSTYPE = #{busType},
+      </if>
+      <if test="busAspectId != null" >
+        FBUSASPECTID = #{busAspectId},
+      </if>
+      <if test="busScopeId != null" >
+        FBUSSCOPEID = #{busScopeId},
+      </if>
+      <if test="busTypeId != null" >
+        FBUSTYPEID = #{busTypeId},
+      </if>
+      <if test="dealLanguage != null" >
+        FDEALLANGUAGE = #{dealLanguage},
+      </if>
+      <if test="dutyStatus != null" >
+        FDUTYSTATUS = #{dutyStatus},
+      </if>
+      <if test="virtualCode!=null"> 
+		FVIRTUALCODING = #{virtualCode},        
+	  </if>
+      <if test="surveyResult != null" >
+        FSURVEYRESULT = #{surveyResult},
+      </if>
+      <if test="businessLink !=null"> 
+		FBUSLINK = #{businessLink},        
+	  </if>  
+      <if test="status != null" >
+        FSTATUS = #{status},
+      </if>
+      <if test="modifyUser != null" >
+        FMODIFYUSERID = #{modifyUser},
+      </if>
+      <if test="befmoddeId != null" >
+        FBEFMODDETID = #{befmoddeId},
+      </if>
+      <if test="dutyDepartmentCC != null" >
+		fduty_department_cc = #{dutyDepartmentCC},
+	  </if>
+	  <if test="dutyDeptId != null" >
+		fdutydeptId = #{dutyDeptId},
+	  </if>
+       FMODIFYTIME = sysdate
+    </set>
+    where FID = #{id}
+  </update>
+  
+    <!--修改工单责任划分结果状态 -->
+  <update id="updateDutySatatus" parameterType="com.deppon.crm.module.duty.shared.domain.DutyResult" >
+     update T_CUST_DUTYRESULT
+    <set>
+      <if test="dutyStatus != null" >
+        FDUTYSTATUS = #{dutyStatus},
+      </if>
+      <if test="modifyUser != null" >
+        FMODIFYUSERID = #{modifyUser},
+      </if>
+       FMODIFYTIME = sysdate
+    </set>
+    where FDUTYID = #{dutyId}
+    AND FSTATUS = 'EFFECTIVE'
+  </update>
+  <!--插入工单责任划分结果 -->
+   <insert id="insertDutyResult" parameterType="com.deppon.crm.module.duty.shared.domain.DutyResult">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_CRM_DUTYRESULT.nextval AS
+				id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CUST_DUTYRESULT
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+			  <if test="dutyId != null" >
+				FDUTYID,
+			  </if>
+			  <if test="divideType != null" >
+				FDIVIDETYPE,
+			  </if>
+			  <if test="dutyPerId != null" >
+				FDUTYPERID,
+			  </if>
+			  <if test="dutyPerName != null" >
+				FDUTYPERNAME,
+			  </if>
+			  <if test="reworpusType != null" >
+				FREWORPUSTYPE,
+			  </if>
+              <if test="dutyDeadLine != null" >
+				FDUTYDEADLINE,
+			  </if>
+              <if test="busAspect != null" >
+				FBUSASPECT,
+			  </if>
+			  <if test="busScope != null" >
+				FBUSSCOPE,
+			  </if>
+			  <if test="busType != null" >
+				FBUSTYPE,
+			  </if>
+			  <if test="busAspectId != null" >
+				FBUSASPECTID,
+			  </if>
+			  <if test="busScopeId != null" >
+				FBUSSCOPEID,
+			  </if>
+			  <if test="busTypeId != null" >
+				FBUSTYPEID,
+			  </if>
+			  <if test="dealLanguage != null" >
+				FDEALLANGUAGE,
+			  </if>
+			  <if test="dutyStatus != null" >
+				FDUTYSTATUS,
+			  </if>
+			  <if test="surveyResult != null" >
+				FSURVEYRESULT,
+			  </if>
+			  <if test="status != null" >
+				FSTATUS,
+			  </if>
+			  <if test="virtualCode!=null"> 
+				FVIRTUALCODING,  
+	  		  </if>
+			  <if test="businessLink !=null"> 
+		        FBUSLINK,        
+	          </if>  
+			  <if test="befmoddeId != null" >
+				FBEFMODDETID,
+			  </if>
+			  <if test="dutyDepartmentCC != null" >
+				fduty_department_cc,
+			  </if>
+			  <if test="dutyDeptId != null" >
+				fdutydeptId,
+			  </if>
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+				#{id},
+			  <if test="dutyId != null" >
+				#{dutyId},
+			  </if>
+			  <if test="divideType != null" >
+				#{divideType},
+			  </if>
+			  <if test="dutyPerId != null" >
+				#{dutyPerId},
+			  </if>
+			  <if test="dutyPerName != null" >
+				#{dutyPerName},
+			  </if>
+			  <if test="reworpusType != null" >
+				#{reworpusType},
+			  </if>
+              <if test="dutyDeadLine != null" >
+				#{dutyDeadLine},
+			  </if>
+              <if test="busAspect != null" >
+				#{busAspect},
+			  </if>
+			  <if test="busScope != null" >
+				#{busScope},
+			  </if>
+			  <if test="busType != null" >
+				#{busType},
+			  </if>
+			  <if test="busAspectId != null" >
+				#{busAspectId},
+			  </if>
+			  <if test="busScopeId != null" >
+				#{busScopeId},
+			  </if>
+			  <if test="busTypeId != null" >
+				#{busTypeId},
+			  </if>
+			  <if test="dealLanguage != null" >
+				#{dealLanguage},
+			  </if>
+			  <if test="dutyStatus != null" >
+				#{dutyStatus},
+			  </if>
+			  <if test="surveyResult != null" >
+				#{surveyResult},
+			  </if>
+			  <if test="status != null" >
+				#{status},
+			  </if>
+			  <if test="virtualCode!=null"> 
+				#{virtualCode},        
+	  		  </if>
+			  <if test="businessLink !=null"> 
+		        #{businessLink},        
+              </if>  
+			  <if test="befmoddeId != null" >
+				#{befmoddeId},
+			  </if>
+			  <if test="dutyDepartmentCC != null" >
+			  	#{dutyDepartmentCC},
+			  </if>
+			  <if test="dutyDeptId != null" >
+			  	#{dutyDeptId},
+			  </if>
+	    </trim>
+  </insert>
+  <!-- 批量删除工单责任划分结果 -->
+  <delete id="deleteDutyResults" parameterType="map">
+  		DELETE FROM T_CUST_DUTYRESULT
+  		<![CDATA[WHERE FID IN ]]>
+		<foreach collection="ids" open="(" close=")" separator=","
+				item="id">
+		<![CDATA[	#{id}  ]]>
+		</foreach>
+  </delete>
+  
+    <!-- 批量删除工单责任划分结果 (逻辑)-->
+  <delete id="deleteDutyResultsStatus" parameterType="map">
+  		UPDATE T_CUST_DUTYRESULT
+  		SET FSTATUS = 'FAIL'
+  		<![CDATA[WHERE FID IN ]]>
+		<foreach collection="ids" open="(" close=")" separator=","
+				item="id">
+		<![CDATA[	#{id}  ]]>
+		</foreach>
+  </delete>
+  
+    <!-- 批量删除根据责任ID(逻辑) -->
+  <delete id="deleteDutyResultsByDutyIdStatus" parameterType="map">
+  		UPDATE T_CUST_DUTYRESULT
+  		SET FSTATUS = 'FAIL'
+  	    WHERE FDUTYID = #{dutyId}
+  </delete>
+  
+      <!-- 批量删除根据责任ID -->
+  <delete id="deleteDutyResultsByDutyId" parameterType="map">
+  		DELETE FROM T_CUST_DUTYRESULT
+  	     where FDUTYID = #{dutyId}
+  </delete>
+</mapper>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Message">
+
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="messageResultMap"
+		type="com.deppon.crm.module.common.shared.domain.Message">
+		<id property="id" column="fid" />
+		<result property="createDate" column="fcreatetime" />
+		<result property="userid" column="fuserid" />
+		<result property="tasktype" column="ftasktype" />
+		<result property="taskcount" column="ftaskcount" />
+		<result property="ishaveinfo" column="fishaveinfo" />
+		<result property="url" column="furl" />
+		<result property="expe" column="fexpe" />
+		<result property="deptId" column="FDEPTID" />
+		<result property="conditions" column="FCONDITIONS" />
+		<result property="effectiveDate" column="FEFFECTIVEDATE" />
+	</resultMap>
+	<resultMap type="com.deppon.crm.module.common.shared.domain.MessageMap" 
+	id="messageMap">
+		<result property="linkId" column="LINKID"/>
+		<result property="messageCount" column="MESSAGECOUNT"/>
+		<result property="messageType" column="MESSAGETYPE"/>
+	</resultMap>
+	<resultMap id="messageToErpResultMap"
+		type="com.deppon.crm.module.common.shared.domain.Message" extends="messageResultMap">
+		<result property="deptStandardCode" column="fstandardCode" />
+	</resultMap>
+
+	<!--新增待办事宜 -->
+	<insert id="addMessage" parameterType="com.deppon.crm.module.common.shared.domain.Message">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_TODO.NEXTVAL as id FROM DUAL
+			]]>
+		</selectKey>
+		<![CDATA[
+	        INSERT INTO t_crm_todo 
+	        (
+	        fid,
+	        fcreatetime,
+	        fcreateuserid,
+	        flastupdatetime,
+	        flastmodifyuserid,
+	        fuserid, 
+	        ftasktype, 
+	        ftaskcount, 
+	        fishaveinfo, 
+	        furl, 
+	        fexpe,FDEPTID,FCONDITIONS,FEFFECTIVEDATE
+	        ) 
+	        VALUES
+	        (
+	        #{id,jdbcType=VARCHAR},
+	        sysdate,
+	        #{createUser,jdbcType=VARCHAR},
+			#{modifyDate,jdbcType=DATE},
+			#{modifyUser,jdbcType=VARCHAR},
+	        #{userid,jdbcType=VARCHAR},
+	        #{tasktype,jdbcType=VARCHAR},
+	        #{taskcount,jdbcType=NUMERIC}, 
+	        #{ishaveinfo,jdbcType=VARCHAR}, 
+	        #{url,jdbcType=VARCHAR}, 
+	        #{expe,jdbcType=VARCHAR},
+	        #{deptId,jdbcType=NUMERIC},
+	        #{conditions,jdbcType=VARCHAR},
+	        #{effectiveDate,jdbcType=DATE}
+	        )
+	   ]]>
+	</insert>
+
+	<insert id="addSuperMessage" parameterType="com.deppon.crm.module.common.shared.domain.Message">
+		<![CDATA[
+		insert into t_crm_todo
+		  (fid,
+		   fcreatetime,
+		   fcreateuserid,
+		   fuserid,
+		   ftasktype,
+		   ftaskcount,
+		   fishaveinfo,
+		   feffectivedate)
+		  select SEQ_ID_TODO.NEXTVAL id,
+		         sysdate createtime,
+		         1 createuserid,
+		         fid userid,
+		         #{msgType,jdbcType=VARCHAR} tasktype,
+		         1 taskcount,
+		         #{superMsg,jdbcType=VARCHAR} ishaveinfo,
+		         sysdate + 3 effectivedate
+		    from t_auth_user
+ 		]]>
+	</insert>
+	
+	<!-- 获取当前用户待办事宜数量 -->
+	<select id="getMeaasge" parameterType="int" resultMap="messageResultMap">
+		<![CDATA[
+			SELECT FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FUSERID,FTASKTYPE,
+				FTASKCOUNT,FISHAVEINFO,FURL,FEXPE,FDEPTID,FCONDITIONS,FEFFECTIVEDATE FROM t_crm_todo where fuserid = #{fuserid}
+		]]>
+	</select>
+
+	<!-- 获取当前用户和部门的待办事宜数量 -->
+	<select id="getMeaasgeByUserAndDept" parameterType="map"
+		resultMap="messageResultMap">
+		<![CDATA[
+			SELECT FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FUSERID,FTASKTYPE,
+				FTASKCOUNT,FISHAVEINFO,FURL,FEXPE,FDEPTID,FCONDITIONS,FEFFECTIVEDATE FROM t_crm_todo where fuserid = #{userid} or (fdeptid=#{deptId} and fuserid is NULL)
+		]]>
+	</select>
+
+	<delete id="deleteById" parameterType="string"> 
+			<![CDATA[
+			delete from t_crm_todo where fid=#{id}
+		]]>
+	</delete>
+
+	<delete id="deleteByType" parameterType="string"> 
+			<![CDATA[
+			delete from t_crm_todo where FTASKTYPE = #{taskType}
+		]]>
+	</delete>
+	
+	<delete id="deleteByInvalidDate" parameterType="string"> 
+			<![CDATA[
+			delete from t_crm_todo where FTASKTYPE = #{taskType} and FEFFECTIVEDATE is not null and FEFFECTIVEDATE < sysdate
+		]]>
+	</delete>
+<!-- *******************************新***************************** -->
+    <!-- 获取当前用户和部门的待办事宜（除了提醒消息） -->
+	<select id="getMeaasgeByUserAndDeptExceptMessage" parameterType="map"
+		resultMap="messageResultMap">
+		<![CDATA[
+			SELECT FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FUSERID,FTASKTYPE,
+				FTASKCOUNT,FISHAVEINFO,FURL,FEXPE,FDEPTID,FCONDITIONS,FEFFECTIVEDATE 
+				FROM t_crm_todo where ftasktype not in('RECOMPENSE_TODO_SUBMITED','COMPLAINT_RT_REPORT_RETURN','RECOMPENSE_MESSAGE','DUTY_MESSAGE','QUALITY_INSPECTOR_RETURNBACK','STATISTICIANS_RETURNBACK','CUSTMER_MESSAGE','NEW_PLAN','OVERDUE_SCHEDULE','NEW_SCHEDULE','ORDER_MESSAGE','SUPER_MESSAGE','ORDER_UNASSIGN','ORDER_UNACCEPT','ORDER_ACCEPTED','ORDER_GOBACK','CUSTCREDIT_MESSAGE','DEPTCREDIT_MESSAGE','KEYCUSTOMER_MSG','BO_MESSAGE') and (fuserid = #{userid} or (fdeptid=#{deptId} and fuserid is NULL))
+		]]>
+	</select>
+ 
+    <!-- 获取当前用户和部门的待办事宜（除了提醒消息） -->
+	<select id="getMeaasgeByUserAndDeptOnlyOrder" parameterType="map"
+		resultMap="messageResultMap">
+		<![CDATA[
+			SELECT FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FUSERID,FTASKTYPE,
+				FTASKCOUNT,FISHAVEINFO,FURL,FEXPE,FDEPTID,FCONDITIONS,FEFFECTIVEDATE 
+				FROM t_crm_todo where ftasktype in('ORDER_UNASSIGN','ORDER_UNACCEPT','ORDER_ACCEPTED','ORDER_GOBACK') and (fuserid = #{userid} or (fdeptid=#{deptId} and fuserid is NULL))
+		]]>
+	</select>
+	
+	<!-- 获取当前用户和部门的待办事宜（只有提醒消息） -->
+	<select id="getMeaasgeByUserAndDeptOnlyMessage" parameterType="map"
+		resultMap="messageResultMap">
+		<![CDATA[
+			SELECT FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FUSERID,FTASKTYPE,
+				FTASKCOUNT,FISHAVEINFO,FURL,FEXPE,FDEPTID,FCONDITIONS,FEFFECTIVEDATE 
+				FROM t_crm_todo where ftasktype in('RECOMPENSE_TODO_SUBMITED','COMPLAINT_RT_REPORT_RETURN','RECOMPENSE_MESSAGE','DUTY_MESSAGE','QUALITY_INSPECTOR_RETURNBACK','STATISTICIANS_RETURNBACK','CUSTMER_MESSAGE','NEW_PLAN','OVERDUE_SCHEDULE','NEW_SCHEDULE','ORDER_MESSAGE','SUPER_MESSAGE','CUSTCREDIT_MESSAGE','DEPTCREDIT_MESSAGE','KEYCUSTOMER_MSG','BO_MESSAGE') and (fuserid = #{userid} or (fdeptid=#{deptId} and fuserid is NULL))
+		]]>
+	</select>
+
+	<!-- 获取当前转发ERP的待办事宜 -->
+	<select id="getMessageForErp" resultMap="messageToErpResultMap">
+		<![CDATA[
+			SELECT TODO.FID,
+			       TODO.FCREATETIME,
+			       TODO.FCREATEUSERID,
+			       TODO.FLASTUPDATETIME,
+			       TODO.FLASTMODIFYUSERID,
+			       TODO.FUSERID,
+			       TODO.FTASKTYPE,
+			       TODO.FTASKCOUNT,
+			       TODO.FISHAVEINFO,
+			       TODO.FURL,
+			       TODO.FEXPE,
+			       TODO.FDEPTID,
+			       TODO.FCONDITIONS,
+			       TODO.FEFFECTIVEDATE,
+			       DEPT.FSTANDARDCODE
+			  FROM T_CRM_TODO TODO
+			 INNER JOIN T_ORG_DEPARTMENT DEPT
+			    ON TODO.FDEPTID = DEPT.FID
+			 WHERE FTASKTYPE IN ('ORDER_UNASSIGN', 'ORDER_UNACCEPT')
+		]]>
+	</select>
+	
+	<!-- 获取消息提醒待办事宜的个数 -->
+	<select id="getCountMessage" parameterType="map"
+		resultType="int">
+		<![CDATA[
+			SELECT COUNT(FID) FROM t_crm_todo where ftasktype in('RECOMPENSE_TODO_SUBMITED','COMPLAINT_RT_REPORT_RETURN','RECOMPENSE_MESSAGE','DUTY_MESSAGE','QUALITY_INSPECTOR_RETURNBACK','STATISTICIANS_RETURNBACK','CUSTMER_MESSAGE','NEW_PLAN','OVERDUE_SCHEDULE','NEW_SCHEDULE','ORDER_MESSAGE','SUPER_MESSAGE','KEYCUSTOMER_MSG','BO_MESSAGE') and (fuserid = #{userid} or (fdeptid=#{deptId} and fuserid is NULL))
+		]]>
+	</select>
+	<!-- 获取待办信息最近修改时间 -->
+	<select id="selectLastModifyTime" resultType="date">
+		SELECT MAX(TODO.FCREATETIME)
+		  FROM T_CRM_TODO TODO
+		 WHERE FTASKTYPE IN
+		       ('RECOMPENSE_TODO_SUBMITED', 'COMPLAINT_RT_REPORT_RETURN',
+		        'RECOMPENSE_MESSAGE', 'DUTY_MESSAGE', 'QUALITY_INSPECTOR_RETURNBACK',
+		        'STATISTICIANS_RETURNBACK', 'CUSTMER_MESSAGE', 'NEW_PLAN',
+		        'OVERDUE_SCHEDULE', 'NEW_SCHEDULE', 'ORDER_MESSAGE', 'SUPER_MESSAGE','KEYCUSTOMER_MSG','BO_MESSAGE')
+	</select>
+	<!-- 获得用户的待办信息以及消息类型 -->
+	<select id="getCountMessageOfUsers" resultMap="messageMap">
+		SELECT TODO.FUSERID LINKID, 
+			   SUM(TODO.FTASKCOUNT) MESSAGECOUNT,
+			   TODO.FTASKTYPE MESSAGETYPE
+  			FROM T_CRM_TODO TODO
+ 			WHERE
+                 TODO.FUSERID IS NOT NULL
+ 		GROUP BY TODO.FUSERID ,TODO.FTASKTYPE
+	</select>
+	<!-- 获得部门的待办信息以及消息类型 -->
+	<select id="getMessageCountOfDepts" resultMap="messageMap">
+			SELECT TODO.FDEPTID LINKID,
+			       SUM(TODO.Ftaskcount) MESSAGECOUNT,
+			       TODO.FTASKTYPE MESSAGETYPE
+			  FROM T_CRM_TODO TODO
+			 WHERE TODO.FUSERID IS NULL
+			 	   AND TODO.FDEPTID IS NOT NULL
+			 GROUP BY TODO.FDEPTID, TODO.FTASKTYPE
+	</select>
+		<!-- 获得某个用户的待办信息以及消息类型 -->
+	<select id="getCountMessageByUser" resultMap="messageMap">
+		SELECT TODO.FUSERID LINKID, 
+			   SUM(TODO.FTASKCOUNT) MESSAGECOUNT,
+			   TODO.FTASKTYPE MESSAGETYPE
+  			FROM T_CRM_TODO TODO
+ 			WHERE
+                 TODO.FUSERID = #{userid} 
+ 		GROUP BY TODO.FUSERID ,TODO.FTASKTYPE
+	</select>
+	
+	
+	<!-- 获得某个部门的待办信息以及消息类型 -->
+	<select id="getMessageCountByDept" resultMap="messageMap">
+			SELECT TODO.FDEPTID LINKID,
+			       SUM(TODO.Ftaskcount) MESSAGECOUNT,
+			       TODO.FTASKTYPE MESSAGETYPE
+			  FROM T_CRM_TODO TODO
+			 WHERE TODO.FUSERID IS NULL
+			 	   AND TODO.FDEPTID=#{deptId}
+			 GROUP BY TODO.FDEPTID, TODO.FTASKTYPE
+	</select>
+	<!-- 批量删除 -->
+	<delete id="deleteByIds" parameterType="map"> 
+			<![CDATA[
+			delete from t_crm_todo 
+		]]>
+		<where>
+			FID in
+			<foreach collection="messageIds" item="item" open="(" close=")" separator=",">
+				#{item,jdbcType=INTEGER}
+			</foreach>
+		</where>
+	</delete>
+</mapper>

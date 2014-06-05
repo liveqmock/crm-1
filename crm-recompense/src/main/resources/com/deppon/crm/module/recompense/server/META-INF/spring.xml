@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="recompenseDao" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.dao.impl.RecompenseDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="baseModelDao" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.dao.impl.BaseModelDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="listItemDao" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.dao.impl.ListItemDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 付款申请Dao 邹明 -->
+	<bean id="paymentDao" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.dao.impl.PaymentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!--付款申请Service 邹明 -->
+	<bean id="paymentService" scope="prototype"
+		class="com.deppon.crm.module.recompense.server.service.impl.PaymentService">
+		<property name="paymentDao" ref="paymentDao" />
+	</bean>
+	
+	<!--付款申请Manager 邹明 -->
+	<bean id="paymentManager" scope="prototype"
+		class="com.deppon.crm.module.recompense.server.manager.impl.PaymentManager">
+		<property name="paymentService" ref="paymentService" />
+	</bean>
+
+	<!--付款申请Action 邹明 -->
+	<bean id="paymentAction" scope="prototype"
+		class="com.deppon.crm.module.recompense.server.action.PaymentAction">
+		<property name="paymentManager" ref="paymentManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	
+	<bean id="recompenseService" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.service.impl.RecompenseServiceImpl">
+		<property name="baseModelDao" ref="baseModelDao" />
+		<property name="listItemDao" ref="listItemDao" />
+		<property name="recompenseDao" ref="recompenseDao" />
+		<property name="waybillOperate" ref="waybillOperate" />
+		<property name="oaAccidentOperate" ref="oaAccidentOperate" />
+		<property name="recompenseApplyOperate" ref="recompenseApplyOperate" />
+		<property name="paymentApplyOperate" ref="paymentApplyOperate" />
+		<property name="fINRecompenserOperate" ref="fINRecompenserOperate" />
+		<property name="smsInfoSender" ref="smsInfoSender" />
+		<property name="bankProvinceCityService" ref="bankProvinceCityService" />
+		<property name="fINSelfserviceOperate" ref="fINSelfserviceOperate" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="normalClaimDao" ref="normalClaimDao" />
+	</bean>
+	<!-- 		理赔工作流	 -->
+	<bean id="normalClaimDao" scope="singleton"
+		class="com.deppon.crm.module.workflow.server.dao.impl.NormalClaimDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="workflowManager" scope="singleton"
+		class="com.deppon.crm.module.common.server.workflow.WorkflowManager">
+		<property name="workflow" ref="basicWorkflow" />
+	</bean>
+
+	<bean id="recompenseManager" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.manager.impl.RecompenseManagerImpl">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="workflowManager" ref="workflowManager" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="userService" ref="userService" />
+		<property name="alterMemberManager" ref="alterMemberManager" />
+		<property name="messageManager" ref="messageManager" />
+		<property name="todoWorkflowManager" ref="todoWorkflowManager" />
+		<property name="memberManager" ref="memberManager" />
+		<property name="bankInfoManager" ref="bankInfoManager" />
+		<property name="bankProvinceCityManager" ref="bankProvinceCityManager" />
+		<property name="pilotCityManager" ref="pilotCityManager" />
+		<property name="normalClaimManager" ref="normalClaimManager" />
+		<property name="normalClaimService" ref="normalClaimService" />
+		<property name="expressPointBusinessDeptManager" ref="expressPointBusinessDeptManager" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="employeeService" ref="employeeService" />
+		
+	</bean>
+	<bean id="normalClaimService" scope="singleton" class="com.deppon.crm.module.workflow.server.service.impl.NormalClaimServiceImpl">
+		<property name="normalClaimDao" ref="normalClaimDao" />
+	</bean>
+	<bean id="normalClaimManager" scope="singleton" class="com.deppon.crm.module.workflow.server.manager.impl.NormalClaimManagerImpl">
+		<property name="normalClaimService" ref="normalClaimService" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="fileManager" ref="fileManager" />
+		<property name="signetManagerManager" ref="signetManagerManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="userService" ref="userService" />
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<bean id="recompenseAction" scope="prototype"
+		class="com.deppon.crm.module.recompense.server.action.RecompenseAction">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+
+	<!--Condition -->
+	<bean id="recompenseTypeOnly"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.condition.RecompenseTypeOnly">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<bean id="recompenseStatusOnly"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.condition.RecompenseStatusOnly">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<bean id="roleOnly"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.condition.RoleOnly">
+		<!-- <property name="recompenseService" ref="recompenseService" /> -->
+	</bean>
+	<bean id="roleDepartmentOnly"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.condition.RoleDepartmentOnly">
+		<property name="recompenseService" ref="recompenseService" />
+		<!-- <property name="departmentService" ref="departmentService" /> -->
+	</bean>
+	<bean id="transTypeOnly"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.condition.TransTypeOnly">
+		<property name="recompenseService" ref="recompenseService" />
+		<!-- <property name="departmentService" ref="departmentService" /> -->
+	</bean>
+	<!-- <bean id="generateToDoWorkflow" -->
+	<!-- class="com.deppon.crm.module.common.server.manager.workflow.GenerateToDoWorkflowFunction"> -->
+	<!-- <property name="recompenseService" ref="recompenseService" /> -->
+	<!-- </bean> -->
+
+	<!--Function -->
+	<bean id="createRecompenseFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.CreateRecompenseFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="claimService" ref="claimService" />
+
+	</bean>
+	<bean id="deleteRecompenseFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.DeleteRecompenseFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="todoWorkflowManager" ref="todoWorkflowManager" />
+		<property name="claimService" ref="claimService" />
+		
+	</bean>
+	<bean id="exemptRecompenseFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.ExemptRecompenseFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="todoWorkflowManager" ref="todoWorkflowManager" />
+	</bean>
+
+	<bean id="saveRecompenseReportFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SaveRecompenseReportFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	<bean id="saveRecompenseProcessFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SaveRecompenseProcessFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<bean id="saveRecompenseOverpayFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SaveRecompenseOverpayFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	<bean id="saveRecompensePaymentFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SaveRecompensePaymentFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<bean id="saveRecompenseBalanceFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SaveRecompenseBalanceFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<!-- <bean id="findNextOwnerFunction" -->
+	<!-- class="com.deppon.crm.module.recompense.server.manager.workflow.function.FindNextOwnerFunction"> -->
+	<!-- </bean> -->
+	<bean id="updateRecompenseStatusFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.UpdateRecompenseStatusFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="todoWorkflowManager" ref="todoWorkflowManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	<bean id="submitRecompenseOaApprovalFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SubmitRecompenseOaApprovalFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="departmentService" ref="departmentService" />
+	</bean>
+	<bean id="submitRecompenseOverpayApprovalFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SubmitRecompenseOverpayApprovalFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	<bean id="submitRecompensePaymentApprovalFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SubmitRecompensePaymentApprovalFunction">
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="bankProvinceCityManager" ref="bankProvinceCityManager" />
+	</bean>
+	<bean id="submitRecompenseBalanceApprovalFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.SubmitRecompenseBalanceApprovalFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<bean id="acceptanceAction" scope="prototype"
+		class="com.deppon.crm.module.recompense.server.action.AcceptanceAction">
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="messageBundle" ref="messageBundle"></property>
+	</bean>
+	<bean id="updateReturnPaymentFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.UpdateReturnPaymentFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<!-- 修改入部门费用 -->
+	<bean id="updateDeptChargeFunction" scope="prototype"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.UpdateDeptChargeFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+	<!-- 索赔相关 -->
+	<bean id="claimDao" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.dao.impl.ClaimDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="claimService" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.service.impl.ClaimService">
+		<property name="claimDao" ref="claimDao" />
+	</bean>
+	<bean id="claimManager" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.manager.impl.ClaimManager">
+		<property name="claimService" ref="claimService" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="smsInfoSender" ref="smsInfoSender" />
+		<property name="messageManager" ref="messageManager" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="userService" ref="userService" />
+		<property name="pilotCityManager" ref="pilotCityManager" />
+		<property name="expressPointBusinessDeptManager" ref="expressPointBusinessDeptManager" />
+	</bean>
+	<bean id="claimAction" scope="singleton"
+		class="com.deppon.crm.module.recompense.server.action.ClaimAction">
+		<property name="claimManager" ref="claimManager" />
+	</bean>
+	<bean id="recompenseBackFunction"
+		class="com.deppon.crm.module.recompense.server.manager.workflow.function.RecompenseBackFunction">
+		<property name="recompenseService" ref="recompenseService" />
+	</bean>
+
+</beans>
+

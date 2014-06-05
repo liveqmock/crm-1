@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<bean id="crmWorkflowManager" scope="singleton"
+		class="com.deppon.crm.module.bpsworkflow.server.manager.impl.CRMWorkflowManager">
+		<property name="contractService" ref="contractService" />
+		<property name="userService" ref="userService" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="marketActivityManager" ref="marketActivityManager" />
+		<property name="keyCustomerManager" ref="keyCustomerManager" />
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+		<property name="normalClaimManager" ref="normalClaimManager" />
+		<property name="workflowApproveOperate" ref="workflowApproveOperate" />
+		<property name="contractWorkflowManager" ref="contractWorkflowManager" />
+	</bean>
+	<bean id="workflowApproveOperate" scope="prototype"
+		class="com.deppon.crm.module.bpsworkflow.server.manager.impl.WorkflowApproveOperate">
+		<property name="marketActivityManager" ref="marketActivityManager" />
+		<property name="keyCustomerManager" ref="keyCustomerManager" />
+		<property name="contractApproveOperate" ref="contractApproveOperate" />
+		<property name="normalClaimManager" ref="normalClaimManager" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+		<property name="contractManager" ref="contractManager" />
+		<property name="serviceRecoveryManager" ref="serviceRecoveryManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	<bean id="workflowAction" scope="prototype"
+		class="com.deppon.crm.module.bpsworkflow.server.action.WorkflowAction">
+		<property name="crmWorkflowManager" ref="crmWorkflowManager" />
+	</bean>
+
+</beans>

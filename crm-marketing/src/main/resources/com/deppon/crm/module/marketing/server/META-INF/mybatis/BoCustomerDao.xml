@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.BoCustomer">
+	<resultMap id="MemberResultRM"
+		type="com.deppon.crm.module.customer.shared.domain.MemberResult">
+		<result property="custId" column="MR_FCUSTID" />
+		<result property="address" column="MR_ADDRESS" />
+		<result property="custNum" column="MR_FCUSTNUM" />
+		<result property="custName" column="MR_FCUSTNAME" />
+		<result property="status" column="MR_FSTATUS" />
+		<result property="custGrade" column="MR_FCUSTGRADE" />
+		<result property="contactNum" column="MR_FCONTACTNUM" />
+		<result property="contactName" column="MR_FCONTACTNAME" />
+		<result property="mobileNum" column="MR_FMOBILENUM" />
+		<result property="telNum" column="MR_FTELNUM" />
+		<result property="deptId" column="MR_FDEPTID" />
+		<result property="deptName" column="MR_FDEPTNAME" />
+		<result property="address" column="MR_FADDRESS" />
+		<result property="remark" column="MR_FREMARK" />
+		<result property="trade" column="MR_FTRADE" />
+		<result property="secondTrade" column="MR_SECONDTRADE" />
+		<result property="custType" column="MR_FCUSTTYPE" />
+		<result property="taxregNum" column="MR_FTAXREGNUM" />
+		<result property="idCard" column="MR_FIDCARD" />
+		<result property="cityId" column="MR_FCITYID" />
+		<result property="cityName" column="MR_FCITYNAME" />
+		<result property="isMainLinkMan" column="MR_FISMAINLINKMAN" />
+		<result property="contactId" column="MR_CONTACTID" />
+		<result property="versionNumber" column="MR_FVERSIONNUMBER" />
+		<!-- <collection property="custLabels" column="MR_FCUSTID" -->
+		<!-- select="com.deppon.crm.module.customer.shared.domain.CustLabel.searchMemberCustLabel"></collection> -->
+	</resultMap>
+	<resultMap id="departmentMap"
+		type="com.deppon.crm.module.organization.shared.domain.Department">
+		<id property="id" column="FID" />
+		<result property="deptName" column="FDEPTNAME" />
+		<result property="standardCode" column="FSTANDARDCODE" />
+	</resultMap>
+
+	<!-- 客户字段列表 -->
+	<sql id="MemberResult_column">
+		<![CDATA[
+			CB.FID MR_FCUSTID,
+			CB.FCOMPADDR MR_ADDRESS,
+			CB.FCUSTNUMBER MR_FCUSTNUM,
+			CB.FCUSTNAME MR_FCUSTNAME,
+			CB.FDEGREE MR_FCUSTGRADE,
+			CB.FCUSTSTATUS MR_FSTATUS,
+			CT.FNUMBER MR_FCONTACTNUM,
+			CT.FNAME MR_FCONTACTNAME,
+			CT.FMOBILETEL MR_FMOBILENUM,
+			CT.FOFFERTEL MR_FTELNUM,
+			CB.FDEPTID MR_FDEPTID,
+			DEPT.FDEPTNAME MR_FDEPTNAME,
+			CB.FCOMPADDR MR_FADDRESS,
+			CB.FREMARK MR_FREMARK,
+			CB.FTRADEID MR_FTRADE,
+			CB.FSECONDTRADE MR_SECONDTRADE,
+			CB.FCUSTTYPE MR_FCUSTTYPE,
+			CB.FTAXREGNUMBER MR_FTAXREGNUM,
+			CT.FIDCARD MR_FIDCARD,
+			CB.FCITYID MR_FCITYID,
+			CITY.FNAME MR_FCITYNAME,
+			CT.FID MR_CONTACTID,
+			CT.FISMAINLINKMAN MR_FISMAINLINKMAN,
+			CB.FVERSIONNUMBER MR_FVERSIONNUMBER,
+			CB.FISKEYCUSTOMER FISKEYCUSTOMER
+		]]>
+	</sql>
+
+	<!-- 商机客户表连接 -->
+	<sql id="QueryMemberByConditionJoinSql">
+		<![CDATA[
+		  FROM T_CUST_CUSTBASEDATA CB
+		  LEFT JOIN T_CUST_CUSTLINKMAN CT
+		    ON CT.FCUSTID = CB.FID
+		   AND CT.FSTATUS <> 2
+		  LEFT JOIN T_ORG_DEPARTMENT DEPT
+		    ON DEPT.FID = CB.FDEPTID
+		  LEFT JOIN T_CRM_CITY CITY
+		    ON CITY.FID = CB.FCITYID
+		 WHERE CB.FID IN (SELECT IN_CB.FID
+		                    FROM T_CUST_CUSTBASEDATA IN_CB
+		                    LEFT JOIN T_CUST_CUSTLINKMAN IN_CT
+		                      ON IN_CT.FCUSTID = IN_CB.FID
+		                    LEFT JOIN T_CUST_CUSTBASEDATA_EXTEND IN_CE
+		                      ON IN_CE.FCUSTID = IN_CB.FID
+		                     AND IN_CT.FSTATUS <> 2
+		]]>
+	</sql>
+
+	<!-- 商机客户的条件 -->
+	<sql id="BoCustomerCondition">
+  		<![CDATA[
+		   AND IN_CB.FISKEYCUSTOMER = 0 /*是否大客户（含通过工作流）*/
+		   AND IN_CB.FID IN (SELECT FCUSTID 
+		                    FROM T_CUST_CUSTBASEDATA_EXTEND
+		                   WHERE FVOLUMEPOTENTIAL IN ('10000-15000', '15000-20000', '>20000')) /*发货潜力*/
+		   AND IN_CB.FID NOT IN (SELECT FCUSTID FROM T_CUST_REPEATED) /*疑似重复客户不要*/
+		   AND IN_CB.FID NOT IN 
+		       (SELECT FCUSTID
+		          FROM T_MARK_BUSINESSOPPORTUNITY
+		         WHERE FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT'))/*有没关闭商机客户*/
+           AND IN_CB.FID NOT IN (SELECT KCW.FCUSTID
+                                   FROM T_CUST_KEYCUSTOMERWORKFLOWINFO KCW
+                                  WHERE KCW.FSTATUS = '1') /*大客户审批中*/
+           AND NOT EXISTS
+         (SELECT FCUSTID
+                  FROM (SELECT FYEAR,
+                               FMONTH,
+                               FCUSTID,
+                               SUM(NVL(FFPREPAYAMOUNT, 0) +
+                                   NVL(FARRIVEDAOUNT, 0) -
+                                   NVL(FAGENTRECEIVEPAY, 0) -
+                                   NVL(FREFUNDRABATE, 0)) AS AMOUNT
+                          FROM T_CRM_CUSTANALYSEBYDAY
+                         WHERE FCANALYSETYPE = 1
+                           AND FANALYSEDAY BETWEEN
+                               TRUNC(ADD_MONTHS((SYSDATE - 1), -2), 'MM') AND
+                               TRUNC(ADD_MONTHS((SYSDATE - 1), 1), 'MM') - 1
+                         GROUP BY FYEAR, FMONTH, FCUSTID)
+                 WHERE AMOUNT >= 10000
+                   AND FCUSTID = IN_CB.FID
+                 GROUP BY FCUSTID
+                HAVING COUNT(1) = 3) /*最近三个月发货金额大于10000*/
+  		]]>
+	</sql>
+
+
+	<!-- 根据条件查询商机客户 -->
+	<select id="queryMemberByConditionForBo" resultMap="MemberResultRM"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.BoCustomerCondition">
+		<![CDATA[ SELECT ]]>
+		<include refid="MemberResult_column" />
+		<include refid="QueryMemberByConditionJoinSql" />
+  		<![CDATA[ WHERE IN_CB.FCUSTSTATUS <> 2 ]]>
+		<choose>
+			<when test="deptId != null and deptId != '' ">
+				<![CDATA[ AND IN_CB.FDEPTID = #{deptId} ]]>
+			</when>
+			<otherwise>
+				<if test="deptType == 1">
+					<![CDATA[ AND IN_CB.FDEPTID IN (SELECT X.FID FROM T_ORG_DEPARTMENT X WHERE X.FSTATUS = 1 START WITH X.FID = #{parentId} CONNECT BY PRIOR X.FID = X.FPARENTID) ]]>
+				</if>
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="custNumber != null and custNumber != '' ">
+				<![CDATA[ AND IN_CB.FCUSTNUMBER = #{custNumber} ]]>
+			</when>
+			<when test="mobile != null and mobile != '' ">
+				<![CDATA[ AND IN_CT.FMOBILETEL = #{mobile} ]]>
+			</when>
+			<when
+				test="linkmanName != null and linkmanName != '' and phone != null and phone != '' ">
+				<![CDATA[ AND IN_CT.FOFFERTEL = #{phone} AND IN_CT.FNAME = #{linkmanName}]]>
+			</when>
+			<otherwise>
+				<if test="deptIds != null and deptIds.size > 0 ">
+					<![CDATA[ AND IN_CB.FDEPTID in ]]>
+					<foreach collection="deptIds" open="(" close=")" separator=","
+						item="dept">
+					<![CDATA[ ${dept} ]]>
+					</foreach>
+				</if>
+				<if test="custName != null and custName != '' ">
+					<![CDATA[ AND IN_CB.FCUSTNAME = #{custName} ]]>
+				</if>
+				<if test="phone != null and phone != '' ">
+					<![CDATA[ AND IN_CT.FOFFERTEL = #{phone} ]]>
+				</if>
+				<if test="linkmanName != null and linkmanName != '' ">
+					<![CDATA[ AND IN_CT.FNAME = #{linkmanName} ]]>
+				</if>
+				<if test="custCategory != null and custCategory != '' ">
+					<![CDATA[ AND IN_CB.FCUSTCATEGORY = #{custCategory} /*业务类别*/ ]]>
+				</if>
+				<if test="custResource != null and custResource != '' ">
+					<![CDATA[ AND IN_CB.FCHANNELSOURCE = #{custResource} /*客户来源*/ ]]>
+				</if>
+				<if test="purpose != null and purpose != '' ">
+					<![CDATA[ AND IN_CE.FCOOPINTENTION = #{purpose} /*合作意向*/ ]]>
+				</if>
+				<if test="developStage != null and developStage != '' ">
+					<![CDATA[ AND IN_CE.FDEVELOPMENTPHASE = #{developStage} /*开发阶段*/ ]]>
+				</if>
+				<if test="firstTrade != null and firstTrade != '' ">
+					<![CDATA[ AND IN_CB.FTRADEID = #{firstTrade} /*一级行业*/ ]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != '' ">
+					<![CDATA[ AND IN_CB.FSECONDTRADE = #{secondTrade} /*二级行业*/ ]]>
+				</if>
+			</otherwise>
+		</choose>
+		<include refid="BoCustomerCondition" />
+		<![CDATA[ ) ]]>
+	</select>
+
+	<!-- 查询所在的上级部门 -->
+	<select id="queryDeptBySubDept" parameterType="map" resultType="string">
+		<![CDATA[
+			SELECT FID
+			  FROM T_ORG_DEPARTMENT
+			 WHERE FSTATUS = 1
+			   AND FDEPTNAME LIKE #{parentName}
+			   AND FSTANDARDCODE IS NOT NULL
+			   AND EXISTS (SELECT 'X'
+			          FROM T_ORG_DEPARTMENT X
+			         WHERE X.FID = 104
+			         START WITH X.FID = FID
+			        CONNECT BY PRIOR X.FPARENTID = X.FID)
+			   AND ROWNUM = 1
+			 START WITH FID = #{subId}
+			CONNECT BY PRIOR FPARENTID = FID
+		]]>
+	</select>
+
+	<!-- 通过所属部门的名称模糊查询 -->
+	<select id="queryDeptByParentDept" parameterType="map"
+		resultMap="departmentMap">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT ROW_NUMBER() OVER(ORDER BY FDEPTNAME) RN,
+			               FID,
+			               FDEPTNAME,
+			               FPARENTID,
+			               FSTANDARDCODE
+			          FROM T_ORG_DEPARTMENT
+			         WHERE FSTATUS = 1
+			           AND FSTANDARDCODE IS NOT NULL
+			           AND FDEPTNAME LIKE #{deptName} ]]>
+		<if test="parentId != null and parentId != '' ">
+			<![CDATA[ START WITH FID = #{parentId} CONNECT BY PRIOR FID = FPARENTID ]]>
+		</if>
+		<![CDATA[) WHERE RN BETWEEN #{start} AND #{start} + #{limit} -1
+		]]>
+	</select>
+
+	<!-- 通过所属部门的名称模糊查询 -->
+	<select id="countDeptByParentDept" parameterType="map"
+		resultType="long">
+		<![CDATA[
+			SELECT COUNT(1)
+			  FROM T_ORG_DEPARTMENT
+			 WHERE FSTATUS = 1
+			   AND FSTANDARDCODE IS NOT NULL
+			   AND FDEPTNAME LIKE #{deptName} ]]>
+		<if test="parentId != null and parentId != '' ">
+			<![CDATA[ START WITH FID = #{parentId} CONNECT BY PRIOR FID = FPARENTID ]]>
+		</if>
+	</select>
+
+	<!-- 查询客户所属的部门负责人id -->
+	<select id="queryCustDeptManagerId" parameterType="string"
+		resultType="string">
+		<![CDATA[SELECT UER.FID USERID
+			  FROM T_CUST_CUSTBASEDATA CUST
+			  LEFT JOIN T_ORG_DEPARTMENT DEPT
+			    ON CUST.FDEPTID = DEPT.FID
+			  LEFT JOIN T_ORG_EMPLOYEE EMP
+			    ON EMP.FEMPCODE = DEPT.FPRINCIPAL
+			  LEFT JOIN T_AUTH_USER UER
+			    ON UER.FEMPCODE = DEPT.FPRINCIPAL
+			 WHERE CUST.FID = #{custId} ]]>
+	</select>
+
+</mapper>

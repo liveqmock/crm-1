@@ -1,0 +1,797 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>package</title>
+</head>
+<body>
+<a name="biz">
+<fieldset>
+<legend>理赔相关业务</legend>
+</fieldset>
+</a>
+<a name="StatusMap" id="StatusMap">
+<fieldset>
+<legend>问题跟进</legend>
+<img alt="" src="doc-files/问题跟进.jpg">
+
+</fieldset><fieldset>
+<legend>理赔状态图</legend>
+<img alt="" src="doc-files/理赔状态图.jpg">
+
+</fieldset>
+</a>
+<a  name="recompenseModel" id="recompenseModel">
+<fieldset>
+<legend>理赔模型</legend>
+<img alt="" src="doc-files/recompense.jpg">
+</fieldset>
+</a>
+<a  name="caseRule1" id="caseRule1">
+<fieldset>
+<legend>理赔出险上报</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>当选择理赔类型为&ldquo;异常签收理赔&rdquo;和&ldquo;丢货理赔&rdquo;时，出险信息中的&ldquo;运单号/差错编号&rdquo;处显示为&ldquo;运单号&rdquo;；当选择理赔类型为&ldquo;未开单理赔&rdquo;时，出险信息中的&ldquo;运单号/差错编号&rdquo;处显示为&ldquo;差错编号&rdquo;；</td>
+    <td width="150"><a href="#caseImg11" >查询运单或差错</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td><ol>
+      <li>当选择理赔类型为&ldquo;异常签收理赔&rdquo;时，输入运单号  ，点击确定，系统校验是否重复上报出险，若是，则提示&ldquo;该单号已上报出险！不能重复上报&rdquo;；否则，系统判断该运单号派送出库时是否为异常签收（出库时选择&ldquo;异常-货物破损&rdquo;），若是，则可继续，并自动带出运单相关信息（包装、运输类型、保价人（即发货联系人）、联系方式、收货部门、目的站、发货日期、货物名称、件/重/体、保价金额、始发站）；否则，系统判断该运单号是否有OA异常签收的差错记录（偏线/空运/整车/拒收），若是，则可以继续，并自动带出运单相关信息（包装、运输类型、保价人（即发货联系人）、联系方式、收货部门、目的站、发货日期、货物名称、件/重/体、保价金额、始发站）。反之，系统提示&ldquo;该单号尚未异常签收，不允许上报出险&rdquo;。 </li>
+      <li>当选择理赔类型为&ldquo;丢货类理赔&rdquo;时，输入运单号  ，点击确定，系统校验是否重复上报出险，若是，则提示&ldquo;该单号已上报出险！不能重复上报&rdquo;；否则，系统判断该运单号是否有OA丢货类（有单无货（丢货））的差错记录，若是，则可以继续，并自动带出运单相关信息（包装、运输类型、保价人（即发货联系人）、联系方式、收货部门、目的站、发货日期、货物名称、件/重/体、保价金额、始发站）。反之，系统提示&ldquo;该单号尚未上报丢货类差错，不允许上报出险&rdquo;。 </li>
+      <li>当选择理赔类型为&ldquo;未开单类理赔&rdquo;时，输入OA未开单类差错的差错编号  ，点击确定，系统校验是否重复上报出险，若是，则提示&ldquo;该差错编号已上报出险！不能重复上报&rdquo;；否则，系统判断该差错编号是否有OA未开单类差错的记录，若是，则可以继续，并自动带出OA差错上报的相关信息（包装、保价人（即发货联系人）、联系方式、收货部门、目的站、发货日期、货物名称、件/重/体、保价金额）。反之，系统提示&ldquo;该差错编号不是未开单类理赔差错，不允许上报出险&rdquo;。</li>
+    </ol></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td>出险日期：必须早于或等于报案日期。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>出险类型：
+      <ol>
+        <li>理赔类型为异常签收理赔时，下拉列表有：&ldquo;破损、潮湿、污染、内物短少、冒领及其他&rdquo;。 </li>
+        <li>理赔类型为丢货理赔时，下拉列表有：&ldquo;整票丢失、整件丢失&rdquo;。 </li>
+        <li>理赔类型为未开单理赔时，下拉列表有：&ldquo;破损、潮湿、污染、内物短少、整件丢失、整票丢失及其他&rdquo;。</li>
+      </ol></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td>所属区域从公司组织结构中带出，系统默认为报案部门所在大区；可进行修改。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A6</td>
+    <td><p>理赔方式： </p>
+      <ol>
+        <li>快速理赔：索赔金额必须限制在1000元（含）以下 。上报后，走系统自动处理流程。当理赔类型选择为&ldquo;未开单类理赔&rdquo;时，&ldquo;快速理赔&rdquo;选项为灰，不可选择。 </li>
+        <li>正常理赔时，不限制索赔金额。上报后，走理赔专员处理流程。 </li>
+        <li>在线理赔，默认为灰，不可选择。</li>
+      </ol></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A7</td>
+    <td>索赔方：发货方或收货方。若发/收货方为会员，则自动带出客户编码、客户名称及客户等级。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A8</td>
+    <td>出险描述：必填。可以增加、删除记录。其中，类型与出险类型一致（下拉选项），出险描述每条不少于30个字。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A9</td>
+    <td>货物托运清单及货物索赔清单：默认为灰不可编辑。当理赔方式选择为正常理赔时，可编辑，新增及删除记录。且正常理赔时为必填项。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A10</td>
+    <td>可上传相关附件。上传时，可选择附件名称，新增、删除附件。</td>
+    <td><a href="#caseImg11" >上传附件<br>删除附件</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A11</td>
+    <td>一个运单号或差错编号，只能上报一张理赔单。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75"><a name="caseRule1_12">RULE-A12</a></td>
+    <td><p>当用户点击&ldquo;保存&rdquo;按钮时， </p>
+      <ol>
+        <li>校验必填项：理赔类型、理赔方式、运单号、出险类型、出险数量、所属区域、出险日期、理赔方式、索赔方、索赔金额、索赔人、电话、出险情况、货物托运清单（正常理赔时必填）、货物索赔清单（正常理赔时必填）。 </li>
+        <li>系统通过报案人的账号信息，自动填充报案人及报案部门；报案日期为当天。 </li>
+        <li>自动生成理赔单信息，此时，理赔状态为&ldquo;未处理&rdquo;。同时系统消息提示理赔专员进行处理【待办事宜】。</li>
+      </ol></td>
+    <td><a href="#caseImg11" ><p>保存新建理赔申请<br>
+      提交理赔申请</p></a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A13</td>
+    <td><p>对于快速理赔，理赔上报完成后系统自动处理。 </p>
+      <ol>
+        <li>处理意见中：根据上报理赔的金额，自动按如下划分：出发部门所属大区70%，报案部门所属大区30%；如果出发部门和报案部门在同一个大区，则只显示一条记录，且费用为实际上报赔偿金额。 </li>
+        <li>系统自动赋值实际金额和正常理赔金额，且实际赔偿金额=正常理赔金额=索赔金额。处理人为：系统自动。 </li>
+        <li>责任大区赋值为：报案部门所在大区。 </li>
+        <li>&ldquo;处理状态&rdquo;更新为：审批完成。（备注：系统自动处理后，仍可以人工审核并可退回修改</li>
+      </ol></td>
+    <td bgcolor="#FF0000"><p>补充：</p>
+      <p>1， 快速理赔自动处理不成功时，即没有出发部门和到达部门时，理赔的状态应该转初步处理</p></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A14</td>
+    <td>对于理赔专员未进行资料确认的理赔单（&ldquo;未处理&rdquo;状态的理赔单），可进行录入信息的修改。</td>
+    <td><a href="#caseImg11" >修改保存理赔申请</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A15</td>
+    <td>对&ldquo;未处理&rdquo;状态的理赔单，允许用户删除该理赔单，删除时，需提示信息；</td>
+    <td><a href="#caseImg11" >删除理赔申请</a></td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a  name="caseRule2" id="caseRule2">
+<fieldset>
+<legend>理赔处理
+</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>进入理赔处理查询界面，默认显示该专员所负责大区所有未处理完成（处理状态为：未处理、资料确认、初步处理、金额确认、多赔审批中、多赔已审批）的理赔单。</td>
+    <td width="150"><a href="#caseImg22" >查询</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td><p>1、查询条件： </p>
+      <ol>
+        <li>上报时间必填； </li>
+        <li>通过上报编号查询时，其他查询条件失效。 </li>
+        <li>支持组合查询。 </li>
+        <li>当理赔方式选择所有时，可查询所负责大区的所有理赔方式的理赔信息； </li>
+        <li>当理赔类型选择所有时，可查询所负责大区的所有理赔类型的理赔信息； </li>
+        <li>当处理状态选择所有时，可查询所负责大区的所有状态的理赔信息。 </li>
+      </ol>
+      <p>2、理赔专员所负责大区，由基础资料&ldquo;理赔负责大区&rdquo;设置；通过工号与大区相对应来实现。该基础资料由增值服务管理组经理维护。 </p></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td>查询结果按报案时间的先后排序。对同一上报时间，按客户等级的高低来显示。 </td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td><p>1）选中运单号/差错编号，可查看理赔单详细信息。 <br>
+      2）对于未处理完成的理赔单，可进行&ldquo;处理&rdquo;操作。 </p>
+      <ol>
+        <li>点击处理后，进入理赔单处理界面。 </li>
+        <li>对外投保信息提醒: 系统通过接口实现。对于已对外投保的运单，在理赔单处理界面进行对外投保信息的提醒。提醒内容为：&ldquo;此货已经对外投保，请理赔专员联系增值服务管理组向保险公司索赔&rdquo;。</li>
+      </ol></td>
+    <td width="150"><a href="#caseImg22" >进行理赔处理</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td><p>报案部门及理由专员都可以进行理赔信息跟进。<br>
+      可录入跟进信息。跟进后，将可在跟进记录中查看到跟进人、跟进时间及跟进内容。A、营业部跟进时，将消息提示对应的理赔专员（待办事宜）。B、理赔专员跟进时，将消息提示报案部门（待办事宜）。</p></td>
+    <td width="150"><a href="#caseImg22" >提交跟进信息</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A6</td>
+    <td><p>1）点击&ldquo;资料确认&rdquo;操作，处理状态由&ldquo;未处理&rdquo;更改为&ldquo;资料确认&rdquo;。 <br>
+      2）若出险上报2天后，理赔专员仍未进行资料确认，则消息提示信息理赔专员及报案部门。门。</p></td>
+    <td width="150"><a href="#caseImg22" >资料确认、取消资料确认</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A7</td>
+    <td><p>差错信息：根据上报类型显示不同内容： <br>
+      1.
+      未开单类理赔：差错信息取OA未开单差错的对应差错编号的处理结果信息及处理人信息。 </p>
+      <table border="1" cellspacing="0" cellpadding="1">
+        <tr>
+          <td width="236" valign="top"><p>理赔差错信息字段 </p></td>
+          <td width="351" valign="top"><p>对应于OA未开单类差错字段 </p></td>
+          <td width="115" valign="top"><p>备注 </p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>差错名称 </p></td>
+          <td width="351" valign="top"><p>未开单差错 </p></td>
+          <td width="115" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>处理结果描述 </p></td>
+          <td width="351" valign="top"><p>处理事项 </p></td>
+          <td width="115" valign="top"><p>处理结果下 </p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>处理对象 </p></td>
+          <td width="351" valign="top"><p>部门或员工 </p></td>
+          <td width="115" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>奖罚说明 </p></td>
+          <td width="351" valign="top"><p>奖罚类型 </p></td>
+          <td width="115" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>奖罚金额 </p></td>
+          <td width="351" valign="top"><p>金额 </p></td>
+          <td width="115" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>处理时间 </p></td>
+          <td width="351" valign="top"><p>处理时间 </p></td>
+          <td width="115" valign="top"><p>处理记录下 </p></td>
+        </tr>
+        <tr>
+          <td width="236" valign="top"><p>处理人 </p></td>
+          <td width="351" valign="top"><p>处理人 </p></td>
+          <td width="115" valign="top"><p>&nbsp;</p></td>
+        </tr>
+  </table>
+      <p>2.已开单理赔（异常签收理赔及丢货理赔）： 
+        <br>
+        差错信息取该理赔单号派送出库时填写的签收情况及OA差错信息（包装不合格、运收违禁品、异常签收、有单无货（丢货））的处理结果及处理记录。对应内容如下。 </p>
+      <table border="1" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="74" valign="top">            理赔差错信息字段 </td>
+          <td width="232" valign="top"><p>对应于派送出库时异常签收字段 </p></td>
+          <td width="499" valign="top"><p>对应于OA差错字段 </p></td>
+          <td width="58" valign="top"><p>备注 </p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>差错名称 </p></td>
+          <td width="232" valign="top"><p>派送出库 </p></td>
+          <td width="499" valign="top"><p>包装不合格差错/运收违禁品差错/异常签收差错/有单无货（丢货）差错 </p></td>
+          <td width="58" valign="top"><p>无 </p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>处理结果描述 </p></td>
+          <td width="232" valign="top"><p>签收情况（或中转情况） </p></td>
+          <td width="499" valign="top"><p>处理事项 </p></td>
+          <td width="58" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>处理对象 </p></td>
+          <td width="232" valign="top"><p>&nbsp;</p></td>
+          <td width="499" valign="top"><p>部门或员工 </p></td>
+          <td width="58" valign="top"><p>无 </p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>奖罚说明 </p></td>
+          <td width="232" valign="top"><p>&nbsp;</p></td>
+          <td width="499" valign="top"><p>奖罚类型 </p></td>
+          <td width="58" valign="top"><p>无 </p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>奖罚金额 </p></td>
+          <td width="232" valign="top"><p>&nbsp;</p></td>
+          <td width="499" valign="top"><p>金额 </p></td>
+          <td width="58" valign="top"><p>无 </p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>处理时间 </p></td>
+          <td width="232" valign="top"><p>签收时间 </p></td>
+          <td width="499" valign="top"><p>处理时间 </p></td>
+          <td width="58" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="74" valign="top"><p>处理人 </p></td>
+          <td width="232" valign="top"><p>操作人 </p></td>
+          <td width="499" valign="top"><p>处理人 </p></td>
+          <td width="58" valign="top"><p>&nbsp;</p></td>
+        </tr>
+    </table></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A8</td>
+    <td>工作流显示该凭证号的所有相关理赔工作流与付款工作流的信息。（当工作流状态改变（已同意/已退回）时，需要同步到CRM）。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A9</td>
+    <td>理赔历史记录：查询时间段内该客户编码的理赔明细，并合计保价金额、索赔金额、正常理赔金额及实际理赔金额。 </td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A10</td>
+    <td><ol>
+      <li>处理意见:</li>
+      <ol>
+        <li>入部门费用：可选择大区，也可以选择营业部；费用为整数，且费用之和等于实际赔偿金额。实际金额小于等于正常理赔与多赔金额之和。 </li>
+        <li>责任大区：默认为报案部门所在大区。也可进行修改，从系统中选择大区。 </li>
+        <li>系统消息/短信通知对象：可从通讯录中选择（工号、姓名和部门）；录入相应信息后，系统将信息提示相应人员（待办事宜）。 </li>
+      </ol>
+      <li>追偿信息：当有偏线、空运、中转货物出险时，可根据实际需要填写追偿日期/部门、暂扣金额、考核奖励。当赔偿金额追回后，相关部门对赔回金额、赔回日期、追回暂扣款进行录入。 </li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A11</td>
+    <td><p>点击&ldquo;初步处理保存&rdquo;后，状态由&ldquo;资料确认&rdquo;更改为&ldquo;初步处理&rdquo;；且系统自动生成消息提示营业部后续处理（待办事宜） <br>
+      1.
+      处理保存时，无须校验填写完整即可保存。 <br>
+      2.
+      实际赔偿金额在1000元以上，则初步意见第一次保存时需要给客户发送短信。 <br>
+      短信模板：您好！我司已经就您申请的索赔出具理赔意见，我司当地营业部会尽快和您联系，您也可致电当地营业部(021-12345678)。谢谢！ <br>
+        其中：发送的对象为：出险上报时索赔人的手机号码。 <br>
+        当地营业部为：上报出险的部门 <br>
+      电话：出险上报的部门对应的电话（截取13位数字） <br>
+      3.当有录入系统消息/短信通知对象时，将短信通知该对象。短信通知的模板为：&ldquo;您好，贵部提交的单号**的索赔初步处理意见已经完成，赔款金额**元，请加快与客户协商！（德邦物流）&rdquo;。 </p></td>
+    <td width="150"><a href="#caseImg22" >提交理赔处理为金额确认</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A12</td>
+    <td><ol>
+      <li>在线理赔：理赔专员确认理赔金额及系统自动划分的责任部门，点击&ldquo;提交审批&rdquo;，则系统自动生成OA付款工作流。此时，理赔处理状态为&ldquo;审批完成&rdquo;，对应于网上营业厅状态为&ldquo;付款中&rdquo;。 </li>
+      <li>快速理赔：对于修改后的快速理赔单，提交审批后，处理状态更新为&ldquo;审批完成&rdquo;，无需走审批流程。 </li>
+      <li>正常理赔：只有营业部同意初步处理理赔金额（确认金额状态）或多赔工作流审批完成（多赔已审批）后，理赔专员才可提交审批；提交审批，则系统生成OA理赔工作流。此时，处理状态更改为：审批中。 <br>
+        A.
+提交时，必填如下信息&ldquo;正常理赔金额、实际金额、处理意见（入部门费用、责任大区）&rdquo;；理赔方式为正常理赔，仍需必填系统消息/手机短信通知。（备注：相关规则参见初步处理保存RULE-A10） <br>
+B.
+提交审批后，系统根据金额流至相应的领导审批流程（通过报案部门对应到相应领导）：赔偿金额在1000元（含）以下，系统自动审批完成；1000元到5000元（含）区长审批；5000元到10000元（含）大区总审批；10000元以上流至大区总、事业部总裁、营运副总裁及总裁审批。 C.实际理赔金额在1000元以下时，提交审批后，状态直接更改为&ldquo;审批完成&rdquo;。 <br>
+D.
+如果该理赔单有后续创建的多赔单，则： <br>
+D1.
+提交时填写的实际理赔金额必须要小于等于多赔单合计金额。 <br>
+D2
+提交审批时，系统提示信息&ldquo;该理赔单有对应的多赔单，请核实实际理赔金额&rdquo;。 <br>
+D3.
+提交审批后，处理状态更新为&ldquo;审批完成&rdquo;，无需走审批流程。 </li>
+    </ol></td>
+    <td width="150"><a href="#caseImg22" >提交理赔处理为金额确认/理赔提交审批</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A13</td>
+    <td>理赔工作流审批同意：则状态更改为：审批完成。</td>
+    <td width="150"><a href="#caseImg22">工作流审批意见<a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A14</td>
+    <td>理赔工作流在审批过程任何环节退回：处理状态将更改为：初步处理。</td>
+    <td width="150"><a href="#caseImg22" >工作流审批意见</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A15</td>
+    <td><ol>
+      <li>快速理赔和正常理赔，都可进行免赔处理。 </li>
+      <li>免赔处理:在&ldquo;未处理、资料确认、初步处理、确认金额、多赔审批中、多赔已审批、审批中、审批完成&rdquo;处理状态的理赔单，可以进行免赔处理。免赔处理时，要求必须在费用说明中，进行相应的备注。 </li>
+      <li>免赔处理后，所有金额类处理结果信息（实际赔偿金额、正常赔偿金额、入部门费用金额全）赋值为0。此时，处理状态更改为&ldquo;免赔处理&rdquo;。</li>
+    </ol></td>
+    <td width="150"><a href="#caseImg22" >免赔处理</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A16</td>
+    <td>在审批完成状态之前（未处理、资料确认、初步处理、确认金额、多赔审批中、多赔已审批）的状态，都可以进行理赔处理结果的修改。备注：经理确认金额后，不可更改理赔的正常理赔金额和实际金额。多赔已审批后，不可更改理赔单的正常理赔金额和多赔金额，且实际金额小于等于正常理赔金额和多赔金额总和。</td>
+    <td width="150"><a href="#caseImg22" >多赔处理</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A17</td>
+    <td><ol>
+      <li>在线理赔：经理受理在线理赔后，若理赔专员不同意理赔金额，则点击&ldquo;退回&rdquo;按钮，退回后，理赔状态更改为&ldquo;审批退回&rdquo;，官网状态不变。 </li>
+      <li>正常理赔：对&ldquo;资料确认、初步处理、确认金额、多赔已审批&rdquo;处理状态的理赔单，可以给于退回至上一操作状态。确认金额和多赔已审批状态退回到状态处理状态，初步处理可以退回到资料确认状态，资料确认可退回到未处理状态。 </li>
+      <li>快速理赔：审批完成状态的理赔单，可以给于退回至初步处理状态。进行处理结果的更改。</li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a name="caseRule3" id="caseRule3">
+<fieldset>
+<legend>理赔金额确认</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>默认显示本部门处理状态为&ldquo;初步处理&rdquo;的理赔单记录。运单号、差错编号可链接到理赔单查询界面，查看详细的理赔信息。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td>只有理赔单处理状态为&ldquo;初步处理&rdquo;时可以&ldquo;确认金额&rdquo;操作，确认金额后，处理状态更改为&ldquo;确认金额&rdquo;。且系统消息提示对应的理赔专员</td>
+    <td width="150"><a href="#caseImg33" >金额确认</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td>只有理赔单处理状态为&ldquo;初步处理&rdquo;时可以创建多赔，同时一个理赔单只有一个多赔单</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>当由理赔单生成多赔单时，自动将理赔单信息带入多赔单中（如理赔运单号/差错编号、理赔金额），同时系统自动填充申请人和申请部门；</td>
+    <td width="150"><a href="#caseImg33" >提交多赔</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td>当点击提交按钮时，系统自动记录当前时间为提交时间，且生成多赔工作流，系统根据合计金额走相应的审批环节（1000元到5000元（含）区长审批；5000元到10000元（含）大区总审批；10000元以上流至大区总、事业部总裁、营运副总裁及总裁审批）。此时，理赔处理状态为&ldquo;多赔审批中&rdquo;。（当工作流状态改变（已同意/已退回）时，需要同步到CRM。）当工作流最后审批人同意时，理赔处理状态更改为&ldquo;多赔已审批&rdquo;，此时系统消息提示对应的理赔专员</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A6</td>
+    <td>点击取消按钮，取消信息的录入，并关闭本界面。 </td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A7</td>
+    <td>点击跟进按钮，可跟进信息。跟进后，将可在跟进记录中查看到跟进人、跟进时间及跟进内容。且系统消息提示对应的理赔专员</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a name="caseRule4" id="recompenseAmount">
+<fieldset>
+<legend>理赔付款
+</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>通过相应查询条件，选中运单后，进入该单的理赔单查询界面。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>理赔审批完成后，由营业部收银员进行付款操作。只有部门收银员才可进行付款。</td>
+    <td width="150"><a href="#caseImg44" >创建理赔付款申请/<br>
+      保存付款申请/<br>
+      提交付款申请</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>工号、理赔方式、理赔类型、运单号/差错编号、理赔金额、客户编码、客户等级、保价人，系统根据理赔单信息自动填充。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>冲账信息中冲应收账款及冲到付款为可选项。当选中冲应收账款后，对应的冲应收账款金额为可编辑；当选中冲到付款后，对应的冲到付款金额为可编辑。冲应收账款金额与冲到付款金额之和不能为大于理赔金额；冲应收账款金额不能大于理赔金额；冲到付款金额不能大于理赔金额。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>付款金额为灰不能编辑。且付款金额=理赔金额-冲应收账款金额-冲到付款金额。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td>付款方式及所属财务部默认为空。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td>当付款金额为0时，汇款方式默认为&ldquo;现金&rdquo;，不需要填写收款人的账户信息。点击&ldquo;提交付款&rdquo;，不需要对接费控系统生成OA工作流，且处理状态更新为&ldquo;已付款&rdquo;。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td>当付款金额大于0时，需要选择汇款方式</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td><ol>
+      <li>若汇款方式为&ldquo;现金&rdquo;，则系统默认账户信息（开户名、开户银行、开户账号、省份、城市、支行）为收银员的账户信息【通过对接费控系统实现】，若费控系统无法获取到收银员的账户信息，可手工录入； </li>
+      <li>若汇款方式为&ldquo;汇款&rdquo;，则不需要对接费控系统，直接手工录入客户的账户信息即可。 </li>
+      <li>开户银行、省份、城市、支行这些字段从银行基础资料获取。（银行基础资料同步费控系统的银行基础资料实现） </li>
+    </ol>
+      点击&ldquo;提交付款&rdquo;，系统对接费控系统生成OA付款工作流。此时，处理更改为&ldquo;付款中&rdquo;。付款工作流审批完成后，状态更改为已付款。若工作流退回（也包括同意后退回情况），则处理状态更改为付款失败。对于付款失败的理赔单，可再次申请付款。</td>
+    <td width="150"><a href="#caseImg44" >付款审批反馈</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td>打印：对理赔单信息的打印。打印内容参见：DP-CRM-用户功能需求说明书-理赔管理V1.0文档中的UC_CRM_SE_07_03中，4.4.1中理赔打印界面。其中情况描述为：出险情况的类型、数量及描述信息。审批人及审批意见为：理赔工作流的最后审批人及审批意见。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A11</td>
+    <td>反付款：对于理赔金额全部冲应收账款及到付款的情况，允许应收账款小组反付款操作，则处理状态由&ldquo;已付款&rdquo;更改为&ldquo;付款失败&rdquo;。反付款后，营业部收银员可再次付款申请。</td>
+    <td width="150"><a href="#caseImg44" >返付款</a></td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a name="caseRule5" id="recompenseAmount">
+<fieldset>
+<legend>理赔查询</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>进入理赔查询界面，默认列表信息结果为空。</td>
+    <td width="150"><a href="#caseImg55" >理赔查询</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td><ol>
+      <li>上报部门默认为当前组织所在部门。当用户为理赔专员时，可选择上报部门进行查询。 </li>
+      <li>所属区域默认为上报部门所在区域。当用户为理赔专员时，可选择所属区域查询。当所属区域为空时，查询全公司的数据。 </li>
+      <li>上报时间与最后审批时间必填其一；当理赔方式选择所有时，可查询时间段内上报部门的所有理赔方式的理赔信息；当理赔类型选择所有时，可查询时间段内上报部门的所有理赔类型的理赔信息；当处理状态选择所有时，可查询时间段内上报部门的所有状态的理赔信息。 </li>
+      <li>按客户编码进行查询时，上报部门查询条件失效。可直接查询出时间内本客户的所有理赔信息。 </li>
+      <li>按上报编号查询时，其他所有查询条件失效。</li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td><p>选中运单号/差错编号，可查看理赔单详细信息。 <br>
+      <br>
+        A、理赔单查询信息包括：出险信息、理赔信息、出险描述、货物托运清单、理赔清单、附件、处理意见、追偿信息、工作流与跟进、差错信息、理赔历史记录、多赔记录。 <br>
+        <br>
+        B、按钮显示规则： </p>
+      <ol>
+        <li>当登录角色为&ldquo;营业部经理&rdquo;时，显示&ldquo;跟进、打印、确认金额、创建多赔、修改、删除&rdquo;按钮。 </li>
+        <li>当登录角色为&ldquo;理赔专员&rdquo;时，显示&ldquo;跟进&rdquo;按钮。 </li>
+        <li>当登录角色为&ldquo;收银员&rdquo;时，显示&ldquo;打印、付款申请、跟进&rdquo;按钮。 </li>
+        <li>当登录角色为&ldquo;营业员&rdquo;中时，显示&ldquo;跟进&rdquo;按钮。 </li>
+        <li>当登录角色为&ldquo;应收账款小组&rdquo;时，显示&ldquo;反付款&rdquo;按钮。 </li>
+        <li>相关按钮规则限制同以上其他用例描述。</li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>进入多赔查询界面，默认列表信息结果为空。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td><ol>
+      <li>创建部门为能为空，默认为当前组织所在部门。当用户为理赔专员时，可选择其他部门组织进行查询。 </li>
+      <li>创建时间必填；</li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a name="caseRule6" id="recompenseAmount">
+<fieldset>
+<legend>理赔监控</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>打开理赔监控界面，默认显示所有未处理完成（审批完成状态之前）的钻石会员的理赔单情况。</td>
+    <td width="150"><a href="#caseImg66" >理赔监控</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td><ol>
+      <li>上报时间必填； </li>
+      <li>当客户等级选择所有时，可查询时间段内所有客户等级的所有未处理完成的理赔信息。 </li>
+      <li>按客户编码进行查询时，不需要关联客户编码及所属大区。可直接查询出时间内本客户的所有未处理完成的理赔信息。 </li>
+      <li>所属大区，默认为空，此时查询结果为公司所有理赔单。</li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td><ol>
+      <li>状态持续时间为：当前时间与当前处理状态时间的时间差。 </li>
+      <li>通过运单号或差错编号，可链接到理赔单查看界面，对理赔单详细信息查询。</li>
+    </ol></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>理赔单查询信息包括：出险信息、理赔信息、出险描述、货物托运清单、理赔清单、附件、处理意见、追偿信息、工作流与跟进、差错信息、理赔历史记录、多赔记录。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td>催办后，对应大区的理赔专员，系统信息提醒催办信息（通过待办事宜实现）。且催单次数加1.</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a name="caseRule7" id="recompenseAmount">
+<fieldset>
+<legend>在线理赔提交</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td><ol>
+      <li>点击&ldquo;同意&ldquo;按钮，可进入下一步。 </li>
+      <li>点击&rdquo;拒绝&ldquo;，则退出在理赔理赔申请。</li>
+    </ol></td>
+    <td width="150"><a href="#caseImg77" >在线理赔提交</a></td>
+    </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td><p>获取验证码的规则： </p>
+      <ol>
+        <li>点击获取验证码，系统自动将验证码通过短信的形式发送到用户的手机上，有手机号，优先发送短信验证码，不需再发送语音短信验证码，无手机号，则以语音的形式发送给用户的电话（限制只可听两次），短信内容模板：您好，这里是德邦物流理赔中心，单号XXXXXXXX的在线理赔验证码：XXXX，若手机号与电话号码不正确，则提示&ldquo;联系方式不正确，不能申请在先理赔，请与部门联系线下理赔&rdquo;； </li>
+        <li>输入验证码，系统判断验证码是否正确，若不正确，则提示&ldquo;验证码输入错误，请重新输入验证码&rdquo;；若验证码超时，则提示重新获取验证码；</li>
+      </ol></td>
+    <td width="150">&nbsp;</td>
+    </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td>索赔金额：0&lt;索赔金额&lt;=1000，且索赔金额&lt;=保价；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>身份证号：限制位数，只能录入15位或18位；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td><p>确认所有信息无误，同意理赔协议时， </p>
+      <ol>
+        <li>系统校验该单号有无派送异常出库（派送出库时，选择签收类型为&ldquo;异常-货物破损&rdquo;），若有，则直接进入下一步；否则，校验该单号有无上报丢货差错，若已上报丢货差错则直接生成理赔申请单，否则，系统生成丢货差错申请单及理赔申请单。 </li>
+        <li>系统自动生成短信给出发部门/到达部门经理（上报时选择发货方则短信通知出发部门经理，上报时选择收货方则短信通知到达部门经理），短信内容模板：您好，单号XXXXX的客户提出在线理赔，请在24小时内处理完毕，谢谢！</li>
+      </ol></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A6</td>
+    <td>当固定客户选择理赔方为发货方时，需将运单中发货方客户编码填入理赔单客户编码；如果为收货方，则根据用户信息找收货客户的客户编码，填入理赔单客户编码；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A7</td>
+    <td>若部门经理未对该单进行审核（受理或拒绝），客户可对在线申请的理赔相关信息进行修改。修改规则同在线理赔提交。</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a><a name="caseRule8" id="recompenseAmount">
+<fieldset>
+<legend>在线理赔受理</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>查询界面默认显示所有在线理赔理赔申请单状态为&ldquo;待受理&rdquo;及理赔处理状态为&ldquo;审批退回&rdquo;的理赔申请信息。</td>
+    <td width="150"><a href="#caseImg88" >在线理赔查询</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td>可按单号进行查询；</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td>拒绝，则理赔申请单状态更改为&ldquo;已拒绝&rdquo;。</td>
+    <td width="150"><a href="#caseImg88" >拒绝在线理赔</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>&ldquo;受理理赔&rdquo;按钮：对于不符合理赔上报条件的理赔申请（未异常确认签收，未上报异常签收差错和丢货差错），点击该按钮时，提示信息&ldquo;该单号未异常签收或上报丢货差错，不能出险上报。请先进行异常签收或上报差错后再受理在线理赔&rdquo;。</td>
+    <td width="150"><a href="#caseImg88" >受理在线理赔</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A5</td>
+    <td>受理理赔，则进入理赔上报界面。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A6</td>
+    <td><p>1）默认客户在线填写的信息不可更改。如：金额、运单信息等 <br>
+      2）填写出险类型、出险数量、所属区域、出险日期及出险描述信息。（规则同FS_CRM_LP_01）</p></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A7</td>
+    <td>&ldquo;保存&rdquo;信息，则系统生成理赔单，处理状态为&ldquo;未处理&rdquo;；且系统自动处理（理赔金额、费用划分及责任部门等，规则同快速理赔系统自动处理），同时，生成消息提示专员处理。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<a name="caseRule9" id="recompenseAmount">
+<fieldset>
+<legend>在线理赔查询及重新提交</legend>
+<table width="1100" border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <td width="75">RULE-A1</td>
+    <td>默认显示最近理赔单信息。可查看到付款失败原因。</td>
+    <td width="150"><a href="#caseImg99" >在线理赔查询及重新提交</a></td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A2</td>
+    <td>可查看该客户所有的理赔单信息。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A3</td>
+    <td><p>重新提交，则进入账号修改页面，重新填写相应账号信息（只可更改账号信息）。 <br>
+      确认后提交，则生成OA工作流信息，直接进入大区出纳审批（可无需重新走流程）；</p></td>
+    <td width="150">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="75">RULE-A4</td>
+    <td>大区出纳审批同意后，理赔单状态更改为已付款。</td>
+    <td width="150">&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+
+<div id="caseImg1">
+<fieldset>
+<legend>
+<legend><a  name="caseRule1" id="caseImg11" href="#caseRule1">理赔出险上报序列图</a></legend>
+</legend>
+<img alt="" src="doc-files/理赔出险上报.jpg">
+<img alt="" src="doc-files/理赔出险上报2.jpg">
+</fieldset>
+</div>
+<div id="caseImg1">
+<fieldset>
+  
+  <legend><a  name="caseRule2" id="caseImg22" href="#caseRule2">理赔处理序列图</a></legend>
+<img alt="" src="doc-files/理赔处理.jpg">
+</fieldset>
+</div>
+<div id="caseImg3">
+<fieldset>
+<legend><a name="caseImg33" id="caseImg33" href="#caseRule3">理赔金额确认序列图</a></legend>
+<img alt="" src="doc-files/金额确认.jpg">
+</fieldset>
+</div>
+<div id="caseImg4">
+<fieldset>
+<legend><a name="caseImg44" id="caseImg44" href="#caseRule4">理赔付款序列图</a></legend>
+<img alt="" src="doc-files/理赔付款.jpg">
+</fieldset>
+</div>
+<div id="caseImg5">
+<fieldset>
+<legend><a name="caseImg55" id="caseImg55" href="#caseRule5">理赔查询序列图</a></legend>
+<img alt="" src="doc-files/理赔查询.jpg">
+</fieldset>
+</div>
+<div id="caseImg6">
+<fieldset>
+<legend><a name="caseImg66" id="caseImg66" href="#caseRule6">理赔监控序列图</a></legend>
+<img alt="" src="doc-files/理赔监控.jpg">
+</fieldset>
+</div>
+<div id="caseImg7">
+<fieldset>
+<legend><a name="caseImg77" id="caseImg77" href="#caseRule7">
+在线理赔提交序列
+</a></legend>
+<img alt="" src="doc-files/在线理赔提交.jpg">
+</fieldset>
+</div>
+<div id="caseImg8">
+<fieldset>
+<legend><a name="caseImg88" id="caseImg88" href="#caseRule8">在线理赔受理序列图</a></legend>
+<img alt="" src="doc-files/在线理赔查询.jpg">
+<img alt="" src="doc-files/在线理赔受理.jpg">
+</fieldset>
+</div>
+<div id="customerValidator">
+<div id="caseImg9">
+<fieldset>
+<legend><a name="caseImg99" id="caseImg99" href="#caseRule9">在线理赔查询及重新提交序列图</a></legend>
+<img alt="" src="doc-files/在线理赔查询及重新提交.jpg">
+</fieldset>
+</div>
+<a name="">
+<fieldset>
+<legend>保存前检查流程</legend>
+</fieldset>
+</a>
+</div>
+<div id="DAO">
+<fieldset>
+<legend>DAO说明</legend>
+</fieldset>
+</div>
+<div id="domain">
+<fieldset>
+<legend>domain说明</legend>
+<table>
+<tr>
+</table>
+</fieldset>
+</div>
+</body>
+</html>

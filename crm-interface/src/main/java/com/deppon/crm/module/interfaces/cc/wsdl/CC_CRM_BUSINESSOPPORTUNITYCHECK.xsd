@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.deppon.com/crm/inteface/cc/domain">
+
+	<complexType name="BusinessOpportunityIfexistRequest">
+		<sequence>
+			<element name="custNumber" type="string">
+				<annotation>
+					<documentation>客户编码</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="BusinessOpportunityIfexistResponse">
+		<sequence>
+			<element name="ifHasBusinessOpportunity" type="boolean">
+				<annotation>
+					<documentation>是否存在未关闭的商机</documentation>
+				</annotation>
+			</element>
+			<element name="errorMessage" type="string">
+				<annotation>
+					<documentation>异常信息</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<element name="businessOpportunityIfexistRequest" type="tns:BusinessOpportunityIfexistRequest"></element>
+
+	<element name="businessOpportunityIfexistResponse" type="tns:BusinessOpportunityIfexistResponse"></element>
+</schema>

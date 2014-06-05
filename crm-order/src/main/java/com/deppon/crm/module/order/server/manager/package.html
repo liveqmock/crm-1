@@ -1,0 +1,1079 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<a  name="orderStatus">
+<fieldset>
+<legend>订单状态图</legend>
+<img alt="" src="doc-files/order.jpg">
+</fieldset>
+</a>
+<a  name="orderClass">
+<fieldset>
+<legend>订单模型</legend>
+<img alt="" src="doc-files/order-class.jpg">
+</fieldset>
+</a>
+<a  name="PotentialMgr">
+<fieldset>
+<legend>订单管理</legend>
+<table border="1">
+  <tr>
+    <td colspan="2" align="center">订单管理--订单新增</td>
+    <td width="214"><a href="#order-create">order-create序列图设计</a></td>
+  </tr>
+  <tr>
+    <td width="106">RULE-A1</td>
+    <td width="858"><ol>
+      <li>可根据客户名称模糊查找客户信息，若已存在此客户，将客户信息（客户编码、联系人、手机、电话、地址、始发网点（最近一次成功发货网点，使用部门为营业部时，始发网点默认为本部门）自动带出； </li>
+      <li>可根据手机号查找客户信息，若已存在此客户，将客户信息（客户编码、联系人、客户名称、电话、地址、始发网点（最近一次成功发货网点，使用部门为营业部时，始发网点默认为本部门）自动带出； </li>
+      <li>可根据电话查找客户信息，若已存在此客户，将客户信息（客户编码、联系人、手机、客户名称、地址、始发网点（最近一次成功发货网点，使用部门为营业部时，始发网点默认为本部门）自动带出； </li>
+      <li>若客户不存在，则依次录入客户信息（客户名称、联系人、手机、电话）； </li>
+    </ol>
+    手机号必须为11位，若没有输入11位，给出提示信息“请输入正确的手机号”；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>默认为是； </li>
+      <li>若上门接货为是，接货时间范围为必填项； </li>
+    </ol>
+      若上门接货为否，接货时间范围可不填；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><ol>
+      <li>支持汉字、拼音和简拼检索省份、城市名称； </li>
+    </ol>
+      <p>根据所选省份自动过滤所属城市，根据所选城市自动过滤所属区县。</p>
+      <p>comments:此处应该是三个下拉框显示</p></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td><ol>
+      <li>支持汉字录入检索当前有效始发网点，点击回车后，实现自动检索。若匹配结果唯一，则自动返回始发网点信息；若匹配结果不唯一，则跳出检索结果界面，选择某个始发网点后，自动返回该始发网点信息。 </li>
+      <li>通过查询电子地图选择始发网点时，接货地址自动填充到地图搜索栏；点击搜索，系统匹配最近的始发网点后，返回该网点信息。 </li>
+      <li>只可查询出做出发的网点信息，不做出发的网点信息过滤掉； </li>
+      <li>使用部门为营业部时，始发网点默认为本部门； </li>
+    </ol>
+      若客户已存在，可根据客户信息系统自动带出该客户最近一次成功发货的始发网</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td><ol>
+      <li>可根据客户名称模糊查找客户信息，若已存在此客户，将客户信息（客户编码、联系人、手机、电话、地址）自动带出； </li>
+      <li>可根据手机号查找客户信息，若已存在此客户，将客户信息（客户编码、客户名称、联系人、电话、地址）自动带出； </li>
+      <li>可根据电话查找客户信息，若已存在此客户，将客户信息（客户编码、联系人、手机、客户名称、地址）自动带出； </li>
+    </ol>
+      若客户不存在，则依次录入客户信息（客户名称、联系人、手机、电话）；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td><ol>
+      <li>支持汉字、拼音和简拼检索省份、城市名称； </li>
+    </ol>
+      <p>根据所选省份自动过滤所属城市，根据所选城市自动过滤所属区县。</p>
+      <p>comments:此处应该是三个下拉框显示</p></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td><ol>
+      <li>支持汉字录入检索当前有效始发网点，点击回车后，实现自动检索。若匹配结果唯一，则自动返回始发网点信息；若匹配结果不唯一，则跳出检索结果界面，选择某个始发网点后，自动返回该始发网点信息。 </li>
+      <li>通过查询电子地图选择始发网点时，取货地址自动填充到地图搜索栏；点击搜索，系统匹配最近的始发网点后，返回该网点信息。 </li>
+    </ol>
+      只可查询出做到达的网点信息，不做到达的网点信息过滤掉；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td><ol>
+      <li>当始发网点或到达网点所在城市包含在大小城市基础资料表中时，货物类型为必填项，且只能选择其中一种，否则货物类型为空且不可编辑； </li>
+    </ol>
+      总重量、总体积不可录入负数，总重量、总体积保留一位小数位数，总件数只可为正整数；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td><ol>
+      <li>短信通知为是，订单提交成功后，系统自动发送短信到发货联系人手机，短信内容模板：发货方联系人，您好！您发往收货地址的城市名称的订单号为订单号，货物跟踪查询请拨打400830555，德邦客户中心竭诚为您服务！【德邦物流】；发货方联系人、收货地址的城市名称、订单号根据实际订单填写，其他内容为固定内容； </li>
+      <li>无手机号的不允许选择短信通知为是； </li>
+      <li>短信通知为否，订单提交成功后，系统不发送短信给发货联系人； </li>
+      <li>运输方式：精准卡航、精准汽运（长）、精准汽运（短）、精准城运、精准空运、汽运偏线； </li>
+      <li>送货方式：自提、送货上门、机场自提； </li>
+      <li>付款方式：现金、到付、月结； </li>
+      <li>签收单：同运单界面的选项； </li>
+    </ol>
+      保险价值、代收货款金额不可录入负数，无小数；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td><ol>
+      <li>若订单信息提交成功，生成一个订单流向订单始发网点对应的受理部门，订单状态为待受理状态； </li>
+    </ol>
+      若订单信息提交失败，提示订单保存失败信息。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A11</td>
+    <td>1、清空所有填写的订单信息，界面恢复到新增订单原始界面；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A12</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="605">
+      <tr>
+        <td width="605" colspan="2" valign="top"><p>说明 </p></td>
+      </tr>
+      <tr>
+        <td width="221" valign="top"><p>编码名称 </p></td>
+        <td width="384" valign="top"><p>订单号 </p></td>
+      </tr>
+      <tr>
+        <td width="221" valign="top"><p>数据类型 </p></td>
+        <td width="384" valign="top"><p>VARCHAR2(30)</p></td>
+      </tr>
+      <tr>
+        <td width="221" valign="top"><p>业务解释 </p></td>
+        <td width="384" valign="top"><p>含义：订单的唯一标识 <br>
+          订单表中的订单编号字段 </p></td>
+      </tr>
+      <tr>
+        <td width="221" valign="top"><p>编码规则 </p></td>
+        <td width="384" valign="top"><p>采用一级十三位编码： <br>
+          W1D1D2D3D4D5D6N1N2N3 N4N5N6<br>
+          订单号的具体编码规则如下： <br>
+          W1是标准渠道编码，其取值为[T/A/W/Y/C],其中，[T淘宝] [A 阿里] [W 网上营业厅] [Y 营业部 （电话预约上门接货）] [C 呼叫中心/区域客服中心];<br>
+          D1D2D3D4D5D6是当前日期标识，其中，D1D2表示年份简写，D3D4表示月份，D5D6表示日期，例如:120102表示2012年01月02日;<br>
+          N1N2N3 N4N5N6是业务流水号，业务流水号由系统生成，与渠道来源无关;<br>
+          举例：T110701000001表示淘宝在2011年7月1日下达的一个订单，且为所有渠道中的第一个。特别说明：业务流水号由系统生成，与渠道来源无关。即不同时存在T110701000001和A110701000001。 </p></td>
+      </tr>
+      <tr>
+        <td width="221" valign="top"><p>扩展规则 </p></td>
+        <td width="384" valign="top"><p>该字段属于德邦公司的业务规范，需统一维护 </p></td>
+      </tr>
+      <tr>
+        <td width="221" valign="top"><p>维护级别 </p></td>
+        <td width="384" valign="top"><p>按公司规范全国统一，可能修改 </p></td>
+      </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>新建订单规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>用户拥有新建订单的权限； </li>
+          <li>订单数据完整性校验 </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>提交成功，生成订单信息，流向订单受理部门，订单状态为待受理； </li>
+          <li>提交失败，提示相关信息； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+    <td><a href="#customerValidator"></a></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td><a href="#customerValidator"></a></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--分配与拒绝订单</td>
+    <td><a href="#order-assign_refuse">order-assign/refuse序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>默认显示未分配状态的订单信息； </li>
+      <li>不同渠道的订单用不同颜色标注； </li>
+      <li>按下单时间从早到晚排序； </li>
+      <li>订单状态：未分配、待受理、已受理、已撤销、已拒绝、已约车、接货中、已退回、揽货失败、已开单、正常签收、异常签收，默认为未分配； </li>
+      <li>订单来源：阿里巴巴、淘宝网、网上营业厅、呼叫中心、金蝶友商网、淘宝商城，默认为全部； </li>
+    </ol>
+      对于没有始发网点的订单，若客户填写的接货地址与上次揽货成功分配的接货地址完全一致，则系统默认始发网点为上次成功分配的始发网点，且将订单信息更改为待受理，订单流向始发网点对应的受理部门；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>可根据创建时间查询，默认时间：服务器当天0点至24点，一次最大查询范围为30天； </li>
+      <li>可自由组合查询条件进行查询； </li>
+      <li>可根据订单号/渠道单号查询，当输入订单号/渠道单号查询时，其他查询条件失效；输入的是订单号，按订单号查询，输入的是渠道单号则按渠道单号查询。 </li>
+    </ol>
+      可根据运单号查询，当输入运单号查询时，除订单号外，其他查询条件失效；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>根据输入的查询条件，显示符合查询条件的订单信息，若无符合查询条件的记录，则提示“无符合查询条件的记录，请重新查询”；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>可选中一条订单进行分配，也可选中多条订单进行分配；若一次选中多条订单进行分配，则需判断所选中的订单信息对应的订单状态、发货人和发货地址是否一致，三者一致才可进行批量分配；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>读取ERP/FOSS系统中的网点信息，只可查询出做出发的网点，不做出发的网点信息过滤掉；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td><ol>
+      <li>分配成功，将订单状态改为待受理，订单流向始发网点对应的受理部门； </li>
+      <li>分配失败，订单状态不变，提示分配失败的原因。 </li>
+    </ol>
+      记录分配订单的操作内容：操作人、操作时间、始发网点；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td><ol>
+      <li>订单状态为未分配且必须录入拒绝原因（即反馈信息）才可拒绝订单； </li>
+      <li>反馈信息可选择：1、禁运品；2、超规格；3、虚假揽收地址；4、虚假取件地址；5、用户恶意下单；6、取货地址超服务范围；7、派送地址超服务范围；8、用户要求延时揽收；9、用户包装问题放弃投递；10、上门后用户后不接受价格；11、用户已更换物流公司投递；12、自定义其他原因；选择“自定义原因”，反馈原因文本框为可编辑状态； </li>
+      <li>拒绝成功，将订单的状态更改为已拒绝，且当定单位为外部系统流入CRM的才需要同步更新下单渠道的订单状态为已拒绝； </li>
+      <li>拒绝失败，提示拒绝失败的原因； </li>
+    </ol>
+      记录拒绝订单的操作内容：操作人、操作时间、拒绝原因；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td><ol>
+      <li>分配成功，将订单状态改为待受理，订单流向始发网点对应的受理部门； </li>
+    </ol>
+      分配失败，订单状态不变，提示分配失败的原因。</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td><ol>
+      <li>可查看该订单的操作记录； </li>
+      <li>操作事件含分配订单、修改订单、打回订单、拒绝订单、受理订单、催单、约车； </li>
+      <li>操作内容：操作动作，若有修改订单信息，则显示**信息修改为***，其他的操作事件，操作内容显示为空； </li>
+      <li>操作用户：当前登录的用户名称； </li>
+      <li>操作部门：操作用户对应的默认部门； </li>
+    </ol>
+      操作时间：操作的服务器时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td><ol>
+      <li>订单状态为待受理时才可重新选择始发网点； </li>
+      <li>重新选择始发网点后，点击分配订单按钮，系统自动弹出提示信息“确认要将***受理网点改为****受理网点”，点击确定，则确认要将订单分配给重新选择的始发网点；点击取消，则始发网点不变，还是前一次分配订单时确定的始发网点； </li>
+    </ol>
+      重新分配始发网点后，原始发网点的订单受理界面不显示该订单信息，可通过订单号查询订单信息，但不可做受理等操作，新的始发网点可对订单进行受理等操作；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>分配与拒绝规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><p>分配订单： </p>
+            <ol>
+              <li>用户拥有查看和分配订单的权限； </li>
+              <li>当订单状态为未分配、待受理、已受理时才可进行分配订单； </li>
+              <li>可选中一条订单进行分配，也可选中多条订单进行分配；若一次选中多条订单进行分配，则需判断所选中的订单信息对应的订单状态、发货人和发货地址是否一致，三者一致才可进行批量分配</li>
+            </ol>
+          <p>拒绝订单： </p>
+          <ol>
+            <li>用户拥有查看和分配订单的权限； </li>
+            <li>当订单状态为未分配、未受理时才可拒绝； </li>
+          </ol></td>
+        <td width="274" valign="top"><p>无 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>分配始发网点成功，订单状态为待受理，订单流向始发网点对应的受理部门；如果始发网点没有对应受理部门， 受理部门就是始发网点</li>
+          <li>拒绝受理订单成功，订单状态更新为已拒绝，且当定单位为外部系统流入CRM的才需要同步更新下单渠道的订单状态为已拒绝； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>无 </p></td>
+      </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--受理与打回订单</td>
+    <td><a href="#order-process_return">order-process/return序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>默认待受理状态的订单信息； </li>
+      <li>不同渠道的订单用不同颜色标注； </li>
+      <li>按下单时间从早到晚排序； </li>
+      <li>订单状态：未分配、待受理、已受理、已撤销、已拒绝、已约车、接货中、已退回、揽货失败、已开单、正常签收、异常签收，默认为待受理； </li>
+    </ol>
+      订单来源：阿里巴巴、淘宝网、网上营业厅、呼叫中心、金蝶友商网、淘宝商城，默认为全部；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>订单号查询优先级最高，其次是发货人手机； </li>
+      <li>订单号的包含订单号、渠道订单号，输入订单号时，按订单号查，输入渠道订单号时，按渠道订单号查； </li>
+      <li>除订单号、运单号、发货人手机可作为单个查询条件查询外，其他查询条件都需要与创建时间组合查询； </li>
+    </ol>
+      创建时间（起止）一次最大查询范围是30天；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>根据输入的查询条件，显示符合查询条件的订单信息，若无符合查询条件的记录，则提示“无符合查询条件的记录，请重新查询”；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td><ol>
+      <ol>
+        <li>勾选是否选中，选中一条订单信息；也可双击订单记录，显示订单详情； </li>
+      </ol>
+      一次只能选择一条订单信息进行受理；
+    </ol></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td><ol>
+      <li>订单受理成功，弹出信息提示：受理成功；订单状态改为已受理，且同步更新渠道下单系统的订单状态为已受理； </li>
+      <li>订单受理失败，提示相关的失败信息； </li>
+      <li>根据订单号查询订单信息，可根据实际业务需要，受理始发网点非本部门的订单信息； </li>
+    </ol>
+      记录受理订单的操作内容：操作人、操作时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td><ol>
+      <li>在待受理状态下且必须选择打回原因（即反馈信息）才可打回订单； </li>
+      <li>反馈信息可选择：1、禁运品；2、超规格；3、虚假揽收地址；4、虚假取件地址；5、用户恶意下单；6、取货地址超服务范围；7、派送地址超服务范围；8、用户要求延时揽收；9、用户包装问题放弃投递；10、上门后用户后不接受价格；11、用户已更换物流公司投递；12、自定义其他原因；选择“自定义原因”，反馈原因文本框为可编辑状态； </li>
+      <li>打回订单成功，清空订单的始发网点，订单状态更新为未分配，流向分配订单界面，由分单员处理； </li>
+      <li>打回失败，提示相关的失败信息； </li>
+    </ol>
+      记录打回的操作内容，打回原因、打回人、原始发网点、打回时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td><ol>
+      <li>在已受理、已退回、接货中状态下，且必须选择揽货失败原因（即反馈信息），才可做揽货失败操作； </li>
+      <li>反馈信息可选择：1、禁运品；2、超规格；3、虚假揽收地址；4、虚假取件地址；5、用户恶意下单；6、取货地址超服务范围；7、派送地址超服务范围；8、用户要求延时揽收；9、用户包装问题放弃投递；10、上门后用户后不接受价格；11、用户已更换物流公司投递；12、自定义其他原因；选择“自定义原因”，反馈原因文本框为可编辑状态； </li>
+      <li>揽货失败成功，订单状态更新为揽货失败，同步更新下单渠道系统的订单状态为揽货失败； </li>
+      <li>揽货失败操作失败，提示相关的失败信息； </li>
+    </ol>
+      记录揽货失败的操作内容：操作人、揽货失败原因、操作时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>分配与拒绝规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="293" valign="top"><p align="center">描述 </p></td>
+        <td width="227" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="293" valign="top"><p>受理订单： </p>
+            <ol>
+              <li>用户拥有查看、受理订单的权限； </li>
+              <li>订单状态为未分配、待受理时才可受理订单； </li>
+            </ol>
+          <p>打回订单： </p>
+          <ol>
+            <li>用户拥有打回订单的权限； </li>
+            <li>订单状态为待受理时才可打回订单； </li>
+          </ol>
+          <p>揽货失败： </p>
+          <ol>
+            <li>用户拥有对订单做揽货失败的权限； </li>
+            <li>订单状态为已受理、已退回时才可做揽货失败； </li>
+          </ol></td>
+        <td width="227" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="293" valign="top"><ol>
+          <li>订单受理成功，弹出信息提示：受理成功；订单状态改为已受理，且同步更新渠道下单系统的订单状态为已受理； </li>
+          <li>打回订单成功，订单状态置为未分配； </li>
+          <li>揽货失败成功，订单状态更新为揽货失败，同步更新下单渠道系统的订单状态为揽货失败； </li>
+        </ol></td>
+        <td width="227" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--修改订单</td>
+    <td><a href="#order-update">order-update序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>订单信息自动带出，不可修改的信息默认为不可编辑状态；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>订单状态为未分配、待受理、已受理、已退回状态时才可修改，用户可通过原订单来源渠道进行修改；其他状态不允许用户修改订单； </li>
+      <li>CRM系统中不可修改的订单信息：发货联系人、收货联系人、保险价值、代收货款，订单号、渠道单号、运单号； </li>
+    </ol>
+    若有修改手机号，改后手机号必须为11位，若没有输入11位，给出提示信息“请输入正确的手机号”；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><ol>
+      <li>保存修改信息成功，CRM系统的订单信息更新为修改后的信息，且当订单由外部系统流入的需与呼叫中心、官网的订单内容同步更新，与CRM订单信息保持一致，但合作渠道订单内容不更新；若修改的内容（重量、体积、发货人地址）影响到接货时，有始发网点的订单状态改为待受理，由订单受理部门重新受理，没有始发网点的订单状态改为未分配；若修改的内容不影响接货，保持原订单状态。记录修改前的订单信息； </li>
+      <li>保存修改信息失败，提示相关的失败信息； </li>
+    </ol>
+    记录修改订单的操作内容：修改内容（修改前的订单信息、修改后的订单信息）、操作人、操作时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>订单更新规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>用户拥有修改订单的权限； </li>
+          <li>订单状态为未分配、待受理、已受理、已退回状态时，才可修改订单； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>修改订单成功，有始发网点的订单状态改为待受理，没有始发网点的订单状态改为未分配，且当订单由外部系统流入的需与呼叫中心、官网的订单内容同步更新，与CRM订单信息保持一致，但合作渠道订单内容不更新； </li>
+          <li>修改订单成功，修改的内容不影响接货，订单状态不变。 </li>
+          <li>修改订单失败，提示相关失败信息，保持订单状态不变； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--撤销订单</td>
+    <td><a href="#order-cancel">order-cancel序列图设计</a></td>
+    <td width="6">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>订单状态为未分配、待受理、已受理、已退回时才可撤销订单； </li>
+      <li>撤销订单成功，订单状态改为已撤销，并同步更新CRM系统的订单状态，同时记录撤销原因； </li>
+      <li>撤销失败，提示失败的相关信息，订单状态不变； </li>
+    </ol>
+    撤销后的订单是订单禁止导入开单；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+        <li>订单状态为未分配、待受理、已受理、已退回时且必须选择反馈信息才可撤销订单； </li>
+      <li>反馈信息可选择：1、禁运品；2、超规格；3、虚假揽收地址；4、虚假取件地址；5、用户恶意下单；6、取货地址超服务范围；7、派送地址超服务范围；8、用户要求延时揽收；9、用户包装问题放弃投递；10、上门后用户后不接受价格；11、用户已更换物流公司投递；12、自定义其他原因；选择“自定义原因”，反馈原因文本框为可编辑状态； </li>
+      <li>撤销订单成功，订单状态改为已撤销，并同步更新渠道下单系统的订单状态，同时记录撤销原因（即反馈信息）； </li>
+      <li>撤销失败，提示失败的相关信息，订单状态不变； </li>
+      <li>撤销后的订单禁止导入开单； </li>
+    </ol>
+      记录撤销操作内容：撤销人、撤销原因、撤销时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>撤销订单规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+        <tr>
+          <td width="113" valign="top"><p align="center">条件类型 </p></td>
+          <td width="293" valign="top"><p align="center">描述 </p></td>
+          <td width="227" valign="top"><p align="center">引用用例 </p></td>
+        </tr>
+        <tr>
+          <td width="113"><p align="center">前置条件 </p></td>
+          <td width="293" valign="top"><ol>
+              <li>订单状态为未分配、待受理或已受理、已退回才可撤销订单； </li>
+            <li>用户拥有撤销订单的权限； </li>
+          </ol></td>
+          <td width="227" valign="top"><p>&nbsp;</p></td>
+        </tr>
+        <tr>
+          <td width="113"><p align="center">后置条件 </p></td>
+          <td width="293" valign="top"><ol>
+              <li>撤销订单成功，订单状态改为已撤销，<strong>在CRM系统撤销订单不需更新渠道订单状态</strong>，同时记录撤销原因（即反馈信息）； </li>
+            <li>撤销订单失败，提示撤销失败信息，订单状态不变； </li>
+          </ol></td>
+          <td width="227" valign="top"><p>&nbsp;</p></td>
+        </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--订单约车</td>
+    <td><a href="#order-bookVehicle">order-bookVehicle序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>订单为接货订单（即是否接货为是）时才可进行约车，非接货订单不可进行约车； </li>
+    </ol>
+    订单信息（订单号、用车部门（即始发网点）、运输方式、提货方式、付款方式、发货方信息、货物信息）自动带出；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="121">RULE-A2</td>
+    <td><ol>
+      <li>约车编号系统自动生成，确保唯一；约车编号生成规则：一个字母+年月日时分秒； </li>
+      <li>填写接货起始时间、接货结束时间、货物类型、派车车队、用车类型、车型，未填写完整不可约车；当始发网点或到达网点所在城市包含在大小城市基础资料表中时，货物类型为必填项，且只能选择其中一种，否则货物类型为空且不可编辑； </li>
+    </ol>
+    接货最早时间不能早于当前服务器时间，接货最晚时间不能早于接货最早时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><ol>
+      <li>约车成功，订单状态更新为已约车，渠道下单系统的订单状态仍为已受理； </li>
+      <li>约车成功，生成一条约车信息流向对应的车队，生成的约车信息内容包含：订单编号、货物品名、客户名称、联系方式（手机/电话）、接货地址、总重量、总体积、包装、总件数、货物类型（A货、B货、空）、接货最早时间、接货最晚时间、用车部门、提货方式、运输性质、提货网点； </li>
+      <li>若在约车界面更改了订单信息，需同步更新CRM系统的订单信息、400和官网的订单信息，但不更新合作渠道的订单信息； </li>
+      <li>记录约车操作日志及修改订单的操作记录； </li>
+      <li>约车失败，提示约车失败的相关信息，订单状态不变； </li>
+    </ol>
+    记录约车的操作内容：操作人、操作时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>订单约车规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="293" valign="top"><p align="center">描述 </p></td>
+        <td width="227" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="293" valign="top"><ol>
+          <li>订单是需要接货的订单； </li>
+          <li>用户拥有订单约车的权限； </li>
+          <li>订单为接货订单（即是否接货为是）时才可进行约车，非接货订单不可进行约车</li>
+        </ol></td>
+        <td width="227" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="293" valign="top"><ol>
+          <li>约车成功，订单状态更新为已约车，渠道下单系统的订单状态仍为已受理； </li>
+          <li>约车成功，生成一条约车信息流向对应的车队，生成的约车信息内容包含：订单编号、货物品名、客户名称、联系方式（手机/电话）、接货地址、总重量、总体积、包装、总件数、货物类型（A货、B货、空）、接货最早时间、接货最晚时间、用车部门、提货方式、运输性质、提货网点； </li>
+          <li>若在约车界面更改了订单信息，需同步更新CRM系统的订单信息、400和官网的订单信息，但不更新合作渠道的订单信息； </li>
+          <li>约车失败，提示约车失败信息，订单状态不变； </li>
+        </ol></td>
+        <td width="227" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--催单</td>
+    <td><a href="#order-urge">order-urge序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>一次只可选择一条订单进行催单； </li>
+    </ol>
+    已开单的订单不可催单；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>订单状态为已撤销、已拒绝、揽货失败、正常签收、异常签收、已开单时不允许催单，之前有的催单不再提醒； </li>
+    </ol>
+    催单仅限上一环节催促下一环节；订单状态为待受理或已受理时，催单对象为订单受理部门；订单状态为已约车或接货中时，催单对象为车队调度员；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><ol>
+      <li>催单成功，生成催单内容：订单号****，催单次数*，在催单对象部门的待办事宜中显示； </li>
+      <li>催单有时间和频率限制，下单时间内30分钟内，禁止催单；同一部门，针对同一订单，每15分钟内仅允许催单操作一次；每催一次单，催单次数+1； </li>
+      <li>记录催单操作记录，含：订单号、催单人、催单时间、当前催单次数、催单部门； </li>
+    </ol>
+    当催单部门在待办事宜中点击催单对应的提醒内容后，该催单提醒在待办事宜中自动失效，不再提醒；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>订单催单规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>客户致电提出催促订单请求； </li>
+          <li>用户拥有催促下一环节加快处理订单的权限； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>催单成功，通知订单所处环节的部门，在订单信息中记录一次催单次数； </li>
+          <li>催单失败，提示失败原因； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--订运单关联</td>
+    <td><a href="#order-associate">order-associate序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>若订单号之前有关联的运单号，则系统自动带出原运单号信息，原运单号不可编辑； </li>
+    </ol>
+    若订单号之前没有关联的运单号，则原运单号的内容为空；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>输入需关联的运单号，系统校验现运单号是否已签收，已签收的运单不可与订单进行关联； </li>
+    </ol>
+    系统校验现运单号是否已与其他订单号有关联关系，若有则不能进行关联，没有与其他订单号有关联关系才可与输入的订单号进行关联；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><ol>
+      <li>保留订单与运单关联的操作记录。 </li>
+      <li>关联成功，将订单号与现运单号建立关联关系，但不更改订单和运单的信息；若输入的订单号有原运单号，自动解除与原运单号的关联关系； </li>
+    </ol>
+    关联失败，提示失败的相关信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>订运单关联规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>订单已创建； </li>
+          <li>运单已开单且未签收； </li>
+          <li>用户拥有绑定订单与运单关系的权限； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>关联成功，订单号与运单号建立关联关系，但不更改订单或运单的信息； </li>
+          <li>关联失败，提示失败信息； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--打印订单信息</td>
+    <td><a href="#order-print">order-print序列图设计</a></td><br>
+<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <ol>
+        <li>进入订单打印界面，订单信息自动带出； </li>
+        <li>托运人/公司：读取下单时填写的发货客户名称； </li>
+        <li>联系方式：读取下单时填写的发货客户手机/电话； </li>
+        <li>地址：读取下单时填写的接货地址； </li>
+        <li>收货人/公司：读取下单时填写的收货客户名称； </li>
+        <li>联系方式：读取下单时填写的收货客户手机/电话； </li>
+        <li>地址：读取下单时填写的收货地址； </li>
+        <li>保险声明价值：读取下单时填写的保险声明价值； </li>
+        <li>代收类型：读取下单时选择的代收货款类型，若是即日退则显示即日退，若是三日退就显示三日退； </li>
+        <li>运输方式：读取下单时选择的运输方式，显示对应的运输方式文字在运输方式栏； </li>
+        <li>交货方式：读取下单时选择的送货方式，显示对应的送货方式文字在交货方式栏； </li>
+        <li>付款方式：读取下单时选择的付款方式，显示对应的付款方式文字在付款方式栏； </li>
+        <li>签收单：读取下单时选择的签收单，显示对应的签收单文字在签收单栏； </li>
+        <li>网络订单号：读取下单提交的订单号； </li>
+        <li>货物品名：读取下单时填写的货物名称； </li>
+        <li>包装：读取下单时填写的包装材料； </li>
+        <li>储运事项：读取下单时填写的储运事项； </li>
+        <li>件数：读取下单时填写的总件数； </li>
+        <li>重量：读取下单时填写的总重量； </li>
+        <li>体积：读取下单时填写的总体积； </li>
+      </ol>
+    上门接货：读取下单时选择的是否上门接货，若为是，在上门接货栏处打印是，若为否，在上门接货栏处显示否；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>可预览打印的内容及效果；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><p>打印成功，给出提示信息，打印成功； </p>
+    2、打印失败，弹出相应的失败信息提示；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>打印订单规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>订单已受理； </li>
+          <li>用户拥有打印订单信息的权限； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>打印成功，订单信息打印至运单出发联； </li>
+          <li>打印失败，提示失败信息； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">订单管理--订单监控和提醒</td>
+    <td><a href="#order-scan_reminder">order-scan/reminder序列图设计</a></td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-B1 </td>
+    <td><p>针对订单不同状态（未分配、待受理、已受理、已退回），设置不同流转时效，监控订单处理时效，对超时受理的订单，提醒订单所处部门及时处理，提醒信息显示在待办事宜中。 </p></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>有超过十五分钟未分配始发网点的订单，需提醒订单分配部门分配订单；在订单提醒列表中的提醒类别为待分配；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><p>1、有新订单未受理的，需提醒订单受理部门受理订单；在订单提醒列表中的提醒类别为待受理； </p>
+    2、有超过十五分钟未受理的订单，需提醒订单受理部门受理订单。在订单提醒列表中的提醒类别为待受理；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><p> 1、超过三天未进行约车或开单操作的订单，需提醒订单受理部门及时联系客户，处理订单；在订单提醒列表中的提醒类别为待处理； </p>
+    2、订单状态为已撤销、已拒绝、揽货失败、已开单、正常签收、异常签收时不需要再提醒；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>1、订单提醒内容在待办事宜中显示，内容为：有（n）条待处理订单，（n）系统自动将符合订单提醒要求的订单数求和；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>监控与提醒规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>存在超时受理的订单； </li>
+          <li>系统设置了受理时效的节点； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>将超时受理的订单信息显示在待办事宜中； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+	<td>&nbsp;</td>
+  </tr>
+  
+  
+  <tr>
+    <td colspan="2" align="center">订单管理--始发网点与受理部门基础资料</td>
+    <td><a href="#order-basicInfo">order-basicInfo序列图设计</a></td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-B1 </td>
+    <td><ol>
+      <li>始发网点必须和ERP/FOSS系统中的营业部名称保持一致； </li>
+      <li>是否接货为订单属性（是否上门接货）； </li>
+      <li>订单来源值为全部、400、网单（含渠道订单、官网订单）； </li>
+    </ol>
+    受理部门必须和ERP/FOSS系统中的部名称保持一致；    <p>&nbsp;</p></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>必填信息填写完整且准确，可保存，否则提示哪些信息未填，保存成功，提示保存成功； </li>
+    </ol>
+    保存失败，提示失败的信息；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><p>导入的文件要求：文件格式为*.xls：始发网点必须和ERP/FOSS系统中的营业部名称一致，受理部门必须和ERP/FOSS系统中的部门名称保持一致，忽略名称前后空格；导入文件模板字段含：始发网点、是否接货、订单来源、受理部门；</p>    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><p> </p>
+      <ol>
+        <li>必填信息是否完整,导入文件是否有不符合条件的数据，满足必填信息完整、导入文件的数据符合条件才可保存成功； </li>
+        <li>导入的数据与系统现有数据重复（始发网点、是否接货、订单来源与现有数据都一致视为重复），替换现有数据，以最新导入的数据为准； </li>
+      </ol>
+      导入文件的数据不符合条件，提示哪些信息不符合要求，且整个导入文件的数据都不能保存；</td>
+    <td>&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td>始发网点与受理部门基础资料规则校验</td>
+    <td><table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center">条件类型 </p></td>
+        <td width="246" valign="top"><p align="center">描述 </p></td>
+        <td width="274" valign="top"><p align="center">引用用例 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">前置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>用户拥有设置该基础资料的权限； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">后置条件 </p></td>
+        <td width="246" valign="top"><ol>
+          <li>保存成功，始发网点和受理部门建立关系，订单分配始发网点后可到此表中读取对应的受理部门，将订单流向对应的受理部门； </li>
+          <li>保存失败，提示失败的信息； </li>
+        </ol></td>
+        <td width="274" valign="top"><p>&nbsp;</p></td>
+      </tr>
+    </table></td>
+	<td>&nbsp;</td>
+  </tr>
+</table>
+</fieldset>
+</a>
+<div id="order-create">
+<fieldset>
+<legend>订单创建序列图</legend>
+<img alt="" src="doc-files/order-create.jpg">
+</fieldset>
+<fieldset>
+<legend>订单创建界面</legend>
+<img alt="" src="doc-files/order-create-ui.jpg">
+</fieldset>
+</div>
+<div id="order-assign_refuse">
+<fieldset>
+<legend>订单分配与拒绝序列图</legend>
+<img alt="" src="doc-files/order-assign_refuse.jpg">
+</fieldset>
+<fieldset>
+<legend>订单分配与拒绝界面</legend>
+<img alt="" src="doc-files/order-assign_refuse-ui.jpg">
+</fieldset>
+</div>
+<div id="order-process_return">
+<fieldset>
+<legend>订单受理与打回序列图</legend>
+<img alt="" src="doc-files/order-process_return.jpg">
+</fieldset>
+<fieldset>
+<legend>订单受理与打回界面</legend>
+<img alt="" src="doc-files/order-process_return-ui.jpg">
+</fieldset>
+</div>
+<div id="order-update">
+<fieldset>
+<legend>订单修改序列图</legend>
+<img alt="" src="doc-files/order-update.jpg">
+</fieldset>
+<fieldset>
+<legend>订单修改界面</legend>
+<img alt="" src="doc-files/order-update-ui.jpg">
+</fieldset>
+</div>
+<div id="order-cancel">
+<fieldset>
+<legend>订单撤销序列图</legend>
+<img alt="" src="doc-files/order-cancel.jpg">
+</fieldset>
+<fieldset>
+<legend>订单撤销界面</legend>
+<img alt="" src="doc-files/order-cancel-ui.jpg">
+</fieldset>
+</div>
+<div id="order-bookVehicle">
+<fieldset>
+<legend>订单约车序列图</legend>
+<img alt="" src="doc-files/order-bookVehicle.jpg">
+</fieldset>
+<fieldset>
+<legend>订单约车界面</legend>
+<img alt="" src="doc-files/order-bookVehicle-ui.jpg">
+</fieldset>
+</div>
+<div id="order-urge">
+<fieldset>
+<legend>订单催单序列图</legend>
+<img alt="" src="doc-files/order-urge.jpg">
+</fieldset>
+</div>
+<div id="order-associate">
+<fieldset>
+<legend>订运单关联序列图</legend>
+<img alt="" src="doc-files/order-associate.jpg">
+</fieldset>
+<fieldset>
+<legend>订运单关联界面</legend>
+<img alt="" src="doc-files/order-associate-ui.jpg">
+</fieldset>
+</div>
+<div id="order-print">
+<fieldset>
+<legend>订单打印序列图</legend>
+<img alt="" src="doc-files/order-print.jpg">
+</fieldset>
+<fieldset>
+<legend>订单打印界面</legend>
+<img alt="" src="doc-files/order-print-ui.jpg">
+</fieldset>
+</div>
+<div id="order-scan_reminder">
+<fieldset>
+<legend>订单监控和提醒序列图</legend>
+<img alt="" src="doc-files/order-scan_reminder.jpg">
+</fieldset>
+</div>
+<div id="order-basicInfo">
+<fieldset>
+<legend>始发网点与受理部门基础资料</legend>
+<img alt="" src="doc-files/order-basicInfo.jpg">
+</fieldset>
+</div>
+<div id="DAO">
+<fieldset>
+<legend>MagicDraw订单UML</legend>
+<a href="doc.files/order.mdzip">详细原型</a>
+</fieldset>
+</div>
+<div id="DAO">
+<fieldset>
+<legend>DAO说明</legend>
+<table border="1">
+<tr><td>NO</td><td>dao方法</td><td>dao调用sqlID</td><td>功能</td></tr>
+</table>
+</fieldset>
+</div>
+<div id="domain">
+<fieldset>
+<legend>domain说明</legend>
+<table>
+<tr>
+</table>
+</fieldset>
+</div>
+</body>
+</html>

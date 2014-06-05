@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<!-- DPAP -->
+	<bean id="instanceid" class="com.deppon.foss.framework.server.components.scheduling.IdFactoryBean" />
+	<bean id="scheduler" class="com.deppon.foss.framework.server.components.scheduling.LocalSchedulerFactoryBean">
+		<property name="instanceId" ref="instanceid"></property>
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="schedulerAction" class="com.deppon.crm.module.scheduler.server.action.SchedulerAction">
+		<property name="schedulingControlService" ref="schedulingControlService"></property>
+		<property name="messageBundle" ref="messageBundle"></property>
+	</bean>
+	<!-- 客户，工作流数据对比 -->
+	<import resource="./DataCompareSchedule.xml"/>
+	<!-- 订单 -->
+	<import resource="./OrderTimerSchedule.xml" />
+	<!-- 理赔 -->
+	<import resource="./RecompenseTimerSchedule.xml" />
+	<!-- 代办消息清理-->
+	<import resource="./CleanMessageTimerSchedule.xml" />
+
+	<!-- 代办消息发送到erp-->
+	<import resource="./SendErpMessageTimerSchedule.xml" />
+
+	<!-- 工单 -->
+	<import resource="./ComplaintTimerSchedule.xml" />
+
+	<!-- 潜散客 -->
+	<import resource="./daoBean.xml" />
+	<import resource="./PotentialCustomerTimerSchedule.xml" />
+
+	<!-- 客户开发 -->
+	<import resource="./planScheduleTimer.xml" />
+	
+	<!-- 部门/网点 -->
+	<import resource="./DeptTimerBean.xml" />
+		
+	<!-- 调度控制 -->
+	<import resource="./schedulingControlBean.xml"/>
+	<import resource="./schedulingControlTimer.xml"/>
+	
+	<!-- 组织人员同步 -->
+<!-- 	<import resource="./syncEmpAndDepartmentTimer.xml"/> -->
+	<!-- 合同 -->
+	<import resource="./ContractTimerSchedule.xml"/>
+	
+	<!-- 客户操作日志 -->
+	<import resource="./ScheduleOperateRecordCustomer.xml"/>
+	
+	<!-- 散客生成 -->
+	<!-- <import resource="./CreatePotentialCustomerTimerSchedule.xml"/> -->
+
+	<!-- Action日志-->
+		<import resource="./ActionLog.xml"/>
+		<import resource="./ActionLogTimerSchedule.xml"/>
+
+</beans>
+

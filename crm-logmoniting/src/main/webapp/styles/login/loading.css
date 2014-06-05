@@ -1,0 +1,98 @@
+﻿@CHARSET "UTF-8";
+
+.loading-indicator {
+	font-size: 11px;
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-left: 20px;
+	height: 18px;
+	text-align: left;
+}
+
+#loading-mask {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 20000;
+	background-color: white;
+}
+
+#loading {
+	position: absolute;
+	left: 42%;
+	top: 40%;
+	padding: 2px;
+	z-index: 20001;
+	height: auto;
+}
+
+#loading img {
+	margin-bottom: 5px;
+}
+
+#loading .loading-indicator {
+	background: white;
+	color: #555;
+	font: bold 13px tahoma, arial, helvetica;
+	padding: 10px;
+	margin: 0;
+	text-align: center;
+	height: auto;
+}
+
+.x-border-box .x-tab-default-top {
+	height: 23px;
+}
+
+.x-tab-default-top button,.x-tab-default-top .x-tab-inner {
+	height: 15px;
+	line-height: 15px;
+}
+
+.x-panel-body-default {
+	background: #D9E7F8;
+	border-color: rgb(153, 188, 232);
+	color: black;
+	border-style: solid;
+}
+.x-panel-default {
+border-color: #DFE8F6;
+}
+
+/* USERWINDOW去掉USERFORM的线条 */
+#userForm-body{
+	border-color: #DFE8F6;
+}
+#authorizeForm-body{
+	border-color: #DFE8F6;
+}
+
+#authorizeTab-body{
+	border-color: #DFE8F6;
+}
+#tab-body{
+	border-color: #DFE8F6;
+}
+
+#AuthorizeOutForm-body{
+	border-color: #DFE8F6;
+}
+#outTab-body{
+	border-color: #DFE8F6;
+}
+
+#AuthorizeOutTab-body{
+	border-color: #DFE8F6;
+}
+#outForm-body{
+	border-color: #DFE8F6;
+}
+.x-panel-default-framed {
+border-color: #DFE8F6 ;
+}
+.x-fieldset {
+overflow: hidden;
+margin:4px 5px 5px 4px;
+}

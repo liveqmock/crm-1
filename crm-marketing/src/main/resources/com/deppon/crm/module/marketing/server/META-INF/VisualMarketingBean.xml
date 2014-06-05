@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- 可视化营销五公里地图 -->
+	 <bean id="visualMarketDaoImpl" class="com.deppon.crm.module.marketing.server.dao.impl.VisualMarketDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean> 
+	 <bean id="visualMarketServiceImpl" 
+		class="com.deppon.crm.module.marketing.server.service.impl.VisualMarketServiceImpl">
+		<property name="ladingstationDepartmentDao" ref="ladingstationDepartmentDao"></property>
+		<property name="visualMarketDao" ref="visualMarketDaoImpl"></property>
+	</bean>
+    <bean id="visualMarketManagerImpl" 
+    	class="com.deppon.crm.module.marketing.server.manager.impl.VisualMarketManagerImpl">
+    	<property name="custLabelManager" ref="custLabelManager"></property>
+    	<property name="customerCallManager" ref="customerCallManager"></property>
+    	<property name="visualMarketService" ref="visualMarketServiceImpl"></property>
+   	    <property name="memberManager" ref="alterMemberManager"></property>
+    </bean>
+     <bean id="visualMarketingAction" 
+    	class="com.deppon.crm.module.marketing.server.action.VisualMarketingAction" scope="prototype">
+    	<property name="visualMarketManager" ref="visualMarketManagerImpl"></property>
+    	<property name="regionPartitionManager" ref="regionPartitionManager"></property>
+    </bean>
+	<!-- 物化视图 DAO-->
+	<bean id="materializedViewImpl" class="com.deppon.crm.module.marketing.server.dao.impl.MaterializedViewImpl">
+	<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="materializedViewPSImpl" class="com.deppon.crm.module.marketing.server.dao.impl.MaterializedViewPSImpl">
+	<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- SERVICE -->
+	<bean id="materviewServiceImpl" class="com.deppon.crm.module.marketing.server.service.impl.MaterviewServiceImpl">
+		<property name="mvPs" ref="materializedViewPSImpl"></property>
+		<property name="mv" ref="materializedViewImpl"></property>
+	</bean>
+	<!-- manager -->
+	<bean id="materViewManagerImpl" class="com.deppon.crm.module.marketing.server.manager.impl.MaterViewManagerImpl">
+		<property name="mvServeice" ref="materviewServiceImpl"></property>
+	</bean>
+</beans>

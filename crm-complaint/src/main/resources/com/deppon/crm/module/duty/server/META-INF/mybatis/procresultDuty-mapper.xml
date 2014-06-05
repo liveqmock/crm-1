@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.ProcResult">
+	<resultMap id="baseResultMap"
+		type="com.deppon.crm.module.duty.shared.domain.ProcResult">
+		<id column="FID" property="fid" jdbcType="DECIMAL" />
+		<result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+		<result column="FCREATEUSERID" property="createuserid"
+			jdbcType="DECIMAL" />
+		<result column="FLASTUPDATETIME" property="lastupdatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="lastmodifyuserid"
+			jdbcType="DECIMAL" />
+		<result column="FLEVELID" property="levelid" jdbcType="DECIMAL" />
+		<result column="FDEALLAN" property="deallan" jdbcType="VARCHAR" />
+		<result column="FEEDBACKLIMIT" property="feedbacklimit"
+			jdbcType="VARCHAR" />
+		<result column="PROCLIMIT" property="proclimit"
+			jdbcType="VARCHAR" />
+		<result column="FBUSTYPE" property="busType"
+			jdbcType="VARCHAR" />
+		<result column="FREWORPUSTYPE" property="reworpusType"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<insert id="saveProcResult" parameterType="com.deppon.crm.module.duty.shared.domain.ProcResult">
+		<selectKey keyProperty="id" resultType="DECIMAL" order="BEFORE">
+			SELECT SEQ_ID_PROCRESULT.nextval AS
+			id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_PROCRESULT
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+			  <if test="createTime != null" >
+				FCREATETIME,
+			  </if>
+			  <if test="createUserId != null" >
+				FCREATEUSERID,
+			  </if>
+			  <if test="lastUpdateTime != null" >
+				FLASTUPDATETIME,
+			  </if>
+			  <if test="lastModifyUserId != null" >
+				FLASTMODIFYUSERID,
+			  </if>
+			  <if test="levelId != null" >
+				FLEVELID,
+			  </if>
+              <if test="dealLanguage != null" >
+				FDEALLAN,
+			  </if>
+              <if test="feedbackLimit != null" >
+				FEEDBACKLIMIT,
+			  </if>
+              <if test="procLimit != null" >
+				PROCLIMIT,
+			  </if>
+              <if test="busType != null" >
+				FBUSTYPE,
+			  </if>
+			  <if test="reworpusType != null" >
+				FREWORPUSTYPE,
+			  </if>
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+					#{id},
+				 sysdate,
+				  <if test="createUserId != null" >
+					#{createUserId},
+				  </if>
+				  sysdate,
+				  <if test="lastModifyUserId != null" >
+					#{lastModifyUserId},
+				  </if>
+				  <if test="levelId != null" >
+					#{levelId},
+				  </if>
+	              <if test="dealLanguage != null" >
+					#{dealLanguage},
+				  </if>
+	              <if test="feedbackLimit != null" >
+					#{feedbackLimit},
+				  </if>
+	              <if test="procLimit != null" >
+					#{procLimit},
+				  </if>
+	              <if test="busType != null" >
+					#{busType},
+				  </if>
+				 <if test="reworpusType != null" >
+					#{reworpusType},
+				  </if>
+			 </trim>
+	</insert>
+	
+	<delete id="deleteProcResultById" parameterType="java.math.BigDecimal">
+		<![CDATA[
+		delete from T_CRM_PROCRESULT WHERE FID=#{id}
+		]]>
+	</delete>
+	
+	<delete id="deleteProcResultByParentId" parameterType="java.math.BigDecimal">
+		<![CDATA[
+		DELETE T_CRM_PROCRESULT CP WHERE CP.FLEVELID IN (SELECT FID FROM T_CRM_BASCI_LEVEL BL WHERE BL.FPARENTID = #{id})
+		]]>
+	</delete>
+	
+	<select id="getProResultByLevelId" parameterType="integer" resultMap="baseResultMap">
+		<![CDATA[
+			SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID, FLEVELID, FDEALLAN, FEEDBACKLIMIT, PROCLIMIT,FBUSTYPE,FREWORPUSTYPE 
+			FROM T_CRM_PROCRESULT WHERE FLEVELID=#{basciLevelId}
+			ORDER BY FID
+		]]>
+	</select>
+	
+	<select id="getProcResultById" parameterType="java.math.BigDecimal" resultMap="baseResultMap">
+		<![CDATA[
+			SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID, FLEVELID, FDEALLAN, FEEDBACKLIMIT, PROCLIMIT,FBUSTYPE,FREWORPUSTYPE
+			FROM T_CRM_PROCRESULT WHERE FID=#{id}
+		]]>
+	</select>
+	<!-- 修改角色对象 -->
+	<update id="updateProcResult" parameterType="com.deppon.crm.module.duty.shared.domain.ProcResult">
+		UPDATE T_CRM_PROCRESULT
+		<set>
+			<if test="lastmodifyuserid !=null and lastmodifyuserid != ''">
+				FLASTMODIFYUSERID = #{lastmodifyuserid,jdbcType=DECIMAL},
+	    	</if>
+			<if test="levelid != null and levelid !=''">
+				FLEVELID = #{levelid,jdbcType=DECIMAL},
+	    	</if>
+			<if test="deallan != null and deallan != '' ">
+				FDEALLAN = #{deallan,jdbcType=VARCHAR},
+        	</if>
+        	
+        	<if test="lastmodifyuserid !=null and lastmodifyuserid != '' ">
+				FEEDBACKLIMIT = #{feedbacklimit, jdbcType=VARCHAR},
+	    	</if>
+			<if test="proclimit != null and proclimit !='' ">
+				PROCLIMIT = #{proclimit, jdbcType=VARCHAR},
+	    	</if>
+	    	<if test="busType !=null and busType != ''">
+	    		FBUSTYPE = #{busType,jdbcType=VARCHAR},
+	    	</if>
+	    	<if test="reworpusType !=null and reworpusType != ''">
+	    		FREWORPUSTYPE = #{reworpusType,jdbcType=VARCHAR},
+	    	</if>
+			FLASTUPDATETIME = sysdate
+		</set>
+		WHERE FID = #{id}
+	</update>
+	<!-- 新基础资料设置 -->
+	<select id="searchBusTypeByBusScope" parameterType="String" 
+		resultType="com.deppon.crm.module.duty.shared.domain.BasicInfo">
+		SELECT 
+			FID busTypeId,
+			FLEVELID busScopeId,
+			FDEALLAN dealLanguage,
+			FEEDBACKLIMIT feedbackLimit,
+			PROCLIMIT procLimit,
+			FBUSTYPE busTypeName,
+			FREWORPUSTYPE reworpusType
+			FROM T_CRM_PROCRESULT
+			WHERE FLEVELID = #{levelId}
+	</select>
+	<insert id="saveBusType" parameterType="com.deppon.crm.module.duty.shared.domain.BasicBusType">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_ID_PROCRESULT.nextval AS
+				id FROM DUAL
+		</selectKey>
+			INSERT INTO T_CRM_PROCRESULT
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+			  <if test="createTime != null" >
+				FCREATETIME,
+			  </if>
+			  <if test="createUserId != null" >
+				FCREATEUSERID,
+			  </if>
+			  <if test="lastUpdateTime != null" >
+				FLASTUPDATETIME,
+			  </if>
+			  <if test="lastModifyUserId != null" >
+				FLASTMODIFYUSERID,
+			  </if>
+			  <if test="levelId != null" >
+				FLEVELID,
+			  </if>
+              <if test="dealLanguage != null" >
+				FDEALLAN,
+			  </if>
+              <if test="feedbackLimit != null" >
+				FEEDBACKLIMIT,
+			  </if>
+              <if test="procLimit != null" >
+				PROCLIMIT,
+			  </if>
+              <if test="busType != null" >
+				FBUSTYPE,
+			  </if>
+			  <if test="reworpusType != null" >
+				FREWORPUSTYPE,
+			  </if>
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+					#{id},
+				  <if test="createTime != null" >
+					#{createTime},
+				  </if>
+				  <if test="createUserId != null" >
+					#{createUserId},
+				  </if>
+				  <if test="lastUpdateTime != null" >
+					#{lastUpdateTime},
+				  </if>
+				  <if test="lastModifyUserId != null" >
+					#{lastModifyUserId},
+				  </if>
+				  <if test="levelId != null" >
+					#{levelId},
+				  </if>
+	              <if test="dealLanguage != null" >
+					#{dealLanguage},
+				  </if>
+	              <if test="feedbackLimit != null" >
+					#{feedbackLimit},
+				  </if>
+	              <if test="procLimit != null" >
+					#{procLimit},
+				  </if>
+	              <if test="busType != null" >
+					#{busType},
+				  </if>
+				 <if test="reworpusType != null" >
+					#{reworpusType},
+				  </if>
+			 </trim>
+	</insert>
+	<update id="updateBusType" parameterType="com.deppon.crm.module.duty.shared.domain.BasicBusType">
+		<![CDATA[
+			UPDATE T_CRM_PROCRESULT
+		]]>
+		<set>
+			<if test="lastUpdateTime !=null and lastUpdateTime != ''">
+				FLASTUPDATETIME = #{lastUpdateTime},
+	    	</if>
+	    	<if test="lastModifyUserId !=null and lastModifyUserId != '' ">
+				FLASTMODIFYUSERID = #{lastModifyUserId},
+	    	</if>
+			<if test="levelId != null and levelId !=''">
+				FLEVELID = #{levelId},
+	    	</if>
+			<if test="dealLanguage != null and dealLanguage != '' ">
+				FDEALLAN = #{dealLanguage},
+        	</if>
+			<if test="procLimit != null and procLimit !='' ">
+				PROCLIMIT = #{procLimit},
+	    	</if>
+	    	<if test="feedbackLimit != null and feedbackLimit !='' ">
+				FEEDBACKLIMIT = #{feedbackLimit},
+	    	</if>
+	    	<if test="reworpusType != null and reworpusType !='' ">
+				FREWORPUSTYPE = #{reworpusType},
+	    	</if>
+	    	<if test="busType !=null and busType != ''">
+	    		FBUSTYPE = #{busType,jdbcType=VARCHAR},
+	    	</if>
+		</set>
+		WHERE FID = #{id}
+	</update>
+	<delete id="deleteBusTypeByBusItem">
+		<![CDATA[
+			DELETE T_CRM_PROCRESULT WHERE FLEVELID IN(
+				SELECT FID FROM T_CRM_BASCI_LEVEL WHERE FPARENTID IN
+		]]>
+			<foreach collection="list" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
+		<![CDATA[
+			)
+		]]>	
+	</delete>
+	<delete id="deleteBusTypeByBusScope">
+		<![CDATA[
+			DELETE T_CRM_PROCRESULT WHERE FLEVELID IN
+		]]>
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	<delete id="deleteBusTypeById" parameterType="list">
+		<![CDATA[
+			DELETE T_CRM_PROCRESULT WHERE FID IN
+		]]>
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

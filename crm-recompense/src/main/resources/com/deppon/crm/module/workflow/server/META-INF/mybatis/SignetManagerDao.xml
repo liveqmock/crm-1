@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.workflow.server.dao.impl.SignetManagerDaoImpl">
+
+
+	<resultMap id="signetManagerMap"		type="com.deppon.crm.module.workflow.shared.domain.SignetManager">
+		<result property="id" column="FID" />
+		<result property="deptId" column="FDEPTID" />
+		<result property="empCode" column="FEMPCODE" />
+		<result property="empName" column="FEMPNAME" />
+		<result property="deptName" column="FDEPTNAME" />
+	</resultMap>
+
+
+
+	<select id="findSignetManager" resultMap="signetManagerMap" parameterType="map">
+ 		SELECT 
+ 			SD.FID,
+			EM.FEMPCODE,
+			EM.FEMPNAME,
+			DE.FDEPTNAME
+	    FROM 
+	    	T_REC_SIGNETDEPARTMENT SD 
+		LEFT JOIN T_ORG_EMPLOYEE EM 
+			ON SD.FEMPID =EM.FID
+		LEFT JOIN T_ORG_DEPARTMENT DE
+			ON SD.FDEPTID=DE.FID
+		<if test="null != empId">
+				WHERE SD.FEMPID=#{empId}	
+		</if>
+ 	</select>
+ 	
+ 	<select id="findSignetManagerCount" resultType="Long" parameterType="map">
+ 		SELECT 
+ 			count(0)
+	    FROM 
+	    	T_REC_SIGNETDEPARTMENT SD 
+		LEFT JOIN T_ORG_EMPLOYEE EM 
+			ON SD.FEMPID =EM.FID
+		LEFT JOIN T_ORG_DEPARTMENT DE
+			ON SD.FDEPTID=DE.FID
+		<if test="null != empId">
+				WHERE SD.FEMPID=#{empId}	
+		</if>
+ 	</select>
+
+
+	<insert id="addSignetManager"	parameterType="com.deppon.crm.module.workflow.shared.domain.SignetManager">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_SIGNETDEPARTMENT.nextval as id FROM DUAL
+		</selectKey>
+		insert into T_REC_SIGNETDEPARTMENT
+		(
+			FID,
+			FDEPTID,
+			FEMPID,
+			FCREATEUSER,
+			FCREATEDATE
+		)
+		values(			
+			#{id},
+			#{deptId ,jdbcType=NUMERIC},
+			#{empId ,jdbcType=NUMERIC},
+			#{createUser ,jdbcType=NUMERIC},
+			#{createDate ,jdbcType=TIMESTAMP}
+		)				
+	</insert>
+	
+	<delete id="deleteSignetManagerById" parameterType="Integer"> 
+		DELETE T_REC_SIGNETDEPARTMENT WHERE FID = #{id} 
+	</delete>
+	
+	
+	<select id="findEmpCount" resultType="Integer" parameterType="Integer">
+ 		SELECT 
+ 			count(0)
+	    FROM 
+	    	T_REC_SIGNETDEPARTMENT
+		WHERE 
+			FEMPID=#{empId}	
+ 	</select>
+ 	
+ 	<select id="findDepCount" resultType="Integer" parameterType="Integer">
+ 		SELECT 
+ 			count(0)
+	    FROM 
+	    	T_REC_SIGNETDEPARTMENT
+		WHERE 
+			FDEPTID=#{deptId}	
+ 	</select>
+
+	<select id="getSignetManagerByDeptId" resultMap="signetManagerMap" parameterType="string">
+ 		SELECT 
+ 			SD.FID,
+ 			SD.FDEPTID,
+			EM.FEMPCODE,
+			EM.FEMPNAME,
+			DE.FDEPTNAME
+	    FROM 
+	    	T_REC_SIGNETDEPARTMENT SD 
+		LEFT JOIN T_ORG_EMPLOYEE EM 
+			ON SD.FEMPID =EM.FID
+		LEFT JOIN T_ORG_DEPARTMENT DE
+			ON SD.FDEPTID=DE.FID 
+		WHERE SD.FDEPTID=#{deptId}	
+ 	</select>
+</mapper>

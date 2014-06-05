@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+xmlns:tns="http://www.deppon.com/fssc/remote/crm/domain" 
+targetNamespace="http://www.deppon.com/fssc/remote/crm/domain">
+    <element name="query_cashieraccountRequest" type="tns:Query_cashieraccountRequest"></element>
+	<element name="query_cashieraccountResponse" type="tns:Query_cashieraccountResponse"></element>
+
+    <complexType name="Query_cashieraccountRequest">
+        <annotation>
+        	<documentation>查询收银员账号接口，请求参数</documentation>
+        </annotation>
+        <sequence>
+        	<element name="cashierNumber" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>收银员工号</documentation>
+        		</annotation>
+        	</element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Query_cashieraccountResponse">
+        <annotation>
+        	<documentation>查询收银员账号接口，返回参数</documentation>
+        </annotation>
+        <sequence>
+    		<element name="cashierAccountInformation" type="tns:CashierAccount" minOccurs="1" maxOccurs="unbounded">
+    			<annotation>
+    				<documentation>收银员账号信息</documentation>
+    			</annotation>
+    		</element>
+    		<element name="isSuccess" type="boolean" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>处理结果	处理成功返回true,处理失败返回false</documentation>
+    			</annotation>
+    		</element>
+    		<element name="failedReason" type="string" minOccurs="0" maxOccurs="1">
+    			<annotation>
+    				<documentation>失败原因	如果处理失败就有失败原因</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+
+
+    <complexType name="CashierAccount">
+    	<sequence>
+    		<element name="bankProvinceCode" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>省份编码</documentation>
+    			</annotation>
+    		</element>
+    		<element name="bankCityCode" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>城市编码</documentation>
+    			</annotation>
+    		</element>
+    		<element name="bankBranchCode" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>支行编码</documentation>
+    			</annotation>
+    		</element>
+    		<element name="bankCode" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>银行编码</documentation>
+    			</annotation>
+    		</element>
+    		<element name="account" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>银行账号</documentation>
+    			</annotation>
+    		</element>
+    		<element name="accountNature" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>账户性质</documentation>
+    			</annotation>
+    		</element>
+    		<element name="mobile" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>电话号码</documentation>
+    			</annotation>
+    		</element>
+    		<element name="openBankUserName" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>开户名</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+</schema>

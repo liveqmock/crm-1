@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv ="Content-Type" content ="text/html; charset=utf-8" />
+<style>     
+@media print
+{
+	.Noprint{display:none;}     
+	.PageNext{page-break-after: always;} 
+	.noprn { DISPLAY: none }   
+}
+@media screen
+{
+	html, body{ overflow-y:scroll;height:99%;}  /*强制火狐浏览器显示滚动条*/
+	td,tr{border-style:solid;border-width:thin;border-width: 1px !important;}
+}
+	.forcesizeLinkMan {height:50px;width:90px; overflow:hidden; border-width:1px !important;}
+	.forcesizeCust {height:50px;width:135px; overflow:hidden; border-width:1px !important;}
+	.forcesizePhone {height:50px;width:60px;overflow:hidden; border-width:1px !important;}
+	.forcesizeMobile {height:50px;width:70px; overflow:hidden; border-width:1px !important;}
+	.forcesizeAddress {height:50px;width:135px; overflow:hidden; border-width:1px !important;}
+	
+</style>
+
+<script type="text/javascript">
+	// 对Date的扩展，将 Date 转化为指定格式的String 
+	// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
+	// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
+	// 例子： 
+	// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S")
+	// (new Date()).Format("yyyy-M-d h:m:s.S")
+	Date.prototype.format = function(fmt) 
+	{ //author: 盛诗庆 
+	  var timeObject = { 
+	    "M+" : this.getMonth()+1,                 //月份 
+	    "d+" : this.getDate(),                    //日 
+	    "h+" : this.getHours(),                   //小时 
+	    "m+" : this.getMinutes(),                 //分 
+	    "s+" : this.getSeconds(),                 //秒 
+	    "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+	    "S"  : this.getMilliseconds()             //毫秒 
+	  }; 
+	  if(/(y+)/.test(fmt)) 
+	    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+	  for(var k in timeObject) 
+	    if(new RegExp("("+ k +")").test(fmt)) 
+	  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (timeObject[k]) : (("00"+ timeObject[k]).substr((""+ timeObject[k]).length))); 
+	  return fmt; 
+	}
+	<!--打印分页-->
+	function pageBreak(i){
+		var id = "pageBreak" + i;
+		document.write('<p class=PageNext></p>');//使用id可以避免使用nanme带来数组遍历问题
+		<!--document.getElementById(id).style.pageBreakAfter="always";-->
+	}
+	<!--创建表头-->
+	function createHead(){
+		var planInfo = this.opener.planInfo;
+		var projectType = planInfo.projectType == null ? '': planInfo.projectType;
+		/*
+		判断计划类型
+		以下方法将计划类型固定死了，不方便扩展和后期维护，建议改进。
+		*/
+		if(projectType == ''){
+			projectType = '';
+		}else if(projectType == 'EXPRESS'){
+			projectType = '快递';
+		}else{
+			projectType = '零担';
+		}
+		var topic = planInfo.topic;
+		var beginTime = new Date(planInfo.beginTime).format('yyyy.MM.dd');
+		var endTime = new Date(planInfo.endTime).format('yyyy.MM.dd');
+		document.write(
+				'<table border=1px rules = all style="font-size:12px;table-layout:word-wrap:break-word;word-break:break-all"  align="center">'
+	            +'<tr >'
+	           	+'<td colspan = "3">计划类别:' + projectType + '</td>'
+				+'<td colspan="2">开发时限:'+ beginTime + '-' + endTime + '</td>'
+				+'<td colspan="6" id = "topic">计划主题：'+ topic + '</td>'
+				+'</tr>'
+		);	
+	}
+	<!--创建表列 建议使用write写死，不要使用dom动态创建行列的方法。动态创建行列style设置比较复杂-->
+	function createRow(){
+		document.write('<tr>'
+				+ '<td  width = 135px height = 45px">客户名称</td>'
+				+'<td  width = 90px height = 45px>联系人姓名</td>'
+				+'<td  width = 60px height = 45px>联系人电话</td>'
+				+'<td  width = 70px height = 45px>联系人手机</td>'
+				+'<td  width = 135px height = 45px>联系人地址</td>'
+			  	+'<td  width = 50px height = 45px>需求及问题</td>'
+			  	+'<td  width = 180px height = 45px>需求及问题解决办法</td>'
+			  	+'<td  width = 45px height = 45px>货量潜力</td>'
+			  	+'<td  width = 30px height = 45px>合作物流公司</td>'
+			  	+'<td  width = 30px height = 45px>回访时间</td>'
+			  	+'<td  width = 30px height = 45px>回访方式</td>'
+			+'</tr>')
+	}
+	<!--加载一行数据-->
+	function loadRowData(rowData){
+		var custName = rowData.data.custName == null?'':rowData.data.custName;
+		var linkManName = rowData.data.linkManName == null?'':rowData.data.linkManName;
+		var linkManPhone = rowData.data.linkManPhone == null?'':rowData.data.linkManPhone;
+		var linkManMobile = rowData.data.linkManMobile == null?'':rowData.data.linkManMobile;
+		var address = rowData.data.address == null?'':rowData.data.address;
+		document.write('<tr> '
+				+ '<td><div class = "forcesizeCust">'+custName+'</div></td>'
+				+'<td><div class = "forcesizeLinkMan">'+linkManName+'</div></td>'
+				+'<td><div class = "forcesizePhone">'+linkManPhone+'</div></td>'
+				+'<td><div class = "forcesizeMobile">'+linkManMobile+'</div></td>'
+				+'<td><div class = "forcesizeAddress">'+address+'</div></td>'
+			  	+'<td></td>'
+			  	+'<td></td>'
+			  	+'<td></td>'
+			  	+'<td></td>'
+			  	+'<td></td>'
+			  	+'<td></td>' 
+			+'</tr>')
+	}
+	<!--创建表尾-->
+	function createTail(){
+		document.write(
+		'<tr>'
+		+	'<td colspan = 11>'
+		+'需求及问题栏包括内容：1、价格 2、时效 3、安全 4、服务 5、增值服务（保价，包装，代收货款，签收单）' 
+		+'	6、是否愿意考虑德邦 7、货物类型 8、其他<br />'
+		+'货量潜力：每月发货金额 单位 元/月'	
+		+'	</td>'
+		+'</tr>'
+	+'</table>')
+	}
+	<!--加载计划详情数据-->
+	function loadData(){
+		var printData = this.opener.printData;
+		for(var i = 0;i<printData.length;i++){
+			if(i == 0){//第一条数据
+				createHead();//创建表头	
+				createRow();//创建列名
+				loadRowData(printData[0]);
+			}else if(i % 10 == 0){//达到一页最大条数限制
+				createTail();//创建表尾
+				pageBreak(i);//分页
+				createHead();//创建表头	
+				createRow();//创建列名
+				loadRowData(printData[i]);
+			}else{
+				loadRowData(printData[i]);
+			}
+			
+		}
+		createTail();//创建表尾
+		
+	}
+	loadData();
+	<!--打印-->
+	function printPlan(){
+		//var b = document.getElementById("printBtn");
+		//b.style.display=b.style.display=='none'?'':'none';
+		if (window.print != null){ 
+			window.print();
+			//document.all.WebBrowser.ExecWB(6,1);
+		}else{
+			alert('没有安装打印机'); }
+	}
+	</script>
+
+</head>
+
+<body>	
+	<input type="button" value="打印" class = "noprn" onclick="window.print()" id="printBtn" />
+</body>
+</html>

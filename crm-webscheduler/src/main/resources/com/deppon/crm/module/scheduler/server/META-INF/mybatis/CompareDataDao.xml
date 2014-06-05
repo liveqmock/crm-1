@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.shared.domain.CompareData">
+	<resultMap id="CompareWorkflowRM" type="com.deppon.crm.module.scheduler.shared.domain.CompareWorkflow">
+		<result property="workflowType" column="W_WORKFLOWTYPE" />
+		<result property="bizNum" column="W_biztnum" />
+		<result property="workflowNum" column="W_fworkflowid" />
+		<result property="state" column="W_FAPPROVALSTATE" />
+	</resultMap>
+
+	<resultMap id="MemeberRM"
+		type="com.deppon.crm.module.scheduler.shared.domain.CompareMember">
+		<result property="custNumber" column="B_FCUSTNUMBER" />
+		<result property="procRedit" column="B_FPROCREDIT" />
+		<result property="custStatus" column="B_FCUSTSTATUS" />
+		<result property="crmId" column="B_FID" />
+		<collection property="accountList" resultMap="AccountRM" />
+		<collection property="contactList" resultMap="ContactRM" />
+		<collection property="contractList" resultMap="ContractRM" />
+	</resultMap>
+	<resultMap id="AccountRM"
+		type="com.deppon.crm.module.scheduler.shared.domain.CompareAccount">
+		<result property="bankAccount" column="A_FBANKACCOUNT" />
+		<result property="bankId" column="A_FBANKID" />
+		<result property="subBanknameId" column="A_FSUBBANKNAMEID" />
+		<result property="crmId" column="A_FID" />
+		<result property="custId" column="A_FBELONGCUSTOM" />
+	</resultMap>
+	<resultMap id="ContactRM"
+		type="com.deppon.crm.module.scheduler.shared.domain.CompareContact">
+		<result property="number" column="L_FNUMBER" />
+		<result property="status" column="L_FSTATUS" />
+		<result property="mobilePhone" column="L_FMOBILETEL" />
+		<result property="custId" column="L_FCUSTID" />
+		<result property="lastUpdateTime" column="L_FLASTUPDATETIME" />
+		<result property="crmId" column="L_FID" />
+	</resultMap>
+	<resultMap id="ContractRM"
+		type="com.deppon.crm.module.scheduler.shared.domain.CompareContract">
+		<result property="number" column="T_FCONTRACTNUM" />
+		<result property="status" column="T_FCONTRACTSTATUS" />
+		<result property="custId" column="T_FCUSTID" />
+		<result property="lastUpdateTime" column="T_FLASTUPDATETIME" />
+		<result property="id" column="T_FID" />
+		<collection property="contractDeptList" resultMap="CompareContractDeptRM"></collection>
+	</resultMap>
+	<resultMap id="CompareContractDeptRM"
+		type="com.deppon.crm.module.scheduler.shared.domain.CompareContractDept">
+		<result property="crmId" column="D_FID" />
+		<result property="lastupdateTime" column="D_FLASTUPDATETIME" />
+		<result property="contractId" column="D_FCONTRACTID" />
+		<result property="state" column="D_FSTATE" />
+		<result property="deptCode" column="P_FSTANDARDCODE" />
+	</resultMap>
+	<sql id="top_Sql">
+		<![CDATA[
+			SELECT
+				   B.FCUSTNUMBER B_FCUSTNUMBER,
+			       B.FPROCREDIT  B_FPROCREDIT,
+			       B.FCUSTSTATUS B_FCUSTSTATUS,
+			       B.FID B_FID,
+			       T.FID T_FID,
+			       T.FCONTRACTNUM T_FCONTRACTNUM,
+			       T.FCONTRACTSTATUS T_FCONTRACTSTATUS,
+	               T.FCUSTID T_FCUSTID,
+	               T.FLASTUPDATETIME T_FLASTUPDATETIME,
+	               L.FID L_FID,
+	               L.FNUMBER L_FNUMBER,
+	               L.FMOBILETEL  L_FMOBILETEL,
+	               L.FCUSTID L_FCUSTID,
+	               L.FLASTUPDATETIME L_FLASTUPDATETIME,
+	               L.FSTATUS L_FSTATUS,
+	               A.FID A_FID,
+	               A.FBANKACCOUNT A_FBANKACCOUNT,
+	               A.FBANKID A_FBANKID,
+	               A.FSUBBANKNAMEID A_FSUBBANKNAMEID,
+	               A.FBELONGCUSTOM A_FBELONGCUSTOM,
+	               D.FID D_FID,
+	               D.FLASTUPDATETIME D_FLASTUPDATETIME,
+	               D.FCONTRACTID D_FCONTRACTID,
+	               D.FSTATE D_FSTATE,
+	               P.FSTANDARDCODE P_FSTANDARDCODE
+	          FROM T_CUST_CUSTBASEDATA B
+	          LEFT JOIN T_CUST_CONTRACT T ON T.FCUSTID = B.FID
+	          LEFT JOIN T_CUST_CUSTLINKMAN L ON L.FCUSTID = B.FID
+	          LEFT JOIN T_CUST_ACCOUNT A ON A.FBELONGCUSTOM = B.FID
+	          LEFT JOIN T_CUST_CONTRACTDEPT D ON D.FCONTRACTID = T.FID
+	          INNER JOIN T_ORG_DEPARTMENT P ON P.FID = D.FDEPTID
+ 			  WHERE B.FCUSTNUMBER IN (
+		 ]]>
+	</sql>
+	<select id="queryContractWorkflow" resultMap="CompareWorkflowRM">
+		<![CDATA[
+			select
+				l.fworkflowid W_fworkflowid,
+				l.fapprovalstate l_fapprovalstate,
+				t.fcontractnum	W_biztnum,
+				L.FAPPROVALSTATE W_FAPPROVALSTATE,
+				'WFS_HT_001' W_WORKFLOWTYPE
+			from 
+				t_cust_contract t
+			inner 
+				join t_cust_contractoperatorlog l on l.fcontractid = t.fid
+			where 
+				l.Flastupdatetime > sysdate - 1
+			and l.fworkflowid is not null
+		 ]]>
+	</select>
+	<select id="queryMuchRecomWorkflow" resultMap="CompareWorkflowRM">
+		<![CDATA[
+			SELECT  
+				W.FWORKSTATUS l_fapprovalstate,
+				R.FRECOMPENSENUM W_biztnum,
+				W.FWORKNUMBER W_fworkflowid,
+				'WFS_LP_002' W_WORKFLOWTYPE
+			FROM
+				T_REC_WORKFLOW W
+			INNER JOIN 
+				T_REC_RECOMPENSE R
+			ON 
+				R.FID = W.FRECOMPENSEID
+			WHERE 
+				W.FWORKTYPE = 2 AND W.FCOMMITDATE > SYSDATE -1
+		 ]]>
+	</select>
+	<select id="queryNormalRecomWorkflow" resultMap="CompareWorkflowRM">
+		<![CDATA[
+			SELECT  
+				W.FWORKSTATUS l_fapprovalstate,
+				R.FRECOMPENSENUM W_biztnum,
+				W.FWORKNUMBER W_fworkflowid,
+				'WFS_LP_001' W_WORKFLOWTYPE
+			FROM
+				T_REC_WORKFLOW W
+			INNER JOIN 
+				T_REC_RECOMPENSE R
+			ON 
+				R.FID = W.FRECOMPENSEID
+			WHERE 
+				W.FWORKTYPE = 1 AND W.FCOMMITDATE > SYSDATE -1
+		 ]]>
+	</select>
+	<select id="queryMemberData" resultMap="MemeberRM">
+		<include refid="top_Sql" />
+		<![CDATA[
+			SELECT 
+				B.FCUSTNUMBER
+	 		FROM 
+	 			T_CRM_CMDTBS S
+	 		INNER JOIN 
+	 			T_CRM_CMDTBSD D 
+	 		ON 
+	 			D.TRANSACTION_NO = S.TRANSACTION_NO
+	 		INNER JOIN 
+	 			T_CUST_CUSTBASEDATA B 
+	 		ON 
+	 			B.FID = D.TABLE_KEYWORD
+			WHERE 
+				S.FCREATETIME > SYSDATE - 1
+	   		AND 
+	   			D.TABLE_NAME = 'T_CUST_CUSTBASEDATA'
+	 		GROUP BY 
+	 			D.TABLE_KEYWORD, D.TABLE_NAME, B.FCUSTNUMBER)
+		 ]]>
+	</select>
+	<select id="queryLinkman" resultMap="MemeberRM">
+		<include refid="top_Sql" />
+		<![CDATA[
+			SELECT 
+				B.FCUSTNUMBER
+	  		FROM 
+	  			T_CRM_CMDTBS S
+	 		INNER JOIN 
+	 			T_CRM_CMDTBSD D 
+	 		ON 
+	 			D.TRANSACTION_NO = S.TRANSACTION_NO
+    		INNER JOIN 
+        		T_CUST_CUSTLINKMAN L
+      		ON 
+        		L.FID = D.TABLE_KEYWORD
+	 		INNER JOIN 
+	 			T_CUST_CUSTBASEDATA B 
+	 		ON 
+	 			B.FID = L.FCUSTID
+	 		WHERE 
+	 			S.FCREATETIME > SYSDATE - 1
+	   		AND 
+	   			D.TABLE_NAME = 'T_CUST_CUSTLINKMAN'
+	 		GROUP BY 
+	 			D.TABLE_KEYWORD, D.TABLE_NAME, B.FCUSTNUMBER)
+	 	 ]]>
+	</select>
+	<select id="queryAccount" resultMap="MemeberRM">
+		<include refid="top_Sql" />
+		<![CDATA[
+		    SELECT 
+				B.FCUSTNUMBER
+	  		FROM 
+	  			T_CRM_CMDTBS S
+	 		INNER JOIN 
+	 			T_CRM_CMDTBSD D 
+	 		ON 
+	 			D.TRANSACTION_NO = S.TRANSACTION_NO
+      		INNER JOIN 
+        		T_CUST_ACCOUNT A
+      		ON 
+        		A.FID = D.TABLE_KEYWORD
+	 		INNER JOIN 
+	 			T_CUST_CUSTBASEDATA B 
+	 		ON 
+	 			B.FID = A.FBELONGCUSTOM
+	 		WHERE 
+	 			S.FCREATETIME > SYSDATE - 1
+	   		AND 
+	   			D.TABLE_NAME = 'T_CUST_ACCOUNT'
+	 		GROUP BY 
+	 			D.TABLE_KEYWORD, D.TABLE_NAME, B.FCUSTNUMBER)
+	 	]]>
+	</select>
+	<select id="queryContract" resultMap="MemeberRM">
+		<include refid="top_Sql" />
+		<![CDATA[     
+		  SELECT 
+				B.FCUSTNUMBER
+	  	  FROM 
+	  			T_CRM_CMDTBS S
+	 	  INNER JOIN 
+	 			T_CRM_CMDTBSD D 
+	 	  ON 
+	 			D.TRANSACTION_NO = S.TRANSACTION_NO
+      	  INNER JOIN 
+        		T_CUST_CONTRACT C
+      	  ON 
+        		C.FID = D.TABLE_KEYWORD
+	 	  INNER JOIN 
+	 			T_CUST_CUSTBASEDATA B 
+	 		ON 
+	 			B.FID = C.FCUSTID
+	 		WHERE 
+	 			S.FCREATETIME > SYSDATE - 1
+	   		AND 
+	   			D.TABLE_NAME = 'T_CUST_CONTRACT'
+	 		GROUP BY 
+	 			D.TABLE_KEYWORD, D.TABLE_NAME, B.FCUSTNUMBER)
+	 	]]>
+	</select>
+</mapper>

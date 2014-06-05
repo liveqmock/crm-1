@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.customer.shared.domain.ContractWorkflowInfo">
+	<resultMap id="contractWorkflowInfoRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContractWorkflowInfo">
+		<result property="id" column="FID" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATEUSERID" />
+		<result property="modifyDate" column="FLASTUPDATETIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+		<result property="processInstId" column="FprocessInstId" />
+		<result property="busino" column="fbusino" />
+		<result property="applyPersonCode" column="fapplyPersonCode" />
+		<result property="applyPersonName" column="fapplyPersonName" />
+		<result property="divisionCode" column="fdivisionCode" />
+		<result property="applyPersonDept" column="fapplyPersonDept" />
+		<result property="applyType" column="fapplyType" />
+		<result property="overRange" column="foverRange" />
+		<result property="contractNumber" column="fcontractNumber" />
+		<result property="subsidiary" column="fsubsidiary" />
+		<result property="contractStartDate" column="fcontractStartDate" />
+		<result property="contractEndDate" column="fcontractEndDate" />
+		<result property="customerCode" column="fcustomerCode" />
+		<result property="customerName" column="fcustomerName" />
+		<result property="amountOfConsignment" column="famountOfConsignment" />
+		<result property="customerAllName" column="fcustomerAllName" />
+		<result property="nodeSectionType" column="fnodeSectionType" />
+		<result property="balanceAccount" column="fbalanceAccount" />
+		<result property="settleAccountsDate" column="fsettleAccountsDate" />
+		<result property="freightDiscount" column="ffreightDiscount" />
+		<result property="preferentialType" column="fpreferentialType" />
+		<result property="generationRateDiscount" column="fgenerationRateDiscount" />
+		<result property="chargeRateDiscount" column="fchargeRateDiscount" />
+		<result property="cargoFeeDiscount" column="fcargoFeeDiscount" />
+		<result property="deliveryFeeDiscount" column="fdeliveryFeeDiscount" />
+		<result property="protocolContactName" column="fprotocolContactName" />
+		<result property="contactPhone" column="fcontactPhone" />
+		<result property="contactTel" column="fcontactTel" />
+		<result property="discount" column="fdiscount" />
+		<result property="modifyContractType" column="fmodifyContractType" />
+		<result property="oldContractNumber" column="foldContractNumber" />
+		<result property="newBalanceAccount" column="fnewBalanceAccount" />
+		<result property="newFreightDiscount" column="fnewFreightDiscount" />
+		<result property="newPreferentialType" column="fnewPreferentialType" />
+		<result property="newGenerationRateDiscount" column="fnewGenerationRateDiscount" />
+		<result property="newChargeRateDiscount" column="fnewChargeRateDiscount" />
+		<result property="newCargoFeeDiscount" column="fnewCargoFeeDiscount" />
+		<result property="newDeliveryFeeDiscount" column="fnewDeliveryFeeDiscount" />
+		<result property="contrctAscriptionDept" column="fcontrctAscriptionDept" />
+		<result property="applyBondingDept" column="fapplyBondingDept" />
+		<result property="ascriptionDept" column="fascriptionDept" />
+		<result property="applyRenewalDept" column="fapplyRenewalDept" />
+		<result property="applyReason" column="fapplyReason" />
+		<result property="priceVersionDate" column="fpriceVersionDate" />
+		<result property="expPriceVersiondate" column="fexpPriceVersiondate" />
+		<result property="modifyPreferentialType" column="fmodifyPreferentialType" />
+		<result property="expressPointDeptCode" column="fexpressPointDeptCode" />
+		<result property="expressPreferentialType" column="fexpressPreferentialType" />
+		<result property="expNewPreferentialType" column="fexpNewPreferentialType" />
+		<result property="expFreightDiscount" column="fexpFreightDiscount" />
+		<result property="expNewFreightDiscount" column="fexpNewFreightDiscount" />
+		<result property="expWxpgenerationRateDiscount" column="fexpWxpgenerationRateDiscount" />
+		<result property="expNewDiscount" column="fexpNewDiscount" />
+		<result property="expChargeRateDiscount" column="fexpChargeRateDiscount" />
+		<result property="expNewChargeRateDiscount" column="fexpNewChargeRateDiscount" />
+		<result property="expCargoFeeDiscount" column="fexpCargoFeeDiscount" />
+		<result property="expNewCargoFeeDiscount" column="fexpNewCargoFeeDiscount" />
+		<result property="expDeliVeryFeeDiscount" column="fexpDeliVeryFeeDiscount" />
+		<result property="expNewDeliveryFeeDiscount" column="fexpNewDeliveryFeeDiscount" />
+		<result property="expNodesectionType" column="fexpNodesectionType" />
+		<result property="expAmountOfConsignMent" column="fexpAmountOfConsignMent" />
+		<result property="fisPointManager" column="fisPointManager" />
+		<result property="signCompany" column="fsignCompany" />
+		<result property="invoiceType" column="finvoiceType" />
+		<result property="invoiceTypeName" column="finvoiceTypeName" />
+		<result property="newSignCompany" column="fnewSignCompany" />
+		<result property="newInvoiceType" column="fnewInvoiceType" />
+		<result property="newInvoiceTypeName" column="fnewInvoiceTypeName" />
+		<result property="isHasLTTDiscount" column="fisHasLTTDiscount" />
+		<result property="isHasExpDiscount" column="fisHasExpDiscount" />
+		<result property="ismodifyInvoiceOnly" column="fismodifyInvoiceOnly" />
+		<collection property="file" select="getLogFileInfoBySourceId"
+			column="FLOGID" jdbcType="VARCHAR"></collection>
+	</resultMap>
+	<select id="getLogFileInfoBySourceId"
+		resultMap="com.deppon.crm.module.common.file.domain.FileInfo.FileInfoResultMap"
+		parameterType="string">
+		SELECT
+		<include
+			refid="com.deppon.crm.module.common.file.domain.FileInfo.FileInfoFields" />
+		FROM T_CRM_FILEINFO
+		<where>
+			FSOURCEID=#{sourceId}
+			<!-- 写死了，历史操作记录的 type为 ContractOperatorLog -->
+			AND FSOURCETYPE='CONTRACTOPERATORLOG'
+		</where>
+	</select>
+	<sql id="ContractWorkflow_column">
+		FID ,
+		FCREATETIME ,
+		FCREATEUSERID ,
+		FLASTUPDATETIME ,
+		FLASTMODIFYUSERID ,
+		FPROCESSINSTID ,
+		FBUSINO ,
+		FAPPLYPERSONCODE ,
+		FAPPLYPERSONNAME,
+		FDIVISIONCODE ,
+		FAPPLYPERSONDEPT ,
+		FAPPLYTYPE ,
+		FOVERRANGE ,
+		FCONTRACTNUMBER ,
+		FSUBSIDIARY ,
+		FCONTRACTSTARTDATE ,
+		FCONTRACTENDDATE ,
+		FCUSTOMERCODE ,
+		FCUSTOMERNAME ,
+		FAMOUNTOFCONSIGNMENT ,
+		FCUSTOMERALLNAME ,
+		FNODESECTIONTYPE ,
+		FBALANCEACCOUNT ,
+		FSETTLEACCOUNTSDATE ,
+		FFREIGHTDISCOUNT ,
+		FPREFERENTIALTYPE ,
+		FGENERATIONRATEDISCOUNT ,
+		FCHARGERATEDISCOUNT ,
+		FCARGOFEEDISCOUNT ,
+		FDELIVERYFEEDISCOUNT ,
+		FPROTOCOLCONTACTNAME ,
+		FCONTACTPHONE ,
+		FCONTACTTEL ,
+		FDISCOUNT ,
+		FMODIFYCONTRACTTYPE ,
+		FOLDCONTRACTNUMBER ,
+		FNEWBALANCEACCOUNT ,
+		FNEWFREIGHTDISCOUNT ,
+		FNEWPREFERENTIALTYPE ,
+		FNEWGENERATIONRATEDISCOUNT ,
+		FNEWCHARGERATEDISCOUNT ,
+		FNEWCARGOFEEDISCOUNT ,
+		FNEWDELIVERYFEEDISCOUNT ,
+		FCONTRCTASCRIPTIONDEPT ,
+		FAPPLYBONDINGDEPT ,
+		FASCRIPTIONDEPT ,
+		FAPPLYRENEWALDEPT ,
+		FAPPLYREASON ,
+		FPRICEVERSIONDATE ,
+		FEXPPRICEVERSIONDATE ,
+		FMODIFYPREFERENTIALTYPE ,
+		FEXPRESSPOINTDEPTCODE ,
+		FEXPRESSPREFERENTIALTYPE ,
+		FEXPNEWPREFERENTIALTYPE ,
+		FEXPFREIGHTDISCOUNT ,
+		FEXPNEWFREIGHTDISCOUNT ,
+		FEXPWXPGENERATIONRATEDISCOUNT ,
+		FEXPNEWDISCOUNT ,
+		FEXPCHARGERATEDISCOUNT ,
+		FEXPNEWCHARGERATEDISCOUNT ,
+		FEXPCARGOFEEDISCOUNT ,
+		FEXPNEWCARGOFEEDISCOUNT ,
+		FEXPDELIVERYFEEDISCOUNT ,
+		FEXPNEWDELIVERYFEEDISCOUNT ,
+		FEXPNODESECTIONTYPE ,
+		FEXPAMOUNTOFCONSIGNMENT ,
+		FISPOINTMANAGER ,
+		FSIGNCOMPANY ,
+		FINVOICETYPE ,
+		FINVOICETYPENAME ,
+		FNEWSIGNCOMPANY ,
+		FNEWINVOICETYPE ,
+		FNEWINVOICETYPENAME ,
+		FISHASLTTDISCOUNT ,
+		FISHASEXPDISCOUNT ,
+		FISMODIFYINVOICEONLY ,
+		FLOGID
+	</sql>
+	<insert id="insertContractWorkflowInfo"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ContractWorkflowInfo">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CONTRACTWORKFLOWINFO.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		insert into t_cust_contractworkflowinfo(
+		<include refid="ContractWorkflow_column" />
+		)
+		values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,
+		#{createUser,jdbcType=VARCHAR},
+		sysdate,
+		#{modifyUser,jdbcType=VARCHAR},
+		#{processInstId,jdbcType=VARCHAR},
+		#{busino,jdbcType=VARCHAR},
+		#{applyPersonCode,jdbcType=VARCHAR},
+		#{applyPersonName,jdbcType=VARCHAR},
+		#{divisionCode,jdbcType=VARCHAR},
+		#{applyPersonDept,jdbcType=VARCHAR},
+		#{applyType,jdbcType=VARCHAR},
+		#{overRange,jdbcType=VARCHAR},
+		#{contractNumber,jdbcType=VARCHAR},
+		#{subsidiary,jdbcType=VARCHAR},
+		#{contractStartDate,jdbcType=TIMESTAMP},
+		#{contractEndDate,jdbcType=TIMESTAMP},
+		#{customerCode,jdbcType=VARCHAR},
+		#{customerName,jdbcType=VARCHAR},
+		#{amountOfConsignment,jdbcType=VARCHAR},
+		#{customerAllName,jdbcType=VARCHAR},
+		#{nodeSectionType,jdbcType=VARCHAR},
+		#{balanceAccount,jdbcType=VARCHAR},
+		#{settleAccountsDate,jdbcType=VARCHAR},
+		#{freightDiscount,jdbcType=VARCHAR},
+		#{preferentialType,jdbcType=VARCHAR},
+		#{generationRateDiscount,jdbcType=VARCHAR},
+		#{chargeRateDiscount,jdbcType=VARCHAR},
+		#{cargoFeeDiscount,jdbcType=VARCHAR},
+		#{deliveryFeeDiscount,jdbcType=VARCHAR},
+		#{protocolContactName,jdbcType=VARCHAR},
+		#{contactPhone,jdbcType=VARCHAR},
+		#{contactTel,jdbcType=VARCHAR},
+		#{discount,jdbcType=VARCHAR},
+		#{modifyContractType,jdbcType=VARCHAR},
+		#{oldContractNumber,jdbcType=VARCHAR},
+		#{newBalanceAccount,jdbcType=VARCHAR},
+		#{newFreightDiscount,jdbcType=VARCHAR},
+		#{newPreferentialType,jdbcType=VARCHAR},
+		#{newGenerationRateDiscount,jdbcType=VARCHAR},
+		#{newChargeRateDiscount,jdbcType=VARCHAR},
+		#{newCargoFeeDiscount,jdbcType=VARCHAR},
+		#{newDeliveryFeeDiscount,jdbcType=VARCHAR},
+		#{contrctAscriptionDept,jdbcType=VARCHAR},
+		#{applyBondingDept,jdbcType=VARCHAR},
+		#{ascriptionDept,jdbcType=VARCHAR},
+		#{applyRenewalDept,jdbcType=VARCHAR},
+		#{applyReason,jdbcType=VARCHAR},
+		#{priceVersionDate,jdbcType=TIMESTAMP},
+		#{expPriceVersiondate,jdbcType=TIMESTAMP},
+		#{modifyPreferentialType,jdbcType=VARCHAR},
+		#{expressPointDeptCode,jdbcType=VARCHAR},
+		#{expressPreferentialType,jdbcType=VARCHAR},
+		#{expNewPreferentialType,jdbcType=VARCHAR},
+		#{expFreightDiscount,jdbcType=VARCHAR},
+		#{expNewFreightDiscount,jdbcType=VARCHAR},
+		#{expWxpgenerationRateDiscount,jdbcType=VARCHAR},
+		#{expNewDiscount,jdbcType=VARCHAR},
+		#{expChargeRateDiscount,jdbcType=VARCHAR},
+		#{expNewChargeRateDiscount,jdbcType=VARCHAR},
+		#{expCargoFeeDiscount,jdbcType=VARCHAR},
+		#{expNewCargoFeeDiscount,jdbcType=VARCHAR},
+		#{expDeliVeryFeeDiscount,jdbcType=VARCHAR},
+		#{expNewDeliveryFeeDiscount,jdbcType=VARCHAR},
+		#{expNodesectionType,jdbcType=VARCHAR},
+		#{expAmountOfConsignMent,jdbcType=VARCHAR},
+		#{fisPointManager,jdbcType=VARCHAR},
+		#{signCompany,jdbcType=VARCHAR},
+		#{invoiceType,jdbcType=VARCHAR},
+		#{invoiceTypeName,jdbcType=VARCHAR},
+		#{newSignCompany,jdbcType=VARCHAR},
+		#{newInvoiceType,jdbcType=VARCHAR},
+		#{newInvoiceTypeName,jdbcType=VARCHAR},
+		#{isHasLTTDiscount,jdbcType=NUMERIC},
+		#{isHasExpDiscount,jdbcType=NUMERIC},
+		#{ismodifyInvoiceOnly,jdbcType=NUMERIC},
+		#{logId,jdbcType=VARCHAR}
+		)
+	</insert>
+	<select id="queryContractWorkflowInfoByBusino" resultMap="contractWorkflowInfoRM"
+		parameterType="string">
+		SELECT
+		<include refid="ContractWorkflow_column" />
+		FROM
+		T_CUST_CONTRACTWORKFLOWINFO c
+		WHERE c.FBUSINO=#{busino}
+	</select>
+</mapper>	
+	

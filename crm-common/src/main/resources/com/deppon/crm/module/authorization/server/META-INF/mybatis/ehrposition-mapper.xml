@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.EhrPosition">
+  <resultMap id="BaseResultMap" type="com.deppon.crm.module.authorization.shared.domain.EhrPosition" >
+    <id column="PKEHRPOSITION" property="pkEhrPosition" jdbcType="DECIMAL" />
+    <result column="JOBNAME" property="jobName" jdbcType="VARCHAR" />
+    <result column="JOBSEQUENCE" property="jobSequence" jdbcType="VARCHAR" />
+    <result column="JOBLEVEL" property="jobLevel" jdbcType="VARCHAR" />
+    <result column="CREATEDATE" property="createDate" jdbcType="VARCHAR" />
+    <result column="JOBCODE" property="jobCode" jdbcType="VARCHAR" />
+    <result column="JOBPOSLEVEL" property="jobPosLevel" jdbcType="VARCHAR" />
+    <result column="ISMAPPING" property="isMapping" jdbcType="DECIMAL" />
+    <result column="PKBASPOSITION" property="pkBasPosition" jdbcType="DECIMAL" />
+    <result column="PKOMJOB" property="pkOmJob" jdbcType="VARCHAR" />
+    <result column="TS" property="ts" jdbcType="VARCHAR" />
+    <result column="JOBGROUPS" property="jobGroups" jdbcType="VARCHAR" />
+    <result column="JOBTYPE" property="jobType" jdbcType="VARCHAR" />
+    <result column="JOBDUTY" property="jobDuty" jdbcType="VARCHAR" />
+    <result column="SEALFLAG" property="sealFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    e.PKEHRPOSITION, e.JOBNAME, e.JOBSEQUENCE, e.JOBLEVEL, e.CREATEDATE, e.JOBCODE, e.JOBPOSLEVEL, 
+    e.ISMAPPING, e.PKBASPOSITION, e.PKOMJOB, e.TS, e.JOBGROUPS, e.JOBTYPE, e.JOBDUTY, e.SEALFLAG
+  </sql>
+  
+  <sql id="Table_StaPositionHaveMappedWithVP">
+	  from t_uums_ehrposition e
+	  join t_crm_virtualstandardposition vsp
+	    on e.pkehrposition = vsp.fspid
+	  join t_crm_virtualpostion vp
+        on vsp.fvpid = vp.fid
+  </sql>
+  <!-- 查询与虚拟岗位已经映射的标准岗位 -->
+  <select id="getStaPositionHaveMappedWithVP" parameterType="Map" resultMap="BaseResultMap">
+	  select
+	  <include refid="Base_Column_List"/>
+	  <include refid="Table_StaPositionHaveMappedWithVP"/>
+	  <if test="vpId!=null and vpId!=''">
+	      where vp.fid = #{vpId,jdbcType=VARCHAR}
+	  </if>
+  </select>
+  
+  <!-- 查询与虚拟岗位已经映射的标准岗位 计数 -->
+  <select id="countStaPositionHaveMappedWithVP" parameterType="String" resultType="int">
+  	select count(1)
+  	<include refid="Table_StaPositionHaveMappedWithVP"/>
+	  <if test="vpId!=null and vpId!=''">
+	      where vp.fid = #{vpId,jdbcType=VARCHAR}
+	  </if>
+  </select>
+  
+  <!-- 查询与虚拟岗位没有映射的标准岗位 -->
+  <select id="getStaPositionWaitToMapWithVP" parameterType="Map" resultMap="BaseResultMap">
+  select
+  <include refid="Base_Column_List"/>
+  from t_uums_ehrposition e
+	 where e.sealflag = 'N' and e.pkehrposition not in (select vsp.fspid
+	                                 from t_crm_virtualstandardposition vsp
+	                                 join t_crm_virtualpostion vp
+	                                   on vsp.fvpid = vp.fid
+	                                <!-- where vp.fid = #{vpId,jdbcType=VARCHAR} -->)
+	 <if test="ehrPositionName!=null and ehrPositionName !=''">
+	 	and jobname like '%'||#{ehrPositionName,jdbcType=VARCHAR}||'%'
+	 </if>
+  </select>
+</mapper>

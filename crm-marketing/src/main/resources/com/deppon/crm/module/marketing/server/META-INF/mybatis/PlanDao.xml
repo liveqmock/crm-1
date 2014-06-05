@@ -1,0 +1,2674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.Plan">
+<resultMap id="ExecuteDeptResultMap" type="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="FID" />
+			<result property="deptCode" column="FDEPTCODE" />
+			<result property="deptName" column="FDEPTNAME" />
+			<result property="principal" column="FPRINCIPAL" />
+			<result property="phone" column="FPHONE" />
+			<result property="fax" column="FFAX" />
+			<result property="parentCode" column="FPARENTID" />
+			<result property="companyName" column="FCOMPANYNAME" />
+			<result property="zipCode" column="FZIPCODE" />
+			<result property="address" column="FADDRESS" />
+			<result property="status" column="FSTATUS" />
+			<result property="validDate" column="FVALIDDATE" />
+			<result property="invalidDate" column="FINVALIDDATE" />
+			<result property="displayOrder" column="FDISPLAYORDER" />
+			<result property="deptLevel" column="FDEPTLEVEL" />
+			<result property="deptDesc" column="FDEPTDESC" />
+			<result property="deptSeq" column="FDEPTSEQ" />
+			<result property="leaf" column="FLEAF" />
+			<result property="createUser" column="FCREATEUSERID" />
+			<result property="createDate" column="FCREATETIME" />
+			<result property="modifyUser" column="FLASTMODIFYUSERID" />
+			<result property="modifyDate" column="FLASTUPDATETIME" />
+			<result property="standardCode" column="FSTANDARDCODE" />
+		</resultMap>
+		<resultMap id="searchEmployeeByCodeMap" type="com.deppon.crm.module.organization.shared.domain.Employee">
+			<id property="id" column="FID" />
+			<result property="empCode" column="FEMPCODE" />
+			<result property="empName" column="FEMPNAME" />
+			<result property="status" column="FSTATUS" />
+			<association property="deptId" column="FDEPTID"  resultMap="searchEmployeeByCodeDeptMap">  
+            </association>  
+		</resultMap>
+		<resultMap id="searchEmployeeByCodeDeptMap" type="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="FDEPTID" />
+		</resultMap>
+	<sql id="Plan_Column_List">
+		DMTL.FID id, DMTL.FCREATETIME createDate,
+		DMTL.FCREATEUSERID createUser, 
+		DMTL.FLASTUPDATETIME modifyDate,
+		DMTL.FLASTMODIFYUSERID modifyUser,
+		DMTL.FTOPIC	topic,
+		DMTL.FACTIVEDESC activedesc,
+		DMTL.FEXECDEPTID execdeptid,
+		DMTL.FEXECUSERID execuserid,
+		DMTL.FWAY way,  
+		DMTL.FSTATUS status,
+		DMTL.FBEGINTIME beginTime,
+		DMTL.FENDTIME endTime,
+		DMTL.FPLANTYPE planType,
+		<!--添加计划类别字段 auth：李春雨 date：2014-01-11-->
+		DMTL.FPROJECTTYPE projectType,
+		SURVEY.FID surveyId
+  	</sql>
+  	
+  	<sql id="PlanRS_column_LIST">
+  		,TO_CHAR(DMTL.FBEGINTIME, 'YYYY-MM-DD') || '~' || TO_CHAR(DMTL.FENDTIME, 'YYYY-MM-DD') TIMELIMIT, 
+  		TDEPT.FDEPTNAME 	execdeptName, 
+  		T1.FEMPNAME 	execdeptUserName, 
+  		T2.FEMPNAME 	createUserName,
+  		t3.FEMPNAME 	modifyUserName,
+  		T4.CT 			running,
+  		SURVEY.FSURVERYNAME surveyName
+  	</sql>
+
+	<sql id="Schedule_Column_List">
+		FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FPLANID, FCUSTID,
+		FCUSTTYPE, FTIME, FSTATUS, FTYPE
+  	</sql>
+	
+	<sql id="Scatter_Column_List">
+		,PS.FID PS_FID, PS.FCUSTNAME PS_FCUSTNAME, PS.FMEMBERNO
+		PS_FMEMBERNO,
+		PS.FMAINLINKMANID PS_FMAINLINKMANID, PS.FTRADE PS_FTRADE,
+		PS.FIDNUMBER
+		PS_FIDNUMBER,PS.FCOMPANYSIZE PS_FCOMPANYSIZE,
+		PS.FCOMPANYNATURE PS_FCOMPANYNATURE,PS.FTAXREGISTNO PS_FTAXREGISTNO,
+		PS.FOFFICE PS_FOFFICE, PS.FCITY PS_FCITY,
+		PS.FCUSTPROPERTY
+		PS_FCUSTPROPERTY,
+		PS.FLEADEPTID PS_FLEADEPTID,
+		PS.FARRDEPTID
+		PS_FARRDEPTID,
+		PS.FBUSINESSSTATE PS_FBUSSINESSSTATE,
+		PS.FCUSTNATURE
+		PS_FCUSTNATURE,
+		PS.FREMARK PS_FREMARK, PS.FRECENTCOOP PS_FRECENTCOOP,
+		PS.FCOOPINTENTION PS_FCOOPINTENTION,
+		PS.FVOLUMEPOTENTIAL
+		PS_FVOLUMEPOTENTIAL, PS.FRECENTGOODS PS_FRECENTGOODS,
+		PS.FCUSTNEED
+		PS_FCUSTNEED, PS.FDEVELOPSTATE PS_FDEVELOPSTATE, PS.FFINALREVITIME
+		PS_FFINALREVITIME, PS.FREVITIMES PS_FREVITIMES, PS.FCUSTTYPE
+		PS_FCUSTTYPE,
+		PS.FCUSTBASE PS_FCUSTBASE, PS.FPREHUMAN PS_FPREHUMAN,
+		PS.FLINKMANNAME PS_FLINKMANNAME, PS.FLINKMANMOBILE PS_FLINKMANMOBILE,
+		PS.FLINKMANPHONE PS_FLINKMANPHONE, PS.FPROGRAMMETIME
+		PS_FPROGRAMMETIME, PS.FINFOSTATE PS_FINFOSTATE,
+		PS.FDEPTID PS_FDEPTID,
+		PS.FCREATEUSERID PS_FCREATOR, PS.FCREATETIME PS_FCREATTIME,
+		PS.FLASTUPDATETIME PS_FLASTUPDATETIME, PS.FLASTMODIFYUSERID
+		PS_FLASTUPDATOR,
+		PS.FADDRESS PS_FADDRESS, PS.FISCANCEL PS_FISCANCEL,
+		PS.FSCATTERID PS_FSCATTERID,
+		PS.FMEMBERID PS_FMEMBERID
+  </sql>
+
+	<!-- 往计划表中插入数据 -->
+	<insert id="insertPlan" parameterType="com.deppon.crm.module.marketing.shared.domain.Plan">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_DEVELOPMAINTAINLIST.nextval as id FROM DUAL
+		</selectKey>
+		<!--增加计划类别 date：20130111 auth：李春雨  -->
+		<![CDATA[
+		INSERT INTO T_CUST_DEVELOPMAINTAINLIST
+				  (FID,
+				   FCREATETIME,
+				   FCREATEUSERID,
+				   FLASTUPDATETIME,
+				   FLASTMODIFYUSERID,
+				   FTOPIC,
+				   FACTIVEDESC,
+				   FEXECDEPTID,
+				   FEXECUSERID,
+				   FWAY,
+				   FSTATUS,
+				   FBEGINTIME,
+				   FENDTIME,
+				   FPLANTYPE,
+				   FCOMFROM,
+				   FCOMEFROMID,
+				   FSURVEYID,
+				   FPROJECTTYPE)
+		VALUES(#{id},sysdate,#{createUserId,jdbcType=VARCHAR},#{lastUpdateTime,jdbcType=DATE},
+			   #{lastModifyUserId,jdbcType=VARCHAR},#{topic,jdbcType=VARCHAR},
+			   #{activedesc,jdbcType=VARCHAR},#{execdeptid,jdbcType=VARCHAR},#{execuserid,jdbcType=VARCHAR},
+			   #{way,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{beginTime,jdbcType=DATE},
+			   #{endTime,jdbcType=DATE},#{planType,jdbcType=VARCHAR},#{comeForm,jdbcType=VARCHAR},
+			   #{comeFormId,jdbcType=NUMERIC},#{surveyId,jdbcType=NUMERIC},#{projectType,jdbcType=VARCHAR}
+			   )
+		]]>
+	</insert>
+	
+	<!-- 更新开发计划 -->
+	<update id="updatePlan" parameterType="com.deppon.crm.module.marketing.shared.domain.Plan">
+		<![CDATA[
+			UPDATE T_CUST_DEVELOPMAINTAINLIST 
+			SET FLASTUPDATETIME = sysdate
+		]]>
+		<if test="lastModifyUserId!=null">
+			<![CDATA[,FLASTMODIFYUSERID=#{lastModifyUserId,jdbcType=NUMERIC}]]>
+		</if>
+		<if test="custType!=null">
+			<![CDATA[,FCUSTTYPE=#{custType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="status!=null">
+			<![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		</if>  
+         <if test="planType != null and planType !=''">
+         	<![CDATA[ , FPLANTYPE = #{planType, jdbcType=VARCHAR} ]]>
+         </if>
+		<if test="topic!=null">
+			<![CDATA[,FTOPIC=#{topic,jdbcType=VARCHAR}]]>
+		</if>		
+		<if test="activedesc!=null">
+			<![CDATA[,FACTIVEDESC=#{activedesc,jdbcType=VARCHAR}]]>
+		</if>	
+		
+		<if test="execdeptid !=null ">
+			<![CDATA[,FEXECDEPTID=#{execdeptid,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="execuserid !=null ">
+			<![CDATA[,FEXECUSERID=#{execuserid,jdbcType=VARCHAR}]]>
+		</if>
+		
+		<if test="beginTime !=null ">
+			<![CDATA[,FBEGINTIME=#{beginTime,jdbcType=DATE}]]>
+		</if>
+		<if test="endTime !=null ">
+			<![CDATA[,FENDTIME=#{endTime,jdbcType=DATE}]]>
+		</if>
+		<if test="projectType !=null ">
+			<![CDATA[,FPROJECTTYPE=#{projectType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="surveyId!=null">
+			<![CDATA[,FSURVEYID=#{surveyId,jdbcType=NUMERIC}]]>
+		</if>
+		<![CDATA[
+			WHERE FID = #{id}
+		]]>
+	</update>
+	<!-- 计划查询结果列表 -->
+	<select id="searchPlanDevelop" 
+		parameterType="com.deppon.crm.module.marketing.shared.domain.PlanDevelopCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.PlanList">
+			<![CDATA[SELECT ]]>
+		<include refid="Plan_Column_List" />
+		<include refid="PlanRS_column_LIST" />		
+		<![CDATA[
+			FROM T_CUST_DEVELOPMAINTAINLIST DMTL
+				LEFT JOIN T_MARK_SURVEY SURVEY
+    				ON DMTL.FSURVEYID = SURVEY.FID
+				LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T1  
+                   ON (DMTL.FEXECUSERID =  T1.FID )
+                LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T2  
+                   ON (DMTL.FCREATEUSERID =  T2.FID )
+                LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T3  
+                   ON (DMTL.FLASTMODIFYUSERID =  T3.FID )
+          		LEFT OUTER JOIN  (SELECT FPLANID, COUNT(1) CT FROM T_CUST_SCHEDULE WHERE FSTATUS > '10' GROUP BY FPLANID) T4 
+                     ON T4.FPLANID = DMTL.FID,
+                T_ORG_DEPARTMENT TDEPT
+	  		WHERE DMTL.FEXECDEPTID = TDEPT.FID	  		
+	  		
+		]]>  
+		<!--添加计划类别的查询 auth：李春雨 date：2014-01-16  -->
+		<if test="projectType != null and projectType !='' ">
+			<![CDATA[ AND FPROJECTTYPE = #{projectType, jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="surveyId!=null and surveyId!=''">
+			<![CDATA[ AND SURVEY.FID = #{surveyId, jdbcType=VARCHAR} ]]>
+		</if>
+<!-- 		<if test="type!=null and type!=''"> -->
+<!-- 			<![CDATA[AND DMTL.FPLANTYPE = #{type,jdbcType=VARCHAR} ]]> -->
+<!-- 		</if> -->
+         <if test="executor != null and executor !=''">
+         	<![CDATA[ AND FEXECUSERID = #{executor, jdbcType=VARCHAR} ]]>
+         </if>
+         <if test="executeDept != null and executeDept !=''">
+         	<![CDATA[ AND FEXECDEPTID = #{executeDept, jdbcType=VARCHAR} ]]>
+         </if>
+         <if test="executeDepts != null and executeDepts.length &lt; 801">
+         	<![CDATA[ AND FEXECDEPTID IN  ]]>         	
+			<foreach collection="executeDepts" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+         </if>
+  		<if test="planName != null and planName != ''">
+			<![CDATA[ AND DMTL.FTOPIC LIKE #{planName, jdbcType=VARCHAR}]]>
+		</if>
+  		<if test="planMaker != null and planMaker != ''">
+			<![CDATA[ AND DMTL.FCREATEUSERID = #{planMaker, jdbcType=VARCHAR}]]>
+		</if>
+  		<if test="developMode != null and developMode != ''">
+			<![CDATA[ AND DMTL.FWAY = #{developMode, jdbcType=VARCHAR}]]>
+		</if>
+  		<if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(DMTL.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(DMTL.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		</if>
+		<![CDATA[
+		 order by DMTL.fid desc
+		]]>
+	</select>
+	<!-- 计划查询总条数 -->
+	<select id="getPlanListCount" 
+		parameterType="com.deppon.crm.module.marketing.shared.domain.PlanDevelopCondition"
+		resultType="int">
+		<![CDATA[
+			SELECT COUNT(1)
+			FROM T_CUST_DEVELOPMAINTAINLIST DMTL
+				LEFT JOIN T_MARK_SURVEY SURVEY
+    				ON DMTL.FSURVEYID = SURVEY.FID
+				LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T1  
+                   ON (DMTL.FEXECUSERID =  T1.FID )
+                LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T2  
+                   ON (DMTL.FCREATEUSERID =  T2.FID )
+                LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T3  
+                   ON (DMTL.FLASTMODIFYUSERID =  T3.FID )
+          		LEFT OUTER JOIN  (SELECT FPLANID, COUNT(1) CT FROM T_CUST_SCHEDULE WHERE FSTATUS > '10' GROUP BY FPLANID) T4 
+                     ON T4.FPLANID = DMTL.FID,
+                T_ORG_DEPARTMENT TDEPT
+	  		WHERE DMTL.FEXECDEPTID = TDEPT.FID	  		
+	  		
+		]]>  
+		<!--添加计划类别的查询 auth：李春雨 date：2014-01-16  -->
+		<if test="projectType != null and projectType !='' ">
+			<![CDATA[ AND FPROJECTTYPE = #{projectType, jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="surveyId!=null and surveyId!=''">
+			<![CDATA[ AND SURVEY.FID = #{surveyId, jdbcType=VARCHAR} ]]>
+		</if>
+<!-- 		<if test="type!=null and type!=''"> -->
+<!-- 			<![CDATA[AND DMTL.FPLANTYPE = #{type,jdbcType=VARCHAR} ]]> -->
+<!-- 		</if> -->
+         <if test="executor != null and executor !=''">
+         	<![CDATA[ AND FEXECUSERID = #{executor, jdbcType=VARCHAR} ]]>
+         </if>
+         <if test="executeDept != null and executeDept !=''">
+         	<![CDATA[ AND FEXECDEPTID = #{executeDept, jdbcType=VARCHAR} ]]>
+         </if>
+         <if test="executeDepts != null and executeDepts.length &lt; 801">
+         	<![CDATA[ AND FEXECDEPTID IN  ]]>         	
+			<foreach collection="executeDepts" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+         </if>
+  		<if test="planName != null and planName != ''">
+			<![CDATA[ AND DMTL.FTOPIC LIKE #{planName, jdbcType=VARCHAR}]]>
+		</if>
+  		<if test="planMaker != null and planMaker != ''">
+			<![CDATA[ AND DMTL.FCREATEUSERID = #{planMaker, jdbcType=VARCHAR}]]>
+		</if>
+  		<if test="developMode != null and developMode != ''">
+			<![CDATA[ AND DMTL.FWAY = #{developMode, jdbcType=VARCHAR}]]>
+		</if>
+  		<if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(DMTL.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(DMTL.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		</if>
+	</select>
+
+	<!-- 开发计划删除 -->
+	<delete id="deletePlanDevelop" parameterType="list">
+		<![CDATA[
+			DELETE FROM T_CUST_DEVELOPMAINTAINLIST WHERE 
+		]]>
+		<![CDATA[ FID in ]]>
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+		<![CDATA[	${id}  ]]>
+		</foreach>
+	</delete>
+	
+	<!-- 开发计划详情查询 -->
+	<select id="searchPlanDevelopDetail" 
+		parameterType = "string"
+		resultType="com.deppon.crm.module.marketing.shared.domain.PlanList">
+		<![CDATA[SELECT ]]>
+		<include refid="Plan_Column_List" />
+		<include refid="PlanRS_column_LIST" />	
+		<![CDATA[ 
+			FROM T_CUST_DEVELOPMAINTAINLIST DMTL
+				LEFT JOIN T_MARK_SURVEY SURVEY
+    				ON DMTL.FSURVEYID = SURVEY.FID
+				LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T1  
+                   ON (DMTL.FEXECUSERID =  T1.FID )
+                LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T2  
+                   ON (DMTL.FCREATEUSERID =  T2.FID )
+                LEFT OUTER JOIN 
+                   T_ORG_EMPLOYEE T3  
+                   ON (DMTL.FLASTMODIFYUSERID =  T3.FID )
+          		LEFT OUTER JOIN  (SELECT FPLANID, COUNT(1) CT FROM T_CUST_SCHEDULE WHERE FSTATUS > '10' GROUP BY FPLANID) T4 
+                     ON T4.FPLANID = DMTL.FID,
+                T_ORG_DEPARTMENT TDEPT
+	  		WHERE DMTL.FEXECDEPTID = TDEPT.FID	  		
+	  			AND DMTL.FID = #{id} 
+		]]>
+	</select>
+
+	<!-- 通过planId获取对应的scheduleId列表 -->
+	<select id="selectScheduleIds" parameterType="string"
+		resultType="string">
+		<![CDATA[
+			select t.fid from t_cust_schedule t where t.fplanid = #{planId}
+		]]>
+	</select>
+
+	<!-- 通过主题模糊匹配找出对应的开发计划 -->
+	<select id="getPlansByTheme" parameterType="map" resultMap="Plan">
+		<![CDATA[
+			SELECT * 
+			FROM T_CUST_DEVELOPMAINTAINLIST T 
+			WHERE T.FTOPIC LIKE #{theme} AND T.FSTATUS IN(10,20)
+		]]>
+
+<!--          <if test="type != null and type !='' and type != 'dev'"> -->
+<!--          	<![CDATA[ AND T.FPLANTYPE != 'dev' ]]> -->
+<!--          </if> -->
+<!--          <if test="type != null and type !='' and type == 'dev'"> -->
+<!--          	<![CDATA[ AND T.FPLANTYPE = 'dev' ]]> -->
+<!--          </if> -->
+		<if test="deptId != null and deptId != ''">
+			<![CDATA[ AND T.FEXECDEPTID = #{deptId}]]>
+		</if>
+	</select>
+	<select id="getPlanById" parameterType="string" resultMap="Plan">
+		<![CDATA[
+			SELECT * FROM T_CUST_DEVELOPMAINTAINLIST WHERE FID=#{id}
+		]]>
+	</select>
+	
+	<select id="queryDevelopList" parameterType="Map" resultMap="Plan">
+		<![CDATA[
+			SELECT * FROM T_CUST_DEVELOPMAINTAINLIST T WHERE T.FEXECDEPTID=#{execDeptId}
+		]]>		
+<!--          <if test="planType != null and planType !='' and planType != 'dev'"> -->
+<!--          	<![CDATA[ AND T.FPLANTYPE != 'dev' ]]> -->
+<!--          </if> -->
+<!--          <if test="planType != null and planType !='' and planType == 'dev'"> -->
+<!--          	<![CDATA[ AND T.FPLANTYPE = 'dev' ]]> -->
+<!--          </if> -->
+		<if test="topic != null">
+			<![CDATA[ AND FTOPIC LIKE #{topic} ]]>
+		</if>
+	</select>
+	
+	<!-- 根据开发计划的Id查询对应的客户Id列表 -->
+	<select id="queryPlanCustIdList" parameterType="String" resultType="String">
+		<![CDATA[
+			SELECT FCUSTID FROM T_CUST_SCHEDULE WHERE FPLANID=#{id}
+		]]>
+	</select>
+	<resultMap id="Plan"
+		type="com.deppon.crm.module.marketing.shared.domain.Plan">
+		<id column="FID" property="id" jdbcType="NUMERIC" />
+		<result column="FCREATETIME" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="FCREATEUSERID" property="createUserId"
+			jdbcType="NUMERIC" />
+		<result column="FLASTUPDATETIME" property="lastUpdateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="lastModifyUserId"
+			jdbcType="NUMERIC" />
+		<result column="FTOPIC" property="topic" jdbcType="VARCHAR" />
+		<result column="FACTIVEDESC" property="activedesc" jdbcType="VARCHAR" />
+		<result column="FEXECDEPTID" property="execdeptid" jdbcType="NUMERIC" />
+		<result column="FEXECUSERID" property="execuserid" jdbcType="NUMERIC" />
+		<result column="FWAY" property="way" jdbcType="NUMERIC" />
+		<result column="FSTATUS" property="status" jdbcType="NUMERIC" />
+		<result column="FBEGINTIME" property="beginTime" jdbcType="TIMESTAMP" />
+		<result column="FENDTIME" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="FPLANTYPE" property="planType" jdbcType="VARCHAR" />
+		<result column="FPROJECTTYPE" property="projectType" jdbcType="VARCHAR" />
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="NUMERIC" />
+		<result column="FSURVEYID" property="surveyId" jdbcType="NUMERIC"/>
+	</resultMap>
+	<!-- 维护计划新增查询，查询客户基础资料及联系人信息 -->
+	<select id="queryMember" parameterType="com.deppon.crm.module.marketing.server.action.CustomerVo" 
+	                         resultType="com.deppon.crm.module.marketing.server.action.CustomerVo">
+		<![CDATA[
+		  SELECT * FROM (
+			SELECT DISTINCT
+				   CUST.FID MEMBERID,
+				   CUST.FCUSTNAME CUSTNAME,
+			       CUST.FDEGREE MEMBERLEVEL,
+			       TLK.FID CONTACTID,
+			       TLK.FNAME LINKMANNAME, 
+			       TLK.FMOBILETEL LINKMANMOBILE,
+			       TLK.FOFFERTEL LINKMANPHONE,
+			       NVL(T2.RVCOUNT, 0) VISITNUM, 
+			       T2.RVLASTDATE LASTVISTITIME,
+			       T1.PCOUNT UNFINISHEDPLANNUM, 
+			       T0.FEMPNAME  PREHUMAN,
+			       BO.FBUSINESSSTATUS businessOpportunityStatus,
+                   DECODE(REPEAT.FCUSTID, NULL, 0, 1) repeatCust,
+                   REPEATDEPT.FDEPTNAME repeatCustDeptName,
+                   CUST.FCUSTGROUP CUSTTYPE,
+	               CUST.FCUSTCATEGORY BUSINESSTYPE,
+               	   EXTEND.FDEVELOPMENTPHASE DEVELOPMENTPHASE,
+                   EXTEND.FCOOPINTENTION COOPINTENTION,
+                   EXTEND.FVOLUMEPOTENTIAL VOLUMEPOTENTIAL
+			  FROM T_CUST_CUSTBASEDATA CUST
+			  LEFT JOIN T_CUST_CUSTBASEDATA_EXTEND EXTEND
+                            ON CUST.FID = EXTEND.FCUSTID
+		]]>
+		  <if test="bussinesState==null or bussinesState==''">
+		  	LEFT
+		  </if>
+		  <![CDATA[JOIN (SELECT X.Fcustid, X.Fbusinessstatus
+		               FROM T_MARK_BUSINESSOPPORTUNITY X
+		             WHERE 1=1
+		  ]]>
+		             <if test="bussinesState!=null and bussinesState!=''">
+		              	<![CDATA[AND X.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>		             
+		             </if> 
+		             <![CDATA[AND NOT EXISTS
+		              (SELECT 1
+		                       FROM T_MARK_BUSINESSOPPORTUNITY Y
+		                      WHERE X.FCUSTID = Y.FCUSTID]]>
+		                      <if test="bussinesState!=null and bussinesState!=''">
+		                        <![CDATA[AND Y.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>
+		                      </if>
+		 <![CDATA[AND Y.FCREATETIME > X.FCREATETIME)) BO ON CUST.FID = BO.FCUSTID
+		             LEFT JOIN T_CUST_REPEATED REPEAT ON REPEAT.FCUSTID = CUST.FID
+                  	 LEFT JOIN T_CUST_REPEATED REPEATDEPT ON REPEATDEPT.FCUSTID = REPEAT.FPUSHMAINCUSTID
+			  LEFT JOIN (        
+			  	SELECT T.FPREHUMAN, T.FCUSTID, E.FEMPNAME, E.FEMPCODE
+          		FROM T_CUST_CUSTGROUPDETAIL T, T_ORG_EMPLOYEE E
+        		WHERE T.FPREHUMAN = E.FID
+				) T0 ON CUST.FID = T0.FCUSTID,
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				T_CRM_OPERATIONANALYSIS OM,
+			]]>
+		</if>
+		<![CDATA[
+			 T_CUST_CUSTLINKMAN TLK
+			  LEFT JOIN (SELECT TP.FTOPIC, TMP.*
+			               FROM T_CUST_DEVELOPMAINTAINLIST TP,
+			                    (SELECT TS.FCONTACTID, COUNT(1) PCOUNT, MAX(TP.FID) FID
+			                       FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			                      WHERE TS.FPLANID = TP.FID
+			                      GROUP BY TS.FCONTACTID) TMP
+			              WHERE TMP.FID = TP.FID) T1 ON (TLK.FID = T1.FCONTACTID)
+			  LEFT JOIN (SELECT TRV.FLINKMANID, COUNT(1) RVCOUNT, MAX(FDATE) RVLASTDATE
+			               FROM T_CUST_RETURNVISIT TRV
+			              GROUP BY TRV.FLINKMANID) T2 ON (T2.FLINKMANID = TLK.FID)
+			WHERE TLK.FCUSTID = CUST.FID
+				AND CUST.FCUSTSTATUS = 0
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				AND CUST.FCUSTNUMBER = OM.FCUSTNUMBER
+			]]>
+		</if>
+		<if test="deptId!=null and deptId!=''">
+			<![CDATA[
+			    AND  CUST.FDEPTID = #{deptId} 
+			]]>
+		</if>
+		
+		<choose>
+			<when test="(memberNo!=null and memberNo!='') 
+						or (linkManCode!=null and linkManCode!='')">
+				<if test="memberNo!=null and memberNo!=''">
+					<![CDATA[
+					    AND CUST.FCUSTNUMBER = #{memberNo}
+					]]>
+				</if>
+				<if test="linkManCode!=null and linkManCode!=''">
+					<![CDATA[
+						AND TLK.FNUMBER = #{linkManCode}
+					]]>
+				</if>
+			</when>
+			<otherwise>					
+				<if test="custNumbers !=null and custNumbers !=''">
+					<![CDATA[    AND CUST.FCUSTNUMBER IN ]]>
+					<foreach collection="custNumbers" open="(" close=")" separator=","
+						item="memberNo">
+					<![CDATA[	'${memberNo}'  ]]>
+					</foreach>
+				</if>
+				<!-- 客户id数组遍历查询 -->
+				<if test="custIds !=null and custIds !=''">
+					<![CDATA[    AND CUST.FID IN ]]>
+					<foreach collection="custIds" open="(" close=")" separator=","
+						item="custId">
+					<![CDATA[	
+						#{custId,jdbcType=VARCHAR}  
+					]]>
+					</foreach>
+				</if>
+				<if test="contactIds !=null and contactIds !=''">
+					<![CDATA[    AND TLK.FID IN ]]>
+					<foreach collection="contactIds" open="(" close=")" separator=","
+						item="contact">
+					<![CDATA[	'${contact}'  ]]>
+					</foreach>
+				</if>
+				<if test="custName!=null and custName!=''">
+					<![CDATA[
+						AND CUST.FCUSTNAME LIKE #{custName}
+					]]>
+				</if>
+				<if test="linkManName!=null and linkManName!=''">
+					<![CDATA[
+						AND TLK.FNAME LIKE #{linkManName}
+					]]>
+				</if>
+				<if test="linkManMobile!=null and linkManMobile!=''">
+					<![CDATA[
+						AND TLK.FMOBILETEL = #{linkManMobile}
+					]]>
+				</if>
+				<if test="linkManPhone!=null and linkManPhone!=''">
+					<![CDATA[
+						AND TLK.FOFFERTEL = #{linkManPhone}
+					]]>
+				</if>
+				<if test="custType!=null and custType!=''">
+					<![CDATA[AND CUST.FCUSTGROUP = #{custType}]]>
+				</if>
+				<if test="memberLevel!=null and memberLevel!=''">
+					<![CDATA[AND CUST.FDEGREE = #{memberLevel}]]>
+				</if>
+				<if test="custbase!=null and custbase!=''">
+					<![CDATA[AND CUST.FCHANNELSOURCE = #{custbase}]]>
+				</if>
+				<if test="volumePotential!=null and volumePotential!=''">
+					<![CDATA[AND EXTEND.FVOLUMEPOTENTIAL = #{volumePotential}]]>
+				</if>
+				<if test="developState!=null and developState!=''">
+					<![CDATA[AND EXTEND.FDEVELOPMENTPHASE = #{developState,jdbcType=VARCHAR}]]>
+				</if>
+				<if test="continueMark!=null and continueMark!=''">
+					<![CDATA[AND EXTEND.FISCONTINUEMARK = #{continueMark,jdbcType=CHAR}]]>
+				</if>
+				<if test="cooperationIntention!=null and cooperationIntention!=''">
+					<![CDATA[AND EXTEND.FCOOPINTENTION = #{cooperationIntention}]]>
+				</if>
+				<if test="businessType!=null and businessType!=''">
+					<![CDATA[AND CUST.FCUSTCATEGORY = #{businessType}]]>
+				</if>
+				<if test="queryBeginTime == null or queryOverTime == null">
+					<if test="custProperty!=null and custProperty!=''">
+						<![CDATA[
+							AND CUST.FCUSTNATURE = #{custProperty}
+						]]>
+					</if>
+				</if>
+				<if test="trade!=null and trade!=''">
+					<![CDATA[
+						AND CUST.FTRADEID = #{trade}
+					]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != ''">
+					<![CDATA[ AND CUST.FSECONDTRADE =#{secondTrade} ]]>
+				</if>
+				<if test="beginTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)>=#{beginTime}
+					]]>
+				</if>
+				<if test="overTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)<=#{overTime}
+					]]>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginShipWeight > 0 or overShipWeight > 0 
+					 or beginShipVotes > 0	 or overShipVotes > 0 
+					 or beginShipAmount > 0 or overShipAmount > 0)">
+					<if test="beginShipWeight> 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT >= #{beginShipWeight} ]]>
+					</if>
+					<if test="overShipWeight > 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT <= #{overShipWeight} ]]>
+					</if>
+					<if test="beginShipVotes > 0">
+						<![CDATA[ AND OM.FLEAVEBILL >= #{beginShipVotes} ]]>
+					</if>
+					<if test="overShipVotes> 0">
+						<![CDATA[ AND OM.FLEAVEBILL <= #{overShipVotes} ]]>
+					</if>
+					<if test="beginShipAmount> 0">
+						<![CDATA[ AND OM.FLEAVEMONEY >= #{beginShipAmount} ]]>
+					</if>
+					<if test="overShipAmount > 0">
+						<![CDATA[ AND OM.FLEAVEMONEY <= #{overShipAmount} ]]>
+					</if>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginArrivalWeight > 0 or overArrivalWeight > 0 
+				  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+				  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<if test="beginArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT > =#{beginArrivalWeight} ]]>
+					</if>
+					<if test="overArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT  <=#{overArrivalWeight} ]]>
+					</if>
+					<if test="beginArrivalVotes> 0">
+					<![CDATA[ AND OM.FARRIVEBILL >= #{beginArrivalVotes} ]]>
+					</if>
+					<if test="overArrivalVotes > 0">
+					<![CDATA[ AND OM.FARRIVEBILL < =#{overArrivalVotes} ]]>
+					</if>
+					<if test="beginArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY > =#{beginArrivalAmount} ]]>
+					</if>
+					<if test="overArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY < =#{overArrivalAmount} ]]>
+					</if>
+				</if>
+			 <if test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+						 or beginShipVotes > 0	 or overShipVotes > 0
+						 or beginShipAmount > 0 or overShipAmount > 0
+					  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+					  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+					  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<![CDATA[AND OM.FDATE BETWEEN TRUNC(#{queryBeginTime}) AND TRUNC(#{queryOverTime})]]>
+		  	 </if>
+			</otherwise>
+		</choose>
+		UNION
+		<![CDATA[
+			SELECT DISTINCT
+				   CUST.FID MEMBERID,
+				   CUST.FCUSTNAME CUSTNAME,
+			       CUST.FDEGREE MEMBERLEVEL,
+			       TLK.FID CONTACTID,
+			       TLK.FNAME LINKMANNAME, 
+			       TLK.FMOBILETEL LINKMANMOBILE,
+			       TLK.FOFFERTEL LINKMANPHONE,
+			       NVL(T2.RVCOUNT, 0) VISITNUM, 
+			       T2.RVLASTDATE LASTVISTITIME,
+			       T1.PCOUNT UNFINISHEDPLANNUM, 
+			       T0.FEMPNAME  PREHUMAN,
+			       BO.FBUSINESSSTATUS businessOpportunityStatus,
+                   DECODE(REPEAT.FCUSTID, NULL, 0, 1) repeatCust,
+                   REPEATDEPT.FDEPTNAME repeatCustDeptName,
+                   CUST.FCUSTGROUP CUSTTYPE,
+                   CUST.FCUSTCATEGORY BUSINESSTYPE,
+                   EXTEND.FDEVELOPMENTPHASE DEVELOPMENTPHASE,
+                   EXTEND.FCOOPINTENTION COOPINTENTION,
+                   EXTEND.FVOLUMEPOTENTIAL VOLUMEPOTENTIAL
+			  FROM T_CUST_CUSTBASEDATA CUST
+			  LEFT JOIN T_CUST_CUSTBASEDATA_EXTEND EXTEND
+                            ON CUST.FID = EXTEND.FCUSTID
+		]]>
+		  <if test="bussinesState==null or bussinesState==''">
+		  	LEFT
+		  </if>
+		  <![CDATA[JOIN (SELECT X.Fcustid, X.Fbusinessstatus
+		               FROM T_MARK_BUSINESSOPPORTUNITY X
+		             WHERE 1=1
+		  ]]>
+		             <if test="bussinesState!=null and bussinesState!=''">
+		              	<![CDATA[AND X.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>		             
+		             </if> 
+		             <![CDATA[AND NOT EXISTS
+		              (SELECT 1
+		                       FROM T_MARK_BUSINESSOPPORTUNITY Y
+		                      WHERE X.FCUSTID = Y.FCUSTID]]>
+		                      <if test="bussinesState!=null and bussinesState!=''">
+		                        <![CDATA[AND Y.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>
+		                      </if>
+		 <![CDATA[AND Y.FCREATETIME > X.FCREATETIME)) BO ON CUST.FID = BO.FCUSTID
+		             LEFT JOIN T_CUST_REPEATED REPEAT ON REPEAT.FCUSTID = CUST.FID
+                  	 LEFT JOIN T_CUST_REPEATED REPEATDEPT ON REPEATDEPT.FCUSTID = REPEAT.FPUSHMAINCUSTID
+			  LEFT JOIN (        
+			  	SELECT T.FPREHUMAN, T.FCUSTID, E.FEMPNAME, E.FEMPCODE
+          		FROM T_CUST_CUSTGROUPDETAIL T, T_ORG_EMPLOYEE E
+        		WHERE T.FPREHUMAN = E.FID
+				) T0 ON CUST.FID = T0.FCUSTID,
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				T_CRM_OPERATIONANALYSIS OM,
+			]]>
+		</if>
+		<![CDATA[
+			 T_CUST_CUSTLINKMAN TLK
+			  LEFT JOIN (SELECT TP.FTOPIC, TMP.*
+			               FROM T_CUST_DEVELOPMAINTAINLIST TP,
+			                    (SELECT TS.FCONTACTID, COUNT(1) PCOUNT, MAX(TP.FID) FID
+			                       FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			                      WHERE TS.FPLANID = TP.FID
+			                      GROUP BY TS.FCONTACTID) TMP
+			              WHERE TMP.FID = TP.FID) T1 ON (TLK.FID = T1.FCONTACTID)
+			  LEFT JOIN (SELECT TRV.FLINKMANID, COUNT(1) RVCOUNT, MAX(FDATE) RVLASTDATE
+			               FROM T_CUST_RETURNVISIT TRV
+			              GROUP BY TRV.FLINKMANID) T2 ON (T2.FLINKMANID = TLK.FID)
+			WHERE TLK.FCUSTID = CUST.FID
+				AND CUST.FCUSTSTATUS = 0
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				AND CUST.FCUSTNUMBER = OM.FCUSTNUMBER
+			]]>
+		</if>
+		<if test="deptId!=null and deptId!=''">
+			<![CDATA[
+			    AND CUST.FID IN
+		       (SELECT T.FCUSTID FROM T_CUST_MARKETDEPT T WHERE T.FDEPTID = #{deptId})
+			]]>
+		</if>
+		
+		<choose>
+			<when test="(memberNo!=null and memberNo!='') 
+						or (linkManCode!=null and linkManCode!='')">
+				<if test="memberNo!=null and memberNo!=''">
+					<![CDATA[
+					    AND CUST.FCUSTNUMBER = #{memberNo}
+					]]>
+				</if>
+				<if test="linkManCode!=null and linkManCode!=''">
+					<![CDATA[
+						AND TLK.FNUMBER = #{linkManCode}
+					]]>
+				</if>
+			</when>
+			<otherwise>					
+				<if test="custNumbers !=null and custNumbers !=''">
+					<![CDATA[    AND CUST.FCUSTNUMBER IN ]]>
+					<foreach collection="custNumbers" open="(" close=")" separator=","
+						item="memberNo">
+					<![CDATA[	'${memberNo}'  ]]>
+					</foreach>
+				</if>
+				<!-- 客户id数组遍历查询 -->
+				<if test="custIds !=null and custIds !=''">
+					<![CDATA[    AND CUST.FID IN ]]>
+					<foreach collection="custIds" open="(" close=")" separator=","
+						item="custId">
+					<![CDATA[	
+						#{custId,jdbcType=VARCHAR}  
+					]]>
+					</foreach>
+				</if>
+				<if test="contactIds !=null and contactIds !=''">
+					<![CDATA[    AND TLK.FID IN ]]>
+					<foreach collection="contactIds" open="(" close=")" separator=","
+						item="contact">
+					<![CDATA[	'${contact}'  ]]>
+					</foreach>
+				</if>
+				<if test="custName!=null and custName!=''">
+					<![CDATA[
+						AND CUST.FCUSTNAME LIKE #{custName}
+					]]>
+				</if>
+				<if test="linkManName!=null and linkManName!=''">
+					<![CDATA[
+						AND TLK.FNAME LIKE #{linkManName}
+					]]>
+				</if>
+				<if test="linkManMobile!=null and linkManMobile!=''">
+					<![CDATA[
+						AND TLK.FMOBILETEL = #{linkManMobile}
+					]]>
+				</if>
+				<if test="linkManPhone!=null and linkManPhone!=''">
+					<![CDATA[
+						AND TLK.FOFFERTEL = #{linkManPhone}
+					]]>
+				</if>
+				<if test="custType!=null and custType!=''">
+					<![CDATA[AND CUST.FCUSTGROUP = #{custType}]]>
+				</if>
+				<if test="memberLevel!=null and memberLevel!=''">
+					<![CDATA[AND CUST.FDEGREE = #{memberLevel}]]>
+				</if>
+				<if test="custbase!=null and custbase!=''">
+					<![CDATA[AND CUST.FCHANNELSOURCE = #{custbase}]]>
+				</if>
+				<if test="volumePotential!=null and volumePotential!=''">
+					<![CDATA[AND EXTEND.FVOLUMEPOTENTIAL = #{volumePotential}]]>
+				</if>
+				<if test="developState!=null and developState!=''">
+					<![CDATA[AND EXTEND.FDEVELOPMENTPHASE = #{developState,jdbcType=VARCHAR}]]>
+				</if>
+				<if test="continueMark!=null and continueMark!=''">
+					<![CDATA[AND EXTEND.FISCONTINUEMARK = #{continueMark,jdbcType=CHAR}]]>
+				</if>
+				<if test="cooperationIntention!=null and cooperationIntention!=''">
+					<![CDATA[AND EXTEND.FCOOPINTENTION = #{cooperationIntention}]]>
+				</if>
+				<if test="businessType!=null and businessType!=''">
+					<![CDATA[AND CUST.FCUSTCATEGORY = #{businessType}]]>
+				</if>
+				<if test="queryBeginTime == null or queryOverTime == null">
+					<if test="custProperty!=null and custProperty!=''">
+						<![CDATA[
+							AND CUST.FCUSTNATURE = #{custProperty}
+						]]>
+					</if>
+				</if>
+				<if test="trade!=null and trade!=''">
+					<![CDATA[
+						AND CUST.FTRADEID = #{trade}
+					]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != ''">
+					<![CDATA[ AND CUST.FSECONDTRADE =#{secondTrade} ]]>
+				</if>
+				<if test="beginTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)>=#{beginTime}
+					]]>
+				</if>
+				<if test="overTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)<=#{overTime}
+					]]>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginShipWeight > 0 or overShipWeight > 0 
+					 or beginShipVotes > 0	 or overShipVotes > 0 
+					 or beginShipAmount > 0 or overShipAmount > 0)">
+					<if test="beginShipWeight> 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT >= #{beginShipWeight} ]]>
+					</if>
+					<if test="overShipWeight > 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT <= #{overShipWeight} ]]>
+					</if>
+					<if test="beginShipVotes > 0">
+						<![CDATA[ AND OM.FLEAVEBILL >= #{beginShipVotes} ]]>
+					</if>
+					<if test="overShipVotes> 0">
+						<![CDATA[ AND OM.FLEAVEBILL <= #{overShipVotes} ]]>
+					</if>
+					<if test="beginShipAmount> 0">
+						<![CDATA[ AND OM.FLEAVEMONEY >= #{beginShipAmount} ]]>
+					</if>
+					<if test="overShipAmount > 0">
+						<![CDATA[ AND OM.FLEAVEMONEY <= #{overShipAmount} ]]>
+					</if>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginArrivalWeight > 0 or overArrivalWeight > 0 
+				  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+				  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<if test="beginArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT > =#{beginArrivalWeight} ]]>
+					</if>
+					<if test="overArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT  <=#{overArrivalWeight} ]]>
+					</if>
+					<if test="beginArrivalVotes> 0">
+					<![CDATA[ AND OM.FARRIVEBILL >= #{beginArrivalVotes} ]]>
+					</if>
+					<if test="overArrivalVotes > 0">
+					<![CDATA[ AND OM.FARRIVEBILL < =#{overArrivalVotes} ]]>
+					</if>
+					<if test="beginArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY > =#{beginArrivalAmount} ]]>
+					</if>
+					<if test="overArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY < =#{overArrivalAmount} ]]>
+					</if>
+				</if>
+			 <if test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+						 or beginShipVotes > 0	 or overShipVotes > 0
+						 or beginShipAmount > 0 or overShipAmount > 0
+					  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+					  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+					  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<![CDATA[AND OM.FDATE BETWEEN TRUNC(#{queryBeginTime}) AND TRUNC(#{queryOverTime})]]>
+		  	 </if>
+			</otherwise>
+		</choose>						
+		<![CDATA[) R ORDER BY R.MEMBERID, R.CONTACTID]]>	
+	</select>
+
+	<select id="queryMemberCount" parameterType="com.deppon.crm.module.marketing.server.action.CustomerVo" 
+	                         resultType="int">
+		<![CDATA[
+			SELECT COUNT(1) FROM(
+			SELECT DISTINCT
+				   CUST.FID MEMBERID,
+				   CUST.FCUSTNAME CUSTNAME,
+			       CUST.FDEGREE MEMBERLEVEL,
+			       TLK.FID CONTACTID,
+			       TLK.FNAME LINKMANNAME, 
+			       TLK.FMOBILETEL LINKMANMOBILE,
+			       TLK.FOFFERTEL LINKMANPHONE,
+			       NVL(T2.RVCOUNT, 0) VISITNUM, 
+			       T2.RVLASTDATE LASTVISTITIME,
+			       T1.PCOUNT UNFINISHEDPLANNUM, 
+			       T0.FEMPNAME  PREHUMAN,
+			       BO.FBUSINESSSTATUS businessOpportunityStatus,
+                   DECODE(REPEAT.FCUSTID, NULL, 0, 1) repeatCust,
+                   REPEATDEPT.FDEPTNAME repeatCustDeptName
+			  FROM T_CUST_CUSTBASEDATA CUST
+			  LEFT JOIN T_CUST_CUSTBASEDATA_EXTEND EXTEND
+                            ON CUST.FID = EXTEND.FCUSTID
+		]]>
+		  <if test="bussinesState==null or bussinesState==''">
+		  	LEFT
+		  </if>
+		  <![CDATA[JOIN (SELECT X.Fcustid, X.Fbusinessstatus
+		               FROM T_MARK_BUSINESSOPPORTUNITY X
+		             WHERE 1=1
+		  ]]>
+		             <if test="bussinesState!=null and bussinesState!=''">
+		              	<![CDATA[AND X.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>		             
+		             </if> 
+		             <![CDATA[AND NOT EXISTS
+		              (SELECT 1
+		                       FROM T_MARK_BUSINESSOPPORTUNITY Y
+		                      WHERE X.FCUSTID = Y.FCUSTID]]>
+		                      <if test="bussinesState!=null and bussinesState!=''">
+		                        <![CDATA[AND Y.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>
+		                      </if>
+		 <![CDATA[AND Y.FCREATETIME > X.FCREATETIME)) BO ON CUST.FID = BO.FCUSTID
+		             LEFT JOIN T_CUST_REPEATED REPEAT ON REPEAT.FCUSTID = CUST.FID
+                  	 LEFT JOIN T_CUST_REPEATED REPEATDEPT ON REPEATDEPT.FCUSTID = REPEAT.FPUSHMAINCUSTID
+			  LEFT JOIN (        
+			  	SELECT T.FPREHUMAN, T.FCUSTID, E.FEMPNAME, E.FEMPCODE
+          		FROM T_CUST_CUSTGROUPDETAIL T, T_ORG_EMPLOYEE E
+        		WHERE T.FPREHUMAN = E.FID
+				) T0 ON CUST.FID = T0.FCUSTID,
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				T_CRM_OPERATIONANALYSIS OM,
+			]]>
+		</if>
+		<![CDATA[
+			 T_CUST_CUSTLINKMAN TLK
+			  LEFT JOIN (SELECT TP.FTOPIC, TMP.*
+			               FROM T_CUST_DEVELOPMAINTAINLIST TP,
+			                    (SELECT TS.FCONTACTID, COUNT(1) PCOUNT, MAX(TP.FID) FID
+			                       FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			                      WHERE TS.FPLANID = TP.FID
+			                      GROUP BY TS.FCONTACTID) TMP
+			              WHERE TMP.FID = TP.FID) T1 ON (TLK.FID = T1.FCONTACTID)
+			  LEFT JOIN (SELECT TRV.FLINKMANID, COUNT(1) RVCOUNT, MAX(FDATE) RVLASTDATE
+			               FROM T_CUST_RETURNVISIT TRV
+			              GROUP BY TRV.FLINKMANID) T2 ON (T2.FLINKMANID = TLK.FID)
+			WHERE TLK.FCUSTID = CUST.FID
+				AND CUST.FCUSTSTATUS = 0
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				AND CUST.FCUSTNUMBER = OM.FCUSTNUMBER
+			]]>
+		</if>
+		<if test="deptId!=null and deptId!=''">
+			<![CDATA[
+			    AND  CUST.FDEPTID = #{deptId} 
+			]]>
+		</if>
+		
+		<choose>
+			<when test="(memberNo!=null and memberNo!='') 
+						or (linkManCode!=null and linkManCode!='')">
+				<if test="memberNo!=null and memberNo!=''">
+					<![CDATA[
+					    AND CUST.FCUSTNUMBER = #{memberNo}
+					]]>
+				</if>
+				<if test="linkManCode!=null and linkManCode!=''">
+					<![CDATA[
+						AND TLK.FNUMBER = #{linkManCode}
+					]]>
+				</if>
+			</when>
+			<otherwise>					
+				<if test="custNumbers !=null and custNumbers !=''">
+					<![CDATA[    AND CUST.FCUSTNUMBER IN ]]>
+					<foreach collection="custNumbers" open="(" close=")" separator=","
+						item="memberNo">
+					<![CDATA[	'${memberNo}'  ]]>
+					</foreach>
+				</if>
+				<!-- 客户id数组遍历查询 -->
+				<if test="custIds !=null and custIds !=''">
+					<![CDATA[    AND CUST.FID IN ]]>
+					<foreach collection="custIds" open="(" close=")" separator=","
+						item="custId">
+					<![CDATA[	
+						#{custId,jdbcType=VARCHAR}  
+					]]>
+					</foreach>
+				</if>
+				<if test="contactIds !=null and contactIds !=''">
+					<![CDATA[    AND TLK.FID IN ]]>
+					<foreach collection="contactIds" open="(" close=")" separator=","
+						item="contact">
+					<![CDATA[	'${contact}'  ]]>
+					</foreach>
+				</if>
+				<if test="custName!=null and custName!=''">
+					<![CDATA[
+						AND CUST.FCUSTNAME LIKE #{custName}
+					]]>
+				</if>
+				<if test="linkManName!=null and linkManName!=''">
+					<![CDATA[
+						AND TLK.FNAME LIKE #{linkManName}
+					]]>
+				</if>
+				<if test="linkManMobile!=null and linkManMobile!=''">
+					<![CDATA[
+						AND TLK.FMOBILETEL = #{linkManMobile}
+					]]>
+				</if>
+				<if test="linkManPhone!=null and linkManPhone!=''">
+					<![CDATA[
+						AND TLK.FOFFERTEL = #{linkManPhone}
+					]]>
+				</if>
+				<if test="custType!=null and custType!=''">
+					<![CDATA[AND CUST.FCUSTGROUP = #{custType}]]>
+				</if>
+				<if test="memberLevel!=null and memberLevel!=''">
+					<![CDATA[AND CUST.FDEGREE = #{memberLevel}]]>
+				</if>
+				<if test="custbase!=null and custbase!=''">
+					<![CDATA[AND CUST.FCHANNELSOURCE = #{custbase}]]>
+				</if>
+				<if test="volumePotential!=null and volumePotential!=''">
+					<![CDATA[AND EXTEND.FVOLUMEPOTENTIAL = #{volumePotential}]]>
+				</if>
+				<if test="developState!=null and developState!=''">
+					<![CDATA[AND EXTEND.FDEVELOPMENTPHASE = #{developState,jdbcType=VARCHAR}]]>
+				</if>
+				<if test="continueMark!=null and continueMark!=''">
+					<![CDATA[AND EXTEND.FISCONTINUEMARK = #{continueMark,jdbcType=CHAR}]]>
+				</if>
+				<if test="cooperationIntention!=null and cooperationIntention!=''">
+					<![CDATA[AND EXTEND.FCOOPINTENTION = #{cooperationIntention}]]>
+				</if>
+				<if test="businessType!=null and businessType!=''">
+					<![CDATA[AND CUST.FCUSTCATEGORY = #{businessType}]]>
+				</if>
+				<if test="queryBeginTime == null or queryOverTime == null">
+					<if test="custProperty!=null and custProperty!=''">
+						<![CDATA[
+							AND CUST.FCUSTNATURE = #{custProperty}
+						]]>
+					</if>
+				</if>
+				<if test="trade!=null and trade!=''">
+					<![CDATA[
+						AND CUST.FTRADEID = #{trade}
+					]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != ''">
+					<![CDATA[ AND CUST.FSECONDTRADE =#{secondTrade} ]]>
+				</if>
+				<if test="beginTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)>=#{beginTime}
+					]]>
+				</if>
+				<if test="overTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)<=#{overTime}
+					]]>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginShipWeight > 0 or overShipWeight > 0 
+					 or beginShipVotes > 0	 or overShipVotes > 0 
+					 or beginShipAmount > 0 or overShipAmount > 0)">
+					<if test="beginShipWeight> 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT >= #{beginShipWeight} ]]>
+					</if>
+					<if test="overShipWeight > 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT <= #{overShipWeight} ]]>
+					</if>
+					<if test="beginShipVotes > 0">
+						<![CDATA[ AND OM.FLEAVEBILL >= #{beginShipVotes} ]]>
+					</if>
+					<if test="overShipVotes> 0">
+						<![CDATA[ AND OM.FLEAVEBILL <= #{overShipVotes} ]]>
+					</if>
+					<if test="beginShipAmount> 0">
+						<![CDATA[ AND OM.FLEAVEMONEY >= #{beginShipAmount} ]]>
+					</if>
+					<if test="overShipAmount > 0">
+						<![CDATA[ AND OM.FLEAVEMONEY <= #{overShipAmount} ]]>
+					</if>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginArrivalWeight > 0 or overArrivalWeight > 0 
+				  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+				  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<if test="beginArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT > =#{beginArrivalWeight} ]]>
+					</if>
+					<if test="overArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT  <=#{overArrivalWeight} ]]>
+					</if>
+					<if test="beginArrivalVotes> 0">
+					<![CDATA[ AND OM.FARRIVEBILL >= #{beginArrivalVotes} ]]>
+					</if>
+					<if test="overArrivalVotes > 0">
+					<![CDATA[ AND OM.FARRIVEBILL < =#{overArrivalVotes} ]]>
+					</if>
+					<if test="beginArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY > =#{beginArrivalAmount} ]]>
+					</if>
+					<if test="overArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY < =#{overArrivalAmount} ]]>
+					</if>
+				</if>
+			 <if test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+						 or beginShipVotes > 0	 or overShipVotes > 0
+						 or beginShipAmount > 0 or overShipAmount > 0
+					  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+					  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+					  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<![CDATA[AND OM.FDATE BETWEEN TRUNC(#{queryBeginTime}) AND TRUNC(#{queryOverTime})]]>
+		  	 </if>
+			</otherwise> 
+		</choose>
+		UNION
+		<![CDATA[
+			SELECT DISTINCT
+				   CUST.FID MEMBERID,
+				   CUST.FCUSTNAME CUSTNAME,
+			       CUST.FDEGREE MEMBERLEVEL,
+			       TLK.FID CONTACTID,
+			       TLK.FNAME LINKMANNAME, 
+			       TLK.FMOBILETEL LINKMANMOBILE,
+			       TLK.FOFFERTEL LINKMANPHONE,
+			       NVL(T2.RVCOUNT, 0) VISITNUM, 
+			       T2.RVLASTDATE LASTVISTITIME,
+			       T1.PCOUNT UNFINISHEDPLANNUM, 
+			       T0.FEMPNAME  PREHUMAN,
+			       BO.FBUSINESSSTATUS businessOpportunityStatus,
+                   DECODE(REPEAT.FCUSTID, NULL, 0, 1) repeatCust,
+                   REPEATDEPT.FDEPTNAME repeatCustDeptName
+			  FROM T_CUST_CUSTBASEDATA CUST
+			  LEFT JOIN T_CUST_CUSTBASEDATA_EXTEND EXTEND
+                            ON CUST.FID = EXTEND.FCUSTID
+		]]>
+		  <if test="bussinesState==null or bussinesState==''">
+		  	LEFT
+		  </if>
+		  <![CDATA[JOIN (SELECT X.Fcustid, X.Fbusinessstatus
+		               FROM T_MARK_BUSINESSOPPORTUNITY X
+		             WHERE 1=1
+		  ]]>
+		             <if test="bussinesState!=null and bussinesState!=''">
+		              	<![CDATA[AND X.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>		             
+		             </if> 
+		             <![CDATA[AND NOT EXISTS
+		              (SELECT 1
+		                       FROM T_MARK_BUSINESSOPPORTUNITY Y
+		                      WHERE X.FCUSTID = Y.FCUSTID]]>
+		                      <if test="bussinesState!=null and bussinesState!=''">
+		                        <![CDATA[AND Y.FBUSINESSSTATUS = #{bussinesState,jdbcType=VARCHAR}]]>
+		                      </if>
+		 <![CDATA[AND Y.FCREATETIME > X.FCREATETIME)) BO ON CUST.FID = BO.FCUSTID
+		             LEFT JOIN T_CUST_REPEATED REPEAT ON REPEAT.FCUSTID = CUST.FID
+                  	 LEFT JOIN T_CUST_REPEATED REPEATDEPT ON REPEATDEPT.FCUSTID = REPEAT.FPUSHMAINCUSTID
+			  LEFT JOIN (        
+			  	SELECT T.FPREHUMAN, T.FCUSTID, E.FEMPNAME, E.FEMPCODE
+          		FROM T_CUST_CUSTGROUPDETAIL T, T_ORG_EMPLOYEE E
+        		WHERE T.FPREHUMAN = E.FID
+				) T0 ON CUST.FID = T0.FCUSTID,
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				T_CRM_OPERATIONANALYSIS OM,
+			]]>
+		</if>
+		<![CDATA[
+			 T_CUST_CUSTLINKMAN TLK
+			  LEFT JOIN (SELECT TP.FTOPIC, TMP.*
+			               FROM T_CUST_DEVELOPMAINTAINLIST TP,
+			                    (SELECT TS.FCONTACTID, COUNT(1) PCOUNT, MAX(TP.FID) FID
+			                       FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			                      WHERE TS.FPLANID = TP.FID
+			                      GROUP BY TS.FCONTACTID) TMP
+			              WHERE TMP.FID = TP.FID) T1 ON (TLK.FID = T1.FCONTACTID)
+			  LEFT JOIN (SELECT TRV.FLINKMANID, COUNT(1) RVCOUNT, MAX(FDATE) RVLASTDATE
+			               FROM T_CUST_RETURNVISIT TRV
+			              GROUP BY TRV.FLINKMANID) T2 ON (T2.FLINKMANID = TLK.FID)
+			WHERE TLK.FCUSTID = CUST.FID
+				AND CUST.FCUSTSTATUS = 0
+		]]>
+		<if
+			test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+			<![CDATA[
+				AND CUST.FCUSTNUMBER = OM.FCUSTNUMBER
+			]]>
+		</if>
+		<if test="deptId!=null and deptId!=''">
+			<![CDATA[
+			    AND CUST.FID IN
+		       (SELECT T.FCUSTID FROM T_CUST_MARKETDEPT T WHERE T.FDEPTID = #{deptId})
+			]]>
+		</if>
+		
+		<choose>
+			<when test="(memberNo!=null and memberNo!='') 
+						or (linkManCode!=null and linkManCode!='')">
+				<if test="memberNo!=null and memberNo!=''">
+					<![CDATA[
+					    AND CUST.FCUSTNUMBER = #{memberNo}
+					]]>
+				</if>
+				<if test="linkManCode!=null and linkManCode!=''">
+					<![CDATA[
+						AND TLK.FNUMBER = #{linkManCode}
+					]]>
+				</if>
+			</when>
+			<otherwise>					
+				<if test="custNumbers !=null and custNumbers !=''">
+					<![CDATA[    AND CUST.FCUSTNUMBER IN ]]>
+					<foreach collection="custNumbers" open="(" close=")" separator=","
+						item="memberNo">
+					<![CDATA[	'${memberNo}'  ]]>
+					</foreach>
+				</if>
+				<!-- 客户id数组遍历查询 -->
+				<if test="custIds !=null and custIds !=''">
+					<![CDATA[    AND CUST.FID IN ]]>
+					<foreach collection="custIds" open="(" close=")" separator=","
+						item="custId">
+					<![CDATA[	
+						#{custId,jdbcType=VARCHAR}  
+					]]>
+					</foreach>
+				</if>
+				<if test="contactIds !=null and contactIds !=''">
+					<![CDATA[    AND TLK.FID IN ]]>
+					<foreach collection="contactIds" open="(" close=")" separator=","
+						item="contact">
+					<![CDATA[	'${contact}'  ]]>
+					</foreach>
+				</if>
+				<if test="custName!=null and custName!=''">
+					<![CDATA[
+						AND CUST.FCUSTNAME LIKE #{custName}
+					]]>
+				</if>
+				<if test="linkManName!=null and linkManName!=''">
+					<![CDATA[
+						AND TLK.FNAME LIKE #{linkManName}
+					]]>
+				</if>
+				<if test="linkManMobile!=null and linkManMobile!=''">
+					<![CDATA[
+						AND TLK.FMOBILETEL = #{linkManMobile}
+					]]>
+				</if>
+				<if test="linkManPhone!=null and linkManPhone!=''">
+					<![CDATA[
+						AND TLK.FOFFERTEL = #{linkManPhone}
+					]]>
+				</if>
+				<if test="custType!=null and custType!=''">
+					<![CDATA[AND CUST.FCUSTGROUP = #{custType}]]>
+				</if>
+				<if test="memberLevel!=null and memberLevel!=''">
+					<![CDATA[AND CUST.FDEGREE = #{memberLevel}]]>
+				</if>
+				<if test="custbase!=null and custbase!=''">
+					<![CDATA[AND CUST.FCHANNELSOURCE = #{custbase}]]>
+				</if>
+				<if test="volumePotential!=null and volumePotential!=''">
+					<![CDATA[AND EXTEND.FVOLUMEPOTENTIAL = #{volumePotential}]]>
+				</if>
+				<if test="developState!=null and developState!=''">
+					<![CDATA[AND EXTEND.FDEVELOPMENTPHASE = #{developState,jdbcType=VARCHAR}]]>
+				</if>
+				<if test="continueMark!=null and continueMark!=''">
+					<![CDATA[AND EXTEND.FISCONTINUEMARK = #{continueMark,jdbcType=CHAR}]]>
+				</if>
+				<if test="cooperationIntention!=null and cooperationIntention!=''">
+					<![CDATA[AND EXTEND.FCOOPINTENTION = #{cooperationIntention}]]>
+				</if>
+				<if test="businessType!=null and businessType!=''">
+					<![CDATA[AND CUST.FCUSTCATEGORY = #{businessType}]]>
+				</if>
+				<if test="queryBeginTime == null or queryOverTime == null">
+					<if test="custProperty!=null and custProperty!=''">
+						<![CDATA[
+							AND CUST.FCUSTNATURE = #{custProperty}
+						]]>
+					</if>
+				</if>
+				<if test="trade!=null and trade!=''">
+					<![CDATA[
+						AND CUST.FTRADEID = #{trade}
+					]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != ''">
+					<![CDATA[ AND CUST.FSECONDTRADE =#{secondTrade} ]]>
+				</if>
+				<if test="beginTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)>=#{beginTime}
+					]]>
+				</if>
+				<if test="overTime!=null">
+					<![CDATA[
+						AND TRUNC(CUST.FCREATETIME)<=#{overTime}
+					]]>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginShipWeight > 0 or overShipWeight > 0 
+					 or beginShipVotes > 0	 or overShipVotes > 0 
+					 or beginShipAmount > 0 or overShipAmount > 0)">
+					<if test="beginShipWeight> 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT >= #{beginShipWeight} ]]>
+					</if>
+					<if test="overShipWeight > 0">
+						<![CDATA[ AND OM.FLEAVEWEIGHT <= #{overShipWeight} ]]>
+					</if>
+					<if test="beginShipVotes > 0">
+						<![CDATA[ AND OM.FLEAVEBILL >= #{beginShipVotes} ]]>
+					</if>
+					<if test="overShipVotes> 0">
+						<![CDATA[ AND OM.FLEAVEBILL <= #{overShipVotes} ]]>
+					</if>
+					<if test="beginShipAmount> 0">
+						<![CDATA[ AND OM.FLEAVEMONEY >= #{beginShipAmount} ]]>
+					</if>
+					<if test="overShipAmount > 0">
+						<![CDATA[ AND OM.FLEAVEMONEY <= #{overShipAmount} ]]>
+					</if>
+				</if>
+				<if
+					test="(queryBeginTime!=null and queryOverTime!=null) 
+					 and (beginArrivalWeight > 0 or overArrivalWeight > 0 
+				  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+				  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<if test="beginArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT > =#{beginArrivalWeight} ]]>
+					</if>
+					<if test="overArrivalWeight > 0">
+					<![CDATA[ AND OM.FARRIVEWEIGHT  <=#{overArrivalWeight} ]]>
+					</if>
+					<if test="beginArrivalVotes> 0">
+					<![CDATA[ AND OM.FARRIVEBILL >= #{beginArrivalVotes} ]]>
+					</if>
+					<if test="overArrivalVotes > 0">
+					<![CDATA[ AND OM.FARRIVEBILL < =#{overArrivalVotes} ]]>
+					</if>
+					<if test="beginArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY > =#{beginArrivalAmount} ]]>
+					</if>
+					<if test="overArrivalAmount > 0">
+					<![CDATA[ AND OM.FARRIVEMONEY < =#{overArrivalAmount} ]]>
+					</if>
+				</if>
+			 <if test="(queryBeginTime!=null and queryOverTime!=null) and (beginShipWeight > 0 or overShipWeight > 0 
+						 or beginShipVotes > 0	 or overShipVotes > 0
+						 or beginShipAmount > 0 or overShipAmount > 0
+					  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+					  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+					  	 or beginArrivalAmount > 0 or overArrivalAmount > 0)">
+					<![CDATA[AND OM.FDATE BETWEEN TRUNC(#{queryBeginTime}) AND TRUNC(#{queryOverTime})]]>
+		  	 </if>
+			</otherwise>
+		</choose>	
+		<![CDATA[)]]>	
+	</select>
+	
+	<select id="getMaintainMemberList" parameterType="String"
+		resultType="com.deppon.crm.module.marketing.server.action.CustomerVo">
+		<![CDATA[
+	       SELECT T3.FTOPIC     	FTOPIC,
+	       		 TSCHE.FREMARK      MARKETREMARK,
+	             TSCHE.FCUSTID   	MEMBERID,
+	             ''         		SCATTERID,
+	             T1.FCUSTNAME   	CUSTNAME,
+	             T1.FDEGREE    		MEMBERLEVEL,
+	             TSCHE.FCONTACTID 	CONTACTID,
+	             TLK.FNAME    		LINKMANNAME,
+	             TLK.FMOBILETEL  	LINKMANMOBILE,
+	             TLK.FOFFERTEL  	LINKMANPHONE,
+	             T3.PCOUNT    		UNFINISHEDPLANNUM,
+	             NVL(T2.RVCOUNT, 0) VISITNUM, 
+	             T2.RVLASTDATE  	LASTVISTITIME ,
+	             T0.FEMPNAME 		PREHUMAN,
+	             T1.FCUSTGROUP CUSTTYPE,
+	             T1.FCUSTCATEGORY BUSINESSTYPE,
+               	 CDE.FDEVELOPMENTPHASE DEVELOPMENTPHASE,
+                 CDE.FCOOPINTENTION COOPINTENTION,
+                 CDE.FVOLUMEPOTENTIAL VOLUMEPOTENTIAL,
+                 ADDRESS.FADDRESS ADDRESS
+	        FROM T_CUST_DEVELOPMAINTAINLIST TPLAN, T_CUST_SCHEDULE TSCHE
+	        LEFT JOIN T_CUST_CUSTBASEDATA T1 ON (T1.FID = TSCHE.FCUSTID)
+	        LEFT JOIN T_CUST_CUSTBASEDATA_EXTEND CDE ON CDE.FCUSTID = T1.FID
+	        LEFT JOIN (SELECT TRV.FLINKMANID, COUNT(1) RVCOUNT, MAX(FDATE) RVLASTDATE
+	                     FROM T_CUST_RETURNVISIT TRV
+				              GROUP BY TRV.FLINKMANID) T2 ON (T2.FLINKMANID =
+				                                             TSCHE.FCONTACTID)
+       		LEFT JOIN ( 
+				  	SELECT T.FPREHUMAN, E.FID, T.FCUSTID, E.FEMPNAME, E.FEMPCODE
+	               		FROM T_CUST_CUSTGROUPDETAIL T, T_ORG_EMPLOYEE E
+	              	WHERE T.FPREHUMAN = E.FID) T0 ON T1.FID = T0.FCUSTID,
+			 T_CUST_CUSTLINKMAN TLK
+			  LEFT JOIN (SELECT TP.FTOPIC, TMP.*
+			               FROM T_CUST_DEVELOPMAINTAINLIST TP,
+			                    (SELECT TS.FCONTACTID, COUNT(1) PCOUNT, MAX(TP.FID) FID
+			                       FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			                      WHERE TS.FPLANID = TP.FID			                           
+			                        AND TP.FSTATUS < 30
+			                      GROUP BY TS.FCONTACTID) TMP
+			              WHERE TMP.FID = TP.FID) T3 ON TLK.FID = T3.FCONTACTID
+			LEFT JOIN T_CUST_PREFERENCEADDRESS ADDRESS
+				    ON ADDRESS.FLINKMANID = TLK.FID
+			        AND ADDRESS.FISMAINADDRESS = '1'
+					AND ADDRESS.FSTATUS = '0'
+			 WHERE /*TPLAN.FPLANTYPE != 'dev'AND*/
+			   TPLAN.FID = TSCHE.FPLANID
+			   AND TSCHE.FCUSTID = TLK.FCUSTID
+			   AND TSCHE.FCONTACTID = TLK.FID
+			   AND TPLAN.FID = #{id}			   
+		]]>
+	</select>
+	
+	<select id="getDevelopCustomerList" parameterType="String"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustomerList">
+		<![CDATA[
+			SELECT T4.FTOPIC FTOPIC,
+			       '' MEMBERID,
+			       TSCHE.FCUSTID SCATTERID,
+			       T1.FCUSTNAME CUSTNAME,
+			       T1.FDEGREE MEMBERLEVEL,
+			       TSCHE.FCONTACTID CONTACTID,
+			       
+			       TPS.FLINKMANNAME LINKMANNAME,
+			       TPS.FLINKMANMOBILE LINKMANMOBILE,
+			       TPS.FLINKMANPHONE LINKMANPHONE,
+			       T3.PCOUNT UNFINISHEDPLANNUM,
+			       
+			       NVL(T2.RVCOUNT, 0) VISITNUM,
+			       T2.RVLASTDATE LASTVISTITIME
+			  FROM T_CUST_DEVELOPMAINTAINLIST TPLAN, T_CUST_SCHEDULE TSCHE
+			  LEFT JOIN T_CUST_CUSTBASEDATA T1 ON (T1.FID = TSCHE.FCUSTID)
+			  LEFT JOIN (SELECT TRV.FLINKMANID, COUNT(1) RVCOUNT, MAX(FDATE) RVLASTDATE
+			               FROM T_CUST_RETURNVISIT TRV
+			              GROUP BY TRV.FLINKMANID) T2 ON (T2.FLINKMANID =
+			                                             TSCHE.FCONTACTID),                                             
+			  T_CUST_POTENTIALSCATTER TPS    
+			  LEFT JOIN (SELECT TS.FCUSTID, COUNT(1) PCOUNT
+			               FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			              WHERE TS.FPLANID = TP.FID
+			                AND TP.FSTATUS < 30 AND TS.FTYPE = 'dev'
+			              GROUP BY TS.FCUSTID) T3 ON TPS.FID = T3.FCUSTID
+			  LEFT JOIN (SELECT TP.FTOPIC, TMP.*
+			               FROM T_CUST_DEVELOPMAINTAINLIST TP,
+			                    (SELECT TS.FCUSTID, COUNT(1) PCOUNT, MAX(TP.FID) FID
+			                       FROM T_CUST_SCHEDULE TS, T_CUST_DEVELOPMAINTAINLIST TP
+			                      WHERE TS.FPLANID = TP.FID
+			                        AND TP.FSTATUS < 30 AND TS.FTYPE = 'dev'
+			                      GROUP BY TS.FCUSTID) TMP
+			              WHERE TMP.FID = TP.FID) T4 ON TPS.FID = T4.FCUSTID
+			 WHERE /*TPLAN.FPLANTYPE = 'dev' AND*/
+			    TPLAN.FID = TSCHE.FPLANID
+			   AND TSCHE.FCUSTID = TPS.FID
+			   AND TPLAN.FID = #{id}			   
+		]]>
+	</select>
+	
+	<select id="queryContactIds" parameterType="String" resultType="String">
+		<![CDATA[
+			SELECT FCONTACTID FROM T_CUST_SCHEDULE  WHERE FPLANID=#{id}
+		]]>
+	</select>
+	
+	<select id="searchPlansByStatusList" resultMap="Plan">
+		<![CDATA[
+			SELECT * 
+			FROM T_CUST_DEVELOPMAINTAINLIST T 
+			WHERE T.FSTATUS NOT IN 
+		]]>
+		<foreach collection="list" item="status"  open="(" separator="," close=")">
+        	#{status}
+		</foreach>
+		<![CDATA[
+			order by t.fid desc
+		]]>
+	</select>
+	
+	<update id="updatePlanStatusForTimer" parameterType="com.deppon.crm.module.marketing.shared.domain.Plan">
+		<![CDATA[
+			UPDATE T_CUST_DEVELOPMAINTAINLIST 
+			SET FSTATUS = #{status, jdbcType=NUMERIC}, 
+			FLASTUPDATETIME = #{modifyDate, jdbcType=TIMESTAMP},
+			FLASTMODIFYUSERID = #{modifyUser, jdbcType=NUMERIC}
+			WHERE FID = #{id}
+		]]>
+	</update>
+	
+	<select id="queryDeliverTop50Customer" parameterType="String" resultType="com.deppon.crm.module.marketing.shared.domain.NeedMaintainCustomer">
+		<![CDATA[
+		SELECT 
+		FDEPTID AS DEPTID, 
+		FCUSTNUMBER AS CUSTNUMBER 
+		FROM T_CRM_DELIVERTOP50CUSTMER 
+		WHERE TO_CHAR(FDATE, 'YYYYMM') = #{queryDate}
+		]]>
+	</select>
+
+	<select id="queryReceiveTop50Customer" parameterType="String" resultType="com.deppon.crm.module.marketing.shared.domain.NeedMaintainCustomer">
+		<![CDATA[
+		SELECT 
+		FDEPTID AS DEPTID, 
+		FCUSTNUMBER AS CUSTNUMBER 
+		FROM T_CRM_RECEIVETOP50CUSTMER 
+		WHERE TO_CHAR(FDATE, 'YYYYMM') = #{queryDate}
+		]]>
+	</select>
+	
+	<select id="queryLostCustomer" parameterType="String" resultType="com.deppon.crm.module.marketing.shared.domain.NeedMaintainCustomer">
+		<![CDATA[
+		SELECT 
+		FDEPTID AS DEPTID, 
+		FCUSTID AS CUSTID,
+		FCUSTNUMBER AS CUSTNUMBER 
+		FROM T_CRM_CUSTOMERLOSEDETAIL 
+		WHERE TO_CHAR(FDATE, 'YYYYMM') = #{queryDate}
+		]]>
+	</select>
+	
+	<select id="queryDelayCustomer" parameterType="String" resultType="com.deppon.crm.module.marketing.shared.domain.NeedMaintainCustomer">
+		<![CDATA[
+		SELECT 
+		FDEPTID AS DEPTID, 
+		FCUSTNUMBER AS CUSTNUMBER 
+		FROM T_CRM_DELIVEROVERDUE
+		WHERE TO_CHAR(FDATE, 'YYYYMM') = #{queryDate}
+		GROUP BY FDEPTID, FCUSTNUMBER
+		]]>
+	</select>
+	
+	<select id="queryReduceCustomer" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.ReduceCustomer">
+		<![CDATA[
+		SELECT D.CUSTOMERNUMBER,
+		       D.CURRAMOUNT,
+		       D.LASTAMOUNT,
+		       C.FID AS CUSTID,
+		       C.FDEGREE AS DEGREE,
+		       C.FDEPTID AS DEPTID,
+		       C.FCONTACTID AS CONTACTID
+		  FROM (SELECT NVL(A.CUSTOMERNUMBER, B.CUSTOMERNUMBER) CUSTOMERNUMBER,
+		               NVL(A.AMOUNT, 0) AS CURRAMOUNT,
+		               NVL(B.AMOUNT, 0) AS LASTAMOUNT
+		          FROM (SELECT FCUSTNUMBER AS CUSTOMERNUMBER,
+		                       NVL(SUM(NVL(FFPREPAYAMOUNT, 0) + NVL(FARRIVEDAOUNT, 0) -
+		                               NVL(FAGENTRECEIVEPAY, 0) - NVL(FREFUNDRABATE, 0)),
+		                           0) AS AMOUNT
+		                  FROM T_CRM_CUSTANALYSEBYDAY
+		                 WHERE FYEAR = #{year}
+		                   AND FMONTH = #{month}
+		                   AND FDAY <= #{day}
+		                 GROUP BY FCUSTNUMBER) A
+		          FULL JOIN (SELECT FCUSTNUMBER AS CUSTOMERNUMBER,
+		                           NVL(SUM(NVL(FFPREPAYAMOUNT, 0) +
+		                                   NVL(FARRIVEDAOUNT, 0) -
+		                                   NVL(FAGENTRECEIVEPAY, 0) -
+		                                   NVL(FREFUNDRABATE, 0)),
+		                               0) AS AMOUNT
+		                      FROM T_CRM_CUSTANALYSEBYDAY
+		                     WHERE FYEAR = #{year1}
+		                       AND FMONTH = #{month1}
+		                       AND FDAY <= #{day}
+		                     GROUP BY FCUSTNUMBER) B ON A.CUSTOMERNUMBER =
+		                                                B.CUSTOMERNUMBER) D
+		  LEFT JOIN T_CUST_CUSTBASEDATA C ON D.CUSTOMERNUMBER = C.FCUSTNUMBER
+		 WHERE D.CURRAMOUNT < D.LASTAMOUNT
+		]]>
+	</select>
+	
+	<select id="queryExistedCustomerInPlan" parameterType="Map" resultType="String">
+		<![CDATA[
+		SELECT S.FCUSTID
+		  FROM T_CUST_DEVELOPMAINTAINLIST D, T_CUST_SCHEDULE S
+		 WHERE D.FENDTIME >= #{sdate}
+		   AND D.FENDTIME <= #{edate}
+		   AND D.FID = S.FPLANID
+		   /*AND D.FPLANTYPE = #{planType}*/
+		 GROUP BY S.FCUSTID
+		 ORDER BY S.FCUSTID
+		]]>
+	</select>
+	
+	<select id="searchPlanByStatus4Job" 
+			parameterType="string" 
+			resultType="com.deppon.crm.module.marketing.server.action.ToDoPojo">
+ 		<![CDATA[
+			SELECT COUNT(1) TASKCOUNT , T.USERID
+			  FROM T_CUST_DEVELOPMAINTAINLIST D,
+			       (SELECT E.FID EID, E.FDEPTID EDEPTID, U.FID USERID
+			          FROM T_ORG_EMPLOYEE E, T_AUTH_USER U
+			         WHERE E.FEMPCODE = U.FEMPCODE) T
+			 WHERE T.USERID IS NOT NULL
+			   AND D.FEXECDEPTID = T.EDEPTID
+			   AND D.FEXECUSERID = T.EID
+	    ]]>
+    	<![CDATA[ 
+   			AND D.FSTATUS < '30'
+    	]]>
+    	<![CDATA[ 
+			GROUP BY T.USERID
+			ORDER BY T.USERID
+    	]]>
+	</select>
+	
+	<!-- 根据Employee ID 获取User Id START-->
+	<resultMap id="userSimplResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.User">
+		<id property="id" column="ID" />
+		<result property="loginName" column="LOGINNAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="lastLogin" column="LASTLOGIN" />
+		<result property="status" column="STATUS" />
+		<result property="invalidDate" column="INVALIDDATE" />
+		<result property="validDate" column="VALIDDATE" />
+		<result property="createUser" column="CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<association property="empCode" column="EMPCODE"
+			select="com.deppon.crm.module.organization.shared.domain.Employee.getEmployeesByCode" />
+	</resultMap>
+	
+	<sql id="select_simple_param">
+		U.FID AS ID,
+		U.FEMPCODE AS EMPCODE,
+		U.FLOGINNAME AS LOGINNAME,
+		U.FLASTLOGIN AS LASTLOGIN,
+		U.FPASSWORD AS PASSWORD,
+		U.FSTATUS AS STATUS,
+		U.FINVALIDDATE AS INVALIDDATE,
+		U.FVALIDDATE AS VALIDDATE,
+		U.FCREATEUSERID AS CREATEUSER,
+		U.FCREATETIME AS CREATEDATE,
+		U.FLASTMODIFYUSERID AS MODIFYUSER,
+		U.FLASTUPDATETIME AS MODIFYDATE
+	</sql>
+	
+	<select id="getUserByEmpId" parameterType="string" resultMap="userSimplResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_USER U , T_ORG_EMPLOYEE E
+			WHERE U.FEMPCODE = E.FEMPCODE AND E.FID = #{ID}
+		]]>
+	</select>
+	<!-- 根据Employee ID 获取User Id  END -->
+	
+	<!-- 根据条件 获取创建人信息 START -->
+	<select id="getPlanCreatorList" 
+		parameterType="map"
+		resultType="com.deppon.crm.module.organization.shared.domain.Employee">
+		SELECT E.FID, E.FEMPNAME FROM T_CUST_DEVELOPMAINTAINLIST D
+			INNER JOIN T_ORG_DEPARTMENT DP ON DP.FID = D.FEXECDEPTID
+			INNER JOIN T_ORG_EMPLOYEE E ON D.FEXECUSERID = E.FID
+		WHERE 1=1
+         <if test="executeDept != null and executeDept !=''">
+         	<![CDATA[ AND D.FEXECDEPTID = #{executeDept, jdbcType=VARCHAR} ]]>
+         </if>
+         <if test="executeDepts != null">
+         	<![CDATA[ AND D.FEXECDEPTID IN  ]]>         	
+			<foreach collection="executeDepts" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+         </if>
+		GROUP BY E.FID, E.FEMPNAME
+		ORDER BY E.FEMPNAME
+	
+	</select>
+	<!-- 根据条件 获取创建人信息 END -->
+	<select id="searchSchedulesByPlanNameDim"
+			parameterType="com.deppon.crm.module.marketing.shared.domain.PlanDevelopCondition"
+			resultType="string">
+		<![CDATA[
+			SELECT S.FID FROM T_CUST_DEVELOPMAINTAINLIST D
+				INNER JOIN T_CUST_SCHEDULE S ON S.FPLANID = D.FID
+			WHERE 1=1
+		]]>
+		<if test="executeDepts != null">
+         	<![CDATA[ AND D.FEXECDEPTID IN  ]]>         	
+			<foreach collection="executeDepts" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+         </if>
+         
+		<if test="planName != null and planName != ''">
+			<![CDATA[
+				AND REGEXP_INSTR(D.FTOPIC, #{planName}) > 0				
+			]]>
+		</if>
+		<if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(D.FENDTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(D.FENDTIME) <= #{planOverDate, jdbcType=DATE})
+	       ]]>
+		</if>
+	</select>
+		
+	<select id="createMonthlyPlanByJob" statementType="CALLABLE">
+		{call pag_markteting_autocreateplan.createPlanForDept(#{code,mode=OUT,jdbcType=NUMERIC})}		
+	</select>
+	<select id="searchExecuteDepCount" parameterType="map" resultType="String">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_ORG_DEPARTMENT 
+		]]>
+		<![CDATA[	WHERE ( FID IN]]>
+		<foreach collection="deptIdsSet" separator="OR FID IN"
+				item="depts">
+			<foreach collection="depts" open="(" close=")" separator=","
+				item="deptId">
+			<![CDATA[	${deptId}  ]]>
+			</foreach>
+		</foreach>
+		<![CDATA[ 
+			) AND FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+		]]>
+	</select>
+	<select id="searchExecuteDep" parameterType="map" resultMap="ExecuteDeptResultMap">
+		<![CDATA[
+			SELECT 	
+					FID,FDEPTCODE,FDEPTNAME,FPRINCIPAL,FPHONE,
+					FFAX,FCOMPANYNAME,FZIPCODE,FADDRESS,FSTATUS,FVALIDDATE,
+					FINVALIDDATE,FDISPLAYORDER,FDEPTLEVEL,FDEPTDESC,FDEPTSEQ,
+					FLEAF,FCREATEUSERID,FCREATETIME,FLASTMODIFYUSERID,FLASTUPDATETIME,
+					FSTANDARDCODE
+			FROM T_ORG_DEPARTMENT 
+		]]>
+		<![CDATA[	WHERE ( FID IN]]>
+		<foreach collection="deptIdsSet" separator="OR FID IN"
+				item="depts">
+			<foreach collection="depts" open="(" close=")" separator=","
+				item="deptId">
+			<![CDATA[	${deptId}  ]]>
+			</foreach>
+		</foreach>
+		<![CDATA[ 
+			) AND FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+		]]>
+	</select>
+	<select id="searchEmployeeByCode" parameterType="string" 
+	resultMap="searchEmployeeByCodeMap">
+		<![CDATA[
+			SELECT 
+			FDEPTID,
+			FEMPCODE,
+			FEMPNAME,
+			FSTATUS
+		]]>
+		<![CDATA[
+			FROM T_ORG_EMPLOYEE E
+			WHERE E.FID = #{execuserId,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<!-- 潜散客信息 -->
+	<resultMap id="Customer_PC_SC_ResultMap"
+		type="com.deppon.crm.module.marketing.shared.domain.PotentialScatterVo">
+		<id property="id" column="PS_FID" />
+		<result property="custName" column="PS_FCUSTNAME" />
+		<result property="bussinesState" column="PS_FBUSSINESSSTATE" />
+		<result property="coopIntention" column="PS_FCOOPINTENTION" />
+		<result property="volumePotential" column="PS_FVOLUMEPOTENTIAL" />
+		<result property="linkManName" column="PS_FLINKMANNAME" />
+		<result property="linkManMobile" column="PS_FLINKMANMOBILE" />
+		<result property="linkManPhone" column="PS_FLINKMANPHONE" />
+		<result property="post" column="PS_FPOST" />
+		<result property="createDate" column="PS_FCREATTIME" />
+		<result property="lastVistiTime" column="lastVistiTime" />
+	</resultMap>
+	<select id="searchPotentialCustomerList" resultMap="Customer_PC_SC_ResultMap">
+		select ps.fid               ps_fid,
+		       ps.fcusttype         ps_fcusttype,
+		       ps.fcustname         ps_fcustname,
+		       ps.fbusinessstate    ps_fbussinessstate,
+		       ps.fcoopintention    ps_fcoopintention,
+		       ps.fvolumepotential  ps_fvolumepotential,
+		       ps.flinkmanname      ps_flinkmanname,
+		       ps.flinkmanmobile    ps_flinkmanmobile,
+		       ps.flinkmanphone     ps_flinkmanphone,
+		       ps.foffice           ps_fpost,
+		       ps.fdeptid           ps_fdeptid,
+		       ps.fcreatetime       ps_fcreattime,
+               vt.lastvisittime     lastVistiTime
+		  from t_cust_potentialscatter ps
+		  left join t_crm_city city
+		    on city.fid = ps.fcity
+		  left join (select max(rv.ftrackdate) lastvisittime,
+                    		rv.fqsid qsid
+               		 from t_cust_returnvisit rv group by rv.fqsid) vt
+    		on vt.qsid = ps.fid
+		 where ps.fiscancel = 0
+		   and ps.fcusttype = 'PC_CUSTOMER'
+		<if test="customerName != null and customerName != ''">
+			<![CDATA[ AND PS.FCUSTNAME like '%'||#{customerName}||'%' ]]>
+		</if>
+		<if test="contactName != null and contactName != ''">
+			<![CDATA[ AND PS.FLINKMANNAME like '%'||#{contactName}||'%' ]]>
+		</if>
+		<if test="position != null and position != ''">
+			<![CDATA[ AND PS.FOFFICE =#{position} ]]>
+		</if>
+		<if test="contactPhone !=  null and contactPhone != ''">
+			<![CDATA[ AND PS.FLINKMANMOBILE =#{contactPhone} ]]>
+		</if>
+		<if test="contactTel !=  null and contactTel != ''">
+			<![CDATA[ AND PS.FLINKMANPHONE =#{contactTel} ]]>
+		</if>
+		<if test="industry != null and industry != ''">
+			<![CDATA[ AND PS.FTRADE =#{industry} ]]>
+		</if>
+		<if test="secondTrade != null and secondTrade != ''">
+            <![CDATA[ AND PS.FSECONDTRADE =#{secondTrade} ]]>
+        </if>
+		<if test="coopIntention != null and coopIntention != ''">
+			<![CDATA[ AND PS.FCOOPINTENTION =#{coopIntention} ]]>
+		</if>
+		<if test="custSource != null and custSource != ''">
+			<![CDATA[ AND PS.FCUSTBASE =#{custSource} ]]>
+		</if>
+		<if test="bizStatus != null and bizStatus != ''">
+			<![CDATA[ AND PS.FBUSINESSSTATE =#{bizStatus} ]]>
+		</if>
+		<if test="goodsPotential != null and goodsPotential != ''">
+			<![CDATA[ AND PS.FVOLUMEPOTENTIAL =#{goodsPotential} ]]>
+		</if>
+		<if test="searchStartTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) >= #{searchStartTime} ]]>
+		</if>
+		<if test="searchEndTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) <= #{searchEndTime} ]]>
+		</if>
+		<!--李春雨2014-02-19修改 潜客业务类别添加查询-->
+		<if test="businessType != null and businessType != ''">
+			<![CDATA[ AND PS.FBUSINESSTYPE =#{businessType} ]]>
+		</if>
+		<if test="deptIds != null and deptIds.size>0">
+			<![CDATA[ AND PS.FDEPTID in ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+		</if>
+<!-- 		<if test="custProperty != null and custProperty != ''"> -->
+<!-- 			<![CDATA[ AND PS.FCUSTPROPERTY =#{custProperty} ]]> -->
+<!-- 		</if> -->
+		<!-- 苏玉军 2012-06-25修改 客户属性的值指的是FCUSTNATURE字段 -->
+		<if test="custProperty != null and custProperty != ''">
+			<![CDATA[ AND PS.FCUSTNATURE =#{custProperty} ]]>
+		</if>
+		<if test="orderByField != null and orderByField != ''">
+			<![CDATA[ ORDER BY #{orderByField}]]>
+		</if>
+		order by PS.FCREATETIME desc
+	</select>
+		<!-- 根据传入条件查询潜客 -->
+	<select id="countSearchPotentialCustomerList" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(1) 
+	  		FROM 
+	  		    T_CUST_POTENTIALSCATTER PS
+	  		WHERE 
+	  			PS.FISCANCEL = 0 
+	  			AND PS.FCUSTTYPE = 'PC_CUSTOMER' 
+	  	]]>
+		<if test="customerName != null and customerName != ''">
+			<![CDATA[ AND PS.FCUSTNAME like '%'||#{customerName}||'%' ]]>
+		</if>
+		<if test="contactName != null and contactName != ''">
+			<![CDATA[ AND PS.FLINKMANNAME like '%'||#{contactName}||'%' ]]>
+		</if>
+		<if test="position != null and position != ''">
+			<![CDATA[ AND PS.FOFFICE =#{position} ]]>
+		</if>
+		<if test="contactPhone !=  null and contactPhone != ''">
+			<![CDATA[ AND  PS.FLINKMANMOBILE =#{contactPhone} ]]>
+		</if>
+		<if test="contactTel !=  null and contactTel != ''">
+			<![CDATA[ AND PS.FLINKMANPHONE=#{contactTel} ]]>
+		</if>
+		<if test="industry != null and industry != ''">
+			<![CDATA[ AND PS.FTRADE =#{industry} ]]>
+		</if>
+		<if test="secondTrade != null and secondTrade != ''">
+            <![CDATA[ AND PS.FSECONDTRADE =#{secondTrade} ]]>
+        </if>
+		<if test="coopIntention != null and coopIntention != ''">
+			<![CDATA[ AND PS.FCOOPINTENTION =#{coopIntention} ]]>
+		</if>
+		<if test="custSource != null and custSource != ''">
+			<![CDATA[ AND PS.FCUSTBASE =#{custSource} ]]>
+		</if>
+		<if test="bizStatus != null and bizStatus != ''">
+			<![CDATA[ AND PS.FBUSINESSSTATE =#{bizStatus} ]]>
+		</if>
+		<if test="goodsPotential != null and goodsPotential != ''">
+			<![CDATA[ AND PS.FVOLUMEPOTENTIAL =#{goodsPotential} ]]>
+		</if>
+		<if test="searchStartTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) >= #{searchStartTime} ]]>
+		</if>
+		<if test="searchEndTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) <= #{searchEndTime} ]]>
+		</if>
+		<if test="custProperty != null and custProperty != ''">
+			<![CDATA[ AND PS.FCUSTPROPERTY =#{custProperty} ]]>
+		</if>
+		<!--李春雨2014-02-19修改 潜客业务类别添加查询-->
+		<if test="businessType != null and businessType != ''">
+			<![CDATA[ AND PS.FBUSINESSTYPE =#{businessType} ]]>
+		</if>
+		<if test="deptIds != null and deptIds.size>0">
+			<![CDATA[ AND PS.FDEPTID in ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	#{dept}  ]]>
+			</foreach>
+		</if>
+	</select>
+	
+	<!-- 散客查询列表  开发计划新增使用 -->
+	<select id="searchScatterCustomer" resultMap="Customer_PC_SC_ResultMap">
+		select ps.fid               ps_fid,
+		       ps.fcusttype         ps_fcusttype,
+		       ps.fcustname         ps_fcustname,
+		       ps.fbusinessstate    ps_fbussinessstate,
+		       ps.fcoopintention    ps_fcoopintention,
+		       ps.fvolumepotential  ps_fvolumepotential,
+		       ps.flinkmanname      ps_flinkmanname,
+		       ps.flinkmanmobile    ps_flinkmanmobile,
+		       ps.flinkmanphone     ps_flinkmanphone,
+		       ps.foffice           ps_fpost,
+		       ps.fdeptid           ps_fdeptid,
+		       ps.fcreatetime       ps_fcreattime,
+               vt.lastvisittime     lastVistiTime	
+		  from t_cust_potentialscatter ps
+		  left join (select max(rv.ftrackdate) lastvisittime,
+                    		rv.fqsid qsid
+               		 from t_cust_returnvisit rv group by rv.fqsid) vt
+    		on vt.qsid = ps.fid
+		<if
+			test="beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+			<![CDATA[ INNER JOIN T_CRM_DISPERSECUSTRADESTA DC
+			ON DC.FDEPTID =	PS.FDEPTID ]]>
+		</if>		
+	  	<![CDATA[    
+	  		WHERE PS.FISCANCEL = 0 
+	  			AND PS.FCUSTTYPE = 'SC_CUSTOMER' 
+	  	]]>
+		<if test="custName != null and custName != ''">
+			<![CDATA[ AND PS.FCUSTNAME like '%'||#{custName}||'%' ]]>
+		</if>
+		<if test="contacterName != null and contacterName != ''">
+			<![CDATA[ AND PS.FLINKMANNAME like '%'||#{contacterName}||'%' ]]>
+		</if>
+		<if test="contacterMobile !=  null and contacterMobile != ''">
+			<![CDATA[ AND  PS.FLINKMANMOBILE=#{contacterMobile} ]]>
+		</if>
+		<if test="contacterPhone !=  null and contacterPhone != ''">
+			<![CDATA[ AND  PS.FLINKMANPHONE=#{contacterPhone} ]]>
+		</if>
+		<if test="position != null and position != ''">
+			<![CDATA[ AND PS.FOFFICE =#{position} ]]>
+		</if>
+		<if test="industry != null and industry != ''">
+			<![CDATA[ AND PS.FTRADE =#{industry} ]]>
+		</if>
+		<if test="secondTrade != null and secondTrade != ''">
+            <![CDATA[ AND PS.FSECONDTRADE =#{secondTrade} ]]>
+        </if>
+		<if test="coopIntention != null and coopIntention != ''">
+			<![CDATA[ AND PS.FCOOPINTENTION =#{coopIntention} ]]>
+		</if>
+		<if test="businessStatus != null and businessStatus != ''">
+			<![CDATA[ AND PS.FBUSINESSSTATE =#{businessStatus} ]]>
+		</if>
+		<if test="volumePotential != null and volumePotential != ''">
+			<![CDATA[ AND PS.FVOLUMEPOTENTIAL =#{volumePotential} ]]>
+		</if>
+		<if test="beginTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) >= #{beginTime} ]]>
+		</if>
+		<if test="overTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) <= #{overTime} ]]>
+		</if>
+		<if test="deptIds != null and deptIds.size>0">
+			<![CDATA[ AND PS.FDEPTID in ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+		</if>
+		<!--苏玉军2012-06-25修改 ， 客户属性取FCUSTNATURE的字段 -->
+		<if test="custAttribute != null and custAttribute != ''">
+			<![CDATA[ AND PS.FCUSTNATURE =#{custAttribute} ]]>
+		</if>
+<!-- 		<if test="custAttribute != null and custAttribute != ''"> -->
+<!-- 			<![CDATA[ AND PS.FCUSTPROPERTY =#{custAttribute} ]]> -->
+<!-- 		</if> -->
+		<if
+			test="beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0 
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+			<![CDATA[
+				AND (DC.FMOBILEPHONENUM = PS.FLINKMANMOBILE
+    			OR (DC.FLINKMANNAME = PS.FLINKMANNAME
+  			 	AND DC.FTELEPHONENUMBER = PS.FLINKMANPHONE))
+  			 ]]>
+		</if>
+		<!--李春雨2014-01-14修改 ，  增加不同业务类型查询不同发货量等查询逻辑-->
+		<if test="businessType != null and businessType != ''">
+			<![CDATA[ AND PS.FBUSINESSTYPE =#{businessType} ]]>
+		</if>
+		<if test="businessType == 'LESS_THAN_TRUCKLOAD'">
+			<if
+				test="beginShipWeight > 0 or overShipWeight > 0 
+				 or beginShipVotes > 0	 or overShipVotes > 0 
+				 or beginShipAmount > 0 or overShipAmount > 0">
+				<if
+					test="beginArrivalWeight == 0 and overArrivalWeight == 0 
+			  	 and beginArrivalVotes == 0  and overArrivalVotes == 0 
+			  	 and beginArrivalAmount == 0 and overArrivalAmount == 0">
+			  	 <![CDATA[
+				 	AND DC.FLEAORARR = 'LEAVE_CUSTOMER' 
+				 ]]></if>
+				<if test="beginShipWeight> 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT >= #{beginShipWeight} ]]>
+				</if>
+				<if test="overShipWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT <= #{overShipWeight} ]]>
+				</if>
+				<if test="beginShipVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT >= #{beginShipVotes} ]]>
+				</if>
+				<if test="overShipVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT <= #{overShipVotes} ]]>
+				</if>
+				<if test="beginShipAmount> 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT >= #{beginShipAmount} ]]>
+				</if>
+				<if test="overShipAmount > 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT <= #{overShipAmount} ]]>
+				</if>
+				
+			</if>
+			<if
+				test="beginArrivalWeight > 0 or overArrivalWeight > 0 
+			  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+			  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+				 <![CDATA[
+				 	AND EXISTS 
+				 	(SELECT 1
+	             		FROM T_CRM_DISPERSECUSTRADESTA DCC
+	           		 WHERE DCC.FDEPTID = DC.FDEPTID
+	              			AND (DCC.FMOBILEPHONENUM = DC.FMOBILEPHONENUM
+	              			or DCC.FTELEPHONENUMBER = DC.FTELEPHONENUMBER)
+				 			AND DCC.FLEAORARR = 'ARRIVE_CUSTOMER' 
+				 ]]>
+				<if test="beginArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT >= #{beginArrivalWeight} ]]>
+				</if>
+				<if test="overArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT  <=#{overArrivalWeight} ]]>
+				</if>
+				<if test="beginArrivalVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT >= #{beginArrivalVotes} ]]>
+				</if>
+				<if test="overArrivalVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT<= #{overArrivalVotes} ]]>
+				</if>
+				<if test="beginArrivalAmount > 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT >= #{beginArrivalAmount} ]]>
+				</if>
+				<if test="overArrivalAmount > 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT <= #{overArrivalAmount} ]]>
+				</if>
+				<![CDATA[)]]>
+			</if>
+		</if>
+		<if test="businessType == 'EXPRESS'">
+			<if
+				test="beginShipWeight > 0 or overShipWeight > 0 
+				 or beginShipVotes > 0	 or overShipVotes > 0 
+				 or beginShipAmount > 0 or overShipAmount > 0">
+				<if
+					test="beginArrivalWeight == 0 and overArrivalWeight == 0 
+			  	 and beginArrivalVotes == 0  and overArrivalVotes == 0 
+			  	 and beginArrivalAmount == 0 and overArrivalAmount == 0">
+			  	 <![CDATA[
+				 	AND DC.FLEAORARR = 'LEAVE_CUSTOMER' 
+				 ]]></if>
+				<if test="beginShipWeight> 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS >= #{beginShipWeight} ]]>
+				</if>
+				<if test="overShipWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS <= #{overShipWeight} ]]>
+				</if>
+				<if test="beginShipVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS >= #{beginShipVotes} ]]>
+				</if>
+				<if test="overShipVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS <= #{overShipVotes} ]]>
+				</if>
+				<if test="beginShipAmount> 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS >= #{beginShipAmount} ]]>
+				</if>
+				<if test="overShipAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS <= #{overShipAmount} ]]>
+				</if>
+				
+			</if>
+			<if
+				test="beginArrivalWeight > 0 or overArrivalWeight > 0 
+			  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+			  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+				 <![CDATA[
+				 	AND EXISTS 
+				 	(SELECT 1
+	             		FROM T_CRM_DISPERSECUSTRADESTA DCC
+	           		 WHERE DCC.FDEPTID = DC.FDEPTID
+	              			AND (DCC.FMOBILEPHONENUM = DC.FMOBILEPHONENUM
+	              			or DCC.FTELEPHONENUMBER = DC.FTELEPHONENUMBER)
+				 			AND DCC.FLEAORARR = 'ARRIVE_CUSTOMER' 
+				 ]]>
+				<if test="beginArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS >= #{beginArrivalWeight} ]]>
+				</if>
+				<if test="overArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS  <=#{overArrivalWeight} ]]>
+				</if>
+				<if test="beginArrivalVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS >= #{beginArrivalVotes} ]]>
+				</if>
+				<if test="overArrivalVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS<= #{overArrivalVotes} ]]>
+				</if>
+				<if test="beginArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS >= #{beginArrivalAmount} ]]>
+				</if>
+				<if test="overArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS <= #{overArrivalAmount} ]]>
+				</if>
+				<![CDATA[)]]>
+			</if>
+		</if>
+		<if test="businessType == 'TRUCKLOAD_AND_EXPRESS'">
+			<if
+				test="beginShipWeight > 0 or overShipWeight > 0 
+				 or beginShipVotes > 0	 or overShipVotes > 0 
+				 or beginShipAmount > 0 or overShipAmount > 0">
+				<if
+					test="beginArrivalWeight == 0 and overArrivalWeight == 0 
+			  	 and beginArrivalVotes == 0  and overArrivalVotes == 0 
+			  	 and beginArrivalAmount == 0 and overArrivalAmount == 0">
+			  	 <![CDATA[
+				 	AND DC.FLEAORARR = 'LEAVE_CUSTOMER' 
+				 ]]></if>
+				<if test="beginShipWeight> 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL >= #{beginShipWeight} ]]>
+				</if>
+				<if test="overShipWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL <= #{overShipWeight} ]]>
+				</if>
+				<if test="beginShipVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL >= #{beginShipVotes} ]]>
+				</if>
+				<if test="overShipVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL <= #{overShipVotes} ]]>
+				</if>
+				<if test="beginShipAmount> 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL >= #{beginShipAmount} ]]>
+				</if>
+				<if test="overShipAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL <= #{overShipAmount} ]]>
+				</if>
+				
+			</if>
+			<if
+				test="beginArrivalWeight > 0 or overArrivalWeight > 0 
+			  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+			  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+				 <![CDATA[
+				 	AND EXISTS 
+				 	(SELECT 1
+	             		FROM T_CRM_DISPERSECUSTRADESTA DCC
+	           		 WHERE DCC.FDEPTID = DC.FDEPTID
+	              			AND (DCC.FMOBILEPHONENUM = DC.FMOBILEPHONENUM
+	              			or DCC.FTELEPHONENUMBER = DC.FTELEPHONENUMBER)
+				 			AND DCC.FLEAORARR = 'ARRIVE_CUSTOMER' 
+				 ]]>
+				<if test="beginArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL >= #{beginArrivalWeight} ]]>
+				</if>
+				<if test="overArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL  <=#{overArrivalWeight} ]]>
+				</if>
+				<if test="beginArrivalVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL >= #{beginArrivalVotes} ]]>
+				</if>
+				<if test="overArrivalVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL<= #{overArrivalVotes} ]]>
+				</if>
+				<if test="beginArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL >= #{beginArrivalAmount} ]]>
+				</if>
+				<if test="overArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL <= #{overArrivalAmount} ]]>
+				</if>
+				<![CDATA[)]]>
+			</if>
+		</if>
+		<!--逻辑结束  -->
+	    order by PS.FCREATETIME desc
+		<!-- <if test="orderByField != null and orderByField != ''"> <![CDATA[ 
+			ORDER BY #{orderByField}]]> </if> -->
+	</select>
+	<!-- 散客查询统计 -->
+		<select id="countSearchScatterCustomer" resultType="int">
+			select count(1) from t_cust_potentialscatter ps
+		<if
+			test="beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+			<![CDATA[ INNER JOIN T_CRM_DISPERSECUSTRADESTA DC
+			ON DC.FDEPTID =	PS.FDEPTID ]]>
+		</if>		
+	  	<![CDATA[    
+	  		WHERE PS.FISCANCEL = 0 
+	  			AND PS.FCUSTTYPE = 'SC_CUSTOMER' 
+	  	]]>
+		<if test="custName != null and custName != ''">
+			<![CDATA[ AND PS.FCUSTNAME like '%'||#{custName}||'%' ]]>
+		</if>
+		<if test="contacterName != null and contacterName != ''">
+			<![CDATA[ AND PS.FLINKMANNAME like '%'||#{contacterName}||'%' ]]>
+		</if>
+		<if test="contacterMobile !=  null and contacterMobile != ''">
+			<![CDATA[ AND  PS.FLINKMANMOBILE=#{contacterMobile} ]]>
+		</if>
+		<if test="contacterPhone !=  null and contacterPhone != ''">
+			<![CDATA[ AND  PS.FLINKMANPHONE=#{contacterPhone} ]]>
+		</if>
+		<if test="position != null and position != ''">
+			<![CDATA[ AND PS.FOFFICE =#{position} ]]>
+		</if>
+		<if test="industry != null and industry != ''">
+			<![CDATA[ AND PS.FTRADE =#{industry} ]]>
+		</if>
+		<if test="secondTrade != null and secondTrade != ''">
+            <![CDATA[ AND PS.FSECONDTRADE =#{secondTrade} ]]>
+        </if>
+		<if test="coopIntention != null and coopIntention != ''">
+			<![CDATA[ AND PS.FCOOPINTENTION =#{coopIntention} ]]>
+		</if>
+		<if test="businessStatus != null and businessStatus != ''">
+			<![CDATA[ AND PS.FBUSINESSSTATE =#{businessStatus} ]]>
+		</if>
+		<if test="volumePotential != null and volumePotential != ''">
+			<![CDATA[ AND PS.FVOLUMEPOTENTIAL =#{volumePotential} ]]>
+		</if>
+		<if test="beginTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) >= #{beginTime} ]]>
+		</if>
+		<if test="overTime != null">
+			<![CDATA[ AND TRUNC(PS.FCREATETIME) <= #{overTime} ]]>
+		</if>
+		<if test="deptIds != null and deptIds.size>0">
+			<![CDATA[ AND PS.FDEPTID in ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+		</if>
+		<!--苏玉军2012-06-25修改 ， 客户属性取FCUSTNATURE的字段 -->
+		<if test="custAttribute != null and custAttribute != ''">
+			<![CDATA[ AND PS.FCUSTNATURE =#{custAttribute} ]]>
+		</if>
+<!-- 		<if test="custAttribute != null and custAttribute != ''"> -->
+<!-- 			<![CDATA[ AND PS.FCUSTPROPERTY =#{custAttribute} ]]> -->
+<!-- 		</if> -->
+		<if
+			test="beginShipWeight > 0 or overShipWeight > 0 
+			 or beginShipVotes > 0	 or overShipVotes > 0 
+			 or beginShipAmount > 0 or overShipAmount > 0
+		  	 or beginArrivalWeight > 0 or overArrivalWeight > 0 
+		  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+		  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+			<![CDATA[
+				AND (DC.FMOBILEPHONENUM = PS.FLINKMANMOBILE
+    			OR (DC.FLINKMANNAME = PS.FLINKMANNAME
+  			 	AND DC.FTELEPHONENUMBER = PS.FLINKMANPHONE))
+  			 ]]>
+		</if>
+		<!--李春雨2014-01-14修改 ，  增加不同业务类型查询不同发货量等查询逻辑-->
+		<if test="businessType != null and businessType != ''">
+			<![CDATA[ AND PS.FBUSINESSTYPE =#{businessType,jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="businessType == 'LESS_THAN_TRUCKLOAD'">
+			<if
+				test="beginShipWeight > 0 or overShipWeight > 0 
+				 or beginShipVotes > 0	 or overShipVotes > 0 
+				 or beginShipAmount > 0 or overShipAmount > 0">
+				<if
+					test="beginArrivalWeight == 0 and overArrivalWeight == 0 
+			  	 and beginArrivalVotes == 0  and overArrivalVotes == 0 
+			  	 and beginArrivalAmount == 0 and overArrivalAmount == 0">
+			  	 <![CDATA[
+				 	AND DC.FLEAORARR = 'LEAVE_CUSTOMER' 
+				 ]]></if>
+				<if test="beginShipWeight> 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT >= #{beginShipWeight} ]]>
+				</if>
+				<if test="overShipWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT <= #{overShipWeight} ]]>
+				</if>
+				<if test="beginShipVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT >= #{beginShipVotes} ]]>
+				</if>
+				<if test="overShipVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT <= #{overShipVotes} ]]>
+				</if>
+				<if test="beginShipAmount> 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT >= #{beginShipAmount} ]]>
+				</if>
+				<if test="overShipAmount > 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT <= #{overShipAmount} ]]>
+				</if>
+				
+			</if>
+			<if
+				test="beginArrivalWeight > 0 or overArrivalWeight > 0 
+			  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+			  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+				 <![CDATA[
+				 	AND EXISTS 
+				 	(SELECT 1
+	             		FROM T_CRM_DISPERSECUSTRADESTA DCC
+	           		 WHERE DCC.FDEPTID = DC.FDEPTID
+	              			AND (DCC.FMOBILEPHONENUM = DC.FMOBILEPHONENUM
+	              			or DCC.FTELEPHONENUMBER = DC.FTELEPHONENUMBER)
+				 			AND DCC.FLEAORARR = 'ARRIVE_CUSTOMER' 
+				 ]]>
+				<if test="beginArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT >= #{beginArrivalWeight} ]]>
+				</if>
+				<if test="overArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT  <=#{overArrivalWeight} ]]>
+				</if>
+				<if test="beginArrivalVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT >= #{beginArrivalVotes} ]]>
+				</if>
+				<if test="overArrivalVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT<= #{overArrivalVotes} ]]>
+				</if>
+				<if test="beginArrivalAmount > 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT >= #{beginArrivalAmount} ]]>
+				</if>
+				<if test="overArrivalAmount > 0">
+				<![CDATA[ AND DC.FTOTALAMOUNT <= #{overArrivalAmount} ]]>
+				</if>
+				<![CDATA[)]]>
+			</if>
+		</if>
+		<if test="businessType == 'EXPRESS'">
+			<if
+				test="beginShipWeight > 0 or overShipWeight > 0 
+				 or beginShipVotes > 0	 or overShipVotes > 0 
+				 or beginShipAmount > 0 or overShipAmount > 0">
+				<if
+					test="beginArrivalWeight == 0 and overArrivalWeight == 0 
+			  	 and beginArrivalVotes == 0  and overArrivalVotes == 0 
+			  	 and beginArrivalAmount == 0 and overArrivalAmount == 0">
+			  	 <![CDATA[
+				 	AND DC.FLEAORARR = 'LEAVE_CUSTOMER' 
+				 ]]></if>
+				<if test="beginShipWeight> 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS >= #{beginShipWeight} ]]>
+				</if>
+				<if test="overShipWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS <= #{overShipWeight} ]]>
+				</if>
+				<if test="beginShipVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS >= #{beginShipVotes} ]]>
+				</if>
+				<if test="overShipVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS <= #{overShipVotes} ]]>
+				</if>
+				<if test="beginShipAmount> 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS >= #{beginShipAmount} ]]>
+				</if>
+				<if test="overShipAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS <= #{overShipAmount} ]]>
+				</if>
+				
+			</if>
+			<if
+				test="beginArrivalWeight > 0 or overArrivalWeight > 0 
+			  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+			  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+				 <![CDATA[
+				 	AND EXISTS 
+				 	(SELECT 1
+	             		FROM T_CRM_DISPERSECUSTRADESTA DCC
+	           		 WHERE DCC.FDEPTID = DC.FDEPTID
+	              			AND (DCC.FMOBILEPHONENUM = DC.FMOBILEPHONENUM
+	              			or DCC.FTELEPHONENUMBER = DC.FTELEPHONENUMBER)
+				 			AND DCC.FLEAORARR = 'ARRIVE_CUSTOMER' 
+				 ]]>
+				<if test="beginArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS >= #{beginArrivalWeight} ]]>
+				</if>
+				<if test="overArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS  <=#{overArrivalWeight} ]]>
+				</if>
+				<if test="beginArrivalVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS >= #{beginArrivalVotes} ]]>
+				</if>
+				<if test="overArrivalVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_EXPRESS<= #{overArrivalVotes} ]]>
+				</if>
+				<if test="beginArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS >= #{beginArrivalAmount} ]]>
+				</if>
+				<if test="overArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS <= #{overArrivalAmount} ]]>
+				</if>
+				<![CDATA[)]]>
+			</if>
+		</if>
+		<if test="businessType == 'TRUCKLOAD_AND_EXPRESS'">
+			<if
+				test="beginShipWeight > 0 or overShipWeight > 0 
+				 or beginShipVotes > 0	 or overShipVotes > 0 
+				 or beginShipAmount > 0 or overShipAmount > 0">
+				<if
+					test="beginArrivalWeight == 0 and overArrivalWeight == 0 
+			  	 and beginArrivalVotes == 0  and overArrivalVotes == 0 
+			  	 and beginArrivalAmount == 0 and overArrivalAmount == 0">
+			  	 <![CDATA[
+				 	AND DC.FLEAORARR = 'LEAVE_CUSTOMER' 
+				 ]]></if>
+				<if test="beginShipWeight> 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL >= #{beginShipWeight} ]]>
+				</if>
+				<if test="overShipWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL <= #{overShipWeight} ]]>
+				</if>
+				<if test="beginShipVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL >= #{beginShipVotes} ]]>
+				</if>
+				<if test="overShipVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL <= #{overShipVotes} ]]>
+				</if>
+				<if test="beginShipAmount> 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL >= #{beginShipAmount} ]]>
+				</if>
+				<if test="overShipAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL <= #{overShipAmount} ]]>
+				</if>
+				
+			</if>
+			<if
+				test="beginArrivalWeight > 0 or overArrivalWeight > 0 
+			  	 or beginArrivalVotes > 0  or overArrivalVotes > 0 
+			  	 or beginArrivalAmount > 0 or overArrivalAmount > 0">
+				 <![CDATA[
+				 	AND EXISTS 
+				 	(SELECT 1
+	             		FROM T_CRM_DISPERSECUSTRADESTA DCC
+	           		 WHERE DCC.FDEPTID = DC.FDEPTID
+	              			AND (DCC.FMOBILEPHONENUM = DC.FMOBILEPHONENUM
+	              			or DCC.FTELEPHONENUMBER = DC.FTELEPHONENUMBER)
+				 			AND DCC.FLEAORARR = 'ARRIVE_CUSTOMER' 
+				 ]]>
+				<if test="beginArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL >= #{beginArrivalWeight} ]]>
+				</if>
+				<if test="overArrivalWeight > 0">
+				<![CDATA[ AND DC.FTOTALWEIGHT_EXPRESS_ALL  <=#{overArrivalWeight} ]]>
+				</if>
+				<if test="beginArrivalVotes> 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL >= #{beginArrivalVotes} ]]>
+				</if>
+				<if test="overArrivalVotes > 0">
+				<![CDATA[ AND DC.FTOTALBILLCOUNT_ALL<= #{overArrivalVotes} ]]>
+				</if>
+				<if test="beginArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL >= #{beginArrivalAmount} ]]>
+				</if>
+				<if test="overArrivalAmount > 0">
+				<![CDATA[ AND DC.FMONEYTOTAL_EXPRESS_ALL <= #{overArrivalAmount} ]]>
+				</if>
+				<![CDATA[)]]>
+			</if>
+		</if>
+	    order by PS.FCREATETIME desc
+		<!-- <if test="orderByField != null and orderByField != ''"> <![CDATA[ 
+			ORDER BY #{orderByField}]]> </if> -->
+	</select>
+	<select id="searchAuthBussinessDeptByParentId" resultType="String">
+		SELECT DISTINCT DEPT.FID 
+		FROM T_ORG_DEPARTMENT DEPT
+		JOIN T_AUTH_USERDEPARTMENT AUTH
+		ON DEPT.FID=AUTH.FDEPTID
+		JOIN T_AUTH_USER US
+		ON US.FID= AUTH.FUSERID
+		WHERE
+		DEPT.FDEPTSEQ LIKE '%.'||#{deptId,jdbcType=VARCHAR}||'.%'
+		AND US.FEMPCODE=#{empCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="countForsearchPlansByStatusList" resultType="int">
+		<![CDATA[
+			SELECT count(1) 
+			FROM T_CUST_DEVELOPMAINTAINLIST T 
+			WHERE T.FSTATUS NOT IN 
+		]]>
+		<foreach collection="list" item="status"  open="(" separator="," close=")">
+        	#{status}
+		</foreach>
+	</select>
+</mapper>

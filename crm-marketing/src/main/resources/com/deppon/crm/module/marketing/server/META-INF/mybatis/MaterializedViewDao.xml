@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain">
+<select id="CallProductorUpdateCust" parameterType="java.lang.String" 
+statementType="CALLABLE">
+<!-- 调用视图刷新的存储过程 -->
+	{call PAG_MARKETING_REFRESHANDUPDATE.customerCustUpdate())}
+</select>
+<select id="UpdatePsCustomer" parameterType="java.lang.String" 
+statementType="CALLABLE">
+<!-- 调用中间表刷新的存储过程 -->
+	{call PAG_MARKETING_REFRESHANDUPDATE.customerPSUpdate()}
+</select>
+</mapper>
+

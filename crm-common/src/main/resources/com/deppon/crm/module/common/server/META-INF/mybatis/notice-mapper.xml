@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Notice">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="noticeResultMap"
+		type="com.deppon.crm.module.common.shared.domain.Notice">
+		<id property="id" column="fid" />
+		<result property="createDate" column="fcreatetime" />
+		<result property="createUser" column="fcreateuser" />
+		<result property="modifyDate" column="fupdatetime" />
+		<result property="modifyUser" column="fupdateUser" />
+		<result property="title" column="ftitle" />
+		<result property="content" column="fcontent" />
+		<result property="moduleBelong" column="fmoduleBelong" />
+		<result property="visits" column="fvisits" />
+		<result property="active" column="factive" />
+		<result property="top" column="ftop" />
+		<result property="type" column="ftype" />
+		<result property="imageAddr" column="fimageaddr" />
+		<result property="imageDescribe" column="fimagedescribe" />
+	</resultMap>
+
+
+
+	<sql id="noticeSqlField">
+		FID,FTITLE,FTYPE,FMODULEBELONG,FCREATEUSER,
+		FUPDATEUSER,FUPDATETIME,FCREATETIME,FVISITS,
+		FCONTENT,FACTIVE,FTOP,FIMAGEADDR,FIMAGEDESCRIBE
+
+	</sql>
+
+	<!--新增公告 -->
+	<insert id="addNotice" parameterType="com.deppon.crm.module.common.shared.domain.Notice">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_NOTICEID.NEXTVAL AS ID FROM DUAL
+			]]>
+		</selectKey>
+		<![CDATA[
+	        INSERT INTO t_crm_notice 
+	        (fid,
+			fcreatetime,
+			fcreateuser,
+			fupdatetime,
+			fupdateuser,
+			ftitle,
+			fcontent,
+			fmodulebelong,
+			factive,
+			ftype,
+			fvisits,
+			ftop,
+			fimageaddr,
+			fimagedescribe 
+	        ) 
+	        VALUES
+	        (
+	        #{id,jdbcType=VARCHAR},
+	        sysdate,
+	        #{createUser,jdbcType=VARCHAR},
+			sysdate,
+			#{modifyUser,jdbcType=VARCHAR},
+	        #{title,jdbcType=VARCHAR},
+	        #{content,jdbcType=VARCHAR},
+	        #{moduleBelong,jdbcType=VARCHAR}, 
+	        #{active,jdbcType=NUMERIC},
+	        #{type,jdbcType=VARCHAR}, 
+	       	#{visits,jdbcType=NUMERIC}, 
+	        #{top,jdbcType=NUMERIC},
+	        #{imageAddr,jdbcType=VARCHAR},
+	        #{imageDescribe,jdbcType=VARCHAR}
+	        )
+	   ]]>
+	</insert>
+
+	<!-- 更新公告 -->
+	<update id="updateNoticeById" parameterType="com.deppon.crm.module.common.shared.domain.Notice">
+		UPDATE t_crm_notice SET
+		<if test="modifyUser != null and modifyUser != ''">
+			fupdateuser=#{createUser,jdbcType=VARCHAR},
+		</if>
+		<if test="title != null and title != ''">
+			ftitle=#{title,jdbcType=VARCHAR},
+		</if>
+		<if test="type != null and type != ''">
+			ftype=#{type,jdbcType=VARCHAR},
+		</if>
+		<if test="content != null and content != ''">
+			fcontent=#{content,jdbcType=VARCHAR},
+		</if>
+		<if test="moduleBelong != null and moduleBelong != ''">
+			fmodulebelong=#{moduleBelong,jdbcType=VARCHAR},
+		</if>
+
+		<if test="top != null ">
+			ftop=#{top,jdbcType=VARCHAR},
+		</if>
+		<if test="active != null ">
+			factive=#{active,jdbcType=NUMERIC},
+		</if>
+		<if test="imageAddr != null ">
+			fimageaddr=#{imageAddr,jdbcType=VARCHAR},
+		</if>
+		<if test="imageDescribe != null ">
+			fimagedescribe=#{imageDescribe,jdbcType=VARCHAR},
+		</if>
+		fupdatetime=sysdate
+		WHERE FID = #{id}
+	</update>
+
+	<!-- 更新查看人数 -->
+	<update id="updateNoticeVIsitsById" parameterType="string">
+		UPDATE
+		t_crm_notice
+		SET fvisits=fvisits+1
+		where FID=#{noticeId}
+	</update>
+
+	<!--根据id获得公告 -->
+	<select id="searchNoticeById" parameterType="string" resultMap="noticeResultMap">
+		SELECT
+		<include refid="noticeSqlField" />
+		FROM T_CRM_NOTICE where FID = #{noticeId}
+	</select>
+
+	<!-- 根据id删除公告 -->
+	<delete id="deleteById" parameterType="string"> 
+		<![CDATA[
+			DELETE FROM T_CRM_NOTICE WHERE FID=#{noticeId}
+		]]>
+	</delete>
+	
+	<!---->
+	<select id="searchNoticeByCondition" resultMap="noticeResultMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.NoticeSearchCondition">
+		SELECT
+		<include refid="noticeSqlField" />
+		FROM T_CRM_NOTICE
+		<where>
+			<if test="title != null and title != ''">
+				AND ftitle like '%'||#{title,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="createUser != null and createUser != ''">
+				AND fcreateUser like
+				'%'||#{createUser,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="moduleBelong != null and moduleBelong != ''">
+				AND fmodulebelong=#{moduleBelong,jdbcType=VARCHAR}
+			</if>
+			<if test="active!=null ">
+				AND factive=#{active,jdbcType=NUMERIC}
+			</if>
+			<if test="type != null and type != ''">
+				AND ftype=#{type,jdbcType=VARCHAR}
+			</if>
+			<if test="top!=null ">
+				AND ftop=#{top,jdbcType=NUMERIC}
+			</if>
+			<if test="null != startTime and '' != startTime">
+				AND trunc(fupdatetime) >= #{startTime}
+			</if>
+			<if test="null != endTime and '' != endTime">
+				AND trunc(fupdatetime) &lt;= #{endTime}
+			</if>
+		</where>
+		order by ftop desc,fcreatetime desc
+	</select>
+	
+	<!---->
+	<update id="updateNoticesIntoPublishByIds" parameterType="list">
+		UPDATE T_CRM_NOTICE SET FACTIVE=0 where FID IN
+
+		<foreach item="ids" collection="list" open="(" close=")"
+			separator=",">
+			#{ids}
+		</foreach>
+	</update>
+	
+	<!---->
+	<delete id="deleteNoticesByIds">
+		DELETE FROM T_CRM_NOTICE WHERE FID IN
+		<foreach item="ids" collection="list" open="(" close=")"
+			separator=",">
+			#{ids}
+		</foreach>
+	</delete>
+	
+	<!--查询最新的一条公告-->
+	<select id="searchIndexNewNotice" resultMap="noticeResultMap">
+		select * from t_crm_notice where fcreatetime=
+			(select max(t.fcreatetime) from t_crm_notice t 
+										where t.fcreatetime>(sysdate-12) and t.FACTIVE=1)
+	</select>
+	
+	<!---->
+	<select id="getCountByCondition" resultType="int">
+		SELECT count('X')
+		FROM T_CRM_NOTICE
+		<where>
+			<if test="title != null and title != ''">
+				AND ftitle like '%'||#{title,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="createUser != null and createUser != ''">
+				AND fcreateUser like
+				'%'||#{createUser,jdbcType=VARCHAR}||'%'
+			</if>
+			<if test="moduleBelong != null and moduleBelong != ''">
+				AND fmodulebelong=#{moduleBelong,jdbcType=VARCHAR}
+			</if>
+			<if test="top!=null ">
+				AND ftop=#{top,jdbcType=NUMERIC}
+			</if>
+			<if test="active!=null ">
+				AND factive=#{active,jdbcType=NUMERIC}
+			</if>
+			<if test="null != startTime and '' != startTime">
+				AND trunc(fupdatetime) >= #{startTime}
+			</if>
+			<if test="null != endTime and '' != endTime">
+				AND trunc(fupdatetime) &lt;= #{endTime}
+			</if>
+			<if test="type != null and type != ''">
+				AND ftype=#{type,jdbcType=VARCHAR}
+			</if>
+
+		</where>
+	</select>
+
+	<!--根据Id置顶公告 -->
+	<update id="topNoticeByIds" parameterType='string'>
+		UPDATE T_CRM_NOTICE
+		SET FTOP=1 where fid=#{noticeId}
+	</update>
+</mapper>

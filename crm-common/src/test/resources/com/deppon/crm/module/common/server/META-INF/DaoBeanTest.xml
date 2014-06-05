@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="departmentService"
+		class="com.deppon.crm.module.organization.server.service.impl.DepartmentService">
+		<property name="departmentDao" ref="departmentDao"></property>
+	</bean>
+	<bean id="bankProvinceCityDao" class="com.deppon.crm.module.common.server.dao.impl.BankProvinceCityDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+<!-- 部门数据访问 --> 
+	<bean id="departmentDao" class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 用户数据访问 -->
+	<bean id="userDao" class="com.deppon.crm.module.authorization.server.dao.impl.UserDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 员工数据访问 -->
+	<bean id="employeeDao" class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 公告功能 -->
+	<bean name="noticeDao" class="com.deppon.crm.module.common.server.dao.impl.NoticeDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+		<bean name="noticeService" class="com.deppon.crm.module.common.server.service.impl.NoticeServiceImpl">
+		<property name="noticeDao" ref="noticeDao"/>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean name="noticeManager" class="com.deppon.crm.module.common.server.manager.impl.NoticeManagerImpl">
+		<property name="noticeService" ref="noticeService"/>
+		<!--  property name="fileManager" ref="fileManager"/>-->
+	</bean>
+	<bean id="noticeAction" class="com.deppon.crm.module.common.server.action.NoticeAction">
+		<property name="noticeManager" ref="noticeManager"></property>
+	</bean>
+	
+  <bean id="detailDao" class="com.deppon.crm.module.common.server.dao.impl.DetailDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="detailService" class="com.deppon.crm.module.common.server.service.impl.DetailService">
+	   <property name="detailDao"  ref="detailDao"/>
+	</bean>
+	
+	<bean id="detailManager" class="com.deppon.crm.module.common.server.manager.impl.DetailManager">
+	   <property name="detailService" ref="detailService" />
+	</bean>
+</beans>

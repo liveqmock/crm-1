@@ -1,0 +1,630 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.deppon.crm</groupId>
+		<artifactId>crm-parent</artifactId>
+		<version>3.1.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>crm-interface</artifactId>
+	<version>0.2-SNAPSHOT</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cxf.version>2.4.2</cxf.version>
+	</properties>
+
+	<profiles>
+	  <profile>
+	    <id>dev</id>
+	    <properties>
+	      <mongodb.host1>192.168.17.105</mongodb.host1>
+          <mongodb.port1>47017</mongodb.port1>
+          <mongodb.host2>192.168.17.105</mongodb.host2>
+          <mongodb.port2>57017</mongodb.port2>
+          <mongodb.database>crm</mongodb.database>
+
+          <mongodb.username>deppon_crm</mongodb.username>
+	      <mongodb.password>test_deppon_crm</mongodb.password>
+	      <redis.host1>192.168.17.105</redis.host1>
+	      <redis.port1>6379</redis.port1>
+	      <redis.password1>deppon_crm</redis.password1>
+          <redis.host2>192.168.17.31</redis.host2>
+	      <redis.port2>6379</redis.port2>
+	      <redis.password2>deppon_crm</redis.password2>
+	    </properties>
+	  </profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<mongodb.host1>192.168.17.172</mongodb.host1>
+				<mongodb.port1>47017</mongodb.port1>
+				<mongodb.host2>192.168.17.172</mongodb.host2>
+				<mongodb.port2>57017</mongodb.port2>
+				<mongodb.database>admin</mongodb.database>
+				<mongodb.username>sysdba</mongodb.username>
+				<mongodb.password>deppon_crm_test</mongodb.password>
+
+				<redis.host1>192.168.17.172</redis.host1>
+				<redis.port1>4555</redis.port1>
+				<redis.password1>deppon_crm</redis.password1>
+				<redis.host2>192.168.17.199</redis.host2>
+				<redis.port2>4556</redis.port2>
+				<redis.password2>test_deppon_crm</redis.password2>
+			</properties>
+		</profile>
+		<profile>
+			<id>online</id>
+			<properties>
+				<mongodb.host1>192.168.2.95</mongodb.host1>
+				<mongodb.port1>27017</mongodb.port1>
+				<mongodb.host2>192.168.17.199</mongodb.host2>
+				<mongodb.port2>57017</mongodb.port2>
+				<mongodb.database>crm</mongodb.database>
+
+				<mongodb.username>dpcrm</mongodb.username>
+				<mongodb.password>dpcrm</mongodb.password>
+				<redis.host1>192.168.2.154</redis.host1>
+				<redis.port1>6379</redis.port1>
+				<redis.password1>deppon_crm</redis.password1>
+				<redis.host2>192.168.17.199</redis.host2>
+				<redis.port2>4556</redis.port2>
+				<redis.password2>test_deppon_crm</redis.password2>
+			</properties>
+		</profile>
+	</profiles>
+	<dependencies>
+		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId>
+			<version>5.1.9</version> </dependency> -->
+		<!-- module -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>2.4.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.dpap</groupId>
+			<artifactId>framework-server</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.deppon.dpap</groupId>
+					<artifactId>framework-sso</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+				<!--JBOSS报错： 由poi->dom4j->xml-apis冲突 org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
+					cannot be cast to javax.xml.parsers.DocumentBuilderFactory -->
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<!-- jboss部署调用解析date的时候会报错，与jdk的冲突 -->
+				<exclusion>
+					<groupId>javax.activation</groupId>
+					<artifactId>activation</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-common</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.deppon.dpap</groupId>
+					<artifactId>framework-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			 <groupId>com.deppon.crm</groupId>
+			 <artifactId>crm-marketing</artifactId>
+			 <version>3.1.1-SNAPSHOT</version>
+			 <exclusions>
+			 	<exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   		</exclusion>
+		   </exclusions>
+		</dependency>
+		<dependency>
+			 <groupId>com.deppon.crm</groupId>
+			 <artifactId>crm-base</artifactId>
+			 <version>3.1.1-SNAPSHOT</version>
+			 <exclusions>
+			 	<exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   		</exclusion>
+		   </exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-customer</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+			<exclusions>
+		    <exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   </exclusion>
+		   </exclusions>
+		</dependency>
+		<dependency>
+         <groupId>com.deppon.crm</groupId>
+         <artifactId>crm-complaint</artifactId>
+          <version>3.1.1-SNAPSHOT</version>
+          <exclusions>
+		    <exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   </exclusion>
+		   </exclusions>
+          </dependency>
+		 <dependency>
+	          <groupId>com.deppon.crm</groupId>
+	          <artifactId>crm-order</artifactId>
+	          <version>3.1.1-SNAPSHOT</version>
+	          <exclusions>
+				<exclusion>
+					<groupId>com.deppon.dpap</groupId>
+					<artifactId>framework-server</artifactId>
+				</exclusion>
+		    <exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   </exclusion>
+		   </exclusions>
+        </dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-coupon</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.deppon.dpap</groupId>
+					<artifactId>framework-server</artifactId>
+				</exclusion>
+		    <exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   </exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-recompense</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.deppon.dpap</groupId>
+					<artifactId>framework-server</artifactId>
+				</exclusion>
+		    <exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   </exclusion>
+
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-interface-client</artifactId>
+			<!-- 正式 <version>1.0.5-RELEASE</version> -->
+			<!-- 测试 <version>0.9.57-SNAPSHOT</version> -->
+			<version>3.1.1-SNAPSHOT</version>
+			<exclusions>
+		    <exclusion>
+					<groupId>com.deppon.crm</groupId>
+			        <artifactId>crm-common</artifactId>
+		   </exclusion>
+		   </exclusions>
+		</dependency>
+		<!-- <dependency> <groupId>com.deppon.crm</groupId> <artifactId>crm-interface-datasender</artifactId>
+			<version>0.1.9-SNAPSHOT</version> </dependency> -->
+		<!-- <dependency> <groupId>com.deppon.crm</groupId> <artifactId>crm-recompense</artifactId>
+			<version>0.1-SNAPSHOT</version> </dependency> -->
+
+		<!-- CXF dependency -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-core</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>${cxf.version}</version> </dependency> -->
+		<!-- servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- 增加了模块的jsp-api jar包 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- test tools -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-codegen-plugin</artifactId>
+			<version>${cxf.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+<dependency>
+			<groupId>com.deppon.bpmsapi</groupId>
+			<artifactId>bpmsapi</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bpmsapi-1.0.0-SNAPSHOT.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bfs_client</groupId>
+			<artifactId>bfs_client</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bfs_client.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bfs_client_eos</groupId>
+			<artifactId>bfs_client_eos</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bfs_client_eos.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bfs_common</groupId>
+			<artifactId>bfs_common</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bfs_common.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bfs_console</groupId>
+			<artifactId>bfs_console</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bfs_console.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bfs_engineall</groupId>
+			<artifactId>bfs_engineall</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bfs_engineall.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bfs_interface</groupId>
+			<artifactId>bfs_interface</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bfs_interface.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bps-api</groupId>
+			<artifactId>bps-api</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bps-api.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.eos.foundation</groupId>
+			<artifactId>com.eos.foundation</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/com.eos.foundation.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-access</groupId>
+			<artifactId>eos-access</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-access.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-access-ejb</groupId>
+			<artifactId>eos-access-ejb</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-access-ejb.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-common</groupId>
+			<artifactId>eos-common</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-common.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-das</groupId>
+			<artifactId>eos-das</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-das.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-data</groupId>
+			<artifactId>eos-data</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-data.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-infra</groupId>
+			<artifactId>eos-infra</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-infra.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-runtime</groupId>
+			<artifactId>eos-runtime</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-runtime.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-sca</groupId>
+			<artifactId>eos-sca</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-sca.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>eos-system</groupId>
+			<artifactId>eos-system</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/eos-system.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>sdo-api-v</groupId>
+			<artifactId>sdo-api-v</artifactId>
+			<version>2.1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/sdo-api-v2.1.0.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.2.2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/xstream-1.2.2.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>bps-tag</groupId>
+			<artifactId>bps-tag</artifactId>
+			<version>6.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bps-tag.jar</systemPath>
+		</dependency>
+
+
+		<dependency>
+			<groupId>bps-taglib4j</groupId>
+			<artifactId>bps-tag</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/bps-taglib4j.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>sca-api</groupId>
+			<artifactId>sca-api</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/sca-api-1.0.jar</systemPath>
+		</dependency>
+
+
+	</dependencies>
+	<build>
+		<finalName>crm</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-java2ws-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.cxf</groupId>
+						<artifactId>cxf-rt-frontend-jaxws</artifactId>
+						<version>${cxf.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.cxf</groupId>
+						<artifactId>cxf-rt-frontend-simple</artifactId>
+						<version>${cxf.version}</version>
+					</dependency>
+				</dependencies>
+
+				<executions>
+					<!-- <execution> -->
+					<!-- <id>process-classes</id> -->
+					<!-- <phase>process-classes</phase> -->
+					<!-- <configuration> -->
+					<!-- <className>com.deppon.crm.module.interfaces.order.IESBOrderService</className> -->
+					<!-- <genWsdl>true</genWsdl> -->
+					<!-- <verbose>true</verbose> -->
+					<!-- </configuration> -->
+					<!-- <goals> -->
+					<!-- <goal>java2ws</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.1</version> <configuration> <path>/crm</path> <port>8088</port>
+				</configuration> </plugin> -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<!-- or if you want to use tomcat 6.x <artifactId>tomcat6-maven-plugin</artifactId> -->
+				<version>2.0-beta-1</version>
+				<configuration>
+					<!-- http port -->
+					<charset>UTF-8</charset>
+					<port>8088</port>
+					<!-- application path always starts with / -->
+					<path>/crm</path>
+					<!-- optionnal path to a context file -->
+					<contextFile>${basedir}/context.xml</contextFile>
+					<!-- optionnal system propoerties you want to add -->
+					<!-- <systemProperties> <appserver.base>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target/appserver-base</appserver.base>
+						<appserver.home>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target/appserver-home</appserver.home>
+						<derby.system.home>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target/appserver-base/logs</derby.system.home>
+						<java.io.tmpdir>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target</java.io.tmpdir>
+						</systemProperties> -->
+					<!-- if you want to use test dependencies rather than only runtime -->
+					<useTestClasspath>false</useTestClasspath>
+					<!-- optionnal if you want to add some extra directories in the class
+						loader -->
+					<!-- <additionalClasspathDirs> <additionalClasspathDir></additionalClasspathDir>
+						</additionalClasspathDirs> -->
+				</configuration>
+				<!-- <dependencies>
+					<dependency>
+						<groupId>com.ibm.mq</groupId>
+						<artifactId>jmqi</artifactId>
+						<version>1.0</version>
+					</dependency>
+					<dependency>
+						<groupId>com.ibm.mq</groupId>
+						<artifactId>connector</artifactId>
+						<version>1.0</version>
+					</dependency>
+					<dependency>
+						<groupId>com.ibm.mq</groupId>
+						<artifactId>dhbcore</artifactId>
+						<version>1.0</version>
+					</dependency>
+					<dependency>
+						<groupId>com.ibm.mq</groupId>
+						<artifactId>fscontext</artifactId>
+						<version>1.0</version>
+					</dependency>
+					<dependency>
+						<groupId>com.ibm.mq</groupId>
+						<artifactId>jms</artifactId>
+						<version>1.0</version>
+					</dependency>
+				</dependencies> -->
+				<!-- if you need some extra dependencies only for running the embeded
+					tomcat add them in the plugin dependencies -->
+				<!-- <dependencies> <dependency> <groupId>org.apache.derby</groupId>
+					<artifactId>derby</artifactId> <version>${derbyVersion}</version> </dependency>
+					<dependency> <groupId>javax.mail</groupId> <artifactId>mail</artifactId>
+					<version>1.4</version> </dependency> </dependencies> -->
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jboss-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<configuration>
+					<jbossHome>E:\app\jboss-5.1.0.GA</jbossHome>
+					<hostName>localhost</hostName>
+					<port>8080</port>
+					<fileNames>
+						<fileName>${basedir}\target\crm.war</fileName>
+					</fileNames>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+		  <resource>
+		     <directory>src/main/resources</directory>
+		     <includes>
+		      <include>foss.properties</include>
+		     </includes>
+		     <filtering>true</filtering>
+		  </resource>
+
+		  <resource>
+		     <directory>src/main/resources</directory>
+		     <includes>
+		      <include>com/deppon/crm/module/interfaces/server/META-INF/*.xml</include>
+		     </includes>
+		     <filtering>false</filtering>
+		  </resource>
+		</resources>
+	</build>
+	<packaging>war</packaging>
+</project>

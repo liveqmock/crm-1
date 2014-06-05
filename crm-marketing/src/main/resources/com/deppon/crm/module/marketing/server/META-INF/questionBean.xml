@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- 问题管理 DAO -->
+	 <bean id="questionDaoImpl" 
+	 	class="com.deppon.crm.module.marketing.server.dao.impl.QuestionDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean> 
+	<!-- 问题管理 service -->
+	 <bean id="questionServiceImpl" 
+		class="com.deppon.crm.module.marketing.server.service.impl.QuestionServiceImpl">
+		<property name="questionDao" ref="questionDaoImpl"></property>
+	</bean>
+	<!-- 问题管理 manager -->
+    <bean id="questionManagerImpl" 
+    	class="com.deppon.crm.module.marketing.server.manager.impl.QuestionManagerImpl">
+    	<property name="questionService" ref="questionServiceImpl"></property>
+    </bean>
+    
+</beans>

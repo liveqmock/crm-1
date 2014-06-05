@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral">
+
+	<delete id="deleteMemberIntegralByMemberId" parameterType="string">
+		delete t_cust_memberpoint where fmemberId = #{memberId}
+	</delete>
+
+
+<insert id="insertMemberIntegral" parameterType="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral" >
+	<selectKey keyProperty="id" order="BEFORE" resultType="String">
+	select SEQ_ID_memberpoint.nextval as id from dual
+	</selectKey>
+	insert into t_cust_memberpoint(
+	FID,FCREATETIME,FCREATEUSERID,
+	FMEMBERID,FCURRENTUSABLESCORE,FCURRENTTOUSESSCORE,FCURRENTTOTALSCORE,
+	FTOTALSCORE,FTOTALTOUSESSCORE,FLASTDATESCORE)
+	 values(
+	#{id,jdbcType=VARCHAR},
+	sysdate,#{createUser,jdbcType=VARCHAR},
+	#{member.id,jdbcType=VARCHAR},#{currentUsableScore,jdbcType=NUMERIC},
+	#{currentToUsesScore,jdbcType=NUMERIC},#{currentTotalScore,jdbcType=NUMERIC},
+	#{totalScore,jdbcType=NUMERIC},#{totalToUsesScore,jdbcType=NUMERIC},
+	#{lastDateScore,jdbcType=DATE}
+	)
+</insert>
+
+<resultMap id="MemberIntegralRM"
+ type="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral">
+	<result property="id" column="FID" jdbcType = "VARCHAR" />
+	<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+	<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+	<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+	<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+	<result property="currentUsableScore" column="FCURRENTUSABLESCORE" jdbcType = "NUMERIC" />
+	<result property="currentToUsesScore" column="FCURRENTTOUSESSCORE" jdbcType = "NUMERIC" />
+	<result property="currentTotalScore" column="FCURRENTTOTALSCORE" jdbcType = "NUMERIC" />
+	<result property="totalScore" column="FTOTALSCORE" jdbcType = "NUMERIC" />
+	<result property="totalToUsesScore" column="FTOTALTOUSESSCORE" jdbcType = "NUMERIC" />
+	<result property="lastDateScore" column="FLASTDATESCORE" jdbcType = "DATE" />
+	<association property="member" column="FMEMBERID" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryAllMemberById"/>
+</resultMap>
+
+<select id="countSearchMemberIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral" resultType="long">
+	SELECT
+	count(*)
+	<include refid="searchMemberIntegralsConditions"/>
+</select>
+
+<select id="getMemberIntegralById" parameterType="string" resultMap="MemberIntegralRM">
+	SELECT
+	<include refid="MemberIntegral_column"/>
+	FROM t_cust_memberpoint
+	WHERE FID = #{id}
+</select>
+
+<select id="searchMemberIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral" resultMap="MemberIntegralRM">
+	SELECT
+	<include refid="MemberIntegral_column"/>
+	<include refid="searchMemberIntegralsConditions"/>
+</select>
+
+<sql id="searchMemberIntegralsConditions">
+	FROM t_cust_memberpoint
+	<where>
+	<if test=" id != null  and id != ''  ">
+	<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" createDate != null  and createDate != ''  ">
+	<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+	</if>
+	<if test=" createUser != null  and createUser != ''  ">
+	<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" modifyDate != null  and modifyDate != ''  ">
+	<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+	</if>
+	<if test=" modifyUser != null  and modifyUser != ''  ">
+	<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" member != null  and member != ''  ">
+	<![CDATA[and FMEMBERID=#{member.id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" currentUsableScore != null  and currentUsableScore != ''  ">
+	<![CDATA[and FCURRENTUSABLESCORE=#{currentUsableScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" currentToUsesScore != null  and currentToUsesScore != ''  ">
+	<![CDATA[and FCURRENTTOUSESSCORE=#{currentToUsesScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" currentTotalScore != null  and currentTotalScore != ''  ">
+	<![CDATA[and FCURRENTTOTALSCORE=#{currentTotalScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" totalScore != null  and totalScore != ''  ">
+	<![CDATA[and FTOTALSCORE=#{totalScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" totalToUsesScore != null  and totalToUsesScore != ''  ">
+	<![CDATA[and FTOTALTOUSESSCORE=#{totalToUsesScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" lastDateScore != null  and lastDateScore != ''  ">
+	<![CDATA[and FLASTDATESCORE=#{lastDateScore,jdbcType=DATE}]]>
+	</if>
+	</where>
+</sql>
+
+<update id="updateMemberIntegral" parameterType="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral">
+	UPDATE
+    t_cust_memberpoint
+	SET FLASTUPDATETIME = sysdate 
+	,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+	<if test=" id != null  and id != ''  ">
+	<![CDATA[,FID=#{id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" member != null  and member != ''  ">
+	<![CDATA[,FMEMBERID=#{member.id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" currentUsableScore != null  and currentUsableScore != ''  ">
+	<![CDATA[,FCURRENTUSABLESCORE=#{currentUsableScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" currentToUsesScore != null  and currentToUsesScore != ''  ">
+	<![CDATA[,FCURRENTTOUSESSCORE=#{currentToUsesScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" currentTotalScore != null  and currentTotalScore != ''  ">
+	<![CDATA[,FCURRENTTOTALSCORE=#{currentTotalScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" totalScore != null  and totalScore != ''  ">
+	<![CDATA[,FTOTALSCORE=#{totalScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" totalToUsesScore != null  and totalToUsesScore != ''  ">
+	<![CDATA[,FTOTALTOUSESSCORE=#{totalToUsesScore,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" lastDateScore != null  and lastDateScore != ''  ">
+	<![CDATA[,FLASTDATESCORE=#{lastDateScore,jdbcType=DATE}]]>
+	</if>
+	WHERE FID = #{id}
+</update>
+
+<sql id="MemberIntegral_column">
+	FID,
+	FCREATETIME,
+	FCREATEUSERID,
+	FLASTUPDATETIME,
+	FLASTMODIFYUSERID,
+	FMEMBERID,
+	FCURRENTUSABLESCORE,
+	FCURRENTTOUSESSCORE,
+	FCURRENTTOTALSCORE,
+	FTOTALSCORE,
+	FTOTALTOUSESSCORE,
+	FLASTDATESCORE
+</sql>
+
+<delete id="deleteMemberIntegral" parameterType="String">
+  delete t_cust_memberpoint where fid = #{id}
+</delete>
+
+
+
+	<sql id="Member_column_zh">
+		CB.FCUSTNUMBER CB_FCUSTNUMBER,
+		CB.FDEGREE CB_FDEGREE,
+		CB.FCUSTNAME CB_FCUSTNAME,
+		CB.FTRADEID CB_FTRADEID,
+		CB.FSECONDTRADE CB_FSECONDTRADE,
+		CB.FCUSTTYPE CB_FCUSTTYPE,
+		CB.FTAXREGNUMBER CB_FTAXREGNUMBER,
+		CB.FCOMPANYPROPERTY CB_FCOMPANYPROPERTY,
+		CB.FCUSTNATURE CB_FCUSTNATURE,
+		CB.FPROVINCE CB_FPROVINCE,
+		CB.FPROVINCEID CB_FPROVINCEID,
+		CB.FCITY CB_FCITY,
+		CB.FCITYID CB_FCITYID,
+		CB.FISSPECIAL CB_FISSPECIAL,
+		CB.FISREDEEMPOINTS CB_FISREDEEMPOINTS,
+		CB.FISIMPORTCUSTOR CB_FISIMPORTCUSTOR,
+		CB.FISACCEPTMARKET CB_FISACCEPTMARKET,
+		CB.FBRANDWORTH CB_FBRANDWORTH,
+		CB.FCHANNELSOURCE CB_FCHANNELSOURCE,
+		CB.FCHANNEL CB_FCHANNEL,
+		CB.FPREFERENCESERVICE CB_FPREFERENCESERVICE,
+		CB.FCOMPANYSCOP CB_FCOMPANYSCOP,
+		CB.FLASTYEARPROFIT CB_FLASTYEARPROFIT,
+		CB.FLASTYEARINCOME CB_FLASTYEARINCOME,
+		CB.FISFOCUSPAY CB_FISFOCUSPAY,
+		CB.FFOCUSDEPTID CB_FFOCUSDEPTID,
+		CB.FBILLTITLE CB_FBILLTITLE,
+		CB.FISPARENTCOMPANY CB_FISPARENTCOMPANY,
+		CB.FPARENTCOMPANYID CB_FPARENTCOMPANYID,
+		CB.FREGISTERFUND CB_FREGISTERFUND,
+		CB.FPROCREDIT CB_FPROCREDIT,
+		CB.FRECOMMENDCUST CB_FRECOMMENDCUST,
+		CB.FREMARK CB_FREMARK,
+		CB.FSIMPLENAME CB_FSIMPLENAME,
+		CB.FISTRANGOODS CB_FISTRANGOODS,
+		CB.FAREAID CB_FAREAID,
+		CB.FDEPTID CB_FDEPTID,
+		CB.FCONTACTID CB_FCONTACTID,
+		CB.FCUSTSTATUS CB_FCUSTSTATUS,
+		CB.FRESPONSIBILLITY CB_FRESPONSIBILLITY,
+		CB.FVERSIONNUMBER CB_FVERSIONNUMBER,
+		CB.FID CB_FID,
+		CB.FCREATETIME CB_FCREATETIME,
+		CB.FCREATEUSERID CB_FCREATEUSERID,
+		CB.FLASTUPDATETIME CB_FLASTUPDATETIME,
+		CB.FLASTMODIFYUSERID CB_FLASTMODIFYUSERID
+	</sql>
+	
+	<sql id="MemberIntegral_column_zh">
+		CA.FID   CA_FID,
+		CA.FCREATETIME CA_FCREATETIME,
+		CA.FCREATEUSERID CA_FCREATEUSERID,
+		CA.FLASTUPDATETIME CA_FLASTUPDATETIME,
+		CA.FLASTMODIFYUSERID CA_FLASTMODIFYUSERID,
+		CA.FMEMBERID CA_FMEMBERID,
+		CA.FCURRENTUSABLESCORE CA_FCURRENTUSABLESCORE,
+		CA.FCURRENTTOUSESSCORE CA_FCURRENTTOUSESSCORE,
+		CA.FCURRENTTOTALSCORE CA_FCURRENTTOTALSCORE,
+		CA.FTOTALSCORE CA_FTOTALSCORE,
+		CA.FTOTALTOUSESSCORE CA_FTOTALTOUSESSCORE,
+		CA.FLASTDATESCORE CA_FLASTDATESCORE
+	</sql>
+	
+	<select id="countSearchMemberIntegralsForCondition" parameterType="com.deppon.crm.module.customer.shared.domain.integral.IntegralSearchCondition" resultType="long">
+		select count(*) from(
+			select
+			distinct DE.FDEPTNAME DE_DEPTNAME,
+			<include refid="Member_column_zh"/>,
+			<include refid="MemberIntegral_column_zh"/>
+			<include refid="searchMemberIntegralsForConditionCondition"/>
+		)
+	</select>
+	
+	<select id="searchMemberIntegralsForCondition" parameterType="com.deppon.crm.module.customer.shared.domain.integral.IntegralSearchCondition" resultMap="SeachMemberIntegralRM">
+		select distinct DE.FDEPTNAME DE_DEPTNAME,
+		<include refid="Member_column_zh"/>,
+		<include refid="MemberIntegral_column_zh"/>
+		<include refid="searchMemberIntegralsForConditionCondition"/>
+	</select>
+	
+	<sql id="searchMemberIntegralsForConditionCondition">
+		from t_cust_memberpoint CA,
+		T_CUST_CUSTBASEDATA CB,
+		t_cust_custlinkman c,
+		T_ORG_DEPARTMENT DE
+		where CA.FMEMBERID = CB.FID
+		and c.FCUSTID = CB.FID
+		and de.fid = CB.fdeptId
+		<if test=" deptIds != null  and deptIds.size > 0  ">
+			and CB.FDEPTID in 
+			<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+				${dept} 
+			</foreach>
+		</if>
+		<if test=" memberNum != null  and memberNum != ''  ">
+		<![CDATA[and CB.FCUSTNUMBER=#{memberNum,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" memberName != null  and memberName != ''  ">
+		<![CDATA[and CB.FCUSTNAME like #{memberName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactId != null  and contactId != ''  ">
+		<![CDATA[and c.FNUMBER=#{contactId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactName != null  and contactName != ''  ">
+		<![CDATA[and c.FNAME like #{contactName,jdbcType=VARCHAR} ]]>
+		</if>
+	</sql>
+		
+	<resultMap id="SeachMemberIntegralRM"
+ 	type="com.deppon.crm.module.customer.shared.domain.integral.MemberIntegral">
+		<result property="id" column="CA_FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="CA_FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="CA_FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="CA_FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="CA_FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="currentUsableScore" column="CA_FCURRENTUSABLESCORE" jdbcType = "NUMERIC" />
+		<result property="currentToUsesScore" column="CA_FCURRENTTOUSESSCORE" jdbcType = "NUMERIC" />
+		<result property="currentTotalScore" column="CA_FCURRENTTOTALSCORE" jdbcType = "NUMERIC" />
+		<result property="totalScore" column="CA_FTOTALSCORE" jdbcType = "NUMERIC" />
+		<result property="totalToUsesScore" column="CA_FTOTALTOUSESSCORE" jdbcType = "NUMERIC" />
+		<result property="lastDateScore" column="CA_FLASTDATESCORE" jdbcType = "DATE" />
+		<association property="member" javaType="com.deppon.crm.module.customer.shared.domain.Member">
+			<result property="custNumber" column="CB_FCUSTNUMBER" />
+			<result property="degree" column="CB_FDEGREE" />
+			<result property="custName" column="CB_FCUSTNAME" />
+			<result property="tradeId" column="CB_FTRADEID" />
+			<result property="secondTrade" column="CB_FSECONDTRADE" />
+			<result property="custType" column="CB_FCUSTTYPE" />
+			<result property="taxregNumber" column="CB_FTAXREGNUMBER" />
+			<result property="companyProperty" column="CB_FCOMPANYPROPERTY" />
+			<result property="custNature" column="CB_FCUSTNATURE" />
+			<result property="province" column="CB_FPROVINCE" />
+			<result property="provinceId" column="CB_FPROVINCEID" />
+			<result property="city" column="CB_FCITY" />
+			<result property="cityId" column="CB_FCITYID" />
+			<result property="isSpecial" column="CB_FISSPECIAL" />
+			<result property="isRedeempoints" column="CB_FISREDEEMPOINTS" />
+			<result property="isImportCustor" column="CB_FISIMPORTCUSTOR" />
+			<result property="isAcceptMarket" column="CB_FISACCEPTMARKET" />
+			<result property="brandWorth" column="CB_FBRANDWORTH" />
+			<result property="channelSource" column="CB_FCHANNELSOURCE" />
+			<result property="channel" column="CB_FCHANNEL" />
+			<result property="preferenceService" column="CB_FPREFERENCESERVICE" />
+			<result property="companyScop" column="CB_FCOMPANYSCOP" />
+			<result property="lastYearProfit" column="CB_FLASTYEARPROFIT" />
+			<result property="lastYearIncome" column="CB_FLASTYEARINCOME" />
+			<result property="isFocusPay" column="CB_FISFOCUSPAY" />
+			<result property="focusDeptId" column="CB_FFOCUSDEPTID" />
+			<result property="billTitle" column="CB_FBILLTITLE" />
+			<result property="isParentCompany" column="CB_FISPARENTCOMPANY" />
+			<result property="parentNumber" column="CB_FPARENTNUMBER" />
+			<result property="parentCompanyId" column="CB_FPARENTCOMPANYID" />
+			<result property="registerFund" column="CB_FREGISTERFUND" />
+			<result property="procRedit" column="CB_FPROCREDIT" />
+			<result property="recommendCust" column="CB_FRECOMMENDCUST" />
+			<result property="remark" column="CB_FREMARK" />
+			<result property="simpleName" column="CB_FSIMPLENAME" />
+			<result property="isTranGoods" column="CB_FISTRANGOODS" />
+			<result property="areaId" column="CB_FAREAID" />
+			<result property="deptId" column="CB_FDEPTID" />
+			<result property="deptName" column="DE_DEPTNAME" />
+			<result property="contactId" column="CB_FCONTACTID" />
+			<result property="custStatus" column="CB_FCUSTSTATUS" />
+			<result property="responsibillity" column="CB_FRESPONSIBILLITY" />
+			<result property="versionNumber" column="CB_FVERSIONNUMBER" />
+			<result property="id" column="CB_FID" />
+			<result property="createDate" column="CB_FCREATETIME" />
+			<result property="createUser" column="FCREATEUSERID" />
+			<result property="modifyDate" column="CB_FLASTUPDATETIME" />
+			<result property="modifyUser" column="CB_FLASTMODIFYUSERID" />
+		</association>
+	</resultMap>
+	
+</mapper>

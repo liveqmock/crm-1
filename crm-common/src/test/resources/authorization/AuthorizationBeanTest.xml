@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop" />
+	</bean>
+	<bean id="dataSourceTest"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop" />
+	</bean>
+	
+	<bean id="dataSourceLog"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop
+		" />
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation"
+			value="/com/deppon/crm/module/common/server/META-INF/mybatis.xml" />
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 授权用户角色与部门数据访问 -->
+	<bean id="authorizeDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.AuthorizeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 功能数据访问 -->
+	<bean id="functionDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.FunctionDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 角色数据访问 -->
+	<bean id="roleDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.RoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 用户数据访问 -->
+	<bean id="userDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.UserDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="lockDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.LoginLockDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 用户授权部门和角色数据访问 -->
+	<bean id="userDeptAndRoleDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.UserDeptAndRoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+    <bean id="empDao"
+		class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="orgDao"
+		class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- SERVICE层 -->
+	<!-- 授权管理服务 -->
+	<bean id="authorizeService"
+		class="com.deppon.crm.module.authorization.server.service.impl.AuthorizeService">
+		<property name="authorizeDao" ref="authorizeDao"></property>
+	</bean>
+
+	<!-- 功能查询服务 -->
+	<bean id="functionService"
+		class="com.deppon.crm.module.authorization.server.service.impl.FunctionService">
+		<property name="functionDao" ref="functionDao"></property>
+	</bean>
+	<bean id="treeDao"
+		class="com.deppon.crm.module.authorization.server.dao.impl.TreeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="treeService"
+		class="com.deppon.crm.module.authorization.server.service.impl.TreeService">
+		<property name="treeDao" ref="treeDao" />
+	</bean>
+	<bean id="treeManager"
+		class="com.deppon.crm.module.authorization.server.manager.impl.TreeManager">
+		<property name="treeService" ref="treeService" />
+	</bean>
+	<bean id="departmentDao"
+		class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="userService"
+		class="com.deppon.crm.module.authorization.server.service.impl.UserService">
+		<property name="userDao" ref="userDao"></property>
+		<property name="roleDao" ref="roleDao"></property>
+		<property name="departmentDao" ref="departmentDao"></property>
+		<property name="userDeptAndRoleDao" ref="userDeptAndRoleDao"></property>
+	</bean>
+	<!-- 职员数据访问 -->
+	<bean id="employeeDao" class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="departmentService" class="com.deppon.crm.module.organization.server.service.impl.DepartmentService">
+		<property name="departmentDao" ref="orgDao"></property>
+	</bean>
+	<!-- 角色管理服务 -->
+	<bean id="roleService"
+		class="com.deppon.crm.module.authorization.server.service.impl.RoleService">
+		<property name="roleDao" ref="roleDao"></property>
+	</bean>
+	<bean id="employeeService" class="com.deppon.crm.module.organization.server.service.impl.EmployeeService">
+		<property name="employeeDao" ref="empDao"></property>
+	</bean>
+	<bean id="syncUserManager" class="com.deppon.crm.module.sync.server.manager.Imp.UserSyncManagerImp">
+		<property name="userService" ref="userService"></property>
+		<property name="employeeService" ref="employeeService"></property>
+	</bean>
+	<bean id="syncEmpManager" class="com.deppon.crm.module.sync.server.manager.Imp.EmployeeSyncManagerImp">
+		<property name="employeeService" ref="employeeService"></property>
+	</bean>
+	<bean id="syncDepManager" class="com.deppon.crm.module.sync.server.manager.Imp.DepartmentSyncManagerImp">
+		<property name="department" ref="departmentService"></property>
+	</bean>
+</beans>

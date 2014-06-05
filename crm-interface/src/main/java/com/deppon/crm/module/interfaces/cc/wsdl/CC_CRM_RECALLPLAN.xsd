@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.deppon.com/crm/inteface/cc/domain">
+    <complexType name="RecallPlanRequest">
+		<annotation>
+			<documentation>
+</documentation>
+		</annotation>
+		<sequence>
+			<element name="custNumber" type="string">
+				<annotation>
+					<documentation>客户编码</documentation>
+				</annotation>
+			</element>
+			<element name="planSubject" type="string">
+				<annotation>
+					<documentation>计划主题</documentation>
+				</annotation>
+			</element>
+			<element name="projectType" type="string">
+				<annotation>
+					<documentation>计划类别
+EXPRESS 快递
+LESS_THAN_TRUCKLOAD 零担</documentation></annotation></element>
+			<element name="beginTime" type="dateTime">
+				<annotation>
+					<documentation>开始时间</documentation>
+				</annotation>
+			</element>
+			<element name="endTime" type="dateTime">
+				<annotation>
+					<documentation>结束时间</documentation>
+				</annotation>
+			</element>
+			<element name="executeDept" type="string">
+				<annotation>
+					<documentation>执行网点（部门标杆编码）</documentation>
+				</annotation>
+			</element>
+			<element name="creator" type="string">
+				<annotation>
+					<documentation>创建人（德邦工号）</documentation>
+				</annotation>
+			</element>
+			<element name="remark" type="string">
+				<annotation>
+					<documentation>备注</documentation>
+				</annotation>
+			</element>
+		</sequence>
+    </complexType>
+
+	<complexType name="RecallPlanResponse">
+		<sequence>
+			<element name="isSuccess" type="boolean"></element>
+			<element name="errorMsg" type="string"></element>
+		</sequence>
+	</complexType>
+	<element name="recallPlanRequest" type="tns:RecallPlanRequest"></element>
+	<element name="recallPlanResponse" type="tns:RecallPlanResponse"></element>
+</schema>

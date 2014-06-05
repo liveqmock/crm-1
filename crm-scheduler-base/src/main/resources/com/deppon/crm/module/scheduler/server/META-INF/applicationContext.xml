@@ -1,0 +1,64 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-2.5.xsd 
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop-2.5.xsd 
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
+
+
+	<!-- =================================================================== -->
+	<!-- System param properties configuration -->
+	<!-- =================================================================== -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:quartz.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- =================================================================== -->
+	<!-- JDBC DataSource configuration -->
+	<!-- =================================================================== -->
+
+	<!-- <bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource" destroy-method="close"> -->
+	<!-- <property name="driver" value="${org.quartz.dataSource.myDS.driver}"/> -->
+	<!-- <property name="driverUrl" value="${org.quartz.dataSource.myDS.URL}"/> -->
+	<!-- <property name="user" value="${org.quartz.dataSource.myDS.user}"/> -->
+	<!-- <property name="password" value="${org.quartz.dataSource.myDS.password}"/> -->
+	<!-- <property name="prototypeCount" value="0" /> -->
+	<!-- <property name="maximumConnectionCount" value="50" /> -->
+	<!-- <property name="minimumConnectionCount" value="2" /> -->
+	<!-- <property name="simultaneousBuildThrottle" value="50" /> -->
+	<!-- </bean> -->
+
+	<!-- =================================================================== -->
+	<!-- Transaction manager for a single JDBC DataSource configuration -->
+	<!-- =================================================================== -->
+	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+	<!-- <property name="dataSource" ref="dataSource" /> -->
+	<!-- </bean> -->
+
+	<bean id="qrtzDao" class="com.deppon.crm.module.scheduler.server.dao.impl.QrtzDaoImpl" />
+
+	<bean id="quartzScheduler" lazy-init="true"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="applicationContextSchedulerContextKey" value="applicationContextKey"></property>
+		<!-- <property name="configLocation" value="classpath:quartz.properties"></property> -->
+	</bean>
+	<bean id="schedulerService" class="com.deppon.crm.module.scheduler.server.service.impl.SchedulerServiceImpl">
+		<property name="scheduler" ref="quartzScheduler"></property>
+	</bean>
+
+	<bean id="jobManager" class="com.deppon.crm.module.scheduler.server.manager.JobManager">
+		<property name="qrtzDao" ref="qrtzDao" />
+		<property name="schedulerService" ref="schedulerService" />
+	</bean>
+
+</beans>

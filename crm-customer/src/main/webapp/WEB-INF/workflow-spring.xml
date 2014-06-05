@@ -1,0 +1,84 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<bean id="workflowStore" class="com.deppon.crm.module.common.server.workflow.MyBatisWorkflowStore"
+		init-method="init">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<property name="jdbcTemplateProperties">
+			<props>
+				<prop key="history.table">OS_HISTORYSTEP</prop>
+				<prop key="historyPrev.table">OS_HISTORYSTEP_PREV</prop>
+				<prop key="current.table">OS_CURRENTSTEP</prop>
+				<prop key="currentPrev.table">OS_CURRENTSTEP_PREV</prop>
+				<prop key="step.id">ID</prop>
+				<prop key="step.entryId">ENTRY_ID</prop>
+				<prop key="step.stepId">STEP_ID</prop>
+				<prop key="step.actionId">ACTION_ID</prop>
+				<prop key="step.owner">OWNER</prop>
+				<prop key="step.caller">CALLER</prop>
+				<prop key="step.startDate">START_DATE</prop>
+				<prop key="step.finishDate">FINISH_DATE</prop>
+				<prop key="step.dueDate">DUE_DATE</prop>
+				<prop key="step.status">STATUS</prop>
+				<prop key="step.previousId">PREVIOUS_ID</prop>
+				<prop key="step.sequence">
+					SELECT seq_os_currentsteps.nextval from dual
+				</prop>
+				<prop key="entry.sequence">
+					SELECT seq_os_wfentry.nextval from dual
+				</prop>
+				<prop key="entry.table">OS_WFENTRY</prop>
+				<prop key="entry.id">ID</prop>
+				<prop key="entry.name">NAME</prop>
+				<prop key="entry.state">STATE</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="workflowFactory" class="com.deppon.crm.module.common.server.workflow.DepponXMLWorkflowFactory"
+		init-method="initDone" >
+	</bean>
+	<bean id="workflowConfiguration" class="com.opensymphony.workflow.config.SpringConfiguration">
+		<property name="store" ref="workflowStore" />
+		<property name="factory" ref="workflowFactory" />
+	</bean>
+	<bean id="workflow" class="com.opensymphony.workflow.basic.BasicWorkflow">
+		<constructor-arg>
+			<value>crm</value>
+		</constructor-arg>
+		<property name="configuration">
+			<ref local="workflowConfiguration" />
+		</property>
+		<property name="resolver">
+			<ref local="workflowTypeResolver" />
+		</property>
+	</bean>
+	<bean id="workflowTypeResolver" class="com.opensymphony.workflow.util.SpringTypeResolver" />
+
+	<bean id="transactionInterceptor"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="transactionManager">
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="basicWorkflow" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="singleton">
+			<value>false</value>
+		</property>
+		<property name="proxyInterfaces">
+			<value>com.opensymphony.workflow.Workflow</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+				<value>workflow</value>
+			</list>
+		</property>
+	</bean>
+
+
+</beans>

@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>客户来电录入+营销历史记录java-doc</title>
+</head>
+<body>
+<a  name="biz">
+<fieldset>
+<legend>客户维护计划相关业务</legend>
+<img alt="" src="doc-files3/客户关联业务模型.png">
+</fieldset>
+</a>
+<a  name="flowchart">
+<fieldset>
+<legend>客户维护计划业务流程图</legend>
+<img alt="" src="doc-files3/customer.png">
+</fieldset>
+</a>
+<a  name="customerMode">
+<fieldset>
+<legend>客户维护计划概念模型</legend>
+<img alt="" src="doc-files3/CustomerMaintainClassView.jpg">
+<img alt="" src="doc-files3/MaintainScheduleModule.jpg">
+</fieldset>
+</a>
+<a  name="customerClass">
+<fieldset>
+<legend>客户维护计划业务模型</legend>
+<img alt="" src="doc-files3/CustomerMaintain.jpg">
+<img alt="" src="doc-files3/MaintainSchedule.jpg">
+</fieldset>
+</a>
+<fieldset>
+<legend>客户来电录入</legend>
+<table border="1">
+<tr><td colspan="3" align="center">客户来电录入</td></tr>
+<tr>
+	<td>RULE-A1</td>
+	<td>
+		<b>校验客户重复性：（手机）</b></br>
+		1、当填写“联系人手机”且填写完成后，系统根据“联系人手机”判断全国固定客户是否存在</br>相同信息；</br>
+		2、若已存在，则提示“已存在此联系方式的固定客户，是否带出该客户信息继续录入本次</br>营销内容!”； 
+		     <font color="red">（注：不管固定客户是否归属本部门都允许录入）</font><br>
+		3、再根据“本部门+联系人手机”判断潜客和散客信息是否存在相同信息，若存在则提示“本</br>部门已存在此联系方式的潜散客，是否带出该客户信息继续录入本次营销内容!” 
+	</td>
+	<td><a href="#CustomerCallEntryByPhone">根据手机验证客户信息</a></td>
+</tr>
+<tr>
+	<td>RULE-A2</td>
+	<td>
+		<b>校验客户重复性：（固话）</b><br>
+		1、客户名称默认为与联系人姓名相同</br>
+		2、当手机号码和固定电话都录入时，两者都需要校验是否重复</br>
+		3、当校验手机号码不重复，填写“联系人电话”和“联系人姓名”后，根据“联系人姓名+联系人</br>电话”判断固定客户信息，再根据“本部门+联系人姓名+联系人电话”判断潜客和散客信息
+	</td>
+	<td><a href="#CustomerCallEntryByTel">根据固话验证客户信息</a></td>
+</tr>
+<tr>
+	<td>RULE-A3</td>
+	<td>
+		<b>校验必填项：</b></br>
+		1、联系人姓名不能为空，联系人手机、联系人电话至少录入一个；<br>
+		2、走货潜力可为空<br>
+		3、客户意见不可为空，至少录入一条
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RULE-A4</td>
+	<td>
+		<b>系统数据处理：</b><br>
+		1、当手机和固话系统校验都不重复，来电客户确为陌生客户时，就新增一条潜客信息，客户<br>来源为
+		   “陌生来电”，并在该潜客下新增一条营销记录，营销方式为“陌生来电”；<br>
+		2、当来电客户校验为已有客户，用户选择带出客户信息继续录入本次营销内容时，就在该已有<br>客户下新增一条营销记录，营销方式为“已有客户来电”。
+	</td>
+	<td><a href="#DataProcess">数据处理规则</a></td>
+</tr>
+</table>
+</fieldset>
+
+
+<fieldset>
+	<legend>营销历史记录</legend>
+	<table border="1">
+		<tr>
+			<td colspan="3" align="center">营销历史记录</td>
+		</tr>
+		<tr>
+			<td>RULE-A1</td>
+			<td>
+				1）	显示对该联系人对应客户下所有联系人的营销记录，即显示一个客户所有联系人的完整记录；</br>
+				2）	单次录入营销记录时，走货潜力和客户需求录入多条的，在此全部显示出来；</br>
+				3）	走货潜力和客户意见两张表都显示近半年的数据，默认按照营销时间的倒序排列；</br>
+				4）	数据分页显示，默认每页显示20条，支持用户自由选择每页显示的数据条数。</br>
+				5）	添加营销记录的页面5个：开发日程新增、开发日程管理、维护日程新增、维护日程管理、</br>营销录入查询
+			</td>
+			<td>同回访录入查询功能</td>
+		</tr>
+	</table>
+</fieldset>
+
+<fieldset>
+	<legend>数据元素</legend>
+	<table border="1" width="920">
+		<tr>
+			<td colspan="5" align="center"><b><h2>走货潜力</h2></b></td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center">数据元素</td>
+			<td colspan="2" align="center">T_CUST_RETURNVISITDETAIL</td>
+		</tr>
+		<tr>
+			<td>元素</td>
+			<td>数据类型</td>
+			<td>长度</td>
+			<td>字段名</td>
+			<td>名称</td>
+		</tr>
+		<tr>
+			<td>始发城市</td>
+			<td>文本</td>
+			<td>8</td>
+			<td>FLEACITYID</td>
+			<td>始发城市</td>
+		</tr>
+		<tr>
+			<td>到达城市</td>
+			<td>文本</td>
+			<td>8</td>
+			<td>FARRCITYID</td>
+			<td>到达城市</td>
+		</tr>
+		<tr>
+			<td>货量潜力</td>
+			<td>文本</td>
+			<td>15</td>
+			<td>FVOLUMPOTEN</td>
+			<td>或量潜力</td>
+		</tr>
+		<tr>
+			<td>合作物流公司</td>
+			<td>文本</td>
+			<td>5</td>
+			<td>FCOOPCOMPANY</td>
+			<td>合作物流公司</td>
+		</tr>
+		<tr>
+			<td>是否已有线路</td>
+			<td>下拉框</td>
+			<td>5</td>
+			<td>ALREADYHAVELINE</td>
+			<td>是否已有线路，此字段为新增字段 ，10月24日版本添加</td>
+		</tr>
+		<tr>
+			<td>备注</td>
+			<td>文本</td>
+			<td>200</td>
+			<td>FREMARK</td>
+			<td>备注信息</td>
+		</tr>
+	</table>
+	<table border="1" width="920">
+		<tr>
+			<td colspan="5" align="center"><h2><b>客户需求</b></h2></td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center">数据元素</td>
+			<td colspan="2" align="center">T_CUST_REVISITOPINIONDETAIL</td>
+		</tr>
+		<tr>
+			<td>元素</td>
+			<td>数据类型</td>
+			<td>长度</td>
+			<td>字段名</td>
+			<td>名称</td>
+		</tr>
+		<tr>
+			<td>需求分类</td>
+			<td>下拉框</td>
+			<td>5</td>
+			<td>FNEEDTYPE</td>
+			<td>客户需求类型</td>
+		</tr>
+		<tr>
+			<td>需求及问题</td>
+			<td>文本</td>
+			<td>200</td>
+			<td>FQUESTION</td>
+			<td>客户需求问题</td>
+		</tr>
+		<tr>
+			<td>需求问题解决办法</td>
+			<td>文本</td>
+			<td>200</td>
+			<td>FSOLVE</td>
+			<td>解决办法</td>
+		</tr>
+	</table>
+</fieldset>
+
+<fieldset>
+	<legend>主要类关系图</legend>
+	<img alt="主要类关系图" src="doc-files3/客户来电录入类图.jpg">
+</fieldset>
+
+
+
+</a>
+<div id="CustomerCallEntryByPhone">
+	<fieldset>
+		<legend>客户验证-手机</legend>
+			<img alt="" src="doc-files3/Sequence_Diagram__客户来电登记录入-手机__客户来电登记录入-手机.jpg">
+		</fieldset>
+</div>
+<div id="CustomerCallEntryByTel">
+	<fieldset>
+		<legend>客户验证-固话</legend>
+			<img alt="" src="doc-files3/Sequence_Diagram__客户来电登记录入-固话__客户来电登记录入-固话.jpg">
+		</fieldset>
+</div>
+<div id="DataProcess">
+	<fieldset>
+		<legend>数据处理</legend>
+		<img alt="" src="doc-files3/Sequence_Diagram__客户来电登记录入-数据处理__客户来电登记录入-数据处理.jpg">
+	</fieldset>
+</div>
+<div id="queryMarketingHistory">
+	<fieldset>
+		<legend>营销历史查询序列图</legend>
+		<img alt="营销历史查询序列图" src="doc-files3/ReturnVisitSearch.jpg">
+	</fieldset>
+</div>
+</body>
+</html>

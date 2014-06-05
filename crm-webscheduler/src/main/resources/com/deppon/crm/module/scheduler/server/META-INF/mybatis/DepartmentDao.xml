@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.server.dao.impl.DepartmentDaoImpl">
+
+	<select id="queryOADepartments" parameterType="date" resultType="com.deppon.crm.module.scheduler.shared.domain.DepartmentExt">
+		<![CDATA[
+	  SELECT OA.ORGCODE AS DEPTCODE,
+	         OA.ORGNAME AS DEPTNAME,
+	         OA.MANAGERID AS PRINCIPAL,
+	         OA.LINKTEL AS PHONE,
+	         OA.ORGFAX AS FAX,
+	         OA.PARENTCOMPCODE AS COMPANYNAME,
+	         OA.ZIPCODE AS ZIPCODE,
+	         OA.ORGADDR AS ADDRESS,
+	         DECODE(OA.ORGCLOSE, '1', '0', '0', '1', '0') AS FSTATUS,
+	         OA.STARTDATE AS VALIDDATE,
+	         OA.ENDDATE AS INVALIDDATE,
+	         OA.ORGLEVEL AS DEPTLEVEL,
+	         OA.DETAILINFO AS DEPTDESC,
+	         OA.ORGSEQ AS DEPTSEQ,
+	         DECODE(LOWER(OA.ISLEAF), NULL, 1, 'N', 0, 1) AS FLEAF,
+	         OA.FINASYSCODE AS STANDARDCODE
+	    FROM OM_ORGANIZATION OA
+		WHERE OA.LASTUPDATE >= #{updateDate}
+		]]>
+	</select>
+
+
+</mapper>

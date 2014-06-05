@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.deppon.com/uums/inteface/domain/usermanagement"
+	xmlns:tns="http://www.deppon.com/uums/inteface/domain/usermanagement"
+	elementFormDefault="qualified">
+
+	<complexType name="SendAdminOrgRequest">
+		<annotation>
+			<documentation>
+				UUMS发送至业务系统行政组织数据，由UUMS负责统一维护公司行政组织信息；
+			</documentation>
+		</annotation>
+		<sequence>
+			<element name="adminOrgInfo" type="tns:AdminOrgInfo"
+				minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>行政组织信息</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="AdminOrgInfo">
+		<sequence>
+			<element name="orgChangeId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>组织变动ID</documentation>
+				</annotation>
+			</element>
+			<element name="orgId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>组织ID(OA特需)</documentation>
+				</annotation>
+			</element>
+			<element name="orgCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织编码</documentation>
+				</annotation>
+			</element>
+			<element name="parentOrgCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>上级组织编码</documentation>
+				</annotation>
+			</element>
+			<element name="orgName" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织名称</documentation>
+				</annotation>
+			</element>
+			<element name="orgAttribute" type="string" maxOccurs="1"
+				minOccurs="0">
+				<annotation>
+					<documentation>组织性质</documentation>
+				</annotation>
+			</element>
+			<element name="orgBenchmarkCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="orgManager" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织负责人（工号）</documentation>
+				</annotation>
+			</element>
+			<element name="orgPhone" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织联系电话</documentation>
+				</annotation>
+			</element>
+			<element name="orgFax" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织传真号码</documentation>
+				</annotation>
+			</element>
+			<element name="parentOrgId" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>上级组织ID(OA特需)</documentation>
+				</annotation>
+			</element>
+			<element name="parentOrgBenchmarkCode" type="string"
+				maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>上级组织标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="subCompName" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>所属子公司名称</documentation>
+				</annotation>
+			</element>
+			<element name="subCompCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>所属子公司编码</documentation>
+				</annotation>
+			</element>
+			<element name="costCenterCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>所属成本中心编码</documentation>
+				</annotation>
+			</element>
+			<element name="costCenterName" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>所属成本中心名称</documentation>
+				</annotation>
+			</element>
+			<element name="orgProvince" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织省份</documentation>
+				</annotation>
+			</element>
+			<element name="orgCity" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织城市</documentation>
+				</annotation>
+			</element>
+			<element name="orgCountry" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织区县</documentation>
+				</annotation>
+			</element>
+			<element name="orgZipCode" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织邮编</documentation>
+				</annotation>
+			</element>
+			<element name="orgEmail" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织邮箱</documentation>
+				</annotation>
+			</element>
+			<element name="orgAddress" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织地址</documentation>
+				</annotation>
+			</element>
+			<element name="orgStatus" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织状态, 0-正常, 1-待撤销, 2-已撤销</documentation>
+				</annotation>
+			</element>
+			<element name="validDate" type="dateTime" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>启用日期</documentation>
+				</annotation>
+			</element>
+			<element name="invalidDate" type="dateTime" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>作废日期</documentation>
+				</annotation>
+			</element>
+			<element name="isCareerDept" type="boolean" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>是否事业部</documentation>
+				</annotation>
+			</element>
+			<element name="isBigArea" type="boolean" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>是否大区</documentation>
+				</annotation>
+			</element>
+			<element name="isSmallArea" type="boolean" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>是否小区</documentation>
+				</annotation>
+			</element>
+			<element name="orgLevel" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织层级</documentation>
+				</annotation>
+			</element>
+			<element name="orgDesc" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织描述</documentation>
+				</annotation>
+			</element>
+			<element name="orgSeq" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>组织序列</documentation>
+				</annotation>
+			</element>
+			<element name="isLeaf" type="boolean" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>是否叶子节点</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-异动, 4-待撤销, 5-已撤销</documentation>
+				</annotation>
+			</element>
+			<element name="changeDate" type="dateTime" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动时间</documentation>
+				</annotation>
+			</element>
+			<element name="displayOrder" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>显示顺序</documentation>
+				</annotation>
+			</element>
+			<element name="deptShortName" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>部门简称</documentation>
+				</annotation>
+			</element>
+			<element name="deptAttribute" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>组织性质</documentation>
+				</annotation>
+			</element>
+			<element name="areaCode" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>地区编码默认拼音</documentation>
+				</annotation>
+			</element>
+			<element name="canceledSystems" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>已封存系统</documentation>
+				</annotation>
+			</element>
+			<element name="ehrDeptCode" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>EHR部门编码</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="SendAdminOrgResponse">
+		<sequence>
+			<element name="successCount" type="int" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>成功总数</documentation>
+				</annotation>
+			</element>
+			<element name="failedCount" type="int" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>失败总数</documentation>
+				</annotation>
+			</element>
+			<element name="processResult" type="tns:SendAdminOrgProcessReult"
+				minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>处理明细</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="SendAdminOrgProcessReult">
+		<sequence>
+			<element name="orgChangeId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>组织变动ID</documentation>
+				</annotation>
+			</element>
+			<element name="result" type="boolean" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>处理结果，是否成功 [0: 失败 ,1：成功]</documentation>
+				</annotation>
+			</element>
+			<element name="reason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+			
+			<element name="orgName" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织名称</documentation>
+				</annotation>
+			</element>
+			<element name="orgBenchmarkCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-异动, 4-待撤销, 5-已撤销</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<element name="SendAdminOrgRequest" type="tns:SendAdminOrgRequest">
+	</element>
+
+	<element name="SendAdminOrgResponse" type="tns:SendAdminOrgResponse">
+	</element>
+
+</schema>

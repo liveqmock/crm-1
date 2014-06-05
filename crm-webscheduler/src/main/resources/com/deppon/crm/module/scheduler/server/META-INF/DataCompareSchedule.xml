@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	<!-- 服务类 -->
+	<bean id = "compareMember" class="com.deppon.crm.module.scheduler.server.manager.TimeCompareMember">
+		<property name="compareDataService" ref="compareDataService"></property>
+		<property name="customerOperate" ref="customerOperate"></property>
+		<property name="mailSenderService" ref="mailSenderService"></property>
+		<property name="contractApplyOperate" ref="contractApplyOperate"></property>
+		<property name="schedulingControlService" ref="schedulingControlService"></property>
+		<property name="contractManager" ref="contractManager"></property>
+	</bean>
+	<bean id="compareDataService" class="com.deppon.crm.module.scheduler.server.service.impl.CompareDataServiceImpl">
+		<property name="compareDataDao" ref="iCompareDataDao"></property>
+	</bean>
+<!-- 	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService"> -->
+<!-- 	<property name="host" value="smtp.deppon.com"/> -->
+<!-- 	<property name="userName" value="dpsyj@deppon.com"/> -->
+<!-- 	<property name="password" value="870305"/> -->
+<!-- 	</bean> -->
+	<bean id="iCompareDataDao" class="com.deppon.crm.module.scheduler.server.dao.impl.CompareDataDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	
+	<!-- 任务定义 -->
+	<bean id="compareDataJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="compareMember"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="execute"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="compareMemberTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="compareDataJob" />
+		<property name="cronExpression">
+			<value>0 0 0 * * ?</value>
+		</property>
+	</bean>
+
+		<!-- oa和crm合同工作流数据对比的 任务定义 -->
+	<bean id="compareContractWorkflowTimerJob"
+		class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass"
+			value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="compareMember"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="compareCrmAndOaContractWorkflowResult"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 任务定义 -->
+
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="compareContractWorkflowTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="compareContractWorkflowTimerJob" />
+		<property name="cronExpression">
+		<!--选择凌晨1点跑，是为了怕与别的定时器抢资源  -->
+		 <value>0 0 2 * * ?</value> 
+			<!-- 测试  -->
+			<!-- <value> 0 0/2 10 * * ? </value> -->
+		</property>
+	</bean>
+</beans>

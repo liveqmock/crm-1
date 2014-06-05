@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<context:property-placeholder location="classpath*:foss.properties" ignore-unresolvable="true"/>
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<!-- <bean id="remotingServiceInterceptor" class="com.deppon.foss.framework.server.aop.ServiceInterceptor"> -->
+	<!-- <property name="performanceLog" ref="performanceLog"></property> -->
+	<!-- </bean> -->
+	<!-- <bean id="webServiceInterceptor" class="com.deppon.foss.framework.server.aop.WebServiceInterceptor"> -->
+	<!-- <property name="performanceLog" ref="performanceLog"></property> -->
+	<!-- <property name="exceptionLog" ref="exceptionLog"></property> -->
+	<!-- </bean> -->
+	
+	<!-- redis -->
+	
+	<!-- redis 连接池配置 -->
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+	  <property name="maxActive" value="${redis.pool.maxActive}" />
+	  <property name="maxIdle" value="${redis.pool.maxIdle}" />
+	  <property name="maxWait" value="${redis.pool.maxWait}" />
+	  <property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
+	  <property name="testOnReturn" value="${redis.pool.testOnReturn}" />
+	</bean>
+	<!-- redis 客户端连接配置 -->
+	<bean id="redisClient" class="redis.clients.jedis.JedisPool">
+	  <constructor-arg index="0" ref="poolConfig" />
+	  <constructor-arg index="1" value="${redis.host1}" />
+	  <constructor-arg index="2" value="${redis.port1}" />
+	  <constructor-arg index="3" value="${redis.timeout}" />
+	  <constructor-arg index="4" value="${redis.password1}" />
+	</bean>
+
+	<bean id="redisCacheStorage" class="com.deppon.crm.module.frameworkimpl.server.cache.CRMRedisCacheStorage">
+	<property name="client" ref="redisClient" />
+	</bean>
+	
+
+	<!-- 日志 -->
+	<bean id="logDao" class="com.deppon.crm.module.frameworkimpl.server.dao.impl.LogDao">
+		<property name="dataSourceLog" ref="dataSourceLog"></property>
+	</bean>
+	<bean id="logServer" class="com.deppon.crm.module.frameworkimpl.server.service.impl.LogService">
+		<property name="logDao" ref="logDao"></property>
+	</bean>
+	<!-- 
+	<bean id="sender" class="com.deppon.crm.module.frameworkimpl.server.log.CrmLogSenderImpl">
+		<property name="logServer" ref="logServer"></property>
+	</bean>
+	<bean id="performanceLog" class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="logSender" ref="sender" />
+		<property name="enable" value="true" />
+		<property name="queueSize" value="200" />
+		<property name="listSize" value="2" />
+		<property name="interval" value="5" />
+	</bean> 
+	
+	
+	<bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">
+		<property name="host" value="${mongodb.host}" />
+		<property name="port" value="${mongodb.port}" />
+	</bean>
+-->
+
+<bean id="mongoOptions" class="com.mongodb.MongoOptions">
+	  <property name="connectionsPerHost" value="${mongodb.connectionsPerHost}" />
+	  <property name="threadsAllowedToBlockForConnectionMultiplier" value="${mongodb.threadsAllowedToBlockForConnectionMultiplier}" />
+	  <property name="maxWaitTime" value="${mongodb.maxWaitTime}" />
+	  <property name="connectTimeout" value="${mongodb.connectTimeout}" />
+	  <property name="socketTimeout" value="${mongodb.socketTimeout}" />
+	  
+	  <property name="autoConnectRetry" value="${mongodb.autoConnectRetry}" />
+	  <property name="alwaysUseMBeans" value="${mongodb.alwaysUseMBeans}" />
+	  <property name="socketKeepAlive" value="${mongodb.socketKeepAlive}"/>
+	  <property name="w" value="${mongodb.w}"/>
+	  <property name="wtimeout" value="${mongodb.wtimeout}"/>
+	  
+	  <property name="fsync" value="${mongodb.fsync}"/>
+	 <!--生产资源不足 不能使用主从配置 去掉备库查询设置
+	   <property name="readPreference" >
+	      <bean class="com.mongodb.TaggableReadPreference.SecondaryPreferredReadPreference" />
+	  </property> -->
+	</bean>
+
+      <!--  由于资源不足，不能使用主从配置 
+       <bean id="mongoServer1" class="com.mongodb.ServerAddress" >
+		      <constructor-arg value="${mongodb.host1}" />
+		      <constructor-arg value="${mongodb.port1}" />
+		</bean>
+		<bean id="mongoServer2" class="com.mongodb.ServerAddress" >
+		      <constructor-arg value="${mongodb.host2}" />
+		      <constructor-arg value="${mongodb.port2}" />
+		  </bean> -->
+
+    <bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">
+        <property name="host" value="${mongodb.host1}" />
+        <property name="port" value="${mongodb.port1}" />
+        <property name="mongoOptions" ref="mongoOptions" />
+		<!-- 由于资源不足，不能使用主从配置 
+		 <property name="replicaSetSeeds" >
+		 <list>
+		   <ref bean="mongoServer1"/>
+		   <ref bean="mongoServer2"/>
+		 </list>
+		</property> -->
+	</bean>
+	
+	 <bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
+        <constructor-arg name="username" value="${mongodb.username}" />
+        <constructor-arg name="password" value="${mongodb.password}" />
+    </bean>
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo" />
+		<constructor-arg value="${mongodb.database}" />
+		<constructor-arg ref="userCredentials" />
+	</bean>
+	<!-- 日志队列配置开始 -->
+	<!-- 性能日志 -->
+	<bean id="performanceLog" 
+		class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="enable" value="${log.enable}" />
+		<property name="queueSize" value="${log.queueSize}" />
+		<property name="listSize" value="${log.listSize}" />
+		<property name="interval" value="${log.interval}" />
+		<property name="logSender" ref="mongoLogSender" />
+	</bean>
+	
+<!-- 	<bean id="log4j" -->
+<!-- 		class="com.deppon.foss.framework.server.components.logger.LogBuffer"> -->
+<!-- 		<property name="enable" value="${log.enable}" />默认启用 -->
+<!-- 		<property name="queueSize" value="${log.queueSize}" /> -->
+<!-- 		<property name="listSize" value="${log.listSize}" /> -->
+<!-- 		<property name="interval" value="${log.interval}" /> -->
+<!-- 		<property name="logSender" ref="mongoLogSender4j" /> -->
+<!-- 	</bean> -->
+
+	<bean id="mongoLogSender" class="com.deppon.crm.module.frameworkimpl.server.components.logger.CrmMongoLogSender">
+		<property name="logInfo" ref="mongoTemplate" />
+	</bean>
+	<!-- 日志队列配置结束 -->
+
+	<bean id="bankProvinceCityDao" class="com.deppon.crm.module.common.server.dao.impl.BankProvinceCityDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="bankProvinceCityService" class="com.deppon.crm.module.common.server.service.impl.BankProvinceCityServiceImpl">
+		<property name="bankProvinceCityDao" ref="bankProvinceCityDao"/>
+	</bean>
+	<bean id="bankProvinceCityManager" class="com.deppon.crm.module.common.server.manager.impl.BankProvinceCityManagerImpl">
+		<property name="bankProvinceCityService" ref="bankProvinceCityService"/>
+	</bean>
+<!-- 	<bean id="exceptionLog" class="com.deppon.foss.framework.server.components.logger.LogBuffer"> -->
+<!-- 		<property name="enable" value="${log.enable}" />默认启用 -->
+<!-- 		<property name="queueSize" value="${log.queueSize}" /> -->
+<!-- 		<property name="listSize" value="${log.listSize}" /> -->
+<!-- 		<property name="interval" value="${log.interval}" /> -->
+<!-- 		<property name="logSender" ref="mongoLogSender" /> -->
+<!-- 	</bean> -->
+
+	<bean id="headDao" class="com.deppon.crm.module.common.server.dao.impl.HeadDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="detailDao" class="com.deppon.crm.module.common.server.dao.impl.DetailDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="detailService" class="com.deppon.crm.module.common.server.service.impl.DetailService">
+	   <property name="detailDao"  ref="detailDao"/>
+	</bean>
+	
+	<bean id="detailManager" class="com.deppon.crm.module.common.server.manager.impl.DetailManager">
+	   <property name="detailService" ref="detailService" />
+	</bean>
+
+	<!-- 文件操作begin -->
+	<bean id="fileDao" class="com.deppon.crm.module.common.file.dao.impl.FileDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="fileService" class="com.deppon.crm.module.common.file.service.impl.FileService">
+		<property name="fileDao" ref="fileDao"></property>
+	</bean>
+	<bean id="fileManager" class="com.deppon.crm.module.common.file.manager.impl.FileManager">
+		<property name="fileService" ref="fileService"></property>
+	</bean>
+	<bean id="fileUploadAction" class="com.deppon.crm.module.common.file.action.FileUploadAction">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="fileManager" ref="fileManager"></property>
+	</bean>
+	<bean id="fileDownLoadAction" class="com.deppon.crm.module.common.file.action.FileDownLoadAction" />
+	<bean id="fileOperateAction" class="com.deppon.crm.module.common.file.action.FileOperateAction" />
+	<!-- 文件操作end -->
+
+
+	<!-- 始发网点与受理部门基础资料维护 begin -->
+	<bean id="ladingStationDeptAction" class="com.deppon.crm.module.common.server.action.LadingStationDeptAction"
+		scope="prototype">
+		<property name="landStatDepartManager" ref="ladingstationDepartmentManager" />
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="messageBundle" ref="messageBundle"></property>
+	</bean>
+
+	<!-- 始发网点与受理部门基础资料维护 end -->
+	<bean id="areaDao" class="com.deppon.crm.module.common.server.dao.impl.AreaDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="cityDao" class="com.deppon.crm.module.common.server.dao.impl.CityDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="provinceDao" class="com.deppon.crm.module.common.server.dao.impl.ProvinceDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="cityCacheProvider" class="com.deppon.crm.module.common.server.cache.CityCacheProvider">
+		<property name="provinceDao" ref="provinceDao" />
+		<property name="cityDao" ref="cityDao" />
+	</bean>
+	<bean id="cityCache" class="com.deppon.crm.module.common.server.cache.CityCache">
+		<property name="cacheProvider" ref="cityCacheProvider" />
+		<property name="cacheStorage" ref="redisCacheStorage"/>
+	</bean>
+	<bean id="areaAddressService" class="com.deppon.crm.module.common.server.service.impl.AreaAddressService">
+		<property name="areaDao" ref="areaDao"></property>
+	</bean>
+	<bean id="areaAddressManager" class="com.deppon.crm.module.common.server.manager.impl.AreaAddressManager">
+		<property name="areaAddressService" ref="areaAddressService"></property>
+		<property name="iProvinceService" ref="iProvinceService"></property>
+		<property name="iCityService" ref="iCityService"></property>
+	</bean>
+	<bean id="areaAddressAction" class="com.deppon.crm.module.common.server.action.AreaAddressAction">
+		<property name="areaAddressManager" ref="areaAddressManager"></property>
+	</bean>
+	<bean id="messageDao" class="com.deppon.crm.module.common.server.dao.impl.MessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="messageService" class="com.deppon.crm.module.common.server.service.impl.MessageService">
+		<property name="messageDao" ref="messageDao"></property>
+	</bean>
+	<bean id="messageManager" class="com.deppon.crm.module.common.server.manager.impl.MessageManager">
+		<property name="messageService" ref="messageService"></property>
+	</bean>
+	<bean id="messageAction" class="com.deppon.crm.module.common.server.action.MessageAction">
+		<property name="iMessageManager" ref="messageManager"></property>
+	</bean>
+
+	<bean id="ladingstationDepartmentDao" class="com.deppon.crm.module.common.server.dao.impl.LadingstationDepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<bean id="ladingstationDepartmentService" class="com.deppon.crm.module.common.server.service.impl.LadingstationDepartmentService">
+		<property name="ladingstationDepartmentDao" ref="ladingstationDepartmentDao"></property>
+	</bean>
+
+	<bean id="helpDocDao" class="com.deppon.crm.module.common.server.dao.impl.HelpDocDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<bean id="helpDocService"
+		class="com.deppon.crm.module.common.server.service.impl.HelpDocService">
+		<property name="helpDocDao" ref="helpDocDao"></property>
+	</bean>
+
+	<bean id="helpDocManager"
+		class="com.deppon.crm.module.common.server.manager.impl.HelpDocManager">
+		<property name="helpDocService" ref="helpDocService"></property>
+	</bean>
+
+	<bean id="helpDocAction" class="com.deppon.crm.module.common.server.action.HelpDocAction">
+		<property name="helpDocManager" ref="helpDocManager"></property>
+	</bean>
+
+	<!--始发网点与受理部门校验规则 -->
+	<bean id="ladingstationDepartmentRule" class="com.deppon.crm.module.common.server.manager.impl.LadingstationDepartmentRuleImpl">
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService"></property>
+	</bean>
+
+	<bean id="ladingstationDepartmentManager" class="com.deppon.crm.module.common.server.manager.impl.LadingstationDepartmentManager">
+		<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService"></property>
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="ladingstationDepartmentRule" ref="ladingstationDepartmentRule"></property>
+	</bean>
+
+	<bean id="userDeptAndRoleDao" class="com.deppon.crm.module.authorization.server.dao.impl.UserDeptAndRoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<bean id="todoWorkflowDao" class="com.deppon.crm.module.common.server.dao.impl.TodoWorkflowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="todoWorkflowService" class="com.deppon.crm.module.common.server.service.impl.TodoWorkflowService">
+		<property name="todoWorkflowDao" ref="todoWorkflowDao"></property>
+	</bean>
+	<bean id="generateTodoWorkflow" class="com.deppon.crm.module.common.server.workflow.GenerateTodoWorkflowFunction">
+		<property name="todoWorkflowService" ref="todoWorkflowService" />
+	</bean>
+	<bean id="todoWorkflowManager" class="com.deppon.crm.module.common.server.manager.impl.TodoWorkflowManager">
+		<property name="todoWorkflowService" ref="todoWorkflowService" />
+	</bean>
+
+	<!-- 省市区县service -->
+	<bean id="iProvinceService" class="com.deppon.crm.module.common.server.service.impl.ProvinceService">
+		<property name="iProvinceDao" ref="provinceDao"></property>
+	</bean>
+	<bean id="iCityService" class="com.deppon.crm.module.common.server.service.impl.CityService">
+		<property name="iCityDao" ref="cityDao"></property>
+	</bean>
+	<bean id="iAreaAddressService" class="com.deppon.crm.module.common.server.service.impl.AreaAddressService">
+		<property name="areaDao" ref="areaDao"></property>
+	</bean>
+	
+
+
+
+	<!-- 银行信息dao -->
+	<bean id="accountBranchDao" class="com.deppon.crm.module.common.server.dao.impl.AccountBranchDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 银行信息service -->
+	<bean id="bankInfoService" class="com.deppon.crm.module.common.server.service.impl.BankInfoService">
+		<property name="accountBranchDao" ref="accountBranchDao"></property>
+	</bean>
+	<!-- 银行信息Manager -->
+	<bean id="bankInfoManager" class="com.deppon.crm.module.common.server.manager.impl.BankInfoManager">
+		<property name="bankInfoService" ref="bankInfoService"></property>
+	</bean>
+
+	<bean id="bankInfoAction" class="com.deppon.crm.module.common.server.action.BankInfoAction"
+		scope="prototype">
+		<property name="bankInfoManager" ref="bankInfoManager"></property>
+	</bean>
+
+	<!-- 部门aciton -->
+	<bean id="businessDeptAction" class="com.deppon.crm.module.common.server.action.BusinessDeptAction"
+		scope="prototype">
+		<property name="departmentManager" ref="ladingstationDepartmentManager"></property>
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+
+	<!-- ab城市dao -->
+	<bean id="abCityDao" class="com.deppon.crm.module.common.server.dao.impl.AbCityDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- ab城市service -->
+	<bean id="abCityService" class="com.deppon.crm.module.common.server.service.impl.AbCityService">
+		<property name="abCityDao" ref="abCityDao"></property>
+	</bean>
+
+	<bean id="abCityManager" class="com.deppon.crm.module.common.server.manager.impl.AbCityManager">
+		<property name="abCityService" ref="abCityService"></property>
+	</bean>
+
+	<!-- AuthorizeAction -->
+	<bean id="authorizeAction" class="com.deppon.crm.module.authorization.server.action.AuthorizeAction"
+		scope="prototype">
+		<property name="cityManager" ref="abCityManager"></property>
+	</bean>
+
+	<!-- 城市省份维护 RegionAction -->
+	<bean id="RegionAction" class="com.deppon.crm.module.authorization.server.action.RegionAction"
+		scope="prototype">
+		<property name="areaAddressManager" ref="areaAddressManager"></property>
+	</bean>
+
+	<!-- 安全控件Action -->
+	<bean id="checkHardwareAction" class="com.deppon.crm.module.common.server.action.CheckHardwareAction"
+		scope="prototype">
+		<property name="iCheckHardwareManager" ref="checkHardwareManager"></property>
+	</bean>
+
+
+	<bean id="checkHardwareManager" class=" com.deppon.crm.module.common.server.manager.impl.CheckHardwareManager">
+		<property name="iCheckHardWareService" ref="checkHardWareService" />
+		<property name="iHardWareTokenService" ref="hardWareTokenService" />
+	</bean>
+
+	<bean id="checkHardWareService" class="com.deppon.crm.module.common.server.service.impl.CheckHardWareService">
+		<property name="iCheckHardWareDao" ref="checkHardWareDao" />
+	</bean>
+
+	<bean id="checkHardWareDao" class=" com.deppon.crm.module.common.server.dao.impl.CheckHardWareDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean name="hardWareTokenService" class="com.deppon.crm.module.common.server.service.impl.HardWareTokenService">
+		<property name="iHardWareTokenDao" ref="hardWareTokenDao" />
+	</bean>
+
+	<bean name="hardWareTokenDao" class="com.deppon.crm.module.common.server.dao.impl.HardWareTokenDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 问题反馈功能 -->
+	<bean name="problemDao" class="com.deppon.crm.module.common.server.dao.impl.ProblemDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean name="problemService" class="com.deppon.crm.module.common.server.service.impl.ProblemService">
+		<property name="pDao" ref="problemDao"/>
+	</bean>
+	<bean name="problemManager" class="com.deppon.crm.module.common.server.manager.impl.ProblemManager">
+		<property name="pService" ref="problemService"/>
+	</bean>
+	<bean id="problemAction" class="com.deppon.crm.module.common.server.action.ProblemAction">
+		<property name="problemManager" ref="problemManager"></property>
+	</bean>
+	<!-- 公告功能 -->
+		<bean name="noticeDao" class="com.deppon.crm.module.common.server.dao.impl.NoticeDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean name="noticeService" class="com.deppon.crm.module.common.server.service.impl.NoticeServiceImpl">
+		<property name="noticeDao" ref="noticeDao"/>
+	</bean>
+	<bean name="noticeManager" class="com.deppon.crm.module.common.server.manager.impl.NoticeManagerImpl">
+		<property name="noticeService" ref="noticeService"/>
+		<property name="fileManager" ref="fileManager"/>
+	</bean>
+	<bean id="noticeAction" class="com.deppon.crm.module.common.server.action.NoticeAction">
+		<property name="noticeManager" ref="noticeManager"></property>
+	</bean>
+	
+	<bean id="specialDayAction" scope="singleton"
+		class="com.deppon.crm.module.common.server.action.SpecialDayAction">
+		<property name="specialDayManager" ref="specialDayManager"></property>
+	</bean>
+		
+	<bean id="specialDayDao" scope="singleton"
+		class="com.deppon.crm.module.common.server.dao.impl.SpecialDayDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="specialDayService" scope="singleton"
+		class="com.deppon.crm.module.common.server.service.impl.SpecialDayService">
+		<property name="specialDayDao" ref="specialDayDao"></property>
+	</bean>
+	<bean id="specialDayManager" scope="singleton"
+		class="com.deppon.crm.module.common.server.manager.impl.SpecialDayManager">
+		<property name="specialDayService" ref="specialDayService"></property>
+	</bean>
+	
+	<import resource="workflow-spring.xml" />
+	
+	<!--/**			
+	    * 修改人：张斌
+		*修改时间：2013-7-29 10:25
+		*原有内容：无（新增）
+		*修改原因：增加试点城市维护的spring配置
+	 */ -->
+	<bean id="pilotCityDao" class="com.deppon.crm.module.common.server.dao.impl.PilotCityDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="pilotCityService" class="com.deppon.crm.module.common.server.service.impl.PilotCityService">
+		<property name="pilotCityDao" ref="pilotCityDao"></property>
+	</bean>
+	<bean id="pilotCityManager" class="com.deppon.crm.module.common.server.manager.impl.PilotCityManager">
+		<property name="pilotCityService" ref="pilotCityService"></property>
+	</bean>
+	
+	<!-- 陈道兵    2013-08-01  点部与营业部映射关系  -->
+	<bean id="expressPointBusinessDeptDao" class="com.deppon.crm.module.common.server.dao.impl.ExpressPointBusinessDeptDao">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="expressPointBusinessDeptService" class="com.deppon.crm.module.common.server.service.impl.ExpressPointBusinessDeptService">
+		<property name="expressPointBusinessDeptDao" ref="expressPointBusinessDeptDao"></property>
+	</bean>
+	<bean id="expressPointBusinessDeptManager" class="com.deppon.crm.module.common.server.manager.impl.ExpressPointBusinessDeptManager">
+		<property name="expressPointBusinessDeptService" ref="expressPointBusinessDeptService"></property>
+	</bean>
+		
+	<!--  配合监控平台的bean start 2013.12.4 By ZhuPJ  -->	
+	<bean id="propInfoDao" class="com.deppon.crm.module.frameworkimpl.server.dao.impl.PropInfoDaoImpl">
+	    <property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="propInfoService" class="com.deppon.crm.module.frameworkimpl.server.service.impl.PropInfoServiceImpl"
+		init-method="getPropInfo">
+		<property name="propInfoDao" ref="propInfoDao"></property>
+	</bean>
+		<bean name="serverParameterDao" class="com.deppon.crm.module.common.server.dao.impl.ServerParameterDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- ##属性actionExtension用于请求过滤，属于可配置项，默认上面2种后缀的请求被监听。 -->
+	<bean name="appProfile" class="com.deppon.ar.bamp.common.config.AppProfile" 
+			init-method="initAppProfile"> 
+		<property name="appCode" value="CRM"></property>
+		<property name="actionExtension">
+			<list>
+		        <value>action</value>
+		        <value>do</value>
+      		</list>
+		</property>
+	</bean>
+
+	<!-- ##MQ的ip信息 -->
+	<bean name="activeMQUtil" class="com.deppon.crm.module.frameworkimpl.server.util.BAMPActiveMQUtil" 
+		init-method="initActiveMQ"> 
+		<property name="propInfoService" ref="propInfoService"></property>
+	</bean>
+	<!-- ##数据发送开关  1开启   0关闭-->
+  	<bean name="logSwitch" class="com.deppon.ar.bamp.common.dispatch.switchs.LogSwitch" init-method="initLogSwitch"> 
+		<property name="localReqLogSwitch" value="1"></property>
+	</bean>
+	<!-- 数据发送配置类  -->
+  	<bean name="BAMPLogSwitch" class="com.deppon.crm.module.frameworkimpl.server.util.BAMPLogSwitchUtil" 
+  		init-method="initLogSwitch"> 
+		<property name="propInfoService" ref="propInfoService"></property>
+		<property name="logSwitch" ref="logSwitch"></property>
+	</bean>
+	
+	<!--  配合监控平台的bean end 2013.12.4 By ZhuPJ  -->
+	
+	<!--  数据字典维护的映射-->
+	<bean id="headService" class="com.deppon.crm.module.common.server.service.impl.HeadService">
+	   <property name="headDao"  ref="headDao"/>
+	</bean>
+	
+	<bean id="headManager" class="com.deppon.crm.module.common.server.manager.impl.HeadManager">
+	   <property name="headService" ref="headService" />
+	</bean>
+	<bean name="datadictionaryManagementAction" class="com.deppon.crm.module.common.server.action.DatadictionaryManagementAction"
+          scope="prototype">
+		<property name="headManager" ref="headManager" />
+		<property name="detailManager" ref="detailManager"/>
+	</bean>	
+</beans>
+

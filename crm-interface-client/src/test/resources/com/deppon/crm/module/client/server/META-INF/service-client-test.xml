@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core"  
+	xsi:schemaLocation="http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/core
+	http://cxf.apache.org/schemas/core.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+ <!-- <cxf:bus> <cxf:features> <ref bean="loadDistributorFeature" /> </cxf:features> 
+		</cxf:bus> -->
+
+	<!-- 电子地图 -->
+	<jaxws:client id="map2CrmServiceWs" serviceClass="com.deppon.map.baidu.IMap2CrmService"
+		address="MAP_ADDR_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- ERP -->
+	<jaxws:client id="erp2CrmService" serviceClass="com.deppon.erp.waybill.IErp2CrmService"
+		address="ERP_ERP2CRM_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="erp2CrmCustAndOrderService"
+		serviceClass="com.deppon.erp.custAndOrder.IOrderAndCustService"
+		address="ERP_CUSTOORD_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="depClaimsBillService"
+		serviceClass="com.deppon.erp.payment.DepClaimsBillService" address="ERP_CLAIMS_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="erp2CrmMsgService"
+		serviceClass="com.deppon.erp.payment.IErp2CrmMsgService" address="ERP_REMIND_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- OA -->
+	<jaxws:client id="workFlowservice" serviceClass="com.deppon.oa.deleteWorkflow.WorkFlowService" 
+	  	address="OA_DELETE_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="oaTaskService" serviceClass="com.deppon.oa.task.TaskService"
+		address="OA_TASK_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="oaErrorService" serviceClass="com.deppon.oa.error.ErrorService"
+		address="OA_ERROR_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="oAErrorForCRMImplService" serviceClass="com.deppon.oa.goodDelay.OAErrorForCRMImplService"
+		address="OA_GOODDELAYERROR_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="workFlowService" serviceClass="com.deppon.oa.oaWorkflow.WorkFlowService"
+		address="OA_WORKFLOW_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="oaQueryWorkFlowStateServiceWs"
+		serviceClass="com.deppon.oa.workflow.QueryWorkFlowStateService"
+		address="OA_QUERY_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- ESB -->
+	<jaxws:client id="esb2ebmStatus" serviceClass="com.deppon.esb.ws.ESBService"
+		address="ESB_UPDATEORDER_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="esb2erpAppointCar" serviceClass="com.deppon.esb.ws.ESBService"
+		address="ESB_RECGOODBILL_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="esb2oaWorkFlow" serviceClass="com.deppon.esb.ws.ESBService"
+		address="ESB_APPLY_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="syncDataServiceWs" serviceClass="com.deppon.esb.ws.ESBService"
+		address="ESB_SYNC_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="esb2fossCustomerService" serviceClass="com.deppon.foss.crm.CustomerService"
+		address="ESB_FOSS_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+		<jaxws:outInterceptors >
+			<ref bean="soapOutInterceptor"/>
+		</jaxws:outInterceptors>
+	</jaxws:client>
+	<!-- 查询部门坐标 -->
+	<jaxws:client id="esb2gisService" serviceClass="com.deppon.esb.esbtogis.GisService"
+		address="ESB_GIS_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+		<jaxws:outInterceptors >
+			<ref bean="soapOutInterceptor"/>
+		</jaxws:outInterceptors>
+	</jaxws:client>
+	<jaxws:client id="esb2fossWaybill" serviceClass="com.deppon.foss.waybill.WaybillService" 
+		address="ESB_WAYBILL_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+		<jaxws:outInterceptors >
+			<ref bean="soapOutInterceptor"/>
+		</jaxws:outInterceptors>
+	</jaxws:client>
+	<!-- 网厅 -->
+	<jaxws:client id="bhoUserWebService"
+		serviceClass="com.deppon.bho.customer.IUserWebServices" address="BHO_USER_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- 报表 -->
+	<jaxws:client id="biCrmCusStaByNum" serviceClass="com.deppon.bi.leave.CRMCusStaByNum"
+		address="BI_CUSSTA_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<jaxws:client id="biCrmCusArrStaByNum" serviceClass="com.deppon.bi.arrived.CRMCusArrStaByNum"
+		address="BI_CUSARR_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- 呼叫中心 -->
+	<jaxws:client id="ccComplaintServiceWs"
+		serviceClass="com.deppon.cc.complaint.ReceiveWorkOrderIdServicePortType"
+		address="CC_COMPLAINT_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+		<!-- 合肥呼叫中心 -->
+	<jaxws:client id="ccHfComplaintServiceWs"
+		serviceClass="com.deppon.cc.complaint.ReceiveWorkOrderIdServicePortType"
+		address="CC_HF_COMPLAINT_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+		<jaxws:outInterceptors >
+			<ref bean="soapOutInterceptor"/>
+		</jaxws:outInterceptors>
+	</jaxws:client>
+	<!-- 电商 -->
+	<jaxws:client id="ebmQueryOrderStatusServiceWs"
+		serviceClass="com.deppon.ebm.QueryOrderStatusService" address="EBM_QUERY_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- 财务自助 -->
+	<jaxws:client id="fsscClaimsCash" 
+	serviceClass="com.deppon.fin.selfservice.CrmService" address="FSSC_GERA_BILL">
+	<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<!-- 财务 -->
+	<jaxws:client id="iBadDebtInterService"
+		serviceClass="com.deppon.fin.badDebt.IBadDebtInterService" address="FIN_BADDEBT_CODE">
+		<jaxws:features>
+			<ref bean="loadDistributorFeature" />
+		</jaxws:features>
+	</jaxws:client>
+	<bean id="financeServiceWs"
+		class="com.deppon.crm.module.client.fin.domain.FINServiceLocator">
+		<property name="serviceCode" value="FIN_DEPT_CODE" />
+		<property name="loginCode" value="FIN_LOGIN_CODE" />
+		<property name="provider" ref="provider" />
+	</bean>
+		<bean id="finBankNumberWs"
+		class="com.deppon.crm.module.client.fin.domain.FINBankNumberCrmFacadeLocator">
+		<property name="serviceCode" value="FIN_BANKNUM_CODE" />
+		<property name="loginCode" value="FIN_LOGIN_CODE" />
+		<property name="provider" ref="provider" />
+	</bean>
+	<bean id="financePaymentWs"
+		class="com.deppon.crm.module.client.fin.domain.FINForCrmFacadeLocator">
+		<property name="serviceCode" value="FIN_PAYMENT_CODE" />
+		<property name="loginCode" value="FIN_LOGIN_CODE" />
+		<property name="provider" ref="provider" />
+	</bean>
+	<!-- 后勤，axis接口 -->
+	<bean id="lmsGiftService" class="com.deppon.crm.module.client.workflow.domain.LMSServiceLocator">
+		<property name="serviceCode" value="LMS_GIFT_CODE"/>
+		<property name="loginCode" value="LMS_LOGIN_CODE"/>
+		<property name="provider" ref="provider"/>
+	</bean>
+	<!-- 短信接口 SMS_CODE -->
+	<!-- 短信接口 SMS_INFO_CODE -->
+</beans>

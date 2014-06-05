@@ -1,0 +1,96 @@
+insert into t_code_head
+  (fid,
+   fcodetype,
+   fcodetypedesc,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_head.nextval,
+   'DUTY_SURVEY_RESULT',
+   '调查结果',
+   sysdate,
+   043260,
+   sysdate,
+   043260);
+
+--detail 
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'DUTY_SURVEY_RESULT',
+   'DUTY_SURVEYING',
+   '调查中',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'DUTY_SURVEY_RESULT',
+   'DUTY_ESTABLISH',
+   '成立',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'DUTY_SURVEY_RESULT',
+   'DUTY_NOT_ESTABLISH',
+   '不成立',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);

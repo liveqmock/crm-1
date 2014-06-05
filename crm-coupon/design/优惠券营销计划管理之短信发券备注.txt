@@ -1,0 +1,2 @@
+1. 模板下载调用的CouponAction层方法为exportTemplateOfSendCoupon，目前模板下载地址为“D:\template.xlsx”，上线时需根据需要修改；
+2.优惠券查询导出全部调用的CouponAction层方法为creatCouponReportExcel和exportCouponReportExcel，生成的报表文件暂时存放在服务器的D盘路径下，上线后需要根据需要修改路径。并且需要考虑导出成功后是否需要删除服务器上的这个报表文件。

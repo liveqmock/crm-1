@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.ExpressPointBusinessDept">
+
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="expressPointBusinessDeptResultMap"
+		type="com.deppon.crm.module.common.shared.domain.ExpressPointBusinessDept">
+		<id property="id" column="fid" />
+		<result property="expressPointCode" column="fexpressPointCode" javaType="String" jdbcType="VARCHAR"/>
+		<result property="expressPointName" column="fexpressPointName" javaType="String" jdbcType="VARCHAR"/>
+		<result property="businessDeptCode" column="fbusinessDeptCode" javaType="String" jdbcType="VARCHAR"/>
+		<result property="businessDeptName" column="fbusinessDeptName" javaType="String" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<sql id="expressPointBusinessDeptSqlField">fid, fexpressPointCode, fexpressPointName, fbusinessDeptcode,
+		fbusinessDeptName
+	</sql>
+
+	<!--插入点部与营业部映射关系 -->
+	<insert id="addExpressPointBusinessDept" parameterType="com.deppon.crm.module.common.shared.domain.ExpressPointBusinessDept">
+	<![CDATA[
+		INSERT INTO t_crm_ExpressPointBusinessDEPT 
+		(
+		 fid,
+		 fcreatetime,
+		 flastupdatetime, 
+		 fexpressPointCode, 
+		 fexpressPointName, 
+		 fbusinessDeptCode,
+		 fbusinessDeptName
+		) 
+		VALUES
+		(
+		#{id,jdbcType=VARCHAR},
+		sysdate,
+		sysdate,
+		#{expressPointCode,jdbcType=VARCHAR},
+		#{expressPointName,jdbcType=VARCHAR},
+		#{businessDeptCode,jdbcType=VARCHAR},
+		#{businessDeptName,jdbcType=VARCHAR} 
+		)
+	]]>
+	</insert>
+
+	<!-- 根据营业部标杆编码更新对应的点部 -->
+	<update id="updateExpressPointBusinessDept" parameterType="com.deppon.crm.module.common.shared.domain.ExpressPointBusinessDept">
+		UPDATE t_crm_ExpressPointBusinessDEPT SET
+		<if test="expressPointCode != null and expressPointCode != ''">
+			fexpressPointCode=#{expressPointCode,jdbcType=VARCHAR},
+		</if>
+		<if test="expressPointName != null and expressPointName != ''">
+			fexpressPointName=#{expressPointName,jdbcType=VARCHAR},
+		</if>
+		<if test="businessDeptCode != null and businessDeptCode != ''">
+			fbusinessDeptCode=#{businessDeptCode,jdbcType=VARCHAR},
+		</if>
+		<if test="businessDeptName != null and businessDeptName != ''">
+			fbusinessDeptName=#{businessDeptName,jdbcType=VARCHAR},
+		</if>
+		
+		FLASTUPDATETIME=sysdate
+		WHERE FBUSINESSDEPTCODE= #{businessDeptCode}
+	</update>
+
+	<!-- 根据部门标杆编号查找对应的快递营业点映射关系 -->
+	<select id="getExpressPointBusinessDeptByDeptCode" parameterType="string" resultMap="expressPointBusinessDeptResultMap">
+		SELECT
+		<include refid="expressPointBusinessDeptSqlField" />
+		FROM t_crm_ExpressPointBusinessDEPT where  fbusinessDeptCode= #{deptCode}
+	</select>
+	<delete id ="deleteExpressPointBusinessDept" parameterType="map">
+		delete from t_crm_ExpressPointBusinessDEPT where fbusinessDeptCode=#{deptCode,jdbcType=VARCHAR} and fexpressPointCode=#{pointCode,jdbcType=VARCHAR}
+		
+		
+	</delete>
+	
+	<select id="getExpressPointBusinessDeptByApplyDeptCode" parameterType="string" resultType="string">
+		SELECT count(*) FROM t_crm_ExpressPointBusinessDEPT where  fexpressPointCode= #{deptCode}
+	</select>
+
+</mapper>

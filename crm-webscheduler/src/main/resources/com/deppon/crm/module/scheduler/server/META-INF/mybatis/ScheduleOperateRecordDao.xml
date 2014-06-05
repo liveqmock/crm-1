@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.shared.domain.ScheduleOperateRecord">
+	<!-- 潜客批量插入操作日志 -->
+	<insert id="insertBatchPotentialcust" parameterType="java.util.List">		
+		<![CDATA[INSERT INTO T_CUST_LOGBATCHPCADD ( 
+		FID,PS_FID
+		 ) VALUES ]]>
+		<foreach collection="operateList" item="item" index="index" separator=",">
+			(null,#{item.fid})
+		</foreach>
+	</insert>
+</mapper>

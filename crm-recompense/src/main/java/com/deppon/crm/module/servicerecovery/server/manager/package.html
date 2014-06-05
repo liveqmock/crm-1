@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>package</title>
+<style type="text/css">
+<!--
+.STYLE1 {color: #FF0000}
+-->
+</style>
+</head>
+<body>
+	<a name="biz">
+		<fieldset>
+			<legend>服务补救相关业务</legend>
+		</fieldset>
+	</a>
+	<a name="StatusMap" id="StatusMap">
+		<fieldset>
+			<legend>问题跟进</legend>
+
+		</fieldset>
+	</a>
+	<a name="recoveryModel" id="recoveryModel">
+		<fieldset>
+			<legend>服务补救模型</legend>
+			<img alt="" src="doc-files/服务补救模型.jpg">
+		</fieldset>
+	</a>
+<a name="caseRule1" id="caseRule1">
+		<fieldset>
+			<legend>服务补救新增 </legend>			
+			
+	<table border="1" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="100" valign="top"><p align="center">序号 </p></td>
+        <td valign="top"><p align="center">描述 </p></td>
+        <td width="100" valign="top"><p align="center">备注</p></td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A1</p></td>
+        <td valign="top"><p>输入运单号系统自动忽略运单号前后的空格，光标离开运单号输入框，系统校验： </p>
+            <ol>
+              <li>系统中是否存在相应的运单号，不存在则在输入框附近显示提示“你好，你输入的运单号不存在，请从新输入”，点击输入框后，提示取消。原运单号不清除。 </li>
+              <li>存在相应的运单号，则校验该运单号是否已签收，若尚未签收则在输入框附近提示“该单号尚未签收”。 </li>
+              <li>如该运单已签收则需检查该运单号是否超出申请期限：到达部门第一次签收时间（不含出库当天）至申请时间不超过10工作日（含），遇法定节假日和周六周日则顺延；如果超期则在输入框附近显示提示“该运单已超出服务补救申请期限，不允许申请”。 </li>
+              <li>如满足以上条件则需校验运单号是否重复申请。若该运单号已存在申请记录，且该申请记录的状态为“已同意”、    “已提交”，不允许再次新增服务补救，且在输入框附近提示“该运单已申请过服务补救，请勿重复申请”；如果申请记录的状态为“未同意”，则可以新增服务补救。 </li>
+              <li>继续校验如果该单号如果已存在理赔单，理赔单任何状态都不允许新增，且在输入框附近提示“该运单已申请过理赔，不允许服务补救”。 </li>
+              <li>如果该单号没有申请理赔，则需校验是否存在时效延误差错记录，如果有差错记录无论状态即不能申请服务补救，提示“该运费已上报过时效延误差错，不允许服务补救”。 </li>
+              <li>如果该单号没有上报过时效延误差错，则校验是否存在退运费申请记录，且退运费申请记录的申请状态为“已同意”、“已提交”，不允许新增服务补救申请，且在输入框附近提示“该运单已申请退运费，请勿重复申请”；如果申请记录的状态为“未同意”，则可以新增服务补救。 </li>
+            </ol>
+          <p>成功输入运单号后，带出开单金额（不含代收货款、劳务费）与签收时间。 </p></td>
+        <td valign="top">工作日计算问题</td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A2</p></td>
+        <td valign="top"><p>客户类别为下拉框：发货方、收货方。 </p>
+            <ol>
+              <li>选择“发货方”，则系统自动带出该运单号出发客户信息，包括客户名称、客户编码、联系人名称、客户等级；如果为散客即带出发货联系人即可。 </li>
+              <li>选择“收货方”，则系统自动带出该运单号到达客户名称，包括客户名称、客户编码、联系人名称、客户等级；如果为散客即带出收货联系人即可。 </li>
+              <li>未选择客户类别，提交时提示“你好，客户类别不能为空，请选择客户类别” </li>
+            </ol></td>
+        <td valign="top">接口调用客户编码，crm获取客户信息，只针对会员</td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A3</p></td>
+        <td valign="top"><p>用户输入金额后，系统对金额进行检查： </p>
+            <ol>
+              <li>录入的金额必须小于该运单的开单金额；否则提交时提示“输入金额必须小于开单金额”； </li>
+              <li>录入的金额必须大于0且小于等于100，否则当提交时输入金额小于0的情况下，提示“金额必须大于0”；输入金额大于100的情况下，提示“输入金额必须小于等于100元”； </li>
+              <li>未输入金额，提交是提示“您好，减免金额不能为空，请输入金额！” </li>
+            </ol></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A4</p></td>
+        <td valign="top"><p>只有当减免类别选择为货物受损时，才自动带出总件数。 </p></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A5</p></td>
+        <td valign="top"><p>输入的受损件数不能超过总件数：如未输入受损件数则提交时提示“受损件数不能为空，请输入受损件数”。    如受损件数超过总件数则提交时“受损件数不能超过总件数” </p></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A6</p></td>
+        <td valign="top"><ol>
+          <li>文件上传类型需要过滤（可上传图片【.jpg，.jpeg，.gif，.png，.bmp】、文本.txt、.pdf、*.doc、*.docx,*.xls,*.xlsx，.rar</li>
+          <li>上传附件个数不超过10个，否则提交时提示“你好，系统要求最多只能添加10个附件！” </li>
+          <li>上传附件总大小不超过30MB，否则提交时提示“上传附件总大小不能超过30MB” </li>
+          <li>当 “减免类别”选择项为货物受损（货物破损、受潮、污染等）时，必须上传附件，上传附件个数最少为一个，否则提示“减免类别为货物受损时，最少需要上传一个附件，请选择你需要上传的附件！” </li>
+        </ol></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="100" valign="top"><p>RULE-A7</p></td>
+        <td valign="top"><ol>
+          <li>点击“提交”按钮还需要对该运单进行和界面输入“运单号”时相同的校验，必填项数据都必须校验成功后，方能提交，否则提交失败并提示相应的错误信息，参见扩展事件； </li>
+          <li>提交成功，保存一条申请状态为“提交”状态的服务补救申请记录，对接OA生成减免费用申请工作流，同时OA返回生成的工作流号，把OA工作流号保存到服务补救申请记录中； </li>
+        </ol></td>
+        <td valign="top">&nbsp;</td>
+      </tr>
+    </table>
+		</fieldset>
+	</a>
+	<a name="caseRule2" id="caseRule2">
+		<fieldset>
+			<legend>服务补救查询 </legend>
+
+		    <table border="1" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="100" valign="top"><p align="center">序号 </p></td>
+                <td valign="top"><p align="center">描述 </p></td>
+                <td width="100" valign="top"><p align="center">备注</p></td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A1 </p></td>
+                <td valign="top"><p>进入服务补救查询界面： </p>
+                    <ol>
+                      <li>申请时间：起始时间默认为当前日期前31天的00:00:00；截止时间默认为当前日期的23:59:59；查询申请时间范围不超过90天；如果查询时间超过90天，则提示“查询范围不能超过90天”。申请时间不可删除。 </li>
+                      <li>申请部门默认为本部门，并显示出营业部名称，为灰色不可改。（权限用户可以却换部门并查询）； </li>
+                      <li>客户类别为下拉框：发货人、收货人、全部。默认为全部。 </li>
+                      <li>减免类别：与新建时内容一致，下拉框值有：减免类别：货物受损（货物破损、受潮、污染等）、时效延误（运输晚点、接送货晚点、分批配载等）、业务差错（操作失误、系统出错引起客户不满）、其他（货物丢失、服务态度引起不满等）、全部。默认为全部； </li>
+                      <li>申请状态下拉框值有：提交、已同意、未同意、全部。默认为全部； </li>
+                      <li>以上条件：申请时间、部门、客户类别、减免类别、申请状态为组合查询。 </li>
+                      <li>运单号： </li>
+                    </ol>
+                  <p>a、输入运单号时，系统自动忽略运单号前后的空格； <br>
+                    b、输入的运单号的个数不能超过10个； <br>
+                    c、运单之间用半角逗号隔开。 </p>
+                  <ol>
+                    <li>以运单号为准确查询条件的，其他查询条件全部无效。 </li>
+                  </ol></td>
+                <td valign="top"><span class="STYLE1">1、用户可以却换部门并查询,权限如何管理</span>，与客户确认数据权限</td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A2 </p></td>
+                <td valign="top"><ol>
+                  <li>系统根据选择的查询条件查询数据，并显示在服务补救申请列表界面； </li>
+                  <li>查询出记录后，再次查询时原查询结果清空； </li>
+                </ol></td>
+                <td valign="top">&nbsp;</td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A3</p></td>
+                <td valign="top"><p>查询结果在服务补救申请列表中体现： </p>
+                    <ol>
+                      <li>查询结果默认以申请时间从早到晚，倒序摆列，申请时间最近的排在最上面。 </li>
+                      <li>列表包括：勾选框、功能区、运单号、工作流号、部门名称、所属子公司、客户名称、客户类别、减免金额、减免类别、开单金额、到达出库时间、受损件数、经手人、申请人、申请时间、申请状态、审批人、审批时间。 </li>
+                      <li>列表中如无值，则显示“--” </li>
+                      <li>双击列表头可以排序。 </li>
+                    </ol></td>
+                <td valign="top"><span class="STYLE1">1、所属子公司如何获取</span></td>
+              </tr>
+              <tr>
+                <td valign="top"><p>RULE-A4 </p></td>
+                <td valign="top"><p>导出的数据以EXCEL表格的形式显示，带出所有查询结果所有列表信息； </p></td>
+                <td valign="top">&nbsp;</td>
+              </tr>
+            </table>
+		</fieldset>
+</a>
+	<a name="caseRule3" id="caseRule3">
+		<fieldset>
+			<legend>服务补救查看 </legend>
+
+		</fieldset>
+	</a>
+
+
+
+
+
+
+
+	<div id="caseImg1">
+		<fieldset>
+			<legend>
+				<a name="caseImg11" id="caseImg11" href="#caseRule1">服务补救新增序列图</a>
+			</legend>
+			<img alt="" src="doc-files/服务补救新增.jpg">
+		    <img alt="" src="doc-files/OA工作流回调.jpg">
+		</fieldset>
+	</div>
+	<div id="caseImg2">
+		<fieldset>
+			<legend>
+				<a name="caseImg22" id="caseImg22" href="#caseRule2">服务补救查询序列图</a>
+			</legend>
+			<img alt="" src="doc-files/服务补救查询.jpg">
+			<img alt="" src="doc-files/服务补救导出.jpg">
+		</fieldset>
+	</div>
+	<div id="caseImg3">
+		<fieldset>
+			<legend>
+				<a name="caseImg33" id="caseImg33" href="#caseRule3">服务补救查看序列图</a>
+			</legend>
+		</fieldset>
+	</div>
+
+
+
+
+	<a name="">
+		<fieldset>
+			<legend>保存前检查流程</legend>
+		</fieldset>
+	</a>
+
+	<div id="DAO">
+		<fieldset>
+			<legend>DAO说明</legend>
+		</fieldset>
+	</div>
+
+	<div id="domain">
+		<fieldset>
+			<legend>domain说明</legend>
+		</fieldset>
+	</div>
+</body>
+</html>

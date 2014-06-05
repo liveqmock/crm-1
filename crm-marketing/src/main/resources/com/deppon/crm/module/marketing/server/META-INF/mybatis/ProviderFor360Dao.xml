@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+	<!-- 根据客户ID，查询最后一次回访信息 -->
+	<select id="searchLastestReturnVisitInfo" parameterType="String"
+		resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+		<![CDATA[		
+			  SELECT T.SCHEDULE      SCHEDULE,
+			       T.LINKNAME        LINKNAME,
+			       T.LINKMANMOBILE   LINKMANMOBILE,
+			       T.LINKMANPHONE    LINKMANPHONE,
+			       T.THEME           THEME,
+			       T.NEEDTYPE        NEEDTYPE,
+			       T.WAY             WAY
+			  FROM (SELECT TRUNC(RV.FDATE) SCHEDULE, /* 回访时间 */
+			               RV.FLINKMANNAME LINKNAME, /* 联系人姓名*/
+			               RV.FLINKMANMOBILE LINKMANMOBILE, /* 手机号码*/
+			               RV.FLINKMANPHONE LINKMANPHONE, /* 固定电话*/
+			               T0.FTOPIC THEME, /* 维护主题*/
+			               OP.FNEEDTYPE NEEDTYPE, /* 客户意见*/
+			               RV.FWAY WAY, /* 维护方式*/
+			               ROW_NUMBER() OVER(ORDER BY RV.FDATE DESC) R
+			          FROM T_CUST_RETURNVISIT RV
+			          LEFT JOIN T_CUST_CUSTLINKMAN L ON RV.FCUSTID = L.FCUSTID
+			                                              AND RV.FLINKMANID = L.FID
+			          LEFT JOIN (SELECT D.FTOPIC, S.FID
+			                      FROM T_CUST_DEVELOPMAINTAINLIST D,
+			                           T_CUST_SCHEDULE            S
+			                     WHERE D.FID = S.FPLANID) T0 ON T0.FID = RV.FSCHEDULEID,
+			         T_CUST_REVISITOPINIONDETAIL OP
+			         WHERE RV.FID = OP.FPARENTID
+			           AND RV.FLINKMANID IS NOT NULL
+			           AND RV.FCUSTID = #{custId,jdbcType=VARCHAR}) T
+			 WHERE T.R = 1
+		]]>
+	</select>
+	<!-- 根据客户ID，查询该客户下所有日程信息 -->
+	<select id="searchPlanSchedules" parameterType="String" 
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+		<![CDATA[
+			SELECT P.FCREATEUSERID, 
+			       E1.FEMPNAME FORMULATER,		/*计划制定人*/ 
+			       S.FEXECUSERID, 
+			       S.FTYPE TYPE,
+			       E2.FEMPNAME USERNAME,		/*执行人*/
+			       L.FNAME LINKNAME, 			/*联系人姓名*/ 
+			       L.FMOBILETEL LINKMANMOBILE, 	/* 手机号码*/ 
+			       L.FOFFERTEL LINKMANPHONE, 	/* 固定电话*/ 
+			       '' WAY, 						/* 维护方式*/ 
+			       TRUNC(S.FTIME) SCHEDULE,		/* 日程执行时间*/ 
+			       P.FPROJECTTYPE projectType
+			  FROM T_CUST_SCHEDULE S
+			  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST P ON S.FPLANID = P.FID
+			  LEFT JOIN T_CUST_CUSTLINKMAN L ON S.FCONTACTID = L.FID
+			  LEFT JOIN T_ORG_EMPLOYEE E1 ON E1.FID = P.FCREATEUSERID
+			  LEFT JOIN T_ORG_EMPLOYEE E2 ON E2.FID = S.FEXECUSERID
+			 WHERE S.FCONTACTID IS NOT NULL
+			   /*AND S.FTYPE != 'dev'*/
+			   AND S.FCUSTID = #{custId,jdbcType=VARCHAR}
+			 ORDER BY S.FTIME DESC
+		]]>
+	</select>
+	
+	<!-- 根据客户ID，查询该客户下所有回访信息 -->
+	<select id="searchReturnVisitInfos" parameterType="String" 
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+			<![CDATA[ 			
+				SELECT RV.FEXECUSERID, 
+				       E.FEMPNAME			USERNAME,	/* 执行人*/
+				       RV.FLINKMANNAME		LINKNAME, 	/* 联系人姓名*/
+				       RV.FLINKMANMOBILE	LINKMANMOBILE, /* 手机号码*/
+				       RV.FLINKMANPHONE		LINKMANPHONE, /* 固定电话*/
+				       OP.FNEEDTYPE			NEEDTYPE, 	/* 需求分类*/
+				       OP.FQUESTION			PROBLEM, 	/* 需求及问题*/
+				       OP.FSOLVE			SOLUTION, 	/* 解决方法*/
+				       RV.FWAY				WAY, 		/* 回访方式*/
+				       TRUNC(RV.FDATE) 		SCHEDULE	/* 回访时间*/				
+				  FROM T_CUST_RETURNVISIT RV
+				  LEFT JOIN T_ORG_EMPLOYEE E ON E.FID = RV.FEXECUSERID,
+				 T_CUST_REVISITOPINIONDETAIL OP				
+				 WHERE RV.FID = OP.FPARENTID
+   					AND RV.FLINKMANID IS NOT NULL
+				 	AND RV.FCUSTID = #{custId,jdbcType=VARCHAR}
+				 	
+			]]>
+	</select>
+</mapper>
+

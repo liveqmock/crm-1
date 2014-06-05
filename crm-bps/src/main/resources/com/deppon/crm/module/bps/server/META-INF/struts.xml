@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="cas" namespace="/workflow" extends="crm-default">
+			    
+	    <!--工作流详情页面-->
+	   	<action name="detailWorkflow" class="casLoginAction" method="detailWorkflow">
+	    	<result name="success" type="redirect">${jumpUrl}</result>
+	    </action>
+	    
+	   <!--  工作流审批页面 -->
+	   	<action name="approveWorkflow" class="casLoginAction" method="approveWorkflow">
+	    	<result name="success" type="redirect">${jumpUrl}</result>
+	    </action>
+	    
+	</package>
+</struts>

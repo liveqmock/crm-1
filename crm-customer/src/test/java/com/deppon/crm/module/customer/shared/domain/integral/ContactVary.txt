@@ -1,0 +1,10 @@
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid,VARCHAR
+contactNumber,fcontactNumber,VARCHAR
+memberNumber,fmemberNumber,VARCHAR
+fromMemberIntegral.id,ffromMemberIntegralId,VARCHAR
+toMemberIntegral.id,ftoMemberIntegralId,VARCHAR
+workflowId,fworkflowId,NUMERIC

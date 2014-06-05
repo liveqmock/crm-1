@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.SpecialDay">
+	<resultMap id="specialDayResultMap"
+		type="com.deppon.crm.module.common.shared.domain.SpecialDay">
+		<id property="id" column="fid" />
+		<result property="specialDate" column="FSPECIALDATE" />
+		<result property="dateType" column="FDATETYPE" />
+	</resultMap>
+	<insert id="addSpecialDay"
+		parameterType="com.deppon.crm.module.common.shared.domain.SpecialDay">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+		<![CDATA[ 
+		 	select	SEQ_ID_SPECIALDY_ID.nextval id	from dual 
+		 ]]>
+		</selectKey>
+		<![CDATA[
+		insert into t_crm_specialday (fid,fspecialdate,fdatetype)
+		values(#{id},trunc(#{specialDate}),#{dateType})
+		]]>
+
+	</insert>
+	<update id="updateSpecialDayById"
+		parameterType="com.deppon.crm.module.common.shared.domain.SpecialDay">
+		update t_crm_specialday set
+		<if test="null != dateType and '' != dateType">
+			fdatetype=#{dateType}
+		</if>
+		where fid=#{id}
+	</update>
+	<delete id="deleteSpecialDayById" parameterType="string">
+		delete from
+		t_crm_specialday where fid=#{id}
+	</delete>
+	<select id="getSpecialDayByDate" parameterType="date"
+		resultMap="specialDayResultMap">
+		select fid,fspecialdate,fdatetype from
+		t_crm_specialday where
+		fspecialdate=trunc(#{specialDate})
+		and fdatetype  in('WORKDAY','HOLIDAY')
+	</select>
+	<select id="getlegalHoliDayasByDate" parameterType="date"
+		resultMap="specialDayResultMap">
+		select fid,fspecialdate,fdatetype from
+		t_crm_specialday where
+		fspecialdate=trunc(#{specialDate})
+		and fdatetype in('LEGAL_HOLIDAYS')
+	</select>
+	<select id="getSpecialDayById" parameterType="string"
+		resultMap="specialDayResultMap">
+		select fid,fspecialdate,fdatetype from
+		t_crm_specialday where fid=#{id}
+	</select>
+	<select id="getSpecialDayList" parameterType="map"
+		resultMap="specialDayResultMap">
+		select fid,fspecialdate,fdatetype from t_crm_specialDay
+		<where>
+			<if test="null != type and '' != type">
+				AND fdatetype = #{type}
+			</if>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(fspecialdate) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(fspecialdate) &lt;= #{endDate}
+			</if>
+		</where>
+		order by fspecialdate desc
+	</select>
+	<select id="getSpecialHolidayList" parameterType="map"
+		resultMap="specialDayResultMap">
+		select fid,fspecialdate,fdatetype from t_crm_specialDay
+		<where>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(fspecialdate) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(fspecialdate) &lt;= #{endDate}
+			</if>
+		</where>
+			and fdatetype='HOLIDAY'
+		order by fspecialdate desc
+	</select>
+	<select id="getSpecialWorkdayList" parameterType="map"
+		resultMap="specialDayResultMap">
+		select fid,fspecialdate,fdatetype from t_crm_specialDay
+		<where>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(fspecialdate) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(fspecialdate) &lt;= #{endDate}
+			</if>
+		</where>
+		and fdatetype='WORKDAY'
+		order  by fspecialdate desc
+	</select>
+
+
+
+
+
+</mapper>

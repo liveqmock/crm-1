@@ -1,0 +1,82 @@
+@CHARSET "UTF-8";
+
+.main_div {
+	float: left;
+	height: 100%;
+	width: 100%;
+}
+/* 布局 50% 样式 */
+.half_div {
+	float: left;
+	height: 10%;
+	width: 50%;
+}
+/* 布局 33% 元素 样式 */
+.div_v33_column {
+	float: left;
+	border: 1px ;
+	height: 25%;
+	width: 27%;
+}
+/* 布局 33% 元素 样式 */
+.div_to_column {
+	float: left;
+	border: 1px ;
+	height: 25%;
+	width: 33%;
+	margin-left: 27.5px
+}
+/* 布局 33% 元素 样式 */
+.input_toleft {
+	margin-left: 15px;
+}
+/* 布局 20% 元素 样式 */
+.div_v27_3_column {
+	float: left;
+	border: 1px ;
+	height: 25%;
+	width: 27%;
+	margin-top: -0.9%;
+}
+/* 运单 */
+.div_v43_column {
+	float: left;
+	border: 1px ;
+	height: 25%;
+	width: 60%;
+}
+/* table样式 */
+.table_div {
+	width: 100%;
+	width: 100%;
+	margin-top: 0%;
+	margin-right: 0%;
+}
+/* table样式 */
+.hsplit_div {
+	float: left;
+	border: 1px ;
+	width: 870px;
+	height: 500px;
+}
+/* table样式 */
+.searchbtn {
+	float: left;
+	border: 1px ;
+	height: 32%;
+/*     width: 10%; */
+	font-size: 2em;
+ 	margin-left: 5%; 
+}
+/* table样式 */
+.btn {
+	float: left;
+	border: 1px ;
+	margin-right: 1%;
+}
+.dpui-text-inputBill {
+    width: 80px;
+}
+.dpui-text-selectBill {
+    width: 40px;
+}

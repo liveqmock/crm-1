@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop" />
+	</bean>
+
+	<bean id="dataSourceLog"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop" />
+	</bean>
+	
+	<bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+	</bean>
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 工单查询 -->
+	<bean id="complaintDao" class="com.deppon.crm.module.complaint.server.dao.impl.ComplaintDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 通报对象 -->
+	<bean id="bulletinDao" class="com.deppon.crm.module.complaint.server.dao.impl.BulletinDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 处理结果 -->
+	<bean id="resultDaoImpl" class="com.deppon.crm.module.complaint.server.dao.impl.ResultDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 基础层级 -->
+	<bean id="BasciLevelDao" class="com.deppon.crm.module.complaint.server.dao.impl.BasciLevelDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 退回原因 -->
+	<bean id="feedBackReasionDao" class="com.deppon.crm.module.complaint.server.dao.impl.FeedBackReasionDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 退回原因 -->
+	<bean id="workOrderDao" class="com.deppon.crm.module.complaint.server.dao.impl.WorkOrderDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 基础资料处理结果表 -->
+	<bean id="procResultDao" class="com.deppon.crm.module.complaint.server.dao.impl.ProcResultDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 组织部门 -->
+	<bean id="departmentDao" class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 组织部门员工 -->
+	<bean id="employeeDao" class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 手机短信 -->
+	<bean id="cellphoneMessageInfoDaoImpl" class="com.deppon.crm.module.complaint.server.dao.impl.CellphoneMessageInfoDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 工单信息 -->
+	<bean id="complaintInfoDaoImpl" class="com.deppon.crm.module.complaint.server.dao.impl.ComplaintInfoDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<bean id="dutyDao" class="com.deppon.crm.module.duty.server.dao.impl.DutyDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 工单基础资料Dao -->
+	<bean id="baseInfoDao" class="com.deppon.crm.module.complaint.server.dao.impl.BaseInfoDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+</beans>

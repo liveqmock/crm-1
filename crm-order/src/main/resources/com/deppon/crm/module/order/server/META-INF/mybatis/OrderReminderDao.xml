@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.crm.module.order.shared.domain.OrderReminder">
+	<!-- 映射 -->
+	<resultMap id="OrderReminderMap"
+		type="com.deppon.crm.module.order.shared.domain.OrderReminder">
+		<result column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FORDERQTY" property="orderQty" jdbcType="NUMERIC" />
+		<result column="FREMINDTYPE" property="remindType" jdbcType="VARCHAR" />
+		<result column="FREMINDTIME" property="remindTime" jdbcType="TIMESTAMP" />
+		<result column="FDEPTID" property="deptId" jdbcType="VARCHAR" />
+		<result column="FREADFLAG" property="readFlag" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="OrderAcceptInfoMap"
+		type="com.deppon.crm.module.order.shared.domain.OrderAcceptInfo">
+		<result column="FSTANDARDCODE" property="standardCode" jdbcType="VARCHAR" />
+		<result column="WARNNUM" property="warnNum" jdbcType="NUMERIC" />
+		<result column="LOCKNUM" property="lockNum" jdbcType="NUMERIC" />
+	</resultMap>
+
+	<!-- 订单提醒表所有字段 -->
+	<sql id="orderReminderTableFields">
+		FID,
+		FORDERQTY,
+		FREMINDTYPE,
+		FREMINDTIME,
+		FDEPTID,
+		FREADFLAG
+	</sql>
+
+	<!-- 订单提醒记录序列 -->
+	<select id="getSeqId" resultType="int">
+		<![CDATA[
+			SELECT seq_id_orderReminder.NEXTVAL ID FROM DUAL
+		]]>
+	</select>
+
+	<!-- 保存订单操作记录 -->
+	<insert id="insertOrderReminder"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderReminder">
+		INSERT INTO
+		T_ORD_ORDERREMINDER (
+		<include refid="orderReminderTableFields" />
+		)values(
+		#{id,jdbcType=VARCHAR},
+		#{orderQty,jdbcType=NUMERIC},
+		#{remindType,jdbcType=VARCHAR},
+		sysdate,
+		#{deptId,jdbcType=VARCHAR},
+		#{readFlag,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 删除订单提醒 -->
+	<delete id="clearOrderReminder" parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		DELETE FROM
+		T_ORD_ORDERREMINDER
+	</delete>
+
+	<!-- 查询订单提醒 -->
+	<select id="selectOrderReminderAll" resultMap="OrderReminderMap"
+		parameterType="com.deppon.crm.module.order.shared.domain.Order">
+		SELECT FORDERQTY, FREMINDTYPE, FREMINDTIME, FDEPTID,
+		FREADFLAG
+		FROM
+		T_ORD_ORDERREMINDER
+	</select>
+
+	<!-- 查询未分配订单提醒 -->
+	<select id="selectUnassignOrderReminder" resultMap="OrderReminderMap"
+		parameterType="list">
+		SELECT COUNT(*) AS FORDERQTY, '0' AS FREADFLAG
+		FROM
+		T_ORD_ORDER ORD
+		WHERE ORD.FCREATETIME > SYSDATE - 30 AND ORD.FORDERSTATUS IN
+		<foreach collection="list" item="item" open="(" close=")"
+			separator=",">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+		AND ROUND((SYSDATE
+		-
+		CAST(ORD.FCREATETIME AS DATE)) * 1440) > 15
+	</select>
+
+	<!-- 查询未受理订单提醒 -->
+	<select id="selectUnacceptOrderReminder" resultMap="OrderReminderMap"
+		parameterType="list">
+		SELECT ORD.FACCEPTDEPTID AS FDEPTID,
+		'0' AS FREADFLAG,
+		COUNT(1) AS
+		FORDERQTY
+		FROM T_ORD_ORDER ORD
+		WHERE ORD.FCREATETIME > SYSDATE - 30 AND ORD.FORDERSTATUS IN
+		<foreach collection="list" item="item" open="(" close=")"
+			separator=",">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+		GROUP BY ORD.FACCEPTDEPTID
+	</select>
+
+	<!-- 查询已受理订单提醒 -->
+	<select id="selectAcceptedOrderReminder" resultMap="OrderReminderMap"
+		parameterType="list">
+		SELECT ORD.FACCEPTDEPTID AS FDEPTID,
+		'0' AS FREADFLAG,
+		COUNT(1) AS
+		FORDERQTY
+		FROM T_ORD_ORDER ORD
+		WHERE ORD.FCREATETIME > SYSDATE - 30 AND ORD.FORDERSTATUS IN
+		<foreach collection="list" item="item" open="(" close=")"
+			separator=",">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+		AND ROUND((SYSDATE - CAST(ORD.FLASTUPDATETIME AS
+		DATE)) * 1440) >
+		(3 *
+		1440)
+		GROUP BY ORD.FACCEPTDEPTID
+	</select>
+
+
+	<!--  增加待受理订单部门 -->
+	<insert id="addOrderAcceptDept" >
+		INSERT INTO T_ORD_ACCEPTDEPT
+		  SELECT DISTINCT O.FACCEPTDEPTID
+		    FROM T_ORD_ORDER O
+		   WHERE O.FORDERTIME > TRUNC(SYSDATE - 3)
+		   	 AND O.FCREATETIME > TRUNC(SYSDATE - 3)
+		     AND O.FORDERSTATUS = 'WAIT_ACCEPT'
+		     AND O.FACCEPTDEPTID IS NOT NULL
+		     AND O.FACCEPTDEPTID IN
+		         (SELECT D.FID
+		            FROM T_ORG_DEPARTMENT D
+		           WHERE D.FSTANDARDCODE IS NOT NULL)
+		     AND O.FACCEPTDEPTID NOT IN
+		         (SELECT A.FACCEPTDEPTID FROM T_ORD_ACCEPTDEPT A)
+	</insert>
+
+	<!-- 查询已受理订单提醒 -->
+	<select id="generateOrderAcceptInfo" resultMap="OrderAcceptInfoMap"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderAcceptConfig">
+		SELECT APTD.FACCEPTDEPTID,
+		       DEPT.FSTANDARDCODE,
+		       NVL(AI.WARNNUM, 0) WARNNUM,
+		       NVL(AI.LOCKNUM, 0) LOCKNUM
+		  FROM T_ORD_ACCEPTDEPT APTD
+		  LEFT JOIN T_ORG_DEPARTMENT DEPT
+		    ON APTD.FACCEPTDEPTID = DEPT.FID
+		  LEFT JOIN (SELECT ORD.FACCEPTDEPTID,
+	                        COUNT(CASE WHEN ORD.WATIME >= #{lockTime,jdbcType=NUMERIC}-#{warnTime,jdbcType=NUMERIC} AND #{lockTime,jdbcType=NUMERIC} >= ORD.WATIME  THEN 1 ELSE NULL END) WARNNUM,
+	                        COUNT(CASE WHEN ORD.WATIME > #{lockTime,jdbcType=NUMERIC} THEN 1 ELSE NULL END) LOCKNUM
+		               FROM (SELECT FACCEPTDEPTID,
+		                            FORDERNUMBER,
+		                            ROUND((SYSDATE -
+		                                  CAST(NVL(FTOWAITACCEPTTIME, FORDERTIME) AS DATE)) * 1440) WATIME
+		                       FROM T_ORD_ORDER
+		                      WHERE FCREATETIME > TRUNC(SYSDATE - 3)
+		                        AND FORDERSTATUS = 'WAIT_ACCEPT') ORD
+		              GROUP BY ORD.FACCEPTDEPTID) AI
+		    ON APTD.FACCEPTDEPTID = AI.FACCEPTDEPTID
+		 WHERE DEPT.FSTANDARDCODE IS NOT NULL
+		<if test="standardCode != null ">
+			AND DEPT.FSTANDARDCODE=#{standardCode,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+</mapper>

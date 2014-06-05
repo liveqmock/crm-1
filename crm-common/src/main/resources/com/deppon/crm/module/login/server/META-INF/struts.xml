@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="login" namespace="/login" extends="crm-default">
+	
+		<action name="login" class="indexAction" method="login">
+			<result name="login">login.html</result>
+			<result name="error" type="stringResult">
+				<param name="stringName">errorHtml</param>
+				<param name="contentTypeName">text/html;charset=UTF-8</param>
+			</result>
+			<result name="success" type="redirect">index.action</result>
+		</action>
+		
+		<action name="help" class="com.deppon.crm.module.authorization.server.action.HelpAcion" method="getHelpIndex">
+			<result name="success">help/${htmlName}.html</result>
+		</action>
+		
+		<action name="updateBrowser" class="com.deppon.crm.module.authorization.server.action.HelpAcion" method="updateBrowser">
+			<result name="success">help/setBrowser.html</result>
+		</action>
+		
+		<!-- 主页首页标签页-->
+        <action name="showIndex" >
+			<result name="success">index.html</result>
+	    </action>
+		
+		<!-- 跳转到主页面-->
+		<action name="index" class="indexAction" method="showIndex">
+			<result name="success">main.html</result>
+			<result name="login">login.html</result>
+		</action>
+		
+		<action name="loginAction" class="loginAction">
+			<result name="jsonLogin" type="jsonerror"></result>
+			<result name="jsonError" type="jsonerror"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="logout" class="logoutAction">
+			<result name="success">login.html</result>
+		</action>
+		
+		<action name="loadSubSystem" class="menuAction" method="loadSubSystem">
+			<result name="success" type="json">
+				<param name="includeProperties">subSystemNodes</param>
+			</result>
+		</action>
+		
+		<action name="loadSubSystemByTab" class="menuAction" method="loadSubSystemByTab">
+			<result name="success" type="json">
+				<param name="includeProperties">subSystemNodes</param>
+			</result>
+		</action>
+		
+		<action name="loadTree" class="menuAction" method="loadTree">
+				<result name="success" type="jsontree" >
+				<param name="include">nodes</param>
+			</result>
+		</action>
+		
+		<action name="keepSessionOnLine" class="menuAction" method="keepSessionOnLine">
+			<result name="success" type="json"/>
+		</action>
+		
+		<action name="bottomRegionMessage" class="indexAction" method="bottomMessage">
+			<result name="success" type="json"/>
+		</action>	
+		
+		<action name="showWorkSpace" class="menuAction" method="showWorkSpace">
+			<result name="success">showWorkSpace.html</result>
+			<result name="logout" type="redirect">logout.action</result>
+		</action>
+			
+		<!-- 获取代办事宜信息
+		<action name="searchAgencyMatters" class="messageAction" method="searchAgencyMatters">
+			<result name="success" type="json"/>
+		</action>
+		 -->
+		
+		<!-- 获取其它待办-->
+		<action name="searchExceptOrderMessage" class="messageAction" method="searchExceptOrderMessage">
+			<result name="success" type="json"/>
+		</action>
+		
+		<!-- 获取代办事宜信息(仅仅只有订单相关待办) 		-->
+		<action name="searchOrderMessage" class="messageAction" method="searchOrderMessage">
+			<result name="success" type="json"/>
+		</action>
+
+		
+		<!-- 获取代办事宜信息(仅仅只有消息提醒) -->
+		<action name="searchOnlyMessage" class="messageAction" method="searchOnlyMessage">
+			<result name="success" type="json"/>
+		</action>	
+				
+		<!-- 查看代办之后删除该条代办（批量） -->
+		<action name="deleteMessages" class="messageAction" method="deleteMessages">
+			<result name="success" type="json"/>
+		</action>
+		<!-- 查看代办之后删除该条代办 -->
+		<action name="deleteMessage" class="messageAction" method="deleteMessage">
+			<result name="success" type="json"/>
+		</action>
+		
+	    <!--/**			
+		    * 修改人：张斌
+			*修改时间：2013-7-29 16:30
+			*原有内容：无（新增）
+			*修改原因：增加穿个数
+		 */  -->
+		<action name="seacherMessageCount" class="messageAction" method="seacherMessageCount">
+			<result name="success" type="json"/>
+		</action>
+			    <!--/**			
+		    * 修改人：张斌
+			*修改时间：2013-11-12 16:30
+			*原有内容：无（新增）
+			*修改原因：刷新缓存
+		 */  -->
+		<action name="refresh" class="messageAction" method="refresh">
+			<result name="success" type="json"/>
+		</action>
+		
+	</package>
+</struts>

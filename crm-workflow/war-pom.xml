@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.deppon.crm</groupId>
+		<artifactId>crm-parent</artifactId>
+		<version>3.1.1-SNAPSHOT</version>
+		<relativePath>../crm-parent</relativePath>
+	</parent> 
+	<artifactId>crm-bpsworkflow</artifactId>
+	<version>3.1.1-SNAPSHOT</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!-- module -->
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-common</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-bps</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-customer</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>	
+			<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-marketing</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-recompense</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>	
+		<!-- servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- DPAP -->
+		<dependency>
+			<groupId>com.deppon.dpap</groupId>
+			<artifactId>framework-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.dpap</groupId>
+			<artifactId>framework-sso</artifactId>
+		</dependency>
+		<!-- workflow -->
+		
+		<!-- test tools -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+		</dependency>
+		<!-- jMock -->
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- dbUnit -->
+		<dependency>
+		  <groupId>org.dbunit</groupId>
+		  <artifactId>dbunit</artifactId>
+		  <version>2.4.8</version>
+		</dependency>
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<path>/crm-bpsworkflow</path>
+					<port>888</port>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<packaging>war</packaging>
+</project>

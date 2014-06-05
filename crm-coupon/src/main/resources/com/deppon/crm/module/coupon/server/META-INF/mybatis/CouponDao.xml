@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.coupon.shared.domain.Coupon">
+	<!-- 查询 优惠券 实体 -->
+	<sql id="selectCouponsByNumsSQL">
+		SELECT
+		C.FID id,
+        C.FSMSTIMES smstimes,
+        C.FSENDTIME sendTime,
+        C.FCREATETIME createTime,
+        C.FUSETIME useTime,
+        C.FNUMBER couponNumber,
+        C.FMARKETPLANID marketPlanId,
+        C.FTYPEID typeId,
+        C.FCREATERULEID createruleId,
+        C.FUSERULEID useruleId,
+        C.FSTATUS status,
+        C.FUNDERDEPT underDept,
+        C.FSENDTELPHONE sendtelPhone,
+        C.FUSETELPHONE usetelPhone,
+        C.FSOURCEWBNUMBER sourceWBNumber,
+        C.FSOURCEWBVALUE sourceWBValue,
+        C.FUSEWBNUMBER useWBNumber,
+        C.FUSEWBVALUE useWBValue,
+        C.FVALUE useCouponValue
+   </sql>  
+   <!-- 保存优惠券 -->
+   <insert id="insertCoupon" parameterType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+   		<selectKey keyProperty="couponNumber" order="BEFORE" resultType="String">
+			SELECT PG_COU_COUPON.FN_COU_CREATECOUPON_NUM AS FNUMBER FROM　DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_COU_COUPON (
+				FID, FSMSTIMES, FSENDTIME, FCREATETIME,  FNUMBER, 
+		        FMARKETPLANID, FTYPEID, FCREATERULEID, FUSERULEID, FSTATUS, 
+		        FUNDERDEPT, FSENDTELPHONE, FUSETELPHONE, FSOURCEWBNUMBER, 
+		        FSOURCEWBVALUE, FUSEWBNUMBER, FUSEWBVALUE, FVALUE
+			) VALUES
+		]]>
+	        (  SEQ_ID_COUPON.NEXTVAL, 0, SYSDATE, SYSDATE, #{couponNumber,jdbcType=VARCHAR},   
+		        #{marketPlanId,jdbcType=NUMERIC}, #{typeId,jdbcType=VARCHAR},  #{createruleId,jdbcType=NUMERIC}, 
+		        #{useruleId,jdbcType=NUMERIC}, #{status,jdbcType=VARCHAR}, #{underDept,jdbcType=VARCHAR}, #{sendtelPhone,jdbcType=VARCHAR}, 
+		        #{usetelPhone,jdbcType=VARCHAR}, #{sourceWBNumber,jdbcType=VARCHAR},#{sourceWBValue,jdbcType=VARCHAR} , 
+		        #{useWBNumber,jdbcType=VARCHAR} , #{useWBValue,jdbcType=VARCHAR} , #{useCouponValue,jdbcType=VARCHAR} 
+	        )  
+   </insert>
+    
+	<!-- 根据优惠券状态码，编码  批量 更改优惠券的状态 -->   
+	<update id="updateCouponStatus" parameterType="Map">
+		<![CDATA[
+			UPDATE T_COU_COUPON
+				SET
+					FSTATUS = #{couponCode,jdbcType=VARCHAR}
+				WHERE 
+					FNUMBER IN 
+		]]>
+		<foreach collection="couponNums" open="(" close=")" separator=","
+			item="couponNum">
+			<![CDATA[	${couponNum}  ]]>
+		</foreach>
+	</update>
+	
+	<!-- 根据优惠券状态码，编码 更改单条 优惠券的状态 -->   
+	<update id="updateOneCouponStatus" parameterType="Map">
+		<![CDATA[
+			UPDATE T_COU_COUPON
+				SET
+					FSTATUS = #{couponCode,jdbcType=VARCHAR}
+				WHERE 
+					FNUMBER = #{couponNum,jdbcType=VARCHAR}
+		]]>
+	</update>
+	<!-- 更新优惠券信息（使用手机号、运单金额、运单编码、短信次数、短信发送时间、使用时间） -->
+	<update id="updateCoupon" parameterType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+		<![CDATA[
+			UPDATE T_COU_COUPON
+		]]>
+		<set>
+			<if test="sendtelPhone == null and status != null">
+				<![CDATA[
+					FSTATUS=#{status,jdbcType=VARCHAR},
+				]]>
+			</if>
+			<if test="sendtelPhone!=null and status!=null and smstimes == 0">
+				<![CDATA[
+					FSENDTELPHONE = #{sendtelPhone,jdbcType=VARCHAR},
+					FSTATUS=#{status,jdbcType=VARCHAR},
+					FSENDTIME=sysdate,
+				]]>
+			</if>
+			<if test="usetelPhone!=null">
+				<![CDATA[
+					FUSETELPHONE = #{usetelPhone,jdbcType=VARCHAR},
+				]]>
+			</if>
+			<if test="useWBValue!=null">
+				<![CDATA[FUSEWBVALUE = #{useWBValue,jdbcType=VARCHAR},]]>
+			</if>
+			<if test="useWBNumber!=null">
+				<![CDATA[
+					FUSEWBNUMBER = #{useWBNumber,jdbcType=VARCHAR},
+					FUSETIME = sysdate,
+				]]>
+			</if>
+			<if test="smstimes >= 1">
+				<![CDATA[
+					FSMSTIMES = FSMSTIMES+1,
+					FSENDTIME = sysdate,
+				]]>
+			</if>
+		</set>
+		<![CDATA[
+				WHERE 
+					FNUMBER = #{couponNumber ,jdbcType=NUMERIC}
+		]]>
+	</update>
+	
+	<!-- 根据优惠券编码查询 优惠券 集合 -->
+	<select id="selectCouponsByNums" resultType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+		<include refid="selectCouponsByNumsSQL"/>
+		<![CDATA[
+			FROM T_COU_COUPON C
+			WHERE
+				FNUMBER IN 
+		]]>
+		<foreach collection="list" open="(" close=")" separator=","
+			item="couponNum">
+			<![CDATA[	${couponNum}  ]]>
+		</foreach>
+	</select>
+	
+	<!-- 根据优惠券编码查询 单条优惠券 -->
+	<select id="selectCouponsByNum" resultType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+		<include refid="selectCouponsByNumsSQL"/>
+		<![CDATA[
+			FROM T_COU_COUPON C
+			WHERE
+				FNUMBER = #{couponNum,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<!-- 根据营销计划和优惠券状态查询的优惠劵 -->
+	<select id="selectCouponByMarketPlanIdAndStatus" resultType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+		<include refid="selectCouponsByNumsSQL"/>
+		<![CDATA[
+			FROM T_COU_COUPON C
+			WHERE
+				C.FSTATUS = #{status}
+				AND
+				C.FMARKETPLANID = #{marketPlanId}
+							
+		]]>
+	</select>
+	<!-- 根据营销计划查询未使用的优惠劵数量 营销开始时间及结束时间 营销短信内容-->
+	<select id="searchSendCouponVO" parameterType="Map" 
+	resultType="com.deppon.crm.module.coupon.shared.domain.SendCouponVO">
+		<![CDATA[
+		SELECT 
+		M.FID marketPlanId,
+		M.FPLANNUMBER planNumber,
+		M.FPLANNAME planName,
+		M.FCOUPONTYPE couponType,
+		M.FSTATUS marketPlanStatus,
+        NVL(C.BALANCE,0) balance,
+        CR.FBEGINTIME beginTime,
+        CR.FENDTIME endTime,
+        CR.Fsms sms,
+        R.FVALUE couponValue,
+        NVL(R.FQUANTITY,0) couponQuantity,
+        NVL(NVL(R.FQUANTITY,0)-NVL(C.BALANCE,0),0) sendedNum,
+        R.FTYPEID typeId
+        FROM 
+        T_COU_MARKETPLAN M
+        LEFT JOIN 
+        (SELECT COUNT(*) BALANCE ,
+        FMARKETPLANID,
+        FSTATUS
+        FROM T_COU_COUPON
+        WHERE FSTATUS = #{status}
+        GROUP BY FMARKETPLANID,FSTATUS) C
+        ON M.FID = C.FMARKETPLANID
+        LEFT JOIN T_COU_COUPONRULE CR
+        ON M.FID = CR.FMARKETPLANID
+        LEFT JOIN T_COU_RULECOUPONHAND R
+        ON M.FID = R.FMARKETPLANID
+			WHERE
+				M.FPLANNUMBER = #{planNumber}			
+		]]>
+	</select>
+	<!-- 新增 短信发送优惠券 -->
+	<insert id="insertCouponCellphoneMsg" parameterType="com.deppon.crm.module.coupon.shared.domain.CouponCellphoneMsgInfo">
+		<![CDATA[
+			INSERT INTO T_COU_CELLPHONE_MSG_INFO(
+				FID,
+				FCOUNPON_NUMBER,
+				FPHONE_NUMBER,
+				FMSGCONTENT,
+				FSEND_STANDARD_DEPT_CODE,
+				FSENDER_EMP_CODE,
+				FIS_SENDED,
+				FCREATETIME
+			)VALUES(
+				SEQ_T_COU_PHONE_MSG_INFO.NEXTVAL,
+				#{couponNumber,jdbcType=VARCHAR},
+				#{phoneNumber,jdbcType=VARCHAR},
+				#{msgContent,jdbcType=VARCHAR},
+				#{sendStandardDeptCode,jdbcType=VARCHAR},
+				#{senderEmpCode,jdbcType=VARCHAR},
+				#{sended,jdbcType=VARCHAR},
+				#{createTime}
+			)
+		]]>
+	</insert>
+	<!-- 更新优惠券状态 优惠券发送手机号码  发送时间-->
+	<update id="updateCouponStatusPhoneSendTime" parameterType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+		<![CDATA[
+			UPDATE T_COU_COUPON 
+			SET
+			FSTATUS = #{status},
+			FSENDTELPHONE = #{sendtelPhone},
+			FSENDTIME = sysdate
+			WHERE
+			FNUMBER = #{couponNumber}
+		]]>
+	</update>
+	<!-- 根据归属部门 优惠券编码  优惠券状态 营销计划名称 发送时间 手机号 使用时间 查询优惠券信息-->
+	<select id="selectCouponByMutiCondition" parameterType="com.deppon.crm.module.coupon.shared.domain.CouponSearchCondition" 
+			resultType="com.deppon.crm.module.coupon.shared.domain.CouponResultVO">
+			<![CDATA[
+			SELECT
+				M.FPLANNAME 	PLANNAME,
+				C.FNUMBER 		COUPONNUMBER,
+				C.FVALUE 		USECOUPONVALUE,
+				C.FSTATUS 		STATUS,
+				CON.FBEGINTIME 	BEGINTIME,
+				CON.FENDTIME 	ENDTIME,
+				CON.FVALUE 		VALUE,
+				C.FSOURCEWBNUMBER SOURCEWBNUMBER,
+				C.FSOURCEWBVALUE SOURCEWBVALUE,
+				C.FUSEWBNUMBER 	USEWBNUMBER,
+				C.FUSEWBVALUE 	USEWBVALUE,
+				C.FSENDTELPHONE SENDTELPHONE,
+				C.FSENDTIME 	SENDTIME,
+				C.FUSETELPHONE 	USETELPHONE,
+				C.FUSETIME 		USETIME,
+		        C.FUNDERDEPT 	UNDERDEPT,
+		        DP.FDEPTNAME 	UNDERDEPTNAME,
+		        C.FMARKETPLANID MARKETPLANID
+			FROM T_COU_COUPON C
+				JOIN T_COU_MARKETPLAN M
+					ON C.FMARKETPLANID = M.FID
+				JOIN T_COU_COUPONRULE CON
+					ON M.FID = CON.FMARKETPLANID
+				LEFT JOIN T_ORG_DEPARTMENT DP ON DP.FSTANDARDCODE = C.FUNDERDEPT
+			WHERE 1=1
+			]]>
+			<choose>
+				<when test="couponNumber != null and couponNumber != ''">
+		            	<![CDATA[AND LOWER(C.FNUMBER) = LOWER(#{couponNumber})]]>
+				</when>
+				<when
+					test="(couponNumber == null or couponNumber == '') and sendtelPhone != null and sendtelPhone != ''">
+		             	<![CDATA[AND C.FSENDTELPHONE = #{sendtelPhone}]]>
+				</when>
+				<otherwise>
+					<choose>
+						<!-- 数据权限控制，用户选择部门时，查询该部门下所有子部门的信息 -->
+						<when test="deptSeq != null and deptSeq != ''">
+							<![CDATA[AND REGEXP_LIKE(DP.FDEPTSEQ, #{deptSeq,jdbcType=VARCHAR})]]>
+						</when>
+						<!-- 数据权限控制，用户未选择部门时，查询该用户下所有授权部门的信息 -->
+						<otherwise>
+							<![CDATA[
+							AND (DP.FID IN (
+								SELECT AD.FDEPTID
+								  FROM T_AUTH_USERDEPARTMENT AD
+								  JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID
+								 WHERE AD.FUSERID = #{usrId,jdbcType=VARCHAR}
+								   AND OD.FSTATUS = 1
+								   AND OD.FSTANDARDCODE IS NOT NULL
+							   )
+							]]>
+							<!-- 当前操作用户为 DP07139（营销活动组）时，可以查询手动券-->
+							<if test="usrDept == 'DP07139' and managerDept != 'managerDept'">
+								<![CDATA[OR C.FUNDERDEPT IS NULL]]>
+							</if>
+							<![CDATA[
+								)
+							]]>
+						</otherwise>
+					</choose>
+		
+					<if test="status != null and status != '' and status != '00'">
+							<![CDATA[AND C.FSTATUS = #{status}]]>
+					</if>
+					<if test="planNumber != null and planNumber != ''">
+							<![CDATA[AND M.FPLANNUMBER = UPPER(#{planNumber})]]>
+					</if>
+					<if
+						test="sendTimeStart != null and sendTimeStart !='' and sendTimeEnd != null and sendTimeEnd != '' ">
+							<![CDATA[AND C.FSENDTIME between trunc(#{sendTimeStart}) and trunc(#{sendTimeEnd}+1)]]>
+					</if>
+					<if
+						test="useTimeStart != null and useTimeStart != '' and useTimeEnd != null and useTimeEnd != '' ">
+							<![CDATA[AND C.FUSETIME between trunc(#{useTimeStart}) and trunc(#{useTimeEnd}+1)]]>
+					</if>
+				</otherwise>
+			</choose> 
+			<![CDATA[
+				ORDER BY C.FCREATETIME DESC,C.FID 
+			]]>
+	</select>
+	<!-- 根据归属部门 优惠券编码  优惠券状态 营销计划名称 发送时间 手机号 使用时间 查询优惠券信息-->
+	<select id="countCouponByMutiCondition" parameterType="com.deppon.crm.module.coupon.shared.domain.CouponSearchCondition" 
+			resultType="int">
+			<![CDATA[
+			SELECT COUNT(1)
+			FROM T_COU_COUPON C
+				JOIN T_COU_MARKETPLAN M
+					ON C.FMARKETPLANID = M.FID
+				JOIN T_COU_COUPONRULE CON
+					ON M.FID = CON.FMARKETPLANID
+				LEFT JOIN T_ORG_DEPARTMENT DP ON DP.FSTANDARDCODE = C.FUNDERDEPT
+			WHERE 1=1
+			]]>
+			<choose>
+				<when test="couponNumber != null and couponNumber != ''">
+		            	<![CDATA[AND C.FNUMBER = UPPER(#{couponNumber})]]>
+				</when>
+				<when
+					test="(couponNumber == null or couponNumber == '') and sendtelPhone != null and sendtelPhone != ''">
+		             	<![CDATA[AND C.FSENDTELPHONE = #{sendtelPhone}]]>
+				</when>
+				<otherwise>
+					<choose>
+						<!-- 数据权限控制，用户选择部门时，查询该部门下所有子部门的信息 -->
+						<when test="deptSeq != null and deptSeq != ''">
+							<![CDATA[AND REGEXP_LIKE(DP.FDEPTSEQ, #{deptSeq,jdbcType=VARCHAR})]]>
+						</when>
+						<!-- 数据权限控制，用户未选择部门时，查询该用户下所有授权部门的信息 -->
+						<otherwise>
+							<![CDATA[
+							AND (DP.FID IN (
+								SELECT AD.FDEPTID
+								  FROM T_AUTH_USERDEPARTMENT AD
+								  JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID
+								 WHERE AD.FUSERID = #{usrId,jdbcType=VARCHAR}
+								   AND OD.FSTATUS = 1
+								   AND OD.FSTANDARDCODE IS NOT NULL
+							   )
+							]]>
+							<!-- 当前操作用户为 DP07139（营销活动组）时，可以查询手动券-->
+							<if test="usrDept == 'DP07139' and managerDept != 'managerDept'">
+								<![CDATA[OR C.FUNDERDEPT IS NULL]]>
+							</if>
+							<![CDATA[
+								)
+							]]>
+						</otherwise>
+					</choose>
+		
+					<if test="status != null and status != '' and status != '00'">
+							<![CDATA[AND C.FSTATUS = #{status}]]>
+					</if>
+					<if test="planNumber != null and planNumber != ''">
+							<![CDATA[AND M.FPLANNUMBER = UPPER(#{planNumber})]]>
+					</if>
+					<if
+						test="sendTimeStart != null and sendTimeStart !='' and sendTimeEnd != null and sendTimeEnd != '' ">
+							<![CDATA[AND C.FSENDTIME between trunc(#{sendTimeStart}) and trunc(#{sendTimeEnd}+1)]]>
+					</if>
+					<if
+						test="useTimeStart != null and useTimeStart != '' and useTimeEnd != null and useTimeEnd != '' ">
+							<![CDATA[AND C.FUSETIME between trunc(#{useTimeStart}) and trunc(#{useTimeEnd}+1)]]>
+					</if>
+				</otherwise>
+			</choose> 
+	</select>
+	<!-- 查询短信发券短信发券实体 -->
+	<select id="searchSendCouponMsg" resultType="com.deppon.crm.module.coupon.shared.domain.CouponCellphoneMsgInfo">
+		<![CDATA[
+			SELECT FID id,
+				   CCMI.FCOUNPON_NUMBER couponNumber,
+				   CCMI.FPHONE_NUMBER phoneNumber,
+				   CCMI.FMSGCONTENT msgContent,
+				   CCMI.FSEND_STANDARD_DEPT_CODE sendStandardDeptCode,
+				   CCMI.FSENDER_EMP_CODE senderEmpCode,
+				   CCMI.FIS_SENDED sended,
+				   CCMI.FCREATETIME createTime
+			FROM T_COU_CELLPHONE_MSG_INFO CCMI
+			WHERE FIS_SENDED = #{sended}
+		]]>
+	</select>
+	<!-- 根据ID更新发送短信状态 -->
+	<update id="updateSendCouponMsg" parameterType="com.deppon.crm.module.coupon.shared.domain.CouponCellphoneMsgInfo">
+		<![CDATA[
+			UPDATE T_COU_CELLPHONE_MSG_INFO
+			SET FIS_SENDED = #{sended}
+			WHERE FID = #{id}
+		]]>
+	</update>
+	<!-- 根据使用状态查询运单中间表  -->
+	<select id="searchWaybillCouponBystatus" resultType="com.deppon.crm.module.coupon.shared.domain.WaybillCoupon">
+		<![CDATA[
+			SELECT B.FID id,
+				   B.FWAYBILLNUMBER waybillNumber,
+				   M.FID marketPlanId,
+				   B.FMARKETPLANNUMBER marketPlanNumber,
+				   M.FCOUPONTYPE couponType,
+				   B.FUNDERDEPT underDept,
+				   B.FSENDTELPHONE sendTelPhone,
+				   B.FWBVALUE wbValue,
+				   B.FVALUE value,
+				   B.FSTATUS status,
+				   B.FCREATETIME createTime,
+				   RU.FID createRuleId,
+				   COU.FID useRuleId,
+				   COU.FSMS msgContent,
+				   COU.FBEGINTIME beginTime,
+				   COU.FENDTIME endTime
+				FROM
+					 T_COU_WAYBILL_COUPON B
+				JOIN T_COU_MARKETPLAN M 
+				ON B.FMARKETPLANNUMBER = M.FPLANNUMBER
+				JOIN T_COU_COUPONRULE COU
+				ON M.FID = COU.FMARKETPLANID
+				JOIN T_COU_RULECOUPONAUTO RU
+				ON COU.FMARKETPLANID = RU.FMARKETPLANID
+				WHERE
+					 B.FSTATUS = #{status}
+				ORDER BY
+					B.FMARKETPLANNUMBER
+				]]>
+	</select>
+	<!-- 根据ID修改运单中间表使用状态 -->
+	<update id="updateWaybillCouponById" parameterType="com.deppon.crm.module.coupon.shared.domain.WaybillCoupon">
+		<![CDATA[
+			UPDATE T_COU_WAYBILL_COUPON
+			SET FSTATUS = #{status}
+			WHERE FID = #{id}
+		]]>
+	</update>
+	
+	<!-- 根据标杆编码获得部门Seq -->
+	<select id="getDeptSeq" parameterType="String" resultType="String">
+		<![CDATA[
+			SELECT D.FDEPTSEQ FROM T_ORG_DEPARTMENT D WHERE D.FSTANDARDCODE = #{code}
+		]]>
+	</select>
+	<!-- 存储过程  创建手动优惠券发送短信 -->
+	<select id="createHandCouponBackground" statementType="CALLABLE">
+		<![CDATA[
+			{call PG_COU_COUPON.SP_BACKGROUND_CREATE_COUPON(#{i_coupontype,mode=IN,jdbcType=VARCHAR},#{o_flag,mode=OUT,jdbcType=VARCHAR})}
+		]]>
+	</select>
+	<!-- 存储过程  自动券短信发送优惠券 -->
+	<select id="sendCouponMessageAuto" statementType="CALLABLE">
+		<![CDATA[
+			{call PG_COU_COUPON.SP_AUTO_SEND_MSG(
+			#{i_startdate,mode=IN,jdbcType=DATE},
+			#{i_enddate,mode=IN,jdbcType=DATE},
+			#{i_senddeptcode,mode=IN,jdbcType=VARCHAR},
+			#{i_sendempcode,mode=IN,jdbcType=VARCHAR},
+			#{o_flag,mode=OUT,jdbcType=VARCHAR})}
+		]]>
+	</select>
+	<!-- 存储过程 创建手动券 -->
+	<select id="createHandCouponImmediate" statementType="CALLABLE">
+		<![CDATA[
+			{call PG_COU_COUPON.SP_CREATE_HAND_COUPON(#{i_size,mode=IN,jdbcType=NUMERIC},
+				#{i_marketplanid,mode=IN,jdbcType=VARCHAR},
+				#{i_useruleid,mode=IN,jdbcType=VARCHAR},
+				#{i_couponvalue,mode=IN,jdbcType=VARCHAR},
+				#{o_flag,mode=OUT,jdbcType=VARCHAR})}
+		]]>
+	</select>
+	<!-- 根据用户编码查询用户id -->
+	<select id = "SearchUserIdByEmpcode" parameterType="String" resultType="String">
+		<![CDATA[
+			  SELECT e.fid
+				   FROM T_AUTH_USER e
+				  WHERE e.FEMPCODE = (select d.fprincipal
+                        from t_org_department d
+                       where d.fdeptseq like #{principal,jdbcType=VARCHAR}
+                         and d.fdeptname like '%营销管理组'
+                         and d.fstatus = 1
+                         and d.fstandardcode is not null) 
+		]]>
+	</select>
+	<!-- 查询优惠券-部门查询 -->
+	<select id = "queryDeptListByName" parameterType="map" resultType="com.deppon.crm.module.organization.shared.domain.Department">
+ 		    <![CDATA[  
+		    SELECT
+			     AD.FDEPTID id,
+			     OD.FDEPTNAME deptName,
+			     OD.FSTANDARDCODE standardCode
+			     FROM T_AUTH_USERDEPARTMENT AD 
+			     JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID 
+			     WHERE AD.FUSERID = #{userId,jdbcType=VARCHAR}
+			     AND OD.FDEPTNAME like #{deptName,jdbcType=VARCHAR}
+			     AND OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL
+ 			 ]]>
+			 <if test="status != null and status != '' and status != '00'">
+ 			 	<![CDATA[ 
+			 	 union
+				    SELECT MASTER.FID    AS id,
+				           MASTER.FDEPTNAME   AS deptName,
+				           MASTER.FSTANDARDCODE AS standardCode
+				      FROM T_ORG_DEPARTMENT MASTER
+				      LEFT JOIN T_ORG_DEPARTMENT ENTRY_1 ON MASTER.FPARENTID = ENTRY_1.FID
+				     WHERE MASTER.FSTATUS = 1
+				       AND MASTER.FDEPTNAME LIKE #{deptName,jdbcType=VARCHAR}
+				       AND MASTER.FDEPTNAME LIKE #{shiyebuName,jdbcType=VARCHAR}
+				       AND MASTER.FSTANDARDCODE IS NOT NULL
+				       AND EXISTS (SELECT 'X'
+				              FROM T_ORG_DEPARTMENT X
+				             WHERE X.FID = 104
+				             START WITH X.FID = MASTER.FID
+				            CONNECT BY PRIOR X.FPARENTID = X.FID)
+ 				  ]]> 
+			 </if>
+	</select>
+	<!-- 查询优惠券-部门查询-条数 -->
+	<select id = "queryDeptListByNameCount" parameterType="map" resultType="int">
+	select count(1) from (
+ 		    <![CDATA[  
+		    SELECT
+			     AD.FDEPTID id,
+			     OD.FDEPTNAME deptName,
+			     OD.FSTANDARDCODE standardCode
+			     FROM T_AUTH_USERDEPARTMENT AD 
+			     JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID 
+			     WHERE AD.FUSERID = #{userId,jdbcType=VARCHAR}
+			     AND OD.FDEPTNAME like #{deptName,jdbcType=VARCHAR}
+			     AND OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL
+ 			 ]]>
+			 <if test="status != null and status != '' and status != '00'">
+ 			 	<![CDATA[ 
+			 	 union
+				    SELECT MASTER.FID    AS id,
+				           MASTER.FDEPTNAME   AS deptName,
+				           MASTER.FSTANDARDCODE AS standardCode
+				      FROM T_ORG_DEPARTMENT MASTER
+				      LEFT JOIN T_ORG_DEPARTMENT ENTRY_1 ON MASTER.FPARENTID = ENTRY_1.FID
+				     WHERE MASTER.FSTATUS = 1
+				       AND MASTER.FDEPTNAME LIKE #{deptName,jdbcType=VARCHAR}
+				       AND MASTER.FDEPTNAME LIKE #{shiyebuName,jdbcType=VARCHAR}
+				       AND MASTER.FSTANDARDCODE IS NOT NULL
+				       AND EXISTS (SELECT 'X'
+				              FROM T_ORG_DEPARTMENT X
+				             WHERE X.FID = 104
+				             START WITH X.FID = MASTER.FID
+				            CONNECT BY PRIOR X.FPARENTID = X.FID)
+ 				  ]]> 
+			 </if>
+			 )
+	</select>
+</mapper>

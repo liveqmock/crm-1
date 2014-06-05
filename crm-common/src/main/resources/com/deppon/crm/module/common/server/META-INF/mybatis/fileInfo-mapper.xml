@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.file.domain.FileInfo">
+
+	<!-- 映射 -->
+	<resultMap id="FileInfoResultMap" type="com.deppon.crm.module.common.file.domain.FileInfo">
+		<id property="id" column="FID" javaType="String" jdbcType="VARCHAR" />
+		<result property="createUser" column="FCREATEUSER" javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATEDATE" javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FMODIFYUSER" javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FMODIFYDATE" javaType="Date" jdbcType="TIMESTAMP" />
+
+		<result property="sourceId" column="FSOURCEID" javaType="String" jdbcType="VARCHAR" />
+		<result property="sourceType" column="FSOURCETYPE" javaType="String" jdbcType="VARCHAR" />
+		<result property="fileName" column="FFILENAME" javaType="String" jdbcType="VARCHAR" />
+		<result property="fileType" column="FFILETYPE" javaType="String" jdbcType="VARCHAR" />
+		<result property="savePath" column="FSAVEPATH" javaType="String" jdbcType="VARCHAR" />
+		<result property="fileSize" column="FFILESIZE" javaType="Double" jdbcType="VARCHAR" />
+		<result property="createDept" column="FCREATEDEPT" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 字段 -->
+	<sql id="FileInfoFields">
+		FID,FCREATEUSERID,FCREATETIME,FLASTMODIFYUSERID,FLASTUPDATETIME,
+		FSOURCEID,FSOURCETYPE,FFILENAME,FFILETYPE ,FSAVEPATH ,FFILESIZE,FCREATEDEPT
+	</sql>
+
+	<!-- 保存文件 -->
+	<insert id="insertFileInfo" parameterType="com.deppon.crm.module.common.file.domain.FileInfo">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT
+			SEQ_ID_FILEINFO.NEXTVAL AS ID
+			FROM DUAL
+		</selectKey>
+
+		INSERT INTO T_CRM_FILEINFO(
+		<include refid="FileInfoFields" />
+		)VALUES(
+		#{id},
+
+		<choose>
+			<when test="createUser !=null and createUser !=''">
+				#{createUser},
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		SYSDATE,
+		<choose>
+			<when test="modifyUser !=null and modifyUser !=''">
+				#{modifyUser},
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+	SYSDATE,
+
+	#{sourceId,jdbcType=VARCHAR},
+	#{sourceType,jdbcType=VARCHAR},
+	#{fileName,jdbcType=VARCHAR},
+	#{fileType,jdbcType=VARCHAR},
+	#{savePath, jdbcType=VARCHAR},
+	#{fileSize, jdbcType=NUMERIC},
+	#{createDept, jdbcType=NUMERIC}
+	)
+	</insert>
+
+	<!-- 删除文件 -->
+	<delete id="deleteFileInfo" parameterType="string">
+		DELETE FROM T_CRM_FILEINFO WHERE FID = #{id}
+	</delete>
+
+	<!-- 根据条件查询 -->
+	<select id="searchFileInfoByCondition" resultMap="FileInfoResultMap"
+		parameterType="com.deppon.crm.module.common.file.domain.FileInfo">
+		SELECT
+		<include refid="FileInfoFields" />
+		FROM T_CRM_FILEINFO
+		<where>
+			<if test=" sourceId!=null and sourceId!='' ">
+				FSOURCEID=#{sourceId}
+			</if>
+			<if test=" sourceType!=null and sourceType!='' ">
+				AND FSOURCETYPE=#{sourceType}
+			</if>
+			<if test=" fileName!=null and fileName!='' ">
+				AND FFILENAME=#{fileName}
+			</if>
+			<if test=" fileType!=null and fileType!='' ">
+				AND FFILETYPE=#{fileType}
+			</if>
+			<if test=" createDept!=null and createDept!='' ">
+				AND FCREATEDEPT=#{createDept}
+			</if>
+		</where>
+	</select>
+
+</mapper>

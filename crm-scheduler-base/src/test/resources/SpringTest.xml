@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://cxf.apache.org/jaxws
+						http://cxf.apache.org/schemas/jaxws.xsd
+						">
+ 
+	<import resource="./DataSource.xml" />
+	<import resource="./service-client.xml"/>
+	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host">
+			<value>smtp.163.com</value>
+		</property>
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.timeout">25000</prop>
+			</props>
+		</property>
+		<property name="username">
+			<value>hot_feel@163.com</value>
+		</property>
+		<property name="password">
+			<value>ld123456</value>
+		</property>
+	</bean>
+	<bean id = "timeCompareMember" class="com.deppon.crm.module.scheduler.server.manager.TimeCompareMember">
+		<property name="compareDataService" ref="compareDataService"></property>
+	</bean>
+	<bean id="compareDataService" class="com.deppon.crm.module.scheduler.server.service.impl.CompareDataServiceImpl">
+		<property name="compareDataDao" ref="iCompareDataDao"></property>
+		<property name="customerOperate" ref="customerOperate"></property>
+		<property name="mailSenderService" ref="mailSenderService"></property>
+		<property name="contractApplyOperate" ref="contractApplyOperate"></property>
+	</bean>
+	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+	<property name="host" value="smtp.deppon.com"/>
+	<property name="userName" value="dpsyj@deppon.com"/>
+	<property name="password" value="870305"/>
+	</bean>
+	<bean id="iCompareDataDao" class="com.deppon.crm.module.scheduler.server.dao.impl.CompareDataDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+		<!-- 工作流 -->
+	<bean id="contractApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.ContractApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="giftApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.GiftApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+
+	<bean id="recompenseApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.RecompenseApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	
+	<bean id="contractApplyOperate" factory-bean="contractApplyOperateProxy" factory-method="create">
+		<property name="esbService" ref="esb2oaWorkFlow"></property>
+		<property name="stateService" ref="oaQueryWorkFlowStateServiceWs"></property>
+	</bean>
+	<bean id="giftApplyOperate" factory-bean="giftApplyOperateProxy" factory-method="create">
+		<property name="giftService" ref="lmsApplyGiftService"></property>
+	</bean>
+	<!-- 费控付款工作流暂时不提供服务，需求更改 -->
+	<bean id="paymentApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.PaymentApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="paymentApplyOperate" factory-bean="paymentApplyOperateProxy" factory-method="create">
+		<property name="depClaimsBillService" ref="depClaimsBillService"></property>
+	</bean>
+	<bean id="recompenseApplyOperate" factory-bean="recompenseApplyOperateProxy" factory-method="create">
+		<property name="esbService" ref="esb2oaWorkFlow"></property>
+	</bean>
+	<!-- 此接口是OA工作流直接调用，没有走ESB，备用的，所以不做日志 -->
+	<!-- <bean id="oaWorkFlowService" class="com.deppon.crm.module.client.workflow.impl.OaWorkFlowServiceImpl">
+		<property name="workFlowService" ref="oaWorkFlowServiceWs"></property>
+	</bean> -->
+	
+	<!-- 订单 -->
+	<bean id="waybillOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.WaybillOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="waybillOperate" factory-bean="waybillOperateProxy" factory-method="create">
+		<property name="erp2CrmService" ref="erp2CrmService"></property>
+	</bean>
+	
+	<bean id="orderOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.OrderOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="orderOperate" factory-bean="orderOperateProxy" factory-method="create">
+		<property name="esb2ebmStatus" ref="esb2ebmStatus"></property>
+		<property name="esb2erpAppointCar" ref="esb2erpAppointCar"></property>
+		<property name="ebmOrderStatusService" ref="ebmQueryOrderStatusServiceWs"></property>
+		<property name="orderAndCustService" ref="erp2CrmCustAndOrderService"></property>
+	</bean>
+
+	<!-- <bean id="orderOperateProxy2" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.OrderOperateImpl2"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="orderOperate2" factory-bean="orderOperateProxy2" factory-method="create">
+		<property name="erp2EsbService" ref="esb2erpAppointCar2"></property>
+		<property name="updateOrderStatusWebService" ref="esb2ebmStatus2"></property>
+	</bean> -->
+	
+	<bean id="oaAccidentOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.OaAccidentOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="oaAccidentOperate" factory-bean="oaAccidentOperateProxy" factory-method="create">
+		<property name="errorService" ref="oaErrorService" ></property>
+		<property name="taskService" ref="oaTaskService"></property>
+	</bean>
+	
+	<!-- 短信网关 -->
+	<bean id="smsSenderProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.sms.impl.SmsSenderImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<!-- http://192.168.17.152:8085 http://192.168.14.246:8086-->
+	<bean id="smsSender" factory-bean="smsSenderProxy" factory-method="create">
+		<!-- <property name="postAddress" value="http://192.168.17.152:8085/dpVoiceSms/ws/sms/batch"></property> -->
+		<property name="postAddress" value="http://192.168.2.105:8080/dpVoiceSms/ws/sms/batch"></property>
+		<property name="userName" value="crmsms"></property>
+		<property name="password" value="20120504"></property>
+	</bean>
+	
+	<!-- 客户 -->
+	<bean id="customerOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.customer.impl.CustomerOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="customerOperate" factory-bean="customerOperateProxy" factory-method="create">
+		<property name="userWebServices" ref="bhoUserWebService"></property>
+		<property name="crmCusArrStaByNum" ref="biCrmCusArrStaByNum"></property>
+		<property name="crmCusStaByNum" ref="biCrmCusStaByNum"></property>
+		<property name="orderAndCustService" ref="erp2CrmCustAndOrderService"></property>
+	</bean>
+	<!--电子地图 -->
+	<bean id="mapOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.map.impl.MapOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="mapOperate" factory-bean="mapOperateProxy" factory-method="create">
+		<property name="map2CrmService" ref="map2CrmServiceWs"></property>
+	</bean>
+	<!-- 呼叫中心 -->
+	<bean id="complaintOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.complaint.impl.ComplaintOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="complaintOperate" factory-bean="complaintOperateProxy" factory-method="create">
+		<property name="complaintService" ref="ccComplaintServiceWs"></property>
+	</bean>
+	
+	
+	<!-- log -->
+	<bean id="interfaceLogBuffer" class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="queueSize" value="5"></property>
+		<property name="listSize" value="5"></property>
+		<property name="logSender" ref="interfaceLogSender"></property>
+	</bean>
+	<bean id="interfaceLogSender" class="com.deppon.crm.module.client.log.InterfaceInvokeLogSender">
+		<property name="jdbcTemplate" ref="interfaceLogSenderJdbcTemplate"></property>
+	</bean>
+	<bean id="interfaceLogSenderJdbcTemplate"  class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<bean id="serviceAccessProxyFactory" class="com.deppon.crm.module.client.common.ServiceAccessProxyFactory" factory-method="createInstance">
+		<property name="logBuffer" ref="interfaceLogBuffer"></property>
+		<property name="interfaceProvider" ref="interfaceProvider"></property>
+	</bean>
+	<bean id="interfaceProvider" class="com.deppon.crm.module.client.common.DbInterfaceProvider">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 客戶主数据同步 -->
+	<bean id="WaitCustomerLogDao" class="com.deppon.crm.module.client.sync.dao.impl.WaitCustomerLogDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="SearchMemberInfosDao" class="com.deppon.crm.module.client.sync.dao.impl.SearchMemberInfosDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="CustomerInfoLog" class="com.deppon.crm.module.client.sync.impl.CustomerInfoLog">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+		<property name="searchMemberInfosDao">
+			<ref bean="SearchMemberInfosDao" />
+		</property>
+	</bean>
+	<bean id="CustomerInfoSend" class="com.deppon.crm.module.client.sync.impl.CustomerInfoSendImpl">
+		<property name="esbService">
+			<ref bean="syncDataServiceWs" />
+		</property>
+	</bean>
+	
+	<!-- 客户日志修改 -->
+	<bean id="syncCallbackDao" class="com.deppon.crm.module.client.customer.dao.impl.SyncCallbackDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- log -->
+	  <!--  <bean id ="timerPotentialCustomer" class="com.deppon.crm.module.scheduler.server.manager.TimerPotentialCustomer">
+		<property name="potentialCustomerManager" ref="potentialCustomerManager"></property>
+		<property name="timerPotentialCustomerService" ref="timerPotentialCustomerService"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="scatterCustomerManager" ref="scatterCustomerManager"></property>
+		<property name="mapOperate" ref="mapOperate"></property>
+	</bean>
+	<bean id="interfaceLogBuffer" class="com.deppon.foss.framework.server.components.logger.track.PerformanceLogBuffer">
+		<property name="queueCapacity" value="5"></property>
+		<property name="size" value="5"></property>
+		<property name="sender" ref="interfaceLogSender"></property>
+	</bean>
+	<bean id="interfaceLogSender" class="com.deppon.crm.module.client.log.InterfaceInvokeLogSender">
+		<property name="jdbcTemplate" ref="interfaceLogSenderJdbcTemplate"></property>
+	</bean>
+	<bean id="interfaceLogSenderJdbcTemplate"  class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<bean id="serviceAccessProxyFactory" class="com.deppon.crm.module.client.common.ServiceAccessProxyFactory" factory-method="createInstance">
+		<property name="logBuffer" ref="interfaceLogBuffer"></property>
+		<property name="interfaceProvider" ref="interfaceProvider"></property>
+	</bean>
+	<bean id="interfaceProvider" class="com.deppon.crm.module.client.common.DbInterfaceProvider">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>-->
+		<!--电子地图 -->
+	<!-- <bean id="mapOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.map.impl.MapOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="mapOperate" factory-bean="mapOperateProxy" factory-method="create">
+		<property name="map2CrmService" ref="map2CrmServiceWs"></property>
+	</bean> -->
+	<bean id="tempService" class="com.deppon.crm.module.scheduler.server.service.TimerPotentialCustomerService">
+		<property name="custDao" ref="customerGetTempDao"/>
+	</bean>
+	<!-- dao层配置 -->
+	<bean id ="contactVaryDao" class="com.deppon.crm.module.customer.server.dao.impl.ContactVaryDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="contactIntegralDao" class="com.deppon.crm.module.customer.server.dao.impl.ContactIntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="waybillIntegralDao" class="com.deppon.crm.module.customer.server.dao.impl.WaybillIntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="giftDao" class="com.deppon.crm.module.customer.server.dao.impl.GiftDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="memberIntegralDao" class="com.deppon.crm.module.customer.server.dao.impl.MemberIntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="integralDao" class="com.deppon.crm.module.customer.server.dao.impl.IntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="integRuleDao" class="com.deppon.crm.module.customer.server.dao.impl.IntegRuleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id ="rewardIntegRuleDao" class="com.deppon.crm.module.customer.server.dao.impl.RewardIntegRuleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="workFlowDao" class="com.deppon.crm.module.customer.server.dao.impl.WorkFlowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="contactDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ContactDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="alterMemberDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.AlterMemberDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="memberDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.MemberDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="potentialCustomerDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.PotentialCustomerDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="scatterCustomerDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ScatterCustomerDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="contractDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ContractDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="examineRecordDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ExamineRecordDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+<!-- 	<bean id="timerPotentialCustomer" -->
+<!-- 		class="com.deppon.crm.module.scheduler.server.manager.TimerPotentialCustomer"> -->
+<!-- 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property> -->
+<!-- 	</bean> -->
+	<bean id="fileDao" class="com.deppon.crm.module.common.file.dao.impl.FileDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="fileService" class="com.deppon.crm.module.common.file.service.impl.FileService">
+		<property name="fileDao" ref="fileDao"></property>
+	</bean>
+	<bean id="fileManager" class="com.deppon.crm.module.common.file.manager.impl.FileManager">
+	   <property name="fileService" ref="fileService"></property>
+	</bean>
+	<bean id="messageDao" class="com.deppon.crm.module.common.server.dao.impl.MessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="messageService" class="com.deppon.crm.module.common.server.service.impl.MessageService">
+		<property name="messageDao" ref="messageDao"></property>
+	</bean>
+	<bean id="messageManager" class="com.deppon.crm.module.common.server.manager.impl.MessageManager">
+	 	<property name="messageService" ref="messageService"></property>
+	</bean>
+	<bean id="potentialCustomerService"
+		class="com.deppon.crm.module.customer.server.service.impl.PotentialCustomerService">
+		<property name="potentialCustomerDao" ref="potentialCustomerDao"></property>
+	</bean>
+	<bean id="customerValidator"
+		class="com.deppon.crm.module.customer.server.manager.CustomerValidator">
+		<property name="memberService" ref="memberService"></property>
+		<property name="scatterCustomerService" ref="scatterCustomerService"></property>
+		<property name="potentialCustomerService" ref="potentialCustomerService"></property>
+		<property name="contactService" ref="contactService"></property>
+		<property name="alterMemberService" ref="alterMemberService"></property>
+	</bean>
+	
+	<bean id="timerPotentialCustomerService" class="com.deppon.crm.module.scheduler.server.service.TimerPotentialCustomerService">
+		<property name="custDao" ref="customerGetTempDao"/>
+	</bean>
+	<bean id ="waybillIntegralService" class="com.deppon.crm.module.customer.server.service.impl.WaybillIntegralService">
+		<property name="waybillIntegralDao" ref="waybillIntegralDao"></property>
+	</bean>
+
+	<bean id ="contactIntegralService" class="com.deppon.crm.module.customer.server.service.impl.ContactIntegralService">
+		<property name="contactIntegralDao" ref="contactIntegralDao"></property>
+	</bean>
+	
+	<bean id ="contactVaryService" class="com.deppon.crm.module.customer.server.service.impl.ContactVaryService">
+		<property name="contactVaryDao" ref="contactVaryDao"></property>
+	</bean>
+	
+	<bean id="memberIntegralService"
+		class="com.deppon.crm.module.customer.server.service.impl.MemberIntegralService">
+		<property name="memberIntegralDao" ref="memberIntegralDao"></property>
+	</bean>
+	<bean id="integralService" class="com.deppon.crm.module.customer.server.service.impl.IntegralService">
+		<property name="integralDao" ref="integralDao"></property>
+		<property name="memberIntegralDao" ref="memberIntegralDao"></property>
+		<property name="contactIntegralDao" ref="contactIntegralDao"></property>
+	</bean>
+	<bean id="workFLowService"
+		class="com.deppon.crm.module.customer.server.service.impl.WorkFLowService">
+		<property name="workFlowDao" ref="workFlowDao"></property>
+	</bean>
+
+	<bean id="examineRecordService"
+		class="com.deppon.crm.module.customer.server.service.impl.ExamineRecordService">
+		<property name="examineRecordDao" ref="examineRecordDao"></property>
+	</bean>
+
+	<bean id="contactService"
+		class="com.deppon.crm.module.customer.server.service.impl.ContactService">
+		<property name="contactDao" ref="contactDao"></property>
+	</bean>
+
+	<bean id="memberService"
+		class="com.deppon.crm.module.customer.server.service.impl.MemberService">
+		<property name="memberDao" ref="memberDao"></property>
+		<property name="contactDao" ref="contactDao"></property>
+	</bean>
+	<bean id="scatterCustomerManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.ScatterCustomerManager">
+		<property name="potentialCustomerService" ref="potentialCustomerService"></property>
+		<property name="scatterCustomerService" ref="scatterCustomerService"></property>
+		<property name="customerValidator" ref="customerValidator"></property>
+	</bean>
+	<bean id="potentialCustomerManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.PotentialCustomerManager">
+		<property name="customerValidator" ref="customerValidator"></property>
+		<property name="potentialCustomerSerivce" ref="potentialCustomerService"></property>
+	</bean>
+	<bean id="scatterCustomerService"
+		class="com.deppon.crm.module.customer.server.service.impl.ScatterCustomerService">
+		<property name="scatterCustomerDao" ref="scatterCustomerDao"></property>
+	</bean>
+	<bean id="alterMemberService"
+		class="com.deppon.crm.module.customer.server.service.impl.AlterMemberService">
+		<property name="alterMemberDao" ref="alterMemberDao"></property>
+		<property name="memberDao" ref="memberDao"></property>
+		<property name="scatterCustomerService" ref="scatterCustomerService"></property>
+	</bean>
+
+	<bean id="contractService"
+		class="com.deppon.crm.module.customer.server.service.impl.ContractService">
+		<property name="contractDao" ref="contractDao"></property>
+		<property name="alterMemberDao" ref="alterMemberDao"></property>
+	</bean>
+
+	<bean id="integRuleService"
+		class="com.deppon.crm.module.customer.server.service.impl.IntegRuleService">
+		<property name="integRuleDao" ref="integRuleDao"></property>
+		<property name="rewardIntegRuleDao" ref="rewardIntegRuleDao"></property>
+		<property name="giftDao" ref="giftDao"></property>
+	</bean>
+	
+	<bean id ="timerSyncDepartment" class="com.deppon.crm.module.scheduler.server.manager.TimerSyncDepartment">
+		<property name="syncDepartmentDao" ref="syncDepartmentDao"/>
+	</bean>
+	<bean id ="syncDepartmentDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SyncDepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	<bean id ="timerSyncEmployee" class="com.deppon.crm.module.scheduler.server.manager.TimerSyncEmployee">
+		<property name="employeeDao" ref="syncEmployeeDao"></property>
+		<property name="departmentDao" ref="syncDepartmentDao"></property>
+	</bean>
+	<bean id ="syncEmployeeDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SyncEmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	<bean id="orderTimer" class="com.deppon.crm.module.scheduler.server.manager.TimerOrder">
+		<property name="orderManager" ref="orderManager"></property>
+		<property name="orderService" ref="orderService"></property>
+		<property name="schedulingControlService" ref="schedulingControlService"></property>
+		<property name="mailSenderService" ref="mailSenderService"></property>
+	</bean>
+</beans>

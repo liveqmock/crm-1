@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+    <select id="searchReturnVisitRecords" parameterType="String"
+        resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+        <![CDATA[
+                SELECT DISTINCT RV.FDATE        schedule,
+                                LINK.FNAME      linkName,
+                                LINK.FMOBILETEL linkManMobile,
+                                LINK.FOFFERTEL  linkManPhone,
+                                PLAN.FTOPIC     theme,
+                                RVDETAIL.FSOLVE needType,
+                                RV.FWAY         way,
+                                EMP.FEMPNAME    userName
+                  FROM T_CUST_RETURNVISIT RV
+                  LEFT JOIN T_CUST_CUSTBASEDATA CUST ON CUST.FID = RV.FCUSTID
+                  JOIN T_CUST_CUSTLINKMAN LINK ON LINK.FID = RV.FLINKMANID
+                  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST PLAN ON RV.FPLANID = PLAN.FID
+                  JOIN T_CUST_REVISITOPINIONDETAIL RVDETAIL ON RVDETAIL.FPARENTID = RV.FID
+                  LEFT JOIN T_ORG_EMPLOYEE AUSER ON RV.FEXECUSERID = AUSER.FID
+                  LEFT JOIN T_ORG_EMPLOYEE EMP ON EMP.FEMPCODE = AUSER.FEMPCODE
+                  WHERE CUST.FID=#{custId} AND (RV.FDATE>SYSDATE - INTERVAL '1' YEAR)
+        ]]>
+    </select>
+    <!-- 发到货页面跳转至维护日程新增查询页面时提供的查询方法 -->
+    <select id="searchCustFromCycle" parameterType="Map" resultType="com.deppon.crm.module.marketing.shared.domain.ScheduleQueryResultObject">
+        <![CDATA[
+        SELECT DISTINCT DPLAN.FID planId,
+               SCHEDULE.FID scheduleId,
+               CUST.FID custId,
+               LINK.FID contactId,
+               CUST.FCUSTNAME custName,
+               CUST.FDEGREE memberLevel,
+               LINK.FNAME contactName,
+               LINK.FMOBILETEL contactMobile,
+               LINK.FOFFERTEL contactTel,
+               (SELECT COUNT(*)
+                  FROM T_CUST_DEVELOPMAINTAINLIST T
+                 WHERE T.FSTATUS < 30
+                   AND T.FPLANTYPE != 'dev'
+                   AND T.FEXECDEPTID=#{deptId}) unfinishedPlanNum,
+               (SELECT T.FTOPIC FROM T_CUST_DEVELOPMAINTAINLIST T
+                 WHERE T.FSTATUS < 30
+                   AND T.FPLANTYPE != 'dev' 
+                   AND ROWNUM<2
+                   AND T.FEXECDEPTID=#{deptId}) unfinishedPlanName,
+               T1.NUM visitNum,
+              T1.FDATE lastVisitDate,
+               SCHEDULE.FTIME sheduleDate,
+               EMP.FEMPNAME executeUserName
+          FROM T_CUST_CUSTBASEDATA CUST
+          LEFT JOIN T_CUST_CUSTLINKMAN LINK ON LINK.FCUSTID = CUST.FID
+          LEFT JOIN T_CUST_SCHEDULE SCHEDULE ON SCHEDULE.FCUSTID = CUST.FID
+                                            AND SCHEDULE.FTYPE != 'dev'
+          LEFT JOIN T_CUST_DEVELOPMAINTAINLIST DPLAN ON SCHEDULE.FPLANID =
+                                                        DPLAN.FID
+          LEFT JOIN (SELECT L.FID, MAX(R.FDATE) FDATE, COUNT(1) NUM
+                       FROM T_CUST_CUSTLINKMAN L
+                       JOIN T_CUST_RETURNVISIT R ON R.FLINKMANID = L.FID
+                      GROUP BY L.FID) T1 ON T1.FID = SCHEDULE.FCONTACTID
+          LEFT JOIN T_ORG_EMPLOYEE CUSER ON CUSER.FID = DPLAN.FEXECUSERID
+          LEFT JOIN T_ORG_EMPLOYEE EMP ON CUSER.FEMPCODE = EMP.FEMPCODE
+          WHERE 1=1 
+        ]]>
+        <if test="deptId!=null and deptId!=''">
+            <![CDATA[
+                AND CUST.FDEPTID = #{deptId,jdbcType=VARCHAR}
+            ]]>
+        </if>
+        <if test="custIds!=null">
+            <![CDATA[
+                AND CUST.FID IN
+            ]]>
+            <foreach collection="custIds" open="(" close=")" separator="," item="custId">
+                <![CDATA[${custId}]]>
+            </foreach>
+        </if>
+    </select>    
+    <!-- 分页查询总数 -->
+    <select id="countForSearchCustFromCycle" parameterType="Map" resultType="int">
+        <!-- 
+             map.put("custIds", ids);
+             map.put("deptId", deptId); 
+        -->
+        <![CDATA[
+        SELECT COUNT(*) FROM (
+        SELECT DISTINCT DPLAN.FID planId,
+               SCHEDULE.FID scheduleId,
+               CUST.FID custId,
+               LINK.FID contactId,
+               CUST.FCUSTNAME custName,
+               CUST.FDEGREE memberLevel,
+               LINK.FNAME contactName,
+               LINK.FMOBILETEL contactMobile,
+               LINK.FOFFERTEL contactTel,
+               (SELECT COUNT(*)
+                  FROM T_CUST_DEVELOPMAINTAINLIST T
+                 WHERE T.FSTATUS < 30
+                   AND T.FPLANTYPE != 'dev'
+                   AND T.FEXECDEPTID=#{deptId}) unfinishedPlanNum,
+               (SELECT T.FTOPIC FROM T_CUST_DEVELOPMAINTAINLIST T
+                 WHERE T.FSTATUS < 30
+                   AND T.FPLANTYPE != 'dev'
+                   AND ROWNUM<2
+                   AND T.FEXECDEPTID=#{deptId}) unfinishedPlanName,
+               T1.NUM visitNum,
+              T1.FDATE lastVisitDate,
+               SCHEDULE.FTIME sheduleDate,
+               EMP.FEMPNAME executeUserName
+          FROM T_CUST_CUSTBASEDATA CUST
+          LEFT JOIN T_CUST_CUSTLINKMAN LINK ON LINK.FCUSTID = CUST.FID
+          LEFT JOIN T_CUST_SCHEDULE SCHEDULE ON SCHEDULE.FCUSTID = CUST.FID
+                                            AND SCHEDULE.FTYPE != 'dev'
+          LEFT JOIN T_CUST_DEVELOPMAINTAINLIST DPLAN ON SCHEDULE.FPLANID =
+                                                        DPLAN.FID
+          LEFT JOIN (SELECT L.FID, MAX(R.FDATE) FDATE, COUNT(1) NUM
+                       FROM T_CUST_CUSTLINKMAN L
+                       JOIN T_CUST_RETURNVISIT R ON R.FLINKMANID = L.FID
+                      GROUP BY L.FID) T1 ON T1.FID = SCHEDULE.FCONTACTID
+          LEFT JOIN T_ORG_EMPLOYEE CUSER ON CUSER.FID = DPLAN.FEXECUSERID
+          LEFT JOIN T_ORG_EMPLOYEE EMP ON CUSER.FEMPCODE = EMP.FEMPCODE
+          WHERE 1=1 
+        ]]>
+        <if test="deptId!=null and deptId!=''">
+            <![CDATA[
+                AND CUST.FDEPTID = #{deptId,jdbcType=VARCHAR}
+            ]]>
+        </if>
+        <if test="custIds!=null">
+            <![CDATA[
+                AND CUST.FID IN
+            ]]>
+            <foreach collection="custIds" open="(" close=")" separator="," item="custId">
+                <![CDATA[${custId}]]>
+            </foreach>
+        </if>
+        <![CDATA[)]]>
+    </select>
+    <select id="queryLastTimeByCustNum" parameterType="Map" resultType="DATE">
+        <![CDATA[
+            SELECT MAX(RE.DD) FROM (SELECT TO_DATE(T.FYEAR ||
+               DECODE(LENGTH(T.FMONTH), 1, '0' || T.FMONTH, T.FMONTH) ||
+               DECODE(LENGTH(T.FDAY), 1, '0' || T.FDAY, T.FDAY),
+               'YYYY-MM-DD') DD
+            FROM T_CRM_CUSTANALYSEBYDAY T
+            LEFT JOIN T_CUST_CUSTBASEDATA CUST ON T.FCUSTID = CUST.FID
+            LEFT JOIN T_ORG_DEPARTMENT DEPT ON CUST.FDEPTID = DEPT.FID
+                WHERE T.FCANALYSETYPE = 1 
+                AND T.FCUSTNUMBER = #{custNum,jdbcType=VARCHAR}
+                AND DEPT.FID = #{deptId,jdbcType=VARCHAR}
+                AND T.FBEGINTIME >= TRUNC(#{queryDate,jdbcType=DATE},'MM')
+                AND T.FBEGINTIME <= TRUNC(#{queryDate,jdbcType=DATE},'DD')
+                ) RE
+        ]]>
+    </select>
+    
+    <!-- 客户线路分析数据 ResultMap -->
+    <resultMap type="com.deppon.crm.module.marketing.shared.domain.PathAnalysisInfo" id="pathAnalysisInfo">
+        <result column="memberNumber" property="memberNumber" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="lastMonthAmount" property="lastMonthAmount" jdbcType="NUMERIC"/>
+        <result column="LastMonthSameTimeAmount" property="lastMonthSameTimeAmount" jdbcType="NUMERIC"/>
+        <result column="currentMonthSameTimeAmount" property="currentMonthSameTimeAmount" jdbcType="NUMERIC"/>
+        <result column="lastMonthvolume" property="lastMonthvolume" jdbcType="NUMERIC"/>
+        <result column="currentMonthvolume" property="currentMonthvolume" jdbcType="NUMERIC"/>
+        <result column="lastMonthVotes" property="lastMonthVotes" jdbcType="NUMERIC"/>
+        <result column="currentMonthvotes" property="currentMonthvotes" jdbcType="NUMERIC"/>
+        <result column="lastMonthTruckVotes" property="lastMonthTruckVotes" jdbcType="NUMERIC"/>
+        <result column="currentMonthTruckVotes" property="currentMonthTruckVotes" jdbcType="NUMERIC"/>
+        <result column="lastMonthCityVotes" property="lastMonthCityVotes" jdbcType="NUMERIC"/>
+        <result column="currentMonthCityVotes" property="currentMonthCityVotes" jdbcType="NUMERIC"/>
+        <result column="lastMonthlongTruckVotes" property="lastMonthlongTruckVotes" jdbcType="NUMERIC"/>
+        <result column="currentMonthlongTruckVotes" property="currentMonthlongTruckVotes" jdbcType="NUMERIC"/>
+        <result column="lastMonthshortTruckVotes" property="lastMonthshortTruckVotes" jdbcType="NUMERIC"/>
+        <result column="currentMonthshortTruckVotes" property="currentMonthshortTruckVotes" jdbcType="NUMERIC"/>
+        <result column="lastAirTransVotes" property="lastAirTransVotes" jdbcType="NUMERIC"/>
+        <result column="currentAirTransVotes" property="currentAirTransVotes" jdbcType="NUMERIC"/>
+        <result column="lastEconomyExpressVotes" property="lastEconomyExpressVotes" jdbcType="NUMERIC"/>
+        <result column="currentEconomyExpressVotes" property="currentEconomyExpressVotes" jdbcType="NUMERIC"/>
+    </resultMap>
+    <!-- 发货线路分析查询 -->
+    <select id="queryDeliverPathAnalysis" resultMap="pathAnalysisInfo">
+        <![CDATA[
+            SELECT 
+                   TRUNC(#{endDate,jdbcType=DATE}) FDATE,
+                   NVL(TAB1.DELIVERY_CUSTOMER_CODE,TAB2.DELIVERY_CUSTOMER_CODE) MEMBERNUMBER,
+                   NVL(TAB1.RECEIVE_CUSTOMER_CITY_NAME,TAB2.RECEIVE_CUSTOMER_CITY_NAME) CITY,
+                   DECODE(TAB1.LASTMTALLMONEY,NULL,NVL(TAB2.LASTMTALLMONEY,0),TAB1.LASTMTALLMONEY) lastMonthAmount,
+                   NVL(TAB2.ACCMONEY,0) LASTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB1.ACCMONEY,0) CURRENTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB2.ACCWEIGHT,0) LASTMONTHVOLUME,
+                   NVL(TAB1.ACCWEIGHT,0) CURRENTMONTHVOLUME,
+                   NVL(TAB2.ACCDELIVERYCT,0) LASTMONTHVOTES,
+                   NVL(TAB1.ACCDELIVERYCT,0) CURRENTMONTHVOTES,
+                   NVL(TAB2.ACCTRUNCKCT,0) LASTMONTHTRUCKVOTES,
+                   NVL(TAB1.ACCTRUNCKCT,0) CURRENTMONTHTRUCKVOTES,
+                   NVL(TAB2.ACCCITYCT,0) LASTMONTHCITYVOTES,
+                   NVL(TAB1.ACCCITYCT,0) CURRENTMONTHCITYVOTES,
+                   NVL(TAB2.ACCCARLONGCT,0) LASTMONTHLONGTRUCKVOTES,
+                   NVL(TAB1.ACCCARLONGCT,0) CURRENTMONTHLONGTRUCKVOTES,
+                   NVL(TAB2.ACCSHORTCT,0) LASTMONTHSHORTTRUCKVOTES,
+                   NVL(TAB1.ACCSHORTCT,0) CURRENTMONTHSHORTTRUCKVOTES,
+                   NVL(TAB2.ACCAIRCT,0) LASTAIRTRANSVOTES,
+                   NVL(TAB1.ACCAIRCT,0) CURRENTAIRTRANSVOTES
+              from
+            (
+            SELECT SRC1.DELIVERY_CUSTOMER_CODE,
+                   SRC1.RECEIVE_CUSTOMER_CITY_CODE,
+                   SRC1.RECEIVE_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_DELIVERYRTD SRC3
+                     WHERE SRC3.DELIVERY_CUSTOMER_CODE = SRC1.DELIVERY_CUSTOMER_CODE
+                       AND SRC3.RECEIVE_CUSTOMER_CITY_CODE =
+                           SRC1.RECEIVE_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                               AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC1.AMOUNT) ACCMONEY,
+                   SUM(SRC1.WEIGHT) ACCWEIGHT,
+                   SUM(SRC1.DELIVERYCT) ACCDELIVERYCT,
+                   SUM(SRC1.TRUNCKCT) ACCTRUNCKCT,
+                   SUM(SRC1.CITYCT) ACCCITYCT,
+                   SUM(SRC1.CARLONGCT) ACCCARLONGCT,
+                   SUM(SRC1.CARSHORTCT) ACCSHORTCT,
+                   SUM(SRC1.AIRCT) ACCAIRCT
+              FROM T_PKP_DELIVERYRTD SRC1
+             WHERE SRC1.FDATE BETWEEN TRUNC(#{endDate,jdbcType=DATE}, 'MM') AND TRUNC(#{endDate,jdbcType=DATE})
+               and SRC1.DELIVERY_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC1.DELIVERY_CUSTOMER_CODE,
+                      SRC1.RECEIVE_CUSTOMER_CITY_NAME,
+                      SRC1.RECEIVE_CUSTOMER_CITY_CODE
+            ) TAB1          
+              FULL OUTER JOIN         
+            (          
+            SELECT SRC2.DELIVERY_CUSTOMER_CODE,
+                   SRC2.RECEIVE_CUSTOMER_CITY_CODE,
+                   SRC2.RECEIVE_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_DELIVERYRTD SRC3
+                     WHERE SRC3.DELIVERY_CUSTOMER_CODE = SRC2.DELIVERY_CUSTOMER_CODE
+                       AND SRC3.RECEIVE_CUSTOMER_CITY_CODE =
+                           SRC2.RECEIVE_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                               AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC2.AMOUNT) ACCMONEY,
+                   SUM(SRC2.WEIGHT) ACCWEIGHT,
+                   SUM(SRC2.DELIVERYCT) ACCDELIVERYCT,
+                   SUM(SRC2.TRUNCKCT) ACCTRUNCKCT,
+                   SUM(SRC2.CITYCT) ACCCITYCT,
+                   SUM(SRC2.CARLONGCT) ACCCARLONGCT,
+                   SUM(SRC2.CARSHORTCT) ACCSHORTCT,
+                   SUM(SRC2.AIRCT) ACCAIRCT
+              FROM T_PKP_DELIVERYRTD SRC2
+             WHERE SRC2.FDATE BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+               AND (ADD_MONTHS(#{endDate,jdbcType=DATE}, - 1))
+               AND SRC2.DELIVERY_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC2.DELIVERY_CUSTOMER_CODE,
+                      SRC2.RECEIVE_CUSTOMER_CITY_NAME,
+                      SRC2.RECEIVE_CUSTOMER_CITY_CODE
+                      
+            )TAB2  
+             ON TAB1.DELIVERY_CUSTOMER_CODE=TAB2.DELIVERY_CUSTOMER_CODE
+            AND TAB1.RECEIVE_CUSTOMER_CITY_CODE = TAB2.RECEIVE_CUSTOMER_CITY_CODE  
+        ]]>
+    </select>
+    <!-- 到货线路分析查询 -->
+    <select id="queryReceivePathAnalysis" resultMap="pathAnalysisInfo">
+    <![CDATA[
+            SELECT 
+                   TRUNC(#{endDate,jdbcType=DATE}) FDATE,
+                   NVL(TAB1.RECEIVE_CUSTOMER_CODE,TAB2.RECEIVE_CUSTOMER_CODE) MEMBERNUMBER,
+                   NVL(TAB1.DELIVERY_CUSTOMER_CITY_NAME,TAB2.DELIVERY_CUSTOMER_CITY_NAME) CITY,
+                   DECODE(TAB1.LASTMTALLMONEY,NULL,NVL(TAB2.LASTMTALLMONEY,0),TAB1.LASTMTALLMONEY) lastMonthAmount,
+                   NVL(TAB2.ACCMONEY,0) LASTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB1.ACCMONEY,0) currentMonthSameTimeAmount,
+                   NVL(TAB2.ACCWEIGHT,0) LASTMONTHVOLUME,
+                   NVL(TAB1.ACCWEIGHT,0) CURRENTMONTHVOLUME,
+                   NVL(TAB2.ACCDELIVERYCT,0) LASTMONTHVOTES,
+                   NVL(TAB1.ACCDELIVERYCT,0) CURRENTMONTHVOTES,
+                   NVL(TAB2.ACCTRUNCKCT,0) LASTMONTHTRUCKVOTES,
+                   NVL(TAB1.ACCTRUNCKCT,0) CURRENTMONTHTRUCKVOTES,
+                   NVL(TAB2.ACCCITYCT,0) LASTMONTHCITYVOTES,
+                   NVL(TAB1.ACCCITYCT,0) CURRENTMONTHCITYVOTES,
+                   NVL(TAB2.ACCCARLONGCT,0) LASTMONTHLONGTRUCKVOTES,
+                   NVL(TAB1.ACCCARLONGCT,0) CURRENTMONTHLONGTRUCKVOTES,
+                   NVL(TAB2.ACCSHORTCT,0) LASTMONTHSHORTTRUCKVOTES,
+                   NVL(TAB1.ACCSHORTCT,0) CURRENTMONTHSHORTTRUCKVOTES,
+                   NVL(TAB2.ACCAIRCT,0) LASTAIRTRANSVOTES,
+                   NVL(TAB1.ACCAIRCT,0) CURRENTAIRTRANSVOTES
+              from
+            (
+            SELECT SRC1.RECEIVE_CUSTOMER_CODE,
+                   SRC1.DELIVERY_CUSTOMER_CITY_CODE,
+                   SRC1.DELIVERY_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_RECEIVERTD SRC3
+                     WHERE SRC3.RECEIVE_CUSTOMER_CODE = SRC1.RECEIVE_CUSTOMER_CODE
+                       AND SRC3.DELIVERY_CUSTOMER_CITY_CODE =
+                           SRC1.DELIVERY_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                           AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC1.AMOUNT) ACCMONEY,
+                   SUM(SRC1.WEIGHT) ACCWEIGHT,
+                   SUM(SRC1.DELIVERYCT) ACCDELIVERYCT,
+                   SUM(SRC1.TRUNCKCT) ACCTRUNCKCT,
+                   SUM(SRC1.CITYCT) ACCCITYCT,
+                   SUM(SRC1.CARLONGCT) ACCCARLONGCT,
+                   SUM(SRC1.CARSHORTCT) ACCSHORTCT,
+                   SUM(SRC1.AIRCT) ACCAIRCT
+              FROM T_PKP_RECEIVERTD SRC1
+             WHERE SRC1.FDATE BETWEEN TRUNC(#{endDate,jdbcType=DATE}, 'MM') AND TRUNC(#{endDate,jdbcType=DATE})
+               and SRC1.RECEIVE_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC1.RECEIVE_CUSTOMER_CODE,
+                      SRC1.DELIVERY_CUSTOMER_CITY_NAME,
+                      SRC1.DELIVERY_CUSTOMER_CITY_CODE
+            ) TAB1          
+              FULL OUTER JOIN         
+            (          
+            SELECT SRC2.RECEIVE_CUSTOMER_CODE,
+                   SRC2.DELIVERY_CUSTOMER_CITY_CODE,
+                   SRC2.DELIVERY_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_RECEIVERTD SRC3
+                     WHERE SRC3.RECEIVE_CUSTOMER_CODE = SRC2.RECEIVE_CUSTOMER_CODE
+                       AND SRC3.DELIVERY_CUSTOMER_CITY_CODE =
+                           SRC2.DELIVERY_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                           AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC2.AMOUNT) ACCMONEY,
+                   SUM(SRC2.WEIGHT) ACCWEIGHT,
+                   SUM(SRC2.DELIVERYCT) ACCDELIVERYCT,
+                   SUM(SRC2.TRUNCKCT) ACCTRUNCKCT,
+                   SUM(SRC2.CITYCT) ACCCITYCT,
+                   SUM(SRC2.CARLONGCT) ACCCARLONGCT,
+                   SUM(SRC2.CARSHORTCT) ACCSHORTCT,
+                   SUM(SRC2.AIRCT) ACCAIRCT
+              FROM T_PKP_RECEIVERTD SRC2
+             WHERE SRC2.FDATE BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+               AND (ADD_MONTHS(#{endDate,jdbcType=DATE}, - 1))
+               AND SRC2.RECEIVE_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC2.RECEIVE_CUSTOMER_CODE,
+                      SRC2.DELIVERY_CUSTOMER_CITY_NAME,
+                      SRC2.DELIVERY_CUSTOMER_CITY_CODE
+                      
+            )TAB2  
+             ON TAB1.RECEIVE_CUSTOMER_CODE=TAB2.RECEIVE_CUSTOMER_CODE
+            AND TAB1.DELIVERY_CUSTOMER_CITY_CODE = TAB2.DELIVERY_CUSTOMER_CITY_CODE 
+    ]]>
+    </select>
+    <!-- 以下sql已作废-->
+    <select id="queryPathAnalysis" resultMap="pathAnalysisInfo">
+    <![CDATA[
+            select fnumber memberNumber,
+                   fcity city,
+                   flastsumarrpay lastMonthAmount,
+                   flastaccarrpay LastMonthSameTimeAmount,
+                   farrpay currentMonthSameTimeAmount,
+                   flastaccweight lastMonthvolume,
+                   fweight currentMonthvolume,
+                   flastaccwaybilltrans lastMonthVotes,
+                   fwaybilltrans currentMonthvotes,
+                   flastaccvehicletrans lastMonthTruckVotes,
+                   fvehicletrans currentMonthTruckVotes,
+                   flastacccitytrans lastMonthCityVotes,
+                   fcitytrans currentMonthCityVotes,
+                   flastacclongtrans currentMonthlongTruckVotes,
+                   flongtrans currentMonthlongTruckVotes,
+                   flastaccshortnum lastMonthshortTruckVotes,
+                   fshorttrans currentMonthshortTruckVotes,
+                   flastaccairtrans lastAirTransVotes,
+                   fairtrans  lastAirTransVotes
+      from t_cus_dailystabynum_new t
+      where t.fnumber = #{memberNumber,jdbcType=VARCHAR}
+          and t.ftype = #{analysisCustomerType,jdbcType=VARCHAR}
+        and to_char(t.fdate,'yyyy-mm-dd') = to_char(#{endDate,jdbcType=DATE},'yyyy-mm-dd')
+    ]]>
+    </select>
+    <!-- 快递发货线路了分析查询 -->
+    <select id="queryExpressDeliverPathAnalysis" resultMap="pathAnalysisInfo">
+        <![CDATA[
+            SELECT 
+                   TRUNC(#{endDate,jdbcType=DATE}) FDATE,
+                   NVL(TAB1.DELIVERY_CUSTOMER_CODE,TAB2.DELIVERY_CUSTOMER_CODE) MEMBERNUMBER,
+                   NVL(TAB1.RECEIVE_CUSTOMER_CITY_NAME,TAB2.RECEIVE_CUSTOMER_CITY_NAME) CITY,
+                   DECODE(TAB1.LASTMTALLMONEY,NULL,NVL(TAB2.LASTMTALLMONEY,0),TAB1.LASTMTALLMONEY) lastMonthAmount,
+                   NVL(TAB2.ACCMONEY,0) LASTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB1.ACCMONEY,0) CURRENTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB2.ACCWEIGHT,0) LASTMONTHVOLUME,
+                   NVL(TAB1.ACCWEIGHT,0) CURRENTMONTHVOLUME,
+                   NVL(TAB2.EXPRESSCT,0) LASTECONOMYEXPRESSVOTES,
+       			   NVL(TAB1.EXPRESSCT,0) CURRENTECONOMYEXPRESSVOTES
+              from
+            (
+            SELECT SRC1.DELIVERY_CUSTOMER_CODE,
+                   SRC1.RECEIVE_CUSTOMER_CITY_CODE,
+                   SRC1.RECEIVE_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_DELIVERYRTD_EXPRESS SRC3
+                     WHERE SRC3.DELIVERY_CUSTOMER_CODE = SRC1.DELIVERY_CUSTOMER_CODE
+                       AND SRC3.RECEIVE_CUSTOMER_CITY_CODE =
+                           SRC1.RECEIVE_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                               AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC1.AMOUNT) ACCMONEY,
+                   SUM(SRC1.WEIGHT) ACCWEIGHT,
+                   SUM(SRC1.EXPRESSCT) EXPRESSCT
+              FROM T_PKP_DELIVERYRTD_EXPRESS SRC1
+             WHERE SRC1.FDATE BETWEEN TRUNC(#{endDate,jdbcType=DATE}, 'MM') AND TRUNC(#{endDate,jdbcType=DATE})
+               and SRC1.DELIVERY_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC1.DELIVERY_CUSTOMER_CODE,
+                      SRC1.RECEIVE_CUSTOMER_CITY_NAME,
+                      SRC1.RECEIVE_CUSTOMER_CITY_CODE
+            ) TAB1          
+              FULL OUTER JOIN         
+            (          
+            SELECT SRC2.DELIVERY_CUSTOMER_CODE,
+                   SRC2.RECEIVE_CUSTOMER_CITY_CODE,
+                   SRC2.RECEIVE_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_DELIVERYRTD_EXPRESS SRC3
+                     WHERE SRC3.DELIVERY_CUSTOMER_CODE = SRC2.DELIVERY_CUSTOMER_CODE
+                       AND SRC3.RECEIVE_CUSTOMER_CITY_CODE =
+                           SRC2.RECEIVE_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                               AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC2.AMOUNT) ACCMONEY,
+                   SUM(SRC2.WEIGHT) ACCWEIGHT,
+                   SUM(SRC2.EXPRESSCT) EXPRESSCT
+              FROM T_PKP_DELIVERYRTD_EXPRESS SRC2
+             WHERE SRC2.FDATE BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+               AND (ADD_MONTHS(#{endDate,jdbcType=DATE}, - 1))
+               AND SRC2.DELIVERY_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC2.DELIVERY_CUSTOMER_CODE,
+                      SRC2.RECEIVE_CUSTOMER_CITY_NAME,
+                      SRC2.RECEIVE_CUSTOMER_CITY_CODE
+                      
+            )TAB2  
+             ON TAB1.DELIVERY_CUSTOMER_CODE=TAB2.DELIVERY_CUSTOMER_CODE
+            AND TAB1.RECEIVE_CUSTOMER_CITY_CODE = TAB2.RECEIVE_CUSTOMER_CITY_CODE  
+        ]]>
+    </select>
+    <!-- 快递到货线路分析查询 -->
+    <select id="queryExpressReceivePathAnalysis" resultMap="pathAnalysisInfo">
+        <![CDATA[
+            SELECT 
+                   TRUNC(#{endDate,jdbcType=DATE}) FDATE,
+                   NVL(TAB1.RECEIVE_CUSTOMER_CODE,TAB2.RECEIVE_CUSTOMER_CODE) MEMBERNUMBER,
+                   NVL(TAB1.DELIVERY_CUSTOMER_CITY_NAME,TAB2.DELIVERY_CUSTOMER_CITY_NAME) CITY,
+                   DECODE(TAB1.LASTMTALLMONEY,NULL,NVL(TAB2.LASTMTALLMONEY,0),TAB1.LASTMTALLMONEY) lastMonthAmount,
+                   NVL(TAB2.ACCMONEY,0) LASTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB1.ACCMONEY,0) CURRENTMONTHSAMETIMEAMOUNT,
+                   NVL(TAB2.ACCWEIGHT,0) LASTMONTHVOLUME,
+                   NVL(TAB1.ACCWEIGHT,0) CURRENTMONTHVOLUME,
+                   NVL(TAB2.EXPRESSCT,0) LASTECONOMYEXPRESSVOTES,
+       			   NVL(TAB1.EXPRESSCT,0) CURRENTECONOMYEXPRESSVOTES
+              from
+            (
+            SELECT SRC1.RECEIVE_CUSTOMER_CODE,
+                   SRC1.DELIVERY_CUSTOMER_CITY_CODE,
+                   SRC1.DELIVERY_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_RECEIVERTD_EXPRESS SRC3
+                     WHERE SRC3.RECEIVE_CUSTOMER_CODE = SRC1.RECEIVE_CUSTOMER_CODE
+                       AND SRC3.DELIVERY_CUSTOMER_CITY_CODE =
+                           SRC1.DELIVERY_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                           AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                   SUM(SRC1.AMOUNT) ACCMONEY,
+                   SUM(SRC1.WEIGHT) ACCWEIGHT,
+                   SUM(SRC1.EXPRESSCT) EXPRESSCT
+              FROM T_PKP_RECEIVERTD_EXPRESS SRC1
+             WHERE SRC1.FDATE BETWEEN TRUNC(#{endDate,jdbcType=DATE}, 'MM') AND TRUNC(#{endDate,jdbcType=DATE})
+               and SRC1.RECEIVE_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC1.RECEIVE_CUSTOMER_CODE,
+                      SRC1.DELIVERY_CUSTOMER_CITY_NAME,
+                      SRC1.DELIVERY_CUSTOMER_CITY_CODE
+            ) TAB1          
+              FULL OUTER JOIN         
+            (          
+            SELECT SRC2.RECEIVE_CUSTOMER_CODE,
+                   SRC2.DELIVERY_CUSTOMER_CITY_CODE,
+                   SRC2.DELIVERY_CUSTOMER_CITY_NAME,
+                   (SELECT SUM(SRC3.AMOUNT)
+                      FROM T_PKP_RECEIVERTD_EXPRESS SRC3
+                     WHERE SRC3.RECEIVE_CUSTOMER_CODE = SRC2.RECEIVE_CUSTOMER_CODE
+                       AND SRC3.DELIVERY_CUSTOMER_CITY_CODE =
+                           SRC2.DELIVERY_CUSTOMER_CITY_CODE
+                       AND SRC3.FDATE 
+                           BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+                           AND TRUNC(#{endDate,jdbcType=DATE}, 'MM') - 1
+                   ) LASTMTALLMONEY,
+                  SUM(SRC2.AMOUNT) ACCMONEY,
+                  SUM(SRC2.WEIGHT) ACCWEIGHT,
+                  SUM(SRC2.EXPRESSCT) EXPRESSCT
+              FROM T_PKP_RECEIVERTD_EXPRESS SRC2
+             WHERE SRC2.FDATE BETWEEN TRUNC(ADD_MONTHS(TRUNC(#{endDate,jdbcType=DATE}, 'MM'), -1), 'MM') 
+               AND (ADD_MONTHS(#{endDate,jdbcType=DATE}, - 1))
+               AND SRC2.RECEIVE_CUSTOMER_CODE=#{memberNumber,jdbcType=VARCHAR}
+             GROUP BY SRC2.RECEIVE_CUSTOMER_CODE,
+                      SRC2.DELIVERY_CUSTOMER_CITY_NAME,
+                      SRC2.DELIVERY_CUSTOMER_CITY_CODE
+                      
+            )TAB2  
+             ON TAB1.RECEIVE_CUSTOMER_CODE=TAB2.RECEIVE_CUSTOMER_CODE
+            AND TAB1.DELIVERY_CUSTOMER_CITY_CODE = TAB2.DELIVERY_CUSTOMER_CITY_CODE 
+        ]]>    
+    </select>
+</mapper>
+

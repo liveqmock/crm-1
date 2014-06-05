@@ -1,0 +1,10 @@
+﻿1.2012-12-24
+  feedbackreasion-mapper.xml --> id = "updateFeedBackReasion" --> 字段 WAILBILLCONTENT 应改成 FWAILBILLCONTENT
+2.2012-12-24
+  complaint-mapper.xml --> id = "inquireAllUserVeryfiyComplaintsCount" --> 字段 prostatus 有问题
+3.2012-12-25
+  util中DateUtil.JAVA工具类中只有一个方法getCurrentDateTime()得到了使用，其他的方法在工程中均未使用到；
+4.2012-12-25
+  util中MemberVirtualDataProducer.java工具类在整个工程中未使用
+5.2012-12-25
+  util中OrderVirtualDataProducer.java工具类在整个工程中未使用

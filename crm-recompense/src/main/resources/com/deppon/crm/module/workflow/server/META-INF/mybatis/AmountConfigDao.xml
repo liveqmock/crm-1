@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.workflow.server.dao.impl.AmountConfigDaoImpl">
+
+	<resultMap id="amountConfigMap"		type="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		<result property="id" column="FID" />
+		<result property="mcName" column="MC_NAME" />
+		<result property="mcDefiniTionName" column="MC_DEFINITIONNAME" />
+		<result property="currentApproStepName" column="CURRENT_APPROSTEP_NAME" />
+		<result property="currentApproStepNo" column="CURRENT_APPROSTEP_NO" />
+		<result property="targetApproStepName" column="TARGET_APPROSTEP_NAME" />
+		<result property="targetApproStepNo" column="TARGET_APPROSTEP_NO" />
+		<result property="minAmount" column="MIN_AMOUNT" />
+		<result property="maxAmount" column="MAX_AMOUNT" />
+	</resultMap>
+	
+	<sql id="partSql">
+		AF.FID,
+		AF.MC_NAME,
+		AF.MC_DEFINITIONNAME,
+		AF.CURRENT_APPROSTEP_NAME,
+		AF.CURRENT_APPROSTEP_NO,
+		AF.TARGET_APPROSTEP_NAME,
+		AF.TARGET_APPROSTEP_NO,
+		AF.MIN_AMOUNT,
+		AF.MAX_AMOUNT
+	</sql>
+	
+	<select id="queryForBranch" resultMap="amountConfigMap"
+		parameterType="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		SELECT
+		<include refid="partSql" />
+		FROM T_CRM_AMOUNT_CONFIG AF where 1=1 
+		<if test="null != id and '' != id">
+			and AF.FID = #{id}
+		</if>
+		<if test="null != mcDefiniTionName and '' != mcDefiniTionName">
+			and AF.MC_DEFINITIONNAME = #{mcDefiniTionName}
+		</if>
+		<if test="null != currentApproStepNo and '' != currentApproStepNo">
+			and AF.CURRENT_APPROSTEP_NO = #{currentApproStepNo}
+		</if>
+		<if test="null != targetApproStepNo and '' != targetApproStepNo">
+			and AF.TARGET_APPROSTEP_NO = #{targetApproStepNo}
+		</if>
+	</select>
+	
+	<select id="queryAllBranch" resultMap="amountConfigMap"
+		parameterType="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		SELECT
+		<include refid="partSql" />
+		FROM T_CRM_AMOUNT_CONFIG AF where 1=1 
+		<if test="null != mcDefiniTionName and '' != mcDefiniTionName">
+			and AF.MC_DEFINITIONNAME = #{mcDefiniTionName}
+		</if>
+		<if test="null != currentApproStepNo and '' != currentApproStepNo">
+			and AF.CURRENT_APPROSTEP_NO = #{currentApproStepNo}
+		</if>
+		<if test="null != targetApproStepNo and '' != targetApproStepNo">
+			and AF.TARGET_APPROSTEP_NO = #{targetApproStepNo}
+		</if>
+		order by AF.MC_DEFINITIONNAME, AF.CURRENT_APPROSTEP_NO, AF.MIN_AMOUNT
+	</select>
+	
+	<select id="getCountBranch" resultType="long"
+		parameterType="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		SELECT count(*) 
+		FROM T_CRM_AMOUNT_CONFIG AF where 1=1 
+		<if test="null != mcDefiniTionName and '' != mcDefiniTionName">
+			and AF.MC_DEFINITIONNAME = #{mcDefiniTionName}
+		</if>
+		<if test="null != currentApproStepNo and '' != currentApproStepNo">
+			and AF.CURRENT_APPROSTEP_NO = #{currentApproStepNo}
+		</if>
+		<if test="null != targetApproStepNo and '' != targetApproStepNo">
+			and AF.TARGET_APPROSTEP_NO = #{targetApproStepNo}
+		</if>
+	</select>
+	
+	<insert id="insertBranch"
+		parameterType="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		<![CDATA[ 
+			insert into T_CRM_AMOUNT_CONFIG (
+				FID,
+				MC_NAME,
+				MC_DEFINITIONNAME,
+				CURRENT_APPROSTEP_NAME,
+				CURRENT_APPROSTEP_NO,
+				TARGET_APPROSTEP_NAME,
+				TARGET_APPROSTEP_NO,
+				MIN_AMOUNT,
+				MAX_AMOUNT,
+				FCREATEUSER,
+				FCREATEDATE
+			) values (
+				#{id,jdbcType=VARCHAR},
+				#{mcName,jdbcType=VARCHAR},
+				#{mcDefiniTionName,jdbcType=VARCHAR},
+				#{currentApproStepName,jdbcType=VARCHAR},
+				#{currentApproStepNo,jdbcType=VARCHAR},
+				#{targetApproStepName,jdbcType=VARCHAR},
+				#{targetApproStepNo,jdbcType=VARCHAR},
+				#{minAmount,jdbcType=NUMERIC},
+				#{maxAmount,jdbcType=NUMERIC},
+				#{createUser ,jdbcType=NUMERIC},
+				#{createDate ,jdbcType=TIMESTAMP}
+			)
+		]]>
+	</insert>
+	
+	<update id="updateBranch"
+		parameterType="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		update T_CRM_AMOUNT_CONFIG
+		<set>
+			<if test="null != mcName">MC_NAME=#{mcName},</if>
+			<if test="null != mcDefiniTionName">MC_DEFINITIONNAME=#{mcDefiniTionName},</if>
+			<if test="null != currentApproStepName">CURRENT_APPROSTEP_NAME=#{currentApproStepName},</if>
+			<if test="null != currentApproStepNo">CURRENT_APPROSTEP_NO=#{currentApproStepNo},</if>
+			
+			<if test="null != targetApproStepName">TARGET_APPROSTEP_NAME=#{targetApproStepName},</if>
+			<if test="null != targetApproStepNo">TARGET_APPROSTEP_NO=#{targetApproStepNo},</if>
+			<if test="null != minAmount">MIN_AMOUNT=#{minAmount},</if>
+			<if test="null != maxAmount">MAX_AMOUNT=#{maxAmount},</if>
+			<if test="null != modifyUser">FMODIFYUSER=#{modifyUser},</if>
+			<if test="null != modifyDate">FMODIFYDATE=#{modifyDate}</if>
+		</set>
+		<where>
+			FID=#{id}
+		</where>
+	</update>
+	
+	<delete id="deleteBranch" parameterType="String">
+			delete from T_CRM_AMOUNT_CONFIG AF
+			where AF.fid =#{id}
+	</delete>
+	
+	<!-- 工作流名称+当前审批环节相同时金额范围是否与已有记录有交集 -->
+	<select id="validBranch" resultType="long" parameterType="com.deppon.crm.module.workflow.server.util.AmountConfigEntity">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_CRM_AMOUNT_CONFIG AF 
+		]]>
+		<where>
+			1=1 
+			<if test="id != null and id != ''">
+				AND AF.FID != #{id} 
+			</if>
+			<if test="mcDefiniTionName != null and mcDefiniTionName != ''">
+				AND AF.MC_DEFINITIONNAME = #{mcDefiniTionName} 
+			</if>
+			<if test="currentApproStepNo != null and currentApproStepNo != ''">
+				AND AF.CURRENT_APPROSTEP_NO = #{currentApproStepNo} 
+			</if>
+			<if test="targetApproStepNo != null and targetApproStepNo != ''">
+				AND AF.TARGET_APPROSTEP_NO = #{targetApproStepNo}
+			</if>
+		</where>
+	</select>
+</mapper>

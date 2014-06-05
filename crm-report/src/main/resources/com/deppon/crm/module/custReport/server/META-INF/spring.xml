@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id ="keycustReportDao"
+			class="com.deppon.crm.module.report.server.dao.impl.KeycustReportDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id ="keycustReportService"
+			class="com.deppon.crm.module.report.server.service.impl.KeycustReportService">
+		<property name="keycustReportDao" ref="keycustReportDao" />
+	</bean>
+	<bean id ="keycustReportManager"
+			class="com.deppon.crm.module.report.server.manager.impl.KeycustReportManager">
+		<property name="keycustReportService" ref="keycustReportService" />
+		<property name="alterMemberService" ref="alterMemberService" />
+		<property name="marketActivityManager" ref="marketActivityManager"></property>
+	</bean>
+	<bean id ="keycustReportAction" scope="prototype"
+			class="com.deppon.crm.module.report.server.action.KeycustReoprtAction">
+		<property name="keycustReportManager" ref="keycustReportManager" />
+	</bean>
+
+	<!-- 客户信用报表 -->
+	<bean id="custCreditReportManager" 
+			class="com.deppon.crm.module.report.server.manager.impl.CustCreditReportManagerImpl">
+		<property name="custCreditManager" ref="custCreditManager" />
+	</bean>
+	<bean id ="worsecustReportAction" scope="prototype"
+			class="com.deppon.crm.module.report.server.action.WorsecustReportAction">
+		<property name="custCreditReportManager" ref="custCreditReportManager" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="custCreditManager" ref="custCreditManager" />
+	</bean>
+	
+</beans>

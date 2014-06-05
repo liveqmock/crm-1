@@ -1,0 +1,74 @@
+
+--工单和工单责任表新增业务模式列 默认为零担
+alter table t_cust_complaint add  fbusinessmodel  varchar2(50) default 'UNEXPRESS';
+alter table t_cust_duty add  fbusinessmodel  varchar2(50) default 'UNEXPRESS'   ;
+
+
+--数据字典表头插入业务模式
+insert into T_CODE_HEAD
+values
+  (SEQ_ID_HEAD.NEXTVAL,
+   'COMPLAINT_BUSINESS_MODEL',
+   '业务模式',
+   sysdate,
+   1,
+   sysdate,
+   1) ;
+
+--数据字典插入快递
+insert into T_CODE_DETAIL
+  (fid,
+   Fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   Fcodeseq,
+   Flanguage,
+   Fcreatetime,
+   Fcreateuserid,
+   Flastupdatetime,
+   Flastmodifyuserid)
+values
+  (SEQ_ID_DETAIL.NEXTVAL,
+   0,
+   'COMPLAINT_BUSINESS_MODEL',
+   'EXPRESS',
+   '快递',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   130195,
+   sysdate,
+   130195);
+--数据字典插入零担
+insert into T_CODE_DETAIL
+  (fid,
+   Fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   Fcodeseq,
+   Flanguage,
+   Fcreatetime,
+   Fcreateuserid,
+   Flastupdatetime,
+   Flastmodifyuserid)
+values
+  (SEQ_ID_DETAIL.NEXTVAL,
+   0,
+   'COMPLAINT_BUSINESS_MODEL',
+   'UNEXPRESS',
+   '零担',
+   'A',
+   2,
+   'zh_CN',
+   sysdate,
+   130195,
+   sysdate,
+   130195);
+   
+   --更新数据字典网络改为官网
+   update t_code_detail d set d.fcodedesc='官网' where d.fid='322';

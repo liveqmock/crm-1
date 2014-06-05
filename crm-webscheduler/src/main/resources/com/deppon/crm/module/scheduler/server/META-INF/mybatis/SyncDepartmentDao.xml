@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.scheduler.shared.domain.OaDepartmentEntity">
+	<!-- 查询出需要同步的组织数据 -->
+	<select id="queryListByUpdateTime"
+		resultType="com.deppon.crm.module.scheduler.shared.domain.OaDepartmentEntity"
+		parameterType="java.util.HashMap">
+		<![CDATA[
+			SELECT 
+				 T.ORGID 	        ID,
+				 T.ORGCODE 			ORGCODE,
+				 T.ORGNAME 			ORGNAME,
+				 T.MANAGERID 		MANAGERID,
+				 T.LINKTEL 			LINKTEL,
+				 T.PARENTORGID 		PARENTORGID,
+				 T.PARENTCOMPCODE 	PARENTCOMCODE,
+				 T.ZIPCODE 			ZIPCODE,
+				 T.ORGADDR 			ORGADDR,
+				 T.ORGCLOSE 		ORGCLOSE,
+				 T.ENDDATE 			ENDDATE,
+				 T.STARTDATE 		STARTDATE,
+				 T.SORTNO 			SORTNO,
+				 T.ORGLEVEL 		ORGLEVEL,
+				 T.ORGSEQ 			ORGSEQ,
+				 ''                 DEPTDESC,
+				 ''                 FAX,
+				 ''                 CREATEUSER,
+				 ''					MODIFYUSER,
+				 T.CREATETIME  		CREATEDATE,
+         		 T.LASTUPDATE  		MODIFYDATE,
+         		 T.FINASYSCODE		STANDARDCODE
+			FROM OM_ORGANIZATION T
+		]]>
+		<if test="date!=null">
+			<![CDATA[
+			     WHERE T.LASTUPDATE >= #{date,jdbcType=TIMESTAMP} or T.CREATETIME >= #{date,jdbcType=TIMESTAMP}
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY T.ORGID
+		]]>
+	</select>
+
+	<!-- 根据Id查询组织 -->
+	<select id="countDepartmentByDeptSeq" resultType="int">
+		<![CDATA[
+			SELECT COUNT(T.FID) FROM T_ORG_DEPARTMENT T WHERE T.FID=#{id,jdbcType=VARCHAR}
+		]]>
+	</select>
+
+	<!-- 统计需要同步的组织数据数量 -->
+	<select id="countRecord" resultType="int">
+		<![CDATA[
+			SELECT COUNT(T.ORGID) FROM OM_ORGANIZATION T
+		]]>
+		<if test="lastUpdateTime!=null">
+			<![CDATA[
+			     WHERE T.LASTUPDATE>=#{lastUpdateTime,jdbcType=TIMESTAMP}
+			]]>
+		</if>
+	</select>
+	<!-- 新增组织数据 -->
+	<insert id="insertDept"
+		parameterType="com.deppon.crm.module.scheduler.shared.domain.OaDepartmentEntity">
+<!-- 		<selectKey keyProperty="id" order="BEFORE" resultType="String"> -->
+<!-- 			<![CDATA[ -->
+<!-- 				SELECT SEQ_ID_ORGANIZATION.NEXTVAL as id FROM DUAL  -->
+<!-- 			]]> -->
+<!-- 		</selectKey> -->
+		<![CDATA[
+			INSERT INTO T_ORG_DEPARTMENT
+				  (FID,
+				   FDEPTCODE,
+				   FDEPTNAME,
+				   FPRINCIPAL,
+				   FPHONE,
+				   FFAX,
+				   FPARENTID,
+				   FCOMPANYNAME,
+				   FZIPCODE,
+				   FADDRESS,
+				   FSTATUS,
+				   FINVALIDDATE,
+				   FVALIDDATE,
+				   FDISPLAYORDER,
+				   FDEPTLEVEL,
+				   FDEPTDESC,
+				   FDEPTSEQ,
+				   FCREATEUSERID,
+				   FCREATETIME,
+				   FLASTMODIFYUSERID,
+				   FLASTUPDATETIME,
+				   FSTANDARDCODE)
+			VALUES(
+				  #{id,jdbcType=NUMERIC},
+				  #{orgCode,jdbcType=VARCHAR},
+				  #{orgName,jdbcType=VARCHAR},
+				  #{managerId,jdbcType=VARCHAR},
+				  #{linkTel,jdbcType=VARCHAR},
+				  #{fax,jdbcType=VARCHAR},
+				  #{parentOrgId,jdbcType=NUMERIC},
+				  #{parentComCode,jdbcType=VARCHAR},
+				  #{zipCode,jdbcType=VARCHAR},
+				  #{orgAddr,jdbcType=VARCHAR},
+				  #{orgClose,jdbcType=VARCHAR},
+				  #{endDate,jdbcType=TIMESTAMP},
+				  #{startDate,jdbcType=TIMESTAMP},
+				  #{sortNo,jdbcType=NUMERIC},
+				  #{orgLevel,jdbcType=NUMERIC},
+				  #{desc,jdbcType=VARCHAR},
+				  #{orgSeq,jdbcType=VARCHAR},
+				  #{createUser,jdbcType=NUMERIC},
+				  #{createDate,jdbcType=TIMESTAMP},
+				  #{modifyUser,jdbcType=NUMERIC},
+				  #{modifyDate,jdbcType=TIMESTAMP},
+				  #{standardCode,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	<update id="updateDept"
+		parameterType="com.deppon.crm.module.scheduler.shared.domain.OaDepartmentEntity">
+		<![CDATA[
+			UPDATE T_ORG_DEPARTMENT
+				   SET FLASTUPDATETIME =  SYSDATE,
+				    FCREATEUSERID =   #{createUser,jdbcType=NUMERIC},
+			        FLASTMODIFYUSERID =   #{modifyUser,jdbcType=NUMERIC},
+			        FDISPLAYORDER =    #{sortNo,jdbcType=NUMERIC},
+			        FPARENTID =  #{parentOrgId,jdbcType=NUMERIC},
+			        FDEPTLEVEL =    #{orgLevel,jdbcType=NUMERIC}
+		 ]]>
+		<if test="orgCode!=null and orgCode!=''">
+		 	<![CDATA[,FDEPTCODE = #{orgCode,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="standardCode!=null and standardCode!=''">
+		 	<![CDATA[,FSTANDARDCODE = #{standardCode,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="orgName!=null and orgName!=''">
+		 	<![CDATA[,FDEPTNAME= #{orgName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="managerId!=null and managerId!=''">
+		 	<![CDATA[,FPRINCIPAL = #{managerId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="linkTel!=null and linkTel!=''">
+		 	<![CDATA[,FPHONE = #{linkTel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="fax!=null and fax!=''">
+		 	<![CDATA[,FFAX = #{fax,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="parentComCode!=null and parentComCode!=''">
+		 	<![CDATA[,FCOMPANYNAME =  #{parentComCode,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="zipCode!=null and zipCode!=''">
+		 	<![CDATA[,FZIPCODE =  #{zipCode,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="orgAddr!=null and orgAddr!=''">
+		 	<![CDATA[,FADDRESS =  #{orgAddr,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="orgClose!=null and orgClose!=''">
+		 	<![CDATA[,FSTATUS =   #{orgClose,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="endDate!=null">
+		 	<![CDATA[,FINVALIDDATE =   #{endDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="startDate!=null">
+		 	<![CDATA[,FVALIDDATE =    #{startDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="desc!=null and desc!=''">
+		 	<![CDATA[,FDEPTDESC =   #{desc,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="createDate!=null and createDate!=''">
+		 	<![CDATA[,FCREATETIME =  #{createDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<![CDATA[
+			WHERE FID =  #{id,jdbcType=NUMERIC}
+		]]>
+	</update>
+
+	<!-- 删除组织 -->
+	<delete id="deleteByCreateUser" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_ORG_DEPARTMENT T WHERE T.FCREATEUSERID=#{createUser,jdbcType=VARCHAR} 
+		]]>
+	</delete>
+	<!-- 根据Id查询组织 -->
+	<select id="queryDeptById" resultType="com.deppon.crm.module.scheduler.shared.domain.OaDepartmentEntity">
+		<![CDATA[
+				SELECT 
+				 T.ORGID 	        ID,
+				 T.ORGCODE 			ORGCODE,
+				 T.ORGNAME 			ORGNAME,
+				 T.MANAGERID 		MANAGERID,
+				 T.LINKTEL 			LINKTEL,
+				 T.PARENTORGID 		PARENTORGID,
+				 T.PARENTCOMPCODE 	PARENTCOMCODE,
+				 T.ZIPCODE 			ZIPCODE,
+				 T.ORGADDR 			ORGADDR,
+				 T.ORGCLOSE 		ORGCLOSE,
+				 T.ENDDATE 			ENDDATE,
+				 T.STARTDATE 		STARTDATE,
+				 T.SORTNO 			SORTNO,
+				 T.ORGLEVEL 		ORGLEVEL,
+				 T.ORGSEQ 			ORGSEQ,
+				 ''                 DEPTDESC,
+				 ''                 FAX,
+				 ''                 CREATEUSER,
+				 ''					MODIFYUSER,
+				 T.CREATETIME  		CREATEDATE,
+         		 T.LASTUPDATE  		MODIFYDATE,
+         		 T.FINASYSCODE      STANDARDCODE
+			FROM OM_ORGANIZATION T 
+			WHERE T.ORGID=#{orgId,jdbcType=NUMERIC}
+		]]>
+	</select>
+	<!-- 获取数据库时间 -->
+	<select id="getSysDate" resultType="Date">
+		<![CDATA[
+			SELECT SYSDATE FROM DUAL
+		]]>
+	</select>
+</mapper>

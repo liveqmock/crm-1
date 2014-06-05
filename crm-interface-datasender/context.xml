@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<Resource name="jdbc/crmdb" auth="Container" type="javax.sql.DataSource"
+		driverClassName="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@192.168.17.161:1521:depcrm"
+		username="develop" password="develop" maxActive="20" maxIdle="10"
+		maxWait="-1" />
+		
+		<!-- <Resource name="jdbc/crmdb" auth="Container" type="javax.sql.DataSource"
+		driverClassName="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@192.168.20.40:1521:crmtest"
+		username="crmtest" password="crmtest" maxActive="20" maxIdle="10"
+		maxWait="-1" /> -->
+	<Resource name="jms/crmQueueConnection" auth="Container"
+		type="com.ibm.mq.jms.MQConnectionFactory" factory="com.ibm.mq.jms.MQConnectionFactoryFactory"
+		description="JMS Queue Connection Factory for sending messages" HOST="192.168.17.141"
+		PORT="2428" CHAN="CRM.CLIENT" TRAN="1" CCSID="819" QMGR="QM_APPD" />
+		
+		<!-- <Resource name="jms/crmQueueConnection" auth="Container"
+		type="com.ibm.mq.jms.MQConnectionFactory" factory="com.ibm.mq.jms.MQConnectionFactoryFactory"
+		description="JMS Queue Connection Factory for sending messages" HOST="192.168.17.141"
+		PORT="1428" CHAN="CRM.CLIENT" TRAN="1" CCSID="819" QMGR="QM_APP" /> -->
+		
+	<Resource name="jdbc/crmdb_log" auth="Container" type="javax.sql.DataSource"
+		driverClassName="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@192.168.17.161:1521:depcrm"
+		username="develop" password="develop" maxActive="20" maxIdle="10"
+		maxWait="-1" />
+</Context>

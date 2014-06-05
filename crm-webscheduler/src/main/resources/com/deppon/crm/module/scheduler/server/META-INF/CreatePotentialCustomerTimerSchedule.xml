@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+	<!-- 任务定义 -->
+	<bean id="createPotentialCustTimerJob"
+		class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass"
+			value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="timerSchedulingControl"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="executePotentialCustTimer"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="createPotentialCustTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="createPotentialCustTimerJob" />
+		<property name="cronExpression">
+			<value> 0 0/10 * * * ? </value>
+		</property>
+	</bean>
+
+</beans>

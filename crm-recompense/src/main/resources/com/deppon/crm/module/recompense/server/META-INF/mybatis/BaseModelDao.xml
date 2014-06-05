@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.recompense.domain.BaseModelDao">
+	<!-- 角色部门结果集映射 -->
+	<resultMap id="UserRoleDeptRalationResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.UserRoleDeptRelation">
+		<result property="id" column="RD_ID" />
+		<association property="role" column="RD_ROLEID"
+			javaType="com.deppon.crm.module.authorization.shared.domain.Role">
+			<result property="id" column="RD_ROLEID" />
+			<result property="roleName" column="R_ROLENAME" />
+		</association>
+		<association property="dept" column="RD_DEPTID"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<result property="id" column="RD_DEPTID" />
+			<result property="deptCode" column="D_DEPTCODE" />
+			<result property="deptName" column="D_DEPTNAME" />
+		</association>
+		<association property="user" column="RD_USERID"
+			select="com.deppon.crm.module.authorization.shared.domain.User.getById" />
+	</resultMap>
+
+	<!-- 保存用户角色部门关系 -->
+	<insert id="insertUserRoleDepartment"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.UserRoleDeptRelation">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT SEQ_ID_ROLEDEPT.NEXTVAL AS ID
+			FROM DUAL
+		</selectKey>
+		INSERT INTO T_REC_ROLEDEPARTMENT(FID,FROLEID,FDEPTID,FUSERID) VALUES
+		(#{id},
+		#{role.id,jdbcType=NUMERIC},
+		#{dept.id,jdbcType=NUMERIC},
+		#{user.id,jdbcType=NUMERIC})
+	</insert>
+
+	<!--根据id删除 -->
+	<delete id="deleteById" parameterType="string">
+		DELETE
+		T_REC_ROLEDEPARTMENT WHERE FID=#{id}
+	</delete>
+
+	<!-- 根据用户ID删除 -->
+	<delete id="deleteByUserId" parameterType="string">
+		DELETE
+		T_REC_ROLEDEPARTMENT WHERE FUSERID=#{userId"}
+	</delete>
+
+	<!-- 查询字段 -->
+	<sql id="UserRoleDepartmentFeilds">
+		RD.FID RD_ID,
+		RD.FROLEID RD_ROLEID,
+		R.FROLENAME R_ROLENAME,
+		RD.FDEPTID RD_DEPTID,
+		D.FDEPTCODE D_DEPTCODE,
+		D.FDEPTNAME D_DEPTNAME,
+		RD.FUSERID RD_USERID,
+		U.FLOGINNAME U_LOGINNAME
+	</sql>
+
+	<!--根据用户ID查询大区 -->
+	<select id="getByUserId" resultMap="UserRoleDeptRalationResultMap"
+		parameterType="string">
+		SELECT
+		<include refid="UserRoleDepartmentFeilds" />
+		FROM
+		T_REC_ROLEDEPARTMENT RD
+		LEFT JOIN T_AUTH_ROLE R ON RD.FROLEID=R.FID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON RD.FDEPTID=D.FID
+		LEFT JOIN T_AUTH_USER U
+		ON RD.FUSERID=U.FID
+		WHERE RD.FUSERID=#{userId}
+	</select>
+	<!--查询所有大区 -->
+	<select id="getByAllUser" resultMap="UserRoleDeptRalationResultMap">
+		SELECT
+		<include refid="UserRoleDepartmentFeilds" />
+		FROM
+		T_REC_ROLEDEPARTMENT RD
+		LEFT JOIN T_AUTH_ROLE R ON RD.FROLEID=R.FID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON RD.FDEPTID=D.FID
+		LEFT JOIN T_AUTH_USER U
+		ON RD.FUSERID=U.FID
+	</select>
+
+	<!--根据部门ID查询大区 -->
+	<select id="getByDeptId" resultMap="UserRoleDeptRalationResultMap"
+		parameterType="string">
+		SELECT
+		<include refid="UserRoleDepartmentFeilds" />
+		FROM
+		T_REC_ROLEDEPARTMENT RD
+		LEFT JOIN T_AUTH_ROLE R ON RD.FROLEID=R.FID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON RD.FDEPTID=D.FID
+		LEFT JOIN T_AUTH_USER U
+		ON RD.FUSERID=U.FID
+		WHERE RD.FDEPTID=#{deptId}
+	</select>
+
+	<!--查询全部 -->
+	<select id="getAll" resultMap="UserRoleDeptRalationResultMap">
+		SELECT
+		<include refid="UserRoleDepartmentFeilds" />
+		FROM
+		T_REC_ROLEDEPARTMENT RD
+		LEFT JOIN T_AUTH_ROLE R ON RD.FROLEID=R.FID
+		LEFT JOIN T_ORG_DEPARTMENT D
+		ON RD.FDEPTID=D.FID
+		LEFT JOIN T_AUTH_USER U
+		ON RD.FUSERID=U.FID
+	</select>
+
+	<!--查询未分配的大区 -->
+	<!-- <select id="queryUnassignedDept" -->
+	<!-- resultMap="com.deppon.crm.module.organization.shared.domain.Department.departmentSimpleResultMap"> -->
+	<!-- SELECT -->
+	<!-- FID MASTER_ID,FDEPTCODE MASTER_DEPTCODE,FDEPTNAME MASTER_DEPTNAME FROM -->
+	<!-- T_ORG_DEPARTMENT -->
+	<!-- WHERE -->
+	<!-- FDEPTLEVEL = 1 AND FID -->
+	<!-- NOT IN -->
+	<!-- (SELECT FDEPTID FROM T_REC_ROLEDEPARTMENT ) -->
+	<!-- </select> -->
+
+	<!--获取所有被设置过的大区 -->
+	<!-- <select id="getAllAssinedRegion" resultMap="UserRoleDeptRalationResultMap" 
+		parameterType="string"> select -->
+	<!-- rd.fId rd_id,rd.froleId rd_roleId,rd.fDeptId -->
+	<!-- rd_deptId,r.Fid r_id,r.Frolename r_roleName from -->
+	<!-- t_rec_roledepartment rd left join t_auth_role r on -->
+	<!-- rd.froleId=r.Fid -->
+	<!-- </select> -->
+</mapper>

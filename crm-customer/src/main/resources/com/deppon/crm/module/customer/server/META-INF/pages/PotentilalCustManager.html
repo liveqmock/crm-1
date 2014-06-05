@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+     <!-- Ext -->
+	<link rel="stylesheet" type="text/css" href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+	<link rel="stylesheet" type="text/css" href="../styles/common/deppon.css" />
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+	<!-- i18n -->
+	<script language="javascript" src="../i18n_permission_acess/customer/customer.js"></script>
+
+	<script type="text/javascript">
+	/**
+	 * 得到数据字典数据
+	 */
+	var DataDictionary = {};
+	
+	DataDictionary.TRADE = [];
+	DataDictionary.SECOND_TRADE = [];
+	DataDictionary.CUST_SOURCE = [];
+	DataDictionary.BUSINESS_STATUS = [];
+	DataDictionary.COOPERATION_LOGISTICS = [];
+	DataDictionary.COOPERATION_INTENTION = [];
+	DataDictionary.CARGO_POTENTIAL = [];
+	DataDictionary.DEVELOP_STATUS = [];
+	DataDictionary.BUSINESS_TYPE = [];
+		var loadDictionary = function(){
+			Ext.Ajax.request({
+				url:'../common/queryAllDataDictionaryByKeys.action',
+				async:false,
+				jsonData:{'dataDictionaryKeys':[
+					// 行业
+					'TRADE',
+					//二级行业
+					'SECOND_TRADE',
+					// 客户来源
+					'CUST_SOURCE',
+					// 商机状态
+					'BUSINESS_STATUS',
+					// 合作物流
+					'COOPERATION_LOGISTICS',
+					// 合作意向
+					'COOPERATION_INTENTION',
+					// 货量潜力
+					'CARGO_POTENTIAL',
+					// 开发状态
+					'DEVELOP_STATUS',
+					//业务类别
+					'BUSINESS_TYPE'
+				]},
+				success:function(response){
+					var result = Ext.decode(response.responseText);
+					DataDictionary = result.dataDictionary;
+				},
+				failure:function(response){
+					var result = Ext.decode(response.responseText);
+					alert(result.message);
+				}
+			});
+		}
+		
+	</script>
+
+	<!-- 自定义 -->
+      <script type="text/javascript" charset="utf-8" src="../scripts/customer/config/CONFIG.js"></script> 
+      <script type="text/javascript" charset="utf-8" src="../scripts/customer/util/DpUtil.js?201307311610"></script> 
+	  <script type="text/javascript" charset="utf-8" src="../scripts/common/common/common.js?201307311610"></script>
+  	 <script type="text/javascript" charset="utf-8" src="../scripts/common/util/MessageUtil.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/common/common/DataDictionary.js?201307311610"></script>
+		
+      <script type="text/javascript" charset="utf-8" src="../scripts/common/areaaddress/AreaAddressStore.js"></script>
+	  <script type="text/javascript" charset="utf-8" src="../scripts/common/areaaddress/AreaAddressView.js"></script>
+	  <script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/view/BelongDeptView.js"></script>
+	 <script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/data/PotentialCustBasicData.js?201307311610"></script> 
+	 <script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/data/PotentialCustData.js?201307311610"></script> 
+	 <script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/data/PotentialCustSearchData.js"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/view/CustomerTrade.js"></script>	
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/view/PotentialCustEditView.js?201307311610"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/view/PotentialCustDetailView.js?201307311610"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/view/PotentialCustManagerView.js?201307311610"></script>    
+
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/custlabel/view/CustLabelView.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/custlabel/service/CustLabelService.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/custlabel/data/LabelBasicData.js"></script>
+	
+<!-- 	<script type="text/javascript" charset="utf-8" src="../scripts/customer/potentialcust/Potentialcust.js"></script>     -->
+
+	<style>
+	.warningwin .x-window-body-default{
+		border:0px !important;
+	}
+	</style>
+</head>
+
+<body onload="loadDictionary()" class="tabcontentpadding">
+
+</body>
+</html>

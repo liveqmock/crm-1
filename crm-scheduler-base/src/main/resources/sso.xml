@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is just example. please change for your real system. -->
+<sso currentApplication="application" url="http://localhost:8080/application/"
+	homePage="index.action" ssoTokenStore="com.deppon.foss.module.frameworkimpl.server.ssoImpl.TokenMemcacheStore" 
+	ssoUserStore="com.deppon.foss.module.frameworkimpl.server.ssoImpl.FossSSOUserSessionStore">
+
+	<application id="easportal" url="http://192.168.14.41:56898/easportal"
+		homePage=""/>
+	<application id="eos-default" url="http://192.168.14.41:8080/eos-default"
+		homePage="index.jsp"/>
+
+</sso>

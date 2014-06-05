@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.Duty">
+	<sql id="receiveDutyCondition">
+		<where>
+			<choose>
+				<when test="code != null and code != '' and codeType ==&quot;dealbill&quot;">
+						FDEALNUMBER = #{code}
+				</when>
+				<when test="code != null and code != '' and codeType ==&quot;bill&quot;">
+						FVOUCHERNUMBER = #{code}
+				</when>
+				<when test="code != null and code != '' and codeType ==&quot;recomcode&quot;">
+						FREBINDNO = #{code}
+				</when>
+				<otherwise>
+					<if test="receiveUserId != null and receiveUserId !=''">
+					<![CDATA[
+						AND FRECEIVEUSERID = #{receiveUserId}
+					]]>
+					</if>
+					<if test="receiveUser != null and receiveUser != ''">
+					<![CDATA[
+						AND FRECEIVEUSER like '%'||#{receiveUser}||'%'
+					]]>
+					</if>
+					<if test="receiveBeginTime != null and receiveEndTime != null">
+					<![CDATA[
+						AND FRECEIVETIME between #{receiveBeginTime} and #{receiveEndTime} 
+					]]>
+					</if>
+					<if test="status != null">
+							AND FSTATUS IN
+						<foreach collection="status" open="(" close=")" separator=","
+							item="item">
+						<![CDATA[	#{item,jdbcType=VARCHAR}  ]]>
+						</foreach>					
+					</if>
+					<if test="proStatus != null and proStatus != ''">
+					<![CDATA[
+						AND FPROSTATUS = #{proStatus}
+					]]>
+					</if>
+					<if test="businessModel != null and businessModel != ''">
+						AND FBUSINESSMODEL = #{businessModel}
+					</if>
+				<![CDATA[
+					AND　FSURVEYRESULT　= 'LIBRAMS'	
+				]]>	
+				</otherwise>
+			</choose>	
+			<if test="reportType != null and reportType != ''">
+			<![CDATA[
+				AND FREPORTTYPE  = #{reportType}
+			]]>
+			</if>				
+		</where>
+			ORDER BY FREPORTTIME	   
+	</sql>
+	<!-- 工单责任查询 -->
+	<select id="dutyListSearch" parameterType="com.deppon.crm.module.duty.shared.domain.QueryDutyCondition" 
+		resultType="com.deppon.crm.module.duty.shared.domain.DutyQueryResult">
+	<![CDATA[
+				SELECT distinct(dutyId),voucherNumber,dealNumber,reportType,caller,
+					reporttime,surveyResult,operateName,operateDate ,processPass,complaintId,businessModel
+				FROM (select 
+				 DUTY.FID dutyId,
+				 DUTY.fvouchernumber voucherNumber,
+				 DUTY.fdealnumber dealNumber,
+				 DUTY.freporttype reportType,
+				 DUTY.FCALLER caller,
+				 DUTY.Freporttime reporttime,
+				 DR.FDUTYDEADLINE dutyDeadLine,
+				 DUTY.fsurveyresult surveyResult,
+				 DDP.FOPERATORNAME operateName,
+				 DDP.FOPERATORDATE operateDate,
+				 DUTY.FTREATPROCESS processPass,
+				 DUTY.FCOMPLAINTID complaintId,
+				 DUTY.FBUSINESSMODEL businessModel
+				 FROM  T_CUST_DUTY   DUTY  LEFT JOIN T_CUST_DUTYRESULT DR ON DUTY.FID = DR.FDUTYID
+										   LEFT JOIN T_CUST_DUTYFEEDBACK DFB ON DR.FID = DFB.FDETAILID
+										   LEFT JOIN 
+											   ( SELECT *
+		  FROM T_CUST_DUTYDEALPROCESS A
+		 WHERE A.FTREATSTATUS = 'PERSON'
+		   AND NOT EXISTS (SELECT *
+				  FROM T_CUST_DUTYDEALPROCESS B
+				 WHERE B.FTREATSTATUS = 'PERSON'
+				   AND A.FDUTYID = B.FDUTYID
+				   AND A.FID < B.FID)								    
+											) DDP ON DUTY.FID =DDP.FDUTYID
+				 WHERE 1=1 
+	]]>
+		<choose>  
+			<when test="typeId != null and typeId !='' and typeName != null and typeName !=''">
+			<![CDATA[
+				AND ${typeId} = #{typeName,jdbcType=VARCHAR}
+			]]>
+			</when >
+			<otherwise>
+				<choose>
+					<when test="reportTimeBegin != null and reportTimeBegin !='' and reportTimeEnd != null and reportTimeEnd !=''">
+					<![CDATA[
+						AND DUTY.FREPORTTIME between #{reportTimeBegin,jdbcType=TIMESTAMP} and #{reportTimeEnd,jdbcType=TIMESTAMP}
+					]]>
+					</when >
+					<otherwise>
+						<choose>
+							<when test="feedBackTimeBegin != null and feedBackTimeBegin !='' and feedBackTimeEnd != null and feedBackTimeEnd !=''">
+							<![CDATA[
+								AND DFB.FFEEDBACKTIME between #{feedBackTimeBegin,jdbcType=TIMESTAMP} and #{feedBackTimeEnd,jdbcType=TIMESTAMP}
+							]]>
+							</when >
+							<otherwise>
+								<choose>
+									<when test="appDutyTimeBegin != null and appDutyTimeBegin !='' and appDutyTimeEnd != null and appDutyTimeEnd !=''">
+									<![CDATA[
+										AND DDP.FOPERATORDATE between #{appDutyTimeBegin,jdbcType=TIMESTAMP} and #{appDutyTimeEnd,jdbcType=TIMESTAMP}
+									]]>
+									</when>
+								</choose>
+							</otherwise>
+						</choose>
+					</otherwise>
+				</choose>
+				<if test="appDutyUser != null and appDutyUser !=''">
+				<![CDATA[
+					AND DDP.FOPERATORNAME LIKE '%'||#{appDutyUser,jdbcType=VARCHAR}||'%'
+				]]>
+				</if>
+				<if test="surveyResult != null and surveyResult !=''">
+				<![CDATA[
+					AND DR.FSURVEYRESULT = #{surveyResult,jdbcType=VARCHAR}
+					AND DR.FSTATUS = 'EFFECTIVE'
+				]]>
+				</if>
+				<if test="dutyStates != null and dutyStates !=''">
+				<![CDATA[
+					AND DR.FDUTYSTATUS = #{dutyStates,jdbcType=VARCHAR}
+					AND DR.FSTATUS = 'EFFECTIVE'
+				]]>
+				</if>
+				<if test="dutyDept != null and dutyDept !=''">
+				<![CDATA[
+					AND DR.FDUTYPERNAME LIKE '%'||#{dutyDept,jdbcType=VARCHAR}||'%'
+					AND DR.FSTATUS = 'EFFECTIVE'
+				]]>
+				</if>
+				<if test="feedbackDept != null and feedbackDept !=''">
+				<![CDATA[
+					AND DFB.FFEEDDEPTNAME LIKE '%'||#{feedbackDept,jdbcType=VARCHAR}||'%'
+				]]>
+				</if>
+				<if test="callCenterUser != null and callCenterUser !=''">
+				<![CDATA[
+					AND DFB.FCALLCENUSER LIKE '%'||#{callCenterUser,jdbcType=VARCHAR}||'%'
+				]]>
+				</if>
+				
+				<if test="businessModel != null and businessModel != ''">
+					AND DUTY.FBUSINESSMODEL =#{businessModel}
+				</if>
+			</otherwise>
+		</choose>
+	<![CDATA[) ]]>
+		ORDER BY reporttime
+	</select>
+	<!-- 工单责任查询 -条数-->
+	<select id="dutyListSearchCount" parameterType="com.deppon.crm.module.duty.shared.domain.QueryDutyCondition" 
+		resultType="int">
+	<![CDATA[select count(distinct DUTY.FID)
+				 FROM  T_CUST_DUTY   DUTY  LEFT JOIN T_CUST_DUTYRESULT DR ON DUTY.FID = DR.FDUTYID
+										   LEFT JOIN T_CUST_DUTYFEEDBACK DFB ON DR.FID = DFB.FDETAILID
+										   LEFT JOIN 
+											   (SELECT *
+		  FROM T_CUST_DUTYDEALPROCESS A
+		 WHERE A.FTREATSTATUS = 'PERSON'
+		   AND NOT EXISTS (SELECT *
+				  FROM T_CUST_DUTYDEALPROCESS B
+				 WHERE B.FTREATSTATUS = 'PERSON'
+				   AND A.FDUTYID = B.FDUTYID
+				   AND A.FID < B.FID)												    
+											) DDP ON DUTY.FID =DDP.FDUTYID
+				 WHERE 1=1 
+	]]>
+		<choose>  
+			<when test="typeId != null and typeId !='' and typeName != null and typeName !=''">
+			<![CDATA[
+				AND ${typeId} = #{typeName,jdbcType=VARCHAR}
+			]]>
+			</when >
+			<otherwise>
+				<choose>
+					<when test="reportTimeBegin != null and reportTimeBegin !='' and reportTimeEnd != null and reportTimeEnd !=''">
+					<![CDATA[
+						AND DUTY.FREPORTTIME between #{reportTimeBegin,jdbcType=TIMESTAMP} and #{reportTimeEnd,jdbcType=TIMESTAMP}
+					]]>
+					</when >
+					<otherwise>
+						<choose>
+							<when test="feedBackTimeBegin != null and feedBackTimeBegin !='' and feedBackTimeEnd != null and feedBackTimeEnd !=''">
+							<![CDATA[
+								AND DFB.FFEEDBACKTIME between #{feedBackTimeBegin,jdbcType=TIMESTAMP} and #{feedBackTimeEnd,jdbcType=TIMESTAMP}
+							]]>
+							</when >
+							<otherwise>
+								<choose>
+									<when test="appDutyTimeBegin != null and appDutyTimeBegin !='' and appDutyTimeEnd != null and appDutyTimeEnd !=''">
+									<![CDATA[
+										AND DDP.FOPERATORDATE between #{appDutyTimeBegin,jdbcType=TIMESTAMP} and #{appDutyTimeEnd,jdbcType=TIMESTAMP}
+									]]>
+									</when>
+								</choose>
+							</otherwise>
+						</choose>
+					</otherwise>
+				</choose>
+				<if test="appDutyUser != null and appDutyUser !=''">
+				<![CDATA[
+					AND DDP.FOPERATORNAME LIKE '%'||#{appDutyUser,jdbcType=VARCHAR}||'%'
+				]]>
+				</if>
+				<if test="surveyResult != null and surveyResult !=''">
+				<![CDATA[
+					AND DR.FSURVEYRESULT = #{surveyResult,jdbcType=VARCHAR}
+					AND DR.FSTATUS = 'EFFECTIVE'
+				]]>
+				</if>
+				<if test="dutyStates != null and dutyStates !=''">
+				<![CDATA[
+					AND DR.FDUTYSTATUS = #{dutyStates,jdbcType=VARCHAR}
+					AND DR.FSTATUS = 'EFFECTIVE'
+				]]>
+				</if>
+				<if test="dutyDept != null and dutyDept !=''">
+				<![CDATA[
+					AND DR.FDUTYPERNAME LIKE '%'||#{dutyDept,jdbcType=VARCHAR}||'%'
+					AND DR.FSTATUS = 'EFFECTIVE'
+				]]>
+				</if>
+				<if test="feedbackDept != null and feedbackDept !=''">
+				<![CDATA[
+					AND DFB.FFEEDDEPTNAME LIKE '%'||#{feedbackDept,jdbcType=VARCHAR}||'%'
+				]]>
+				</if>
+				<if test="callCenterUser != null and callCenterUser !=''">
+				<![CDATA[
+					AND DFB.FCALLCENUSER LIKE '%'||#{callCenterUser,jdbcType=VARCHAR}||'%'
+				]]>
+				</if>
+				<if test="businessModel != null and businessModel != ''">
+					AND DUTY.FBUSINESSMODEL =#{businessModel}
+				</if>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="searchDutyByCondition" parameterType="com.deppon.crm.module.duty.shared.domain.SearchDutyCondition"
+		resultType="com.deppon.crm.module.duty.shared.domain.Duty">
+	<![CDATA[
+		SELECT * FROM (SELECT 
+			FID id,
+			FCOMPLAINTID complaintid,
+			FVOUCHERNUMBER voucherNumber,
+			FCALLER caller,
+			FDEALNUMBER dealNumber,
+			FTEL tel,
+			FREPORTTYPE reportType,
+			FCOMPMANID compManId,
+			FCOMPLAINCUST complaintCust,
+			FSENDORRECEIVE sendOrReceive,
+			FCUSTLEVEL custLevel,
+			FCUSTTYPE custType,
+			FCOMPLAINTSOURCE complaintSource,
+			FRELATCUSID relatCustId,
+			FRELATCUS relatCus,
+			FRELATCUSLEVEL relatCusLevel,
+			FRELATCUSTYPE relatCusType,
+			FTIMELIMIT timeLimit,
+			FTILIMITCYCLE tiLimitCycle,
+			FPRIORITY pririty,
+			FREBINDNO rebindNo,
+			FREPORTERID reporterId,
+			FREPORTER reporter,
+			FREPORTTIME reportTime,
+			FREPORTCONTENT reportContent,
+			FCUSTREQUIRE custRequire,
+			FPROSTATUS proStatus,
+			FSTATUS status,
+			FCREATEDATE createDate,
+			FCREATEUSER createUser,
+			FMODIFYDATE modifyDate,
+			FMODIFYUSER modifyUser,
+			FRECEIVEUSERID receiveUserId,
+			FRECEIVEUSER receiveUser,
+			FRECEIVETIME receiveTime,
+			FAPPDUTYUSERID appDutyUserId,
+			FAPPDUTYUSER appDutyUser,
+			FAPPDUTYTIME appDutyTime,
+			FSURVEYRESULT surveyResult,
+			FBUSINESSMODEL businessModel
+			FROM T_CUST_DUTY
+	]]>
+		<include refid="receiveDutyCondition"/>)
+		<where>
+			<if test="rowNum != null and rowNum != ''">
+			<![CDATA[
+				rownum < = #{rowNum}
+			]]>
+			</if>
+		</where>					
+	</select>
+	<select id="countDutyByCondition" parameterType="com.deppon.crm.module.duty.shared.domain.SearchDutyCondition"
+		resultType="int">
+	<![CDATA[
+		SELECT 
+			COUNT(1)
+			FROM T_CUST_DUTY
+	]]>		
+		<include refid="receiveDutyCondition"/>	   
+	</select>
+	<update id="updateDutyById" parameterType="com.deppon.crm.module.duty.shared.domain.Duty">
+			UPDATE T_CUST_DUTY
+		<set>
+			<if test="proStatus != null and proStatus != ''">
+					FPROSTATUS = #{proStatus},
+			</if>
+			<if test="status != null and status != ''">
+					FSTATUS = #{status},
+			</if>
+			<if test="modifyDate != null and modifyDate != ''">
+					FMODIFYDATE = #{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyUser != null and modifyUser != ''">
+					FMODIFYUSER = #{modifyUser},
+			</if>
+			<if test="receiveUserId != null and receiveUserId != ''">
+					FRECEIVEUSERID = #{receiveUserId},
+			</if>
+			<if test="receiveUser != null and receiveUser != ''">
+					FRECEIVEUSER = #{receiveUser},
+			</if>
+			<if test="receiveTime != null and receiveTime != ''">
+					FRECEIVETIME = #{receiveTime},
+			</if>
+			<if test="appDutyUserId != null and appDutyUserId != ''">
+					FAPPDUTYUSERID = #{appDutyUserId},
+			</if>
+			<if test="appDutyUser != null and appDutyUser != ''">
+					FAPPDUTYUSER = #{appDutyUser},
+			</if>
+			<if test="appDutyTime != null and appDutyTime != ''">
+					FAPPDUTYTIME = #{appDutyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="surveyResult != null and surveyResult != ''">
+					FSURVEYRESULT = #{surveyResult},
+			</if>
+		</set>
+	<![CDATA[
+		WHERE FID = #{id}
+    ]]>
+		<if test="unReceiveStatus != null and unReceiveStatus != ''">
+			and FSTATUS = #{unReceiveStatus}
+		</if>
+	
+	</update>
+	<select id = "getDutyDetail" parameterType="string" resultType="com.deppon.crm.module.duty.shared.domain.Duty">
+	<![CDATA[	
+		SELECT 
+			DUTY.FID id,
+			DUTY.fcomplaintid complaintid,
+			DUTY.FVOUCHERNUMBER voucherNumber,
+			DUTY.FTEL tel,
+			DUTY.FSENDORRECEIVE sendOrReceive,
+			DUTY.FCALLER caller,
+			DUTY.FREPORTTYPE reportType,
+			DUTY.FCOMPLAINCUST complaintCust,
+			DUTY.FCUSTLEVEL custLevel,
+			DUTY.FCUSTTYPE custType,
+			DUTY.FCOMPLAINTSOURCE complaintSource, 
+			DUTY.FRELATCUS relatCus,
+			DUTY.FRELATCUSLEVEL relatCusLevel,
+			DUTY.FTIMELIMIT timeLimit,
+			DUTY.FPRIORITY pririty,
+			DUTY.FREBINDNO rebindNo,
+			DUTY.FDEALNUMBER dealNumber,
+			DUTY.FSURVEYRESULT surveyResult,
+			DUTY.FREPORTTIME reportTime,
+			DUTY.FREPORTER reporter,
+			DUTY.FREPORTCONTENT reportContent,
+			DUTY.FCUSTREQUIRE custRequire,
+			DUTY.FTREATPROCESS processPass,
+			DUTY.FSTATUS status,
+			DUTY.FBUSINESSMODEL businessModel
+		FROM T_CUST_DUTY DUTY WHERE DUTY.FID = #{id,jdbcType=NUMERIC}
+	]]>
+	</select>
+	<select id = "getDutyDealProcess" parameterType="string" resultType="com.deppon.crm.module.duty.shared.domain.DutyDealProcess">
+	<![CDATA[	
+		SELECT 
+			DDP.FID id,
+			DDP.FDUTYID dutyId,
+			DDP.FTREATSTATUS treatStates,
+			DDP.FTREATPROCESS treatProcess,
+			DDP.FOPERATORID operaprId,
+			DDP.FOPERATORNAME opratorName,
+			DDP.FOPERATORDATE operatorTime
+		FROM T_CUST_DUTYDEALPROCESS DDP WHERE DDP.FDUTYID = #{id,jdbcType=NUMERIC}
+	]]>
+	</select>
+	<select id = "getdutyResult" parameterType="string" resultType="com.deppon.crm.module.duty.shared.domain.DutyResult">
+	<![CDATA[	
+		SELECT 
+			DR.FID id,
+			DR.FDUTYID dutyId,
+			DR.FBUSASPECT busAspectId,
+			DR.FBUSSCOPE busScope,
+			DR.FBUSTYPE busType,
+			DR.FDEALLANGUAGE dealLanguage,
+			DR.FDIVIDETYPE divideType,
+			DR.FDUTYPERID dutyPerId,
+			DR.FDUTYPERNAME dutyPerName,
+			DR.FREWORPUSTYPE reworpusType,
+			DR.FDUTYDEADLINE dutyDeadLine,
+			DR.FBUSLINK businessLink,
+			DR.FDUTYSTATUS dutyStatus,
+			DR.FSURVEYRESULT surveyResult,
+			DR.fduty_department_cc dutyDepartmentCC
+		FROM T_CUST_DUTYRESULT DR WHERE DR.FDUTYID = #{id,jdbcType=NUMERIC} AND DR.FSTATUS = 'EFFECTIVE'
+	]]>
+	</select>
+	<!-- 工单查询- 通知对象 -->
+	<select id = "getUserNameList" parameterType="string" resultType="string">
+	<![CDATA[	
+		SELECT 
+			IU.FUSERNAME userName
+		FROM T_CUST_INFORMUSER IU WHERE IU.FDUTYID = #{id,jdbcType=NUMERIC}
+	]]>
+	</select>
+	<!-- 工单查询- 展开列表 -->
+	<select id = "queryDutyDetailList" parameterType="string" resultType="com.deppon.crm.module.duty.shared.domain.DutyQueryResult">
+	<![CDATA[	
+		SELECT 
+			DR.FDUTYPERNAME appDutyDept,
+			DR.FDUTYDEADLINE dutyDeadLine,
+			DR.FDUTYSTATUS dutyStatus,
+			DR.FSURVEYRESULT surveyResult,
+			DFB.FFEEDUSERNAME feedUser,
+			DFB.FFEEDBACKTIME feedTime
+		 FROM T_CUST_DUTY DUTY ,T_CUST_DUTYRESULT DR , T_CUST_DUTYFEEDBACK DFB
+		 WHERE DUTY.FID = DR.FDUTYID AND DR.FID = DFB.FDETAILID
+		 AND DUTY.FID = #{id,jdbcType=NUMERIC}
+	]]>
+	</select>
+	<!-- 工单责任审批查询条件 -->
+	<sql id="dutyApproval_condition">
+		<choose>
+			<when test="typeId!=null and typeId!=''">
+				<if test="typeName == '001'">
+			    			and duty.fdealnumber = #{typeId,jdbcType=VARCHAR}
+				</if>
+				<if test="typeName == '002'">
+			    			and duty.fvouchernumber = #{typeId,jdbcType=VARCHAR}
+				</if> 
+			</when>
+			<otherwise>
+				<if test="feedBackPerson!=null and feedBackPerson!=''">
+			    			and fd.ffeedusername =#{feedBackPerson,jdbcType=VARCHAR}
+				</if>
+				<if test="feedbackDept!=null and feedbackDept!=''">
+			    			and fd.Ffeeddeptname LIKE '%'||#{feedbackDept,jdbcType=VARCHAR}||'%'
+				</if>
+				<if test="dutyStates!=null and dutyStates!=''">
+			    			and fd.Fstatus = #{dutyStates,jdbcType=VARCHAR}
+				</if>
+				<if test="surveyResult!=null and surveyResult!=''">
+			    			and res.Fsurveyresult = #{surveyResult,jdbcType=VARCHAR}
+				</if>
+				<if test="feedBackTimeBegin!=null and feedBackTimeEnd!=null">
+				<![CDATA[
+					and fd.FFEEDBACKTIME >= #{feedBackTimeBegin,jdbcType=TIMESTAMP}
+					and fd.FFEEDBACKTIME < #{feedBackTimeEnd,jdbcType=TIMESTAMP}
+				]]>
+				</if>
+				<if test="businessModel != null and businessModel != ''">
+					AND DUTY.FBUSINESSMODEL =#{businessModel}
+				</if>
+			</otherwise>
+		</choose>
+		<!-- 角色为统计员 -->
+		<if test="roleId!=null and roleId=='400000165' and deptIds!=null and deptIds.size() > 0">
+		<![CDATA[
+			 and fd.FSTATDEPTID in
+		]]>
+			<foreach collection="deptIds" open="(" close=")" item="deptId" separator=",">
+			     	    ${deptId}
+			</foreach>
+		</if>
+	</sql>
+	<!-- 工单责任审批查询 -->
+	<select id="queryDutyApprovalList" parameterType="com.deppon.crm.module.duty.shared.domain.QueryDutyCondition" 
+		resultType = "com.deppon.crm.module.duty.shared.domain.DutyQueryResult">
+		select distinct dutyid dutyid,detailid,feedbackId,
+		                vouchernumber vouchernumber,
+		                dealnumber dealnumber,
+		                reporttype reporttype,
+		                caller caller,
+		                /*appdutydept appdutydept,
+		                dutystatus   dutystatus,*/
+		                surveyresult surveyresult,
+		                appdutyuser appdutyuser,
+		                appdutytime appdutytime,
+		                /*reporter    reporter,*/
+		                complaintid complaintid,
+		                businessModel businessModel,fBussDeptCode 
+		  from (select duty.fid            dutyid,
+		               res.fid             detailid,
+		               fd.fid              feedbackId,
+		               duty.fvouchernumber vouchernumber,
+		               duty.fdealnumber    dealnumber,
+		               duty.freporttype    reporttype,
+		               duty.fcaller        caller,
+		               res.fdutypername    appdutydept,
+		               res.fdutydeadline   dutydeadline,
+		               res.fdutystatus     dutystatus,
+		               duty.fsurveyresult  surveyresult,
+		               fd.ffeedusername    feeduser,
+		               fd.ffeedbacktime    feedtime,
+		               fd.fBussDeptCode    fBussDeptCode,
+		               duty.fappdutyuser   appdutyuser,
+		               duty.fappdutytime   appdutytime,
+		               duty.freporttime    reporttime,
+		               duty.freporter      reporter,
+		               duty.fcomplaintid   complaintid,
+		               duty.fbusinessmodel   businessModel
+		          from t_cust_duty duty
+		          join t_cust_dutyresult res
+		            on res.fdutyid = duty.fid
+		          join t_cust_dutyfeedback fd
+		            on res.fid = fd.fdetailid 
+		          <choose>
+		         	<when test="dutyInspector == true">
+                        where res.FDUTY_DEPARTMENT_CC = 1 
+		         	</when>
+		         	<when test="dutyInspector == false">
+		         		where res.FDUTY_DEPARTMENT_CC = 0
+		         	</when>
+		         </choose>
+		         <if test="bussDeptCode != null and bussDeptCode != ''">
+		         	and fd.fBussDeptCode = #{bussDeptCode}
+		         </if>
+		<!-- 方便测试，先去掉条件 -->
+		<include refid="dutyApproval_condition"/>
+			    )
+			    order by appdutytime asc
+	</select>
+	<!-- 查询总数 -->
+	<select id="countQueryDutyApprovalList" parameterType="com.deppon.crm.module.duty.shared.domain.QueryDutyCondition" resultType="int">
+			 select count(1) from(   
+			 			select distinct dutyid dutyid,detailid,feedbackId,
+		                vouchernumber vouchernumber,
+		                dealnumber dealnumber,
+		                reporttype reporttype,
+		                caller caller,
+		                /*appdutydept appdutydept,
+		                dutystatus   dutystatus,*/
+		                surveyresult surveyresult,
+		                appdutyuser appdutyuser,
+		                appdutytime appdutytime,
+		                /*reporter    reporter,*/
+		                complaintid complaintid
+		      from (select duty.fid            dutyid,
+		                   res.fid             detailid,
+		                   fd.fid              feedbackId,
+		                   duty.fvouchernumber vouchernumber,
+		                   duty.fdealnumber    dealnumber,
+		                   duty.freporttype    reporttype,
+		                   duty.fcaller        caller,
+		                   res.fdutypername    appdutydept,
+		                   res.fdutydeadline   dutydeadline,
+		                   res.fdutystatus     dutystatus,
+		                   duty.fsurveyresult  surveyresult,
+		                   fd.ffeedusername    feeduser,
+		                   fd.ffeedbacktime    feedtime,
+		                   duty.fappdutyuser   appdutyuser,
+		                   duty.fappdutytime   appdutytime,
+		                   duty.freporttime    reporttime,
+		                   duty.freporter      reporter,
+		                   duty.fcomplaintid   complaintid,
+		                   duty.fbusinessmodel   businessModel
+		              from t_cust_duty duty
+		              join t_cust_dutyresult res
+		                on res.fdutyid = duty.fid
+		              join t_cust_dutyfeedback fd
+		                on res.fid = fd.fdetailid 
+		         <choose>
+		         	<when test="dutyInspector == true">
+                        where res.FDUTY_DEPARTMENT_CC = 1 
+		         	</when>
+		         	<when test="dutyInspector == false">
+		         		where res.FDUTY_DEPARTMENT_CC = 0
+		         	</when>
+		         </choose>
+		         <if test="bussDeptCode != null and bussDeptCode != ''">
+		         	and fd.fBussDeptCode = #{bussDeptCode}
+		         </if>
+		<!-- 方便测试，先去掉条件 -->
+		<include refid="dutyApproval_condition"/>
+			    ))
+	</select>
+		
+	<!-- 工单责任插入数据 -->
+	<insert id="complaintsInsert"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.Complaint">
+		<selectKey keyProperty="dutyId" order="BEFORE" resultType="String">
+		select SEQ_CRM_DUTY.nextval as dutyId from dual
+		</selectKey>
+	    INSERT INTO t_cust_duty
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+				fid,
+			<if test="fid != null" >
+				FCOMPLAINTID,
+			</if>
+			<if test="createtime != null" >
+				FCREATEDATE,
+			</if>
+			<if test="createuserid != null" >
+				FCREATEUSER,
+			</if>
+			<if test="lastupdatetime != null" >
+				FMODIFYDATE,
+			</if>
+			<if test="lastmodifyuserid != null" >
+				FMODIFYUSER,
+			</if>
+			<if test="bill != null" >
+				FVOUCHERNUMBER,
+			</if>
+			<if test="dealbill != null" >
+				FDEALNUMBER,
+			</if>
+			<if test="rebindno != null" >
+				FREBINDNO,
+			</if>
+			<if test="reporttype != null" >
+				freporttype,
+			</if>
+			<if test="complaincust != null" >
+				fcomplaincust,
+			</if>
+			<if test="compmanid != null" >
+				fcompmanid,
+			</if>
+			<if test="compman != null" >
+				FCALLER,
+			</if>
+			<if test="custlevel != null" >
+				fcustlevel,
+			</if>
+			<if test="custtype != null" >
+				fcusttype,
+			</if>
+			<if test="relatcusid != null" >
+				frelatcusid,
+			</if>
+			<if test="relatcus != null" >
+				frelatcus,
+			</if>
+			<if test="timelimit != null" >
+				ftimelimit,
+			</if>
+			<if test="tilimitcycle != null" >
+				ftilimitcycle,
+			</if>
+			<if test="reporterid != null" >
+				freporterid,
+			</if>
+			  
+			<if test="reporter != null" >
+				freporter,
+			</if>
+				freporttime,
+			<if test="reportcontent != null" >
+				freportcontent,
+			</if>
+			<if test="custrequire != null" >
+				fcustrequire,
+			</if>
+			<if test="pririty != null" >
+				FPRIORITY,
+			</if>
+			<if test="tel != null" >
+				ftel,
+			</if>
+			<if test="prostatus != null" >
+				fprostatus,
+			</if>
+			<if test="complaintsource != null" >
+				FCOMPLAINTSOURCE,
+			</if>
+			<if test="relatcustype != null" >
+				FRELATCUSTYPE,
+			</if>
+			<if test="sendorreceive != null" >
+				FSENDORRECEIVE,
+			</if>
+			<if test="relatcuslevel != null" >
+				frelatcuslevel,
+			</if>
+			<if test="businessModel != null" >
+				fbusinessModel,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+				#{dutyId},
+			<if test="fid != null" >
+				#{fid},
+			</if>
+			<if test="createtime != null" >
+				#{createtime},
+			</if>
+			<if test="createuserid != null" >
+				#{createuserid},
+			</if>
+			<if test="lastupdatetime != null" >
+				#{lastupdatetime},
+			</if>
+			<if test="lastmodifyuserid != null" >
+				#{lastmodifyuserid},
+			</if>
+			<if test="bill != null" >
+				#{bill},
+			</if>
+			<if test="dealbill != null" >
+				#{dealbill},
+			</if>
+			<if test="rebindno != null" >
+				#{rebindno},
+			</if>
+			<if test="reporttype != null" >
+				#{reporttype},
+			</if>
+			<if test="complaincust != null" >
+				#{complaincust},
+			</if>
+			<if test="compmanid != null" >
+				#{compmanid},
+			</if>
+			<if test="compman != null" >
+				#{compman},
+			</if>
+			<if test="custlevel != null" >
+				#{custlevel},
+			</if>
+			<if test="custtype != null" >
+				#{custtype},
+			</if>
+			<if test="relatcusid != null" >
+				#{relatcusid},
+			</if>
+			<if test="relatcus != null" >
+				#{relatcus},
+			</if>
+			<if test="timelimit != null" >
+				#{timelimit},
+			</if>
+			<if test="tilimitcycle != null" >
+				#{tilimitcycle},
+			</if>
+			<if test="reporterid != null" >
+				#{reporterid},
+			</if>
+			<if test="reporter != null" >
+				#{reporter},
+			</if>
+				sysdate,
+			<if test="reportcontent != null" >
+				#{reportcontent},
+			</if>
+			<if test="custrequire != null" >
+				#{custrequire},
+			</if>
+			<if test="pririty != null" >
+				#{pririty},
+			</if>
+			<if test="tel != null" >
+				#{tel},
+			</if>
+			<if test="prostatus != null" >
+				#{prostatus},
+			</if>
+			<if test="complaintsource != null" >
+				#{complaintsource},
+			</if>
+			<if test="relatcustype != null" >
+				#{relatcustype},
+			</if>
+			<if test="sendorreceive != null" >
+				#{sendorreceive},
+			</if>
+			  <if test="relatcuslevel != null" >
+				#{relatcuslevel},
+			</if>
+			<if test="businessModel != null" >
+				#{businessModel},
+			</if>
+
+
+		</trim>
+	</insert>
+	<!-- 工单责任修改数据 -->
+	<update id="updateComplaint" parameterType="com.deppon.crm.module.complaint.shared.domain.Complaint">
+		UPDATE t_cust_duty SET 
+		<if test="createuserid != null">
+			FCREATEUSER = #{createuserid,jdbcType=DECIMAL},
+		</if> 
+		
+		<if test="lastmodifyuserid != null">
+			FMODIFYUSER = #{lastmodifyuserid,jdbcType=DECIMAL},
+		</if>
+		<if test="bill != null and bill != '' ">
+			FVOUCHERNUMBER = #{bill,jdbcType=VARCHAR},
+		</if>
+		<if test="dealbill != null and dealbill != '' ">
+			FDEALNUMBER = #{dealbill,jdbcType=VARCHAR},
+		</if>
+		<if test="rebindno != null and rebindno != '' and rebindno != 'clear' ">
+			FREBINDNO = #{rebindno,jdbcType=VARCHAR},
+		</if>
+		<if test="rebindno != null and rebindno != '' and rebindno == 'clear' ">
+			FREBINDNO = null,
+		</if>	
+		<if test="reporttype != null and reporttype != '' ">
+			FREPORTTYPE = #{reporttype,jdbcType=VARCHAR},
+		</if>
+		<if test="complaincust != null and complaincust != '' ">
+			FCOMPLAINCUST = #{complaincust,jdbcType=VARCHAR},
+		</if>
+		<if test="compmanid != null ">
+			FCOMPMANID = #{compmanid,jdbcType=DECIMAL},
+		</if>
+		<if test="compman != null ">
+			FCALLER = #{compman,jdbcType=DECIMAL},
+		</if>
+		<if test="custlevel != null and custlevel != '' ">
+			FCUSTLEVEL = #{custlevel,jdbcType=VARCHAR},
+		</if>
+		<if test="custtype != null and custtype != '' ">
+			FCUSTTYPE = #{custtype,jdbcType=VARCHAR},
+		</if>
+		<if test="relatcusid != null and relatcusid != '' ">
+			FRELATCUSID = #{relatcusid,jdbcType=DECIMAL},
+		</if>
+		<if test="relatcus != null and relatcus != '' ">
+			FRELATCUS = #{relatcus,jdbcType=VARCHAR},
+		</if>
+		<if test="timelimit != null">
+			FTIMELIMIT = #{timelimit,jdbcType=DECIMAL},
+		</if>
+		<if test="tilimitcycle != null and tilimitcycle != '' ">
+			FTILIMITCYCLE = #{tilimitcycle,jdbcType=VARCHAR},
+		</if>
+		<if test="reporterid != null ">
+			FREPORTERID = #{reporterid,jdbcType=DECIMAL},
+		</if>	
+		<if test="reporter != null and reporter != '' ">
+			FREPORTER = #{reporter,jdbcType=VARCHAR},
+		</if>
+		<if test="reportcontent != null and reportcontent != '' ">
+			FREPORTCONTENT = #{reportcontent,jdbcType=VARCHAR},
+		</if>		
+		<if test="custrequire != null and custrequire != '' ">
+			FCUSTREQUIRE = #{custrequire,jdbcType=VARCHAR},
+		</if>	
+		<if test="pririty != null and pririty != '' ">
+			FPRIORITY = #{pririty,jdbcType=VARCHAR},
+		</if>		
+		<if test="prostatus != null and prostatus != '' ">
+			FPROSTATUS = #{prostatus,jdbcType=VARCHAR},
+		</if>
+		<if test="relatcustype != null and relatcustype != '' ">
+			FRELATCUSTYPE = #{relatcustype,jdbcType=VARCHAR},
+		</if>									
+		<if test="sendorreceive != null and '' != sendorreceive ">
+	       	FSENDORRECEIVE = #{sendorreceive, jdbcType=VARCHAR},
+		</if>
+		<if test="businessModel != null and '' != businessModel ">
+	       	FBUSINESSMODEL = #{businessModel, jdbcType=VARCHAR},
+		</if>
+		FMODIFYDATE = SYSDATE
+		WHERE FCOMPLAINTID = #{fid}
+	</update>
+		
+	<!-- 工单责任修改暂存处理经过 -->
+	<update id="updateProcessPass" parameterType="map">
+		UPDATE t_cust_duty SET 
+		FTREATPROCESS = #{processPass,jdbcType=VARCHAR},
+		FMODIFYUSER = #{modifyUser,jdbcType=VARCHAR},
+		FMODIFYDATE = SYSDATE
+		WHERE FID = #{dutyId}
+	</update>
+		
+	<!-- 工单责任修改状态 -->
+	<update id="updateStatus" parameterType="map">
+		UPDATE t_cust_duty SET 
+		FSTATUS = #{status,jdbcType=VARCHAR},
+		FMODIFYUSER = #{modifyUser,jdbcType=VARCHAR},
+		FMODIFYDATE = SYSDATE
+		WHERE FID = #{dutyId}
+	</update>
+		
+	<!-- 工单责任修改调查状态 -->
+	<update id="updateSurveyResult" parameterType="map">
+		UPDATE t_cust_duty SET 
+		FSURVEYRESULT = #{surveyResult,jdbcType=VARCHAR},
+		FMODIFYUSER = #{modifyUser,jdbcType=VARCHAR},
+		FMODIFYDATE = SYSDATE
+		WHERE FID = #{dutyId}
+	</update>
+	
+	<select id="getAllParentDeptByDetailId" resultType="string"
+		parameterType="string">
+		<![CDATA[
+			select fid 
+			FROM T_ORG_DEPARTMENT MASTER
+			CONNECT BY PRIOR MASTER.FPARENTID = MASTER.FID
+			START WITH MASTER.FID = (select t.fdutydeptid from t_cust_dutyresult t 
+			where t.fid = #{id})
+		]]>
+	</select>
+</mapper>

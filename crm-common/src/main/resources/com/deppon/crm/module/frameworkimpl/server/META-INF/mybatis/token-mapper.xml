@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.framework.server.sso.config.Token">
+
+	<insert id="insert" parameterType="map">
+		<![CDATA[
+			INSERT INTO T_SSO_TOKEN(
+				FID,
+				FTOKEN
+			) VALUES(
+				#{id}, 
+				#{token}
+			)
+		]]>
+	</insert>
+
+	<select id="getById" parameterType="string" resultType="string">
+		<![CDATA[
+			SELECT 
+				FTOKEN 
+			FROM T_SSO_TOKEN
+			WHERE
+				FID = #{id}
+		]]>
+	</select>
+	
+	<!-- 通过id和时间找到合法的令牌 -->
+	<select id="findValidateToken" parameterType="map" resultType="string">
+		<![CDATA[
+			SELECT 
+				FTOKEN 
+			FROM T_SSO_TOKEN
+			WHERE FID = #{id}
+		      AND FCACHE_TIME >= #{currTime}
+		]]>
+	</select>
+	
+	<delete id="deleteById">
+		<![CDATA[
+			DELETE T_SSO_TOKEN
+			WHERE 
+				FID = #{id}
+		]]>
+	</delete>
+	
+	<delete id="deleteAll">
+		<![CDATA[
+			DELETE T_SSO_TOKEN
+		]]>
+	</delete>
+	
+	<insert id="insertWithValidTime" parameterType="map">
+		<![CDATA[
+			INSERT INTO T_SSO_TOKEN(FID,FTOKEN,FCACHE_TIME) 
+							VALUES (#{id},#{token},#{validTime})
+		]]>
+	</insert>
+	
+	<delete id="removeWithValidTime">
+		<![CDATA[
+			DELETE FROM T_SSO_TOKEN  WHERE FCACHE_TIME < #{validTime}
+		]]>
+	</delete>
+</mapper>

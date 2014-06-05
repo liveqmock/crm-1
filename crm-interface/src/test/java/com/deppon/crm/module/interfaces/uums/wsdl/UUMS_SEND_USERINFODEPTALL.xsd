@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.deppon.com/uums/inteface/domain/usermanagement"
+	xmlns:tns="http://www.deppon.com/uums/inteface/domain/usermanagement"
+	elementFormDefault="qualified">
+
+	<annotation>
+		<documentation>UUMS负责统一维护公司IT系统用户数据，将用户信息从UUMS系统同步至业务系统；
+		</documentation>
+	</annotation>
+	<complexType name="SendUserInfoDeptAllRequest">
+		<sequence>
+			<element name="userInfo" type="tns:UserInfoDeptAll" minOccurs="1"
+				maxOccurs="unbounded">
+				<annotation>
+					<documentation>用户信息</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="UserInfoDeptAll">
+		<sequence>
+			<element name="accountChangeId" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>账号信息变更ID</documentation>
+				</annotation>
+			</element>
+			<element name="empCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>工号</documentation>
+				</annotation>
+			</element>
+			<element name="userName" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>用户名</documentation>
+				</annotation>
+			</element>
+			<element name="empName" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>姓名</documentation>
+				</annotation>
+			</element>
+			<element name="desPassword" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>DES密码(业务系统可解密后自行加密)</documentation>
+				</annotation>
+			</element>
+			<element name="sysName" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>系统名称</documentation>
+				</annotation>
+			</element>
+			<element name="orgName" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织名称</documentation>
+				</annotation>
+			</element>
+			<element name="orgBenchmarkCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="orgCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织编码</documentation>
+				</annotation>
+			</element>
+			<element name="position" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>职位</documentation>
+				</annotation>
+			</element>
+			<element name="workCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>工号</documentation>
+				</annotation>
+			</element>
+			<element name="gender" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>性别, 男/女</documentation>
+				</annotation>
+			</element>
+			<element name="isTemp" type="boolean" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>是否临时账号, 0-否, 1-是;</documentation>
+				</annotation>
+			</element>
+			<element name="isActive" type="boolean" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>是否激活, 0-否, 1-是;</documentation>
+				</annotation>
+			</element>
+			<element name="validDate" type="dateTime" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>生效日期</documentation>
+				</annotation>
+			</element>
+			<element name="invalidDate" type="dateTime" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>失效日期</documentation>
+				</annotation>
+			</element>
+			<element name="lastModifyTime" type="dateTime" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>最后修改时间</documentation>
+				</annotation>
+			</element>
+			<element name="roleInfo" type="tns:UserRoleDeptAllInfo" maxOccurs="unbounded"
+				minOccurs="0">
+				<annotation>
+					<documentation>角色信息列表</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-删除, 4-返聘; </documentation>
+				</annotation>
+			</element>
+			<element name="changeDate" type="dateTime" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动时间</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="UserRoleDeptAllInfo">
+		<sequence>
+			<element name="orgBenchmarkCode" type="string" minOccurs="1" 
+			maxOccurs="1">
+				<annotation>
+					<documentation>组织标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="orgCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>组织编码</documentation>
+				</annotation>
+			</element>
+			<element name="roleCode" type="tns:UserRoleDetailInfo" maxOccurs="unbounded">
+				<annotation>
+					<documentation>角色编码列表</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="UserRoleDetailInfo">
+		<sequence>
+			<element name="roleCode" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>角色编码</documentation>
+				</annotation>
+			</element>
+			<element name="roleBase" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>角色标准编码</documentation>
+				</annotation>
+			</element>
+			<element name="isDeptAll" type="string" minOccurs="1">
+				<annotation>
+					<documentation>是否包含所有机构(1-是,0-否)</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="SendUserInfoDeptAllResponse">
+		<sequence>
+			<element name="successCount" type="int" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>成功总数</documentation>
+				</annotation>
+			</element>
+			<element name="failedCount" type="int" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>失败总数</documentation>
+				</annotation>
+			</element>
+			<element name="processResult" type="tns:SendUserInfoDeptAllProcessReult"
+				minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>处理明细</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="SendUserInfoDeptAllProcessReult">
+		<sequence>
+			<element name="accountChangeId" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>账号信息变更ID</documentation>
+				</annotation>
+			</element>
+			<element name="result" type="boolean" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>处理结果，是否成功[0: 失败, 1： 成功]</documentation>
+				</annotation>
+			</element>
+			<element name="reason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+			
+			<element name="empCode" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>工号</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-删除, 4-返聘; </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+
+
+
+	<element name="SendUserInfoDeptAllRequest" type="tns:SendUserInfoDeptAllRequest">
+	</element>
+
+	<element name="SendUserInfoDeptAllResponse" type="tns:SendUserInfoDeptAllResponse">
+	</element>
+
+</schema>

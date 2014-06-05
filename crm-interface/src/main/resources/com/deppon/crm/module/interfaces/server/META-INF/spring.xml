@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+	http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="./spring_jms.xml"/>
+	<!-- 订单 -->
+	<bean id="wsOrderServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.order.impl.OrderServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="wsOrderServiceImpl" factory-bean="wsOrderServiceImplProxy" factory-method="create">
+		<property name="orderManager" ref="orderManager" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="alterMemberManager" ref="alterMemberManager" />
+		<property name="orderService" ref="orderService" />
+		<property name="userService" ref="userService" />
+		<property name="complaintManager" ref="complaintManager" />
+		<property name="contactManager" ref="contactManager"></property>
+		<property name="customerOperate" ref="customerOperate"></property>
+		<property name="orderOperate" ref="orderOperate"></property>
+	</bean>
+	<jaxws:endpoint id="wsEsbOrderService" endpointName="IESBOrderServicePort" implementorClass="com.deppon.crm.module.interfaces.order.IESBOrderService"
+    	xmlns="http://esb.order.interfaces.module.crm.deppon.com" serviceName="IESBOrderServiceService" implementor="#wsOrderServiceImpl" address="/esbOrderService" >
+    </jaxws:endpoint>
+    <jaxws:endpoint id="wsBHOOrderService" endpointName="IBHOOrderServicePort" implementorClass="com.deppon.crm.module.interfaces.order.IBHOOrderService"
+    	xmlns="http://bho.order.interfaces.module.crm.deppon.com" serviceName="BHOOrderServiceImpl" implementor="#wsOrderServiceImpl" address="/bhoOrderService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="wsEBMOrderService" endpointName="IEBMOrderServicePort" implementorClass="com.deppon.crm.module.interfaces.order.IEBMOrderService"
+    	xmlns="http://ebm.order.interfaces.module.crm.deppon.com" serviceName="EBMOrderServiceImpl" implementor="#wsOrderServiceImpl" address="/ebmOrderService" >
+    </jaxws:endpoint>
+    <jaxws:endpoint id="wsERPOrderService" endpointName="IERPOrderServicePort" implementorClass="com.deppon.crm.module.interfaces.order.IERPOrderService"
+    	xmlns="http://erp.order.interfaces.module.crm.deppon.com" serviceName="ERPOrderServiceImpl" implementor="#wsOrderServiceImpl" address="/erpOrderService" >
+    </jaxws:endpoint>
+
+	<!-- 客户 -->
+	<bean id="wsCustomerServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.customer.impl.CustomerServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+    <bean id="wsCustomerServiceImpl" factory-bean="wsCustomerServiceImplProxy" factory-method="create">
+		<property name="alterMemberManager" ref="alterMemberManager" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="contactManager" ref="contactManager"></property>
+		<property name="recompenseManager" ref="recompenseManager"></property>
+	</bean>
+    <jaxws:endpoint id="wsBHOCustomerService" endpointName="IBHOCustomerServicePort" implementorClass="com.deppon.crm.module.interfaces.customer.IBHOCustomerService"
+    	xmlns="http://bho.customer.interfaces.module.crm.deppon.com" serviceName="BHOCustomerServiceImpl" implementor="#wsCustomerServiceImpl" address="/bhoCustomerService" >
+    </jaxws:endpoint>
+
+    <!-- CC -->
+	<bean id="wsCallcenterToCrmServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.cc.impl.CallcenterToCrmServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+    <bean id="wsCallcenterToCrmServiceImpl" factory-bean="wsCallcenterToCrmServiceImplProxy" factory-method="create">
+        <property name="customerCallManager" ref="customerCallManager"></property>
+        <property name="memberManager" ref="memberManager"></property>
+        <property name="departmentService" ref="departmentService"></property>
+        <property name="userService" ref="userService"></property>
+        <property name="businessOpportunityManager" ref="businessOpportunityManager"></property>
+	</bean>
+    <jaxws:endpoint id="wsCallcenterToCrmService" endpointName="ICallcenterToCrmServicePort" implementorClass="com.deppon.crm.module.interfaces.cc.ICallcenterToCrmService"
+    	xmlns="http://www.deppon.com/crm/interface/CallcenterToCrmService" serviceName="CallcenterToCrmServiceImpl" implementor="#wsCallcenterToCrmServiceImpl" address="/callcenterToCrmService" >
+    </jaxws:endpoint>
+
+    <bean id="wsSyncCallbackServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.customer.impl.SyncCallbackServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+     <bean id="wsSyncCallbackServiceImpl" factory-bean="wsSyncCallbackServiceImplProxy" factory-method="create">
+     	<property name="syncCallbackDao" ref="syncCallbackDao"></property>
+	</bean>
+	<jaxws:endpoint id="wsSyncCallbackService" endpointName="ISyncCallbackService" implementorClass="com.deppon.crm.module.interfaces.customer.ISyncCallbackService"
+    	xmlns="http://bho.customer.interfaces.module.crm.deppon.com" serviceName="SyncCallbackServiceImpl" implementor="#wsSyncCallbackServiceImpl" address="/SyncCallbackService" >
+    </jaxws:endpoint>
+	<!-- 工作流 -->
+	<bean id="wsESBWorkFlowResultServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.workflow.impl.ESBWorkFlowResultServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="wsESBWorkFlowResultServiceImpl" factory-bean="wsESBWorkFlowResultServiceImplProxy" factory-method="create">
+		<property name="contractManager" ref="contractManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="userService" ref="userService" />
+	</bean>
+	<bean id="wsGiftApplyResultServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.workflow.impl.GiftApplyResultServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+   	<bean id="wsGiftApplyResultServiceImpl" factory-bean="wsGiftApplyResultServiceImplProxy" factory-method="create">
+		<property name="integralManager" ref="integralManager" />
+		<property name="userService" ref="userService" />
+	</bean>
+
+	<bean id="wsPaymentApplyResultServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.workflow.impl.PaymentApplyResultServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="wsPaymentApplyResultServiceImpl" factory-bean="wsPaymentApplyResultServiceImplProxy" factory-method="create">
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="userService" ref="userService" />
+	</bean>
+	<bean id="wsRecompenseOnlineServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.workflow.impl.RecompenseOnlineServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="wsRecompenseOnlineServiceImpl" factory-bean="wsRecompenseOnlineServiceImplProxy" factory-method="create">
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="waybillOperate" ref="waybillOperate" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="departmentOperate" ref="departmentOperate"></property>
+	</bean>
+
+	<bean id="esbToCrmService"  factory-bean="wsEsbToCrmServiceProxy" factory-method="create">
+    	<property name="orderManager" ref="orderManager"/>
+    	<property name="userService" ref="userService"/>
+    	<property name="dataReceiveDao" ref="dataReceiveDao"/>
+    	<property name="departmentService" ref="departmentService"/>
+    	<property name="recompenseManager" ref="recompenseManager"/>
+    	<property name="contractManager" ref="contractManager" />
+    	<property name="cityService" ref="iCityService"/>
+    	<property name="provinceService" ref="iProvinceService"/>
+    	<property name="areaAddressService" ref="areaAddressService"/>
+    	<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService"/>
+    	<property name="pilotCityManager" ref="pilotCityManager"/>
+    	<property name="expressPointBusinessDeptManager" ref="expressPointBusinessDeptManager"/>
+    	<property name="memberManager" ref="memberManager"/>
+    </bean>
+
+    <bean id="wsEsbToCrmServiceProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+    	<property name="className" value="com.deppon.crm.module.interfaces.foss.impl.EsbToCrmServiceImpl"/>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+    </bean>
+
+    <bean id="owsJmsToCrmService" factory-bean="wsOwsJmsToCrmServiceProxy" factory-method="create">
+        <property name="memberManager" ref="memberManager"></property>
+        <property name="cityService" ref="iCityService"></property>
+        <property name="provinceService" ref="iProvinceService"></property>
+        <property name="areaAddressService" ref="areaAddressService"></property>
+        <property name="contactManager" ref="contactManager"></property>
+    </bean>
+
+    <bean id="wsOwsJmsToCrmServiceProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+    	<property name="className" value="com.deppon.crm.module.interfaces.ows.impl.OwsJmsToCrmServiceImpl"/>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+    </bean>
+
+    <bean id="esbQuRequestListener"
+		class="com.deppon.crm.module.interfaces.common.listener.ESBQuRequestListener" >
+		<property name="statusSender" ref="crmToEsbStaSender"/>
+		<property name="responseSender" ref="crmToEsbResponseSender"/>
+		<property name="baseInfoSyncService" ref="baseInfoSyncService"/>
+		<property name="exceptionSender" ref="crmToEsbExceptionSender"/>
+		<property name="esbToCrmService" ref="esbToCrmService"/>
+		<property name="uumsToCrmSyncService" ref="uumsToCrmSyncService"/>
+		<property name="owsJmsToCrmService" ref="owsJmsToCrmService"></property>
+	</bean>
+	<bean id="esbQuResponseListener" class="com.deppon.crm.module.interfaces.common.listener.ESBQuResponseListener">
+		<property name="statusSender" ref="crmToEsbStaSender"/>
+		<property name="interfaceLogSender" ref="interfaceLogSender"/>
+		<property name="syncCallBackService" ref="wsSyncCallbackServiceImpl"/>
+	</bean>
+
+	<jaxws:endpoint id="wsESBWorkFlowResultService" implementor="#wsESBWorkFlowResultServiceImpl" address="/esbWorkFlowResultService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="wsGiftApplyResultService" implementor="#wsGiftApplyResultServiceImpl" address="/giftApplyResultService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="wsPaymentApplyResultService" implementor="#wsPaymentApplyResultServiceImpl" address="/paymentApplyResultService">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="wsRecompenseOnlineService" implementor="#wsRecompenseOnlineServiceImpl" address="/recompenseOnlineService">
+    </jaxws:endpoint>
+    <bean id="baseInfoSyncService" class="com.deppon.crm.module.interfaces.bank.impl.BankInfoSyncServiceImpl">
+    	<property name="bankProvinceCityService" ref="bankProvinceCityService"/>
+    </bean>
+   <bean id="wsWorkflowApplyResultServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.workflow.impl.WorkflowApplyResultServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+   	<bean id="wsWorkflowApplyResultServiceImpl" factory-bean="wsWorkflowApplyResultServiceImplProxy" factory-method="create">
+		<property name="backFreightManager" ref="backFreightManager"/>
+		<property name="serviceRecoveryManager" ref="serviceRecoveryManager"/>
+	</bean>
+	<jaxws:endpoint id="wsWorkflowApplyResultService" address="/workflowApplyResultService"
+	implementorClass="com.deppon.crm.module.interfaces.workflow.IWorkflowApplyResultService"
+     implementor="#wsWorkflowApplyResultServiceImpl"  >
+    </jaxws:endpoint>
+
+    <!-- FSSC -->
+    <bean id="wsCrmNotifyClaimsServiceImplPoxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+        <property name="className" value="com.deppon.crm.module.interfaces.fin.impl.CrmNotifyClaimsServiceImpl"></property>
+        <property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+    </bean>
+    <bean id="wsCrmNotifyClaimsServiceImpl" factory-bean="wsCrmNotifyClaimsServiceImplPoxy" factory-method="create">
+        <property name="recompenseManager" ref="recompenseManager"></property>
+    </bean>
+    <jaxws:endpoint id="wsCrmNotifyClaimsService" implementor="#wsCrmNotifyClaimsServiceImpl"
+	implementorClass="com.deppon.crm.module.interfaces.fin.ICrmNotifyClaimsService" address="/crmNotifyClaimsService" >
+    	<!-- 接口soap详细消息打印 -->
+    	<!-- <jaxws:features>
+    		<bean class="org.apache.cxf.feature.LoggingFeature"></bean>
+    	</jaxws:features> -->
+    </jaxws:endpoint>
+
+
+    <!-- FOSS -->
+	<bean id="wsCrmServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.foss.impl.FossToCrmServiceImpl"/>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="wsCrmServiceImpl" factory-bean="wsCrmServiceImplProxy" factory-method="create">
+		<property name="orderManager" ref="orderManager" />
+		<property name="couponForFossManager" ref="couponForFossManagerImpl"/>
+		<property name="backFreightManager" ref="backFreightManager"/>
+		<property name="recompenseManager" ref="recompenseManager" />
+	</bean>
+	<jaxws:endpoint id="wsCrmService" implementor="#wsCrmServiceImpl"
+	implementorClass="com.deppon.crm.module.interfaces.foss.FossToCrmService" address="/crmService" >
+    	<!-- 接口soap详细消息打印 -->
+    	<!-- <jaxws:features>
+    		<bean class="org.apache.cxf.feature.LoggingFeature"></bean>
+    	</jaxws:features> -->
+    </jaxws:endpoint>
+
+    <!-- FIN -->
+    <jaxws:endpoint id="wsFinToCrmService" implementor="#wsCrmServiceImpl"
+	implementorClass="com.deppon.crm.module.interfaces.fin.IFinToCrmService" address="/finToCrmService" >
+    </jaxws:endpoint>
+
+    <!-- OWS -->
+
+
+  	<bean id="wsOwsToCrmServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.interfaces.ows.impl.OwsToCrmService"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+
+	<bean id="wsOwsToCrmServiceImpl" factory-bean="wsOwsToCrmServiceImplProxy" factory-method="create">
+		<property name="couponForInterfaceManager"  ref="couponForInterfaceManagerImpl"/>
+	</bean>
+
+<jaxws:endpoint id="wsOwsToCrmService" implementor="#wsOwsToCrmServiceImpl"
+	implementorClass="com.deppon.crm.module.interfaces.ows.IOwsToCrmService" address="/owsToCrmService" >
+</jaxws:endpoint>
+
+	<!-- uums -->
+	   <!--同步uums信息  -->
+    <bean id="uumsToCrmSyncService"  factory-bean="uumsToCrmSyncServiceProxy" factory-method="create">
+    	<property name="syncFacedManager" ref="syncFacedManager" />
+    	<!-- crm-base包 -->
+    	<property name="positionSerive" ref="IPositionService" />
+    </bean>
+
+    <bean id="uumsToCrmSyncServiceProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+    	<property name="className" value="com.deppon.crm.module.interfaces.uums.impl.UumsToCrmSyncServiceImpl"/>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+    </bean>
+     <!--同步uums 子公司信息  -->
+	<bean id="uumsToCrmServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className"
+			value="com.deppon.crm.module.interfaces.uums.impl.UumsToCrmServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="uumsToCrmServiceImpl" factory-bean="uumsToCrmServiceImplProxy" factory-method="create">
+		<property name="syncFacedManager" ref="syncFacedManager" />
+	</bean>
+
+	<jaxws:endpoint id="uumsToCrmService" implementor="#uumsToCrmServiceImpl"
+		implementorClass="com.deppon.crm.module.interfaces.uums.UumsToCrmService"
+		address="/uumsToCrmService">
+	</jaxws:endpoint>
+
+	<!-- 渠道 -->
+		<!-- 1、渠道号修改CRM订单中的运单号（ws） -->
+	<bean id="channelServiceImplProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className"
+			value="com.deppon.crm.module.interfaces.channel.impl.ChannelServiceImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="channelServiceImpl" factory-bean="channelServiceImplProxy" factory-method="create">
+		<property name="orderManager" ref="orderManager" />
+	</bean>
+
+	<jaxws:endpoint id="channelService" implementor="#channelServiceImpl"
+		implementorClass="com.deppon.crm.module.interfaces.channel.ChannelService"
+		address="/channelService">
+	</jaxws:endpoint>
+</beans>
+

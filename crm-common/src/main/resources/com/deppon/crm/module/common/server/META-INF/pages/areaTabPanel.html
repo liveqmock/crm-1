@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<title>德邦物流-CRM系统</title>
+<meta charset="utf-8" />
+<!-- extjs4 -->
+<link rel="stylesheet" type="text/css" 
+	href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+<link href="../styles/common/deppon.css" rel="stylesheet"
+	type="text/css" />
+<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+<script type="text/javascript"> </script>
+<script type="text/javascript" charset="utf-8" src="../scripts/common/common/common.js?2012081110.0.1"></script>
+<script type="text/javascript" charset="utf-8" src="../scripts/common/util/MessageUtil.js?2012081110.0.1"></script>
+<script type="text/javascript" src="../scripts/common/areaaddress/AreaAddressStore.js?2012081110.0.1"></script>
+    <script type="text/javascript" src="../scripts/common/areaaddress/AreaAddressView.js?2012081110.0.1"></script>
+
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.create('Ext.container.Viewport',{
+		autoDestroy : true,
+		layout : 'anchor',
+		autoScroll:true,
+		items:[/* 
+			new AreaAddressCombox({
+			'fieldLabel':'省份',
+			'id':'province',
+			'labelWidth':70,
+			'width':200,
+			'minWidth' :200,
+			'name':'province',
+			operateType:'UPDATE', 
+			tabPanel:['provincePanel'],
+			selectedValue:'2973'
+			})
+			,new AreaAddressCombox({
+				'fieldLabel':'城市',
+				'id':'city',
+				'labelWidth':70,
+				'width':200,
+				'minWidth' :200,
+				'name':'city',
+				operateType:'UPDATE', 
+				tabPanel:['provincePanel','cityPanel'],
+				selectedValue:'2974'
+			}), */
+			new AreaAddressCombox({
+				'fieldLabel':'区域',
+				'id':'area',
+				'labelWidth':70,
+				'width':200,
+				'minWidth' :200,
+				'name':'area',
+				operateType:'UPDATE', 
+				selectedValue:'8158'
+				})
+		]
+	});
+});
+
+</script>
+</head>
+<body>
+</body>
+</html>

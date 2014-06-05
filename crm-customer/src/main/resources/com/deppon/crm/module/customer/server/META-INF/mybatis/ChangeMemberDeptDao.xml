@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.ChangeMemberDept">
+	
+	<select id="getChangeMemberDeptByWorkFlowId" parameterType="string" resultMap="ChangeMemberDeptRM">
+		SELECT
+		<include refid="ChangeMemberDept_column"/>
+		FROM T_CUST_CHANGEMEMBERDEPT
+		WHERE FWORKFLOWID=#{workFlowId,jdbcType=NUMERIC}
+	</select>
+	
+	<insert id="insertChangeMemberDept" parameterType="com.deppon.crm.module.customer.shared.domain.ChangeMemberDept" >
+	<selectKey keyProperty="id" order="BEFORE" resultType="String">
+	select SEQ_ID_changeMemberdept.nextval as id from dual
+	</selectKey>
+	insert into t_cust_changeMemberdept(
+	FID,FCREATETIME,FCREATEUSERID,
+	FMEMBERID,FMEMBERNUMBER,FFROMDEPTID,FFROMDEPTNAME,
+	FTODEPTID,FTODEPTNAME,FREASON,FWORKFLOWID)
+	 values(
+	#{id,jdbcType=VARCHAR},
+	sysdate,#{createUser,jdbcType=VARCHAR},
+	#{memberId,jdbcType=VARCHAR},#{memberNumber,jdbcType=VARCHAR},
+	#{fromDeptId,jdbcType=VARCHAR},#{fromDeptName,jdbcType=VARCHAR},
+	#{toDeptId,jdbcType=VARCHAR},#{toDeptName,jdbcType=VARCHAR},
+	#{reason,jdbcType=VARCHAR},#{workFlowId,jdbcType=NUMERIC}
+	)
+	</insert>
+	
+	<resultMap id="ChangeMemberDeptRM"
+	 type="com.deppon.crm.module.customer.shared.domain.ChangeMemberDept">
+	<result property="id" column="FID" jdbcType = "VARCHAR" />
+	<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+	<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+	<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+	<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+	<result property="memberId" column="FMEMBERID" jdbcType = "VARCHAR" />
+	<result property="memberNumber" column="FMEMBERNUMBER" jdbcType = "VARCHAR" />
+	<result property="fromDeptId" column="FFROMDEPTID" jdbcType = "VARCHAR" />
+	<result property="fromDeptName" column="FFROMDEPTNAME" jdbcType = "VARCHAR" />
+	<result property="toDeptId" column="FTODEPTID" jdbcType = "VARCHAR" />
+	<result property="toDeptName" column="FTODEPTNAME" jdbcType = "VARCHAR" />
+	<result property="reason" column="FREASON" jdbcType = "VARCHAR" />
+	<result property="workFlowId" column="FWORKFLOWID" jdbcType = "NUMERIC" />
+	</resultMap>
+	
+	<select id="searchChangeMemberDepts" parameterType="com.deppon.crm.module.customer.shared.domain.ChangeMemberDept" resultMap="ChangeMemberDeptRM">
+	SELECT
+	<include refid="ChangeMemberDept_column"/>
+	FROM T_CUST_CHANGEMEMBERDEPT
+	<where>
+	<if test=" id != null  and id != ''  ">
+	<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" createDate != null  and createDate != ''  ">
+	<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+	</if>
+	<if test=" createUser != null  and createUser != ''  ">
+	<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" modifyDate != null  and modifyDate != ''  ">
+	<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+	</if>
+	<if test=" modifyUser != null  and modifyUser != ''  ">
+	<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" memberId != null  and memberId != ''  ">
+	<![CDATA[and FMEMBERID=#{memberId,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" memberNumber != null  and memberNumber != ''  ">
+	<![CDATA[and FMEMBERNUMBER=#{memberNumber,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" fromDeptId != null  and fromDeptId != ''  ">
+	<![CDATA[and FFROMDEPTID=#{fromDeptId,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" fromDeptName != null  and fromDeptName != ''  ">
+	<![CDATA[and FFROMDEPTNAME=#{fromDeptName,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" toDeptId != null  and toDeptId != ''  ">
+	<![CDATA[and FTODEPTID=#{toDeptId,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" toDeptName != null  and toDeptName != ''  ">
+	<![CDATA[and FTODEPTNAME=#{toDeptName,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" reason != null  and reason != ''  ">
+	<![CDATA[and FREASON=#{reason,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" workFlowId != null  and workFlowId != ''  ">
+	<![CDATA[and FWORKFLOWID=#{workFlowId,jdbcType=NUMERIC}]]>
+	</if>
+	</where>
+	
+	</select>
+	
+	<update id="updateChangeMemberDept" parameterType="com.deppon.crm.module.customer.shared.domain.ChangeMemberDept">
+	UPDATE
+	    T_CUST_CHANGEMEMBERDEPT
+	SET FLASTUPDATETIME = sysdate 
+	,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+	<if test=" id != null  and id != ''  ">
+	<![CDATA[,FID=#{id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" memberId != null  and memberId != ''  ">
+	<![CDATA[,FMEMBERID=#{memberId,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" memberNumber != null  and memberNumber != ''  ">
+	<![CDATA[,FMEMBERNUMBER=#{memberNumber,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" fromDeptId != null  and fromDeptId != ''  ">
+	<![CDATA[,FFROMDEPTID=#{fromDeptId,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" fromDeptName != null  and fromDeptName != ''  ">
+	<![CDATA[,FFROMDEPTNAME=#{fromDeptName,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" toDeptId != null  and toDeptId != ''  ">
+	<![CDATA[,FTODEPTID=#{toDeptId,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" toDeptName != null  and toDeptName != ''  ">
+	<![CDATA[,FTODEPTNAME=#{toDeptName,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" reason != null  and reason != ''  ">
+	<![CDATA[,FREASON=#{reason,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" workFlowId != null  and workFlowId != ''  ">
+	<![CDATA[,FWORKFLOWID=#{workFlowId,jdbcType=NUMERIC}]]>
+	</if>
+	WHERE FID = #{id}
+	</update>
+	
+	<sql id="ChangeMemberDept_column">
+	FID,
+	FCREATETIME,
+	FCREATEUSERID,
+	FLASTUPDATETIME,
+	FLASTMODIFYUSERID,
+	FMEMBERID,
+	FMEMBERNUMBER,
+	FFROMDEPTID,
+	FFROMDEPTNAME,
+	FTODEPTID,
+	FTODEPTNAME,
+	FREASON,
+	FWORKFLOWID
+	</sql>
+	
+	<delete id="deleteChangeMemberDept" parameterType="String">
+	  delete t_cust_changeMemberdept where fid = #{id}
+	</delete>
+	
+	<select id="getChangeMemberDeptById" parameterType="string" resultMap="ChangeMemberDeptRM">
+	SELECT
+	<include refid="ChangeMemberDept_column"/>
+	FROM T_CUST_CHANGEMEMBERDEPT
+	WHERE FID = #{id}
+	</select>
+	
+</mapper>

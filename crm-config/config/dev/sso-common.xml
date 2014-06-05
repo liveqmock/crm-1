@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sso>
+
+	<!-- 本地 -->	
+	<!-- <application id="crm" url="http://10.224.65.71:8080/crm/" 
+        homePage="login/index.action" 
+        ssoTokenStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.TokenDatabaseStore" 
+        ssoUserStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.CrmSSOUserSessionStore"/>
+    <application id="hollycrm" url="http://192.168.20.72:8580/hollycrm/" homePage=""/>    
+    
+	<application id="hollycrmHF" url="http://192.168.20.121:8580/hollycrm/" homePage=""/> 
+    
+    <application id="pkp-pickup-web" url="http://192.168.10.50/pkp-pickup-web/"  homePage="index.action" /> -->
+    
+    
+     <!-- 175 -->	
+	<!-- <application id="crm" url="http://192.168.20.175:8080/crm/" 
+        homePage="login/index.action" 
+        ssoTokenStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.TokenDatabaseStore" 
+        ssoUserStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.CrmSSOUserSessionStore"/>
+        
+    <application id="hollycrm" url="http://192.168.20.72:8580/hollycrm/" homePage=""/>
+    
+    <application id="hollycrmHF" url="http://10.202.200.100/hollycrm/" homePage=""/> 
+    
+    <application id="pkp-pickup-web" url="http://192.168.10.50/pkp-pickup-web/"  homePage="index.action" /> -->
+    
+    
+    <!-- SIT -->	
+	<!-- <application id="crm" url="http://10.224.65.71:8080/crm/" 
+        homePage="login/index.action" 
+        ssoTokenStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.TokenDatabaseStore" 
+        ssoUserStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.CrmSSOUserSessionStore"/>
+    <application id="hollycrm" url="http://10.224.65.155:8580/hollycrm/" homePage=""/>    
+    
+    <application id="hollycrmHF" url="" homePage=""/> 
+    
+    <application id="pkp-pickup-web" url="http://192.168.10.50/pkp-pickup-web/"  homePage="index.action" /> -->
+    
+     
+    <!-- 正式 --> 
+	<application id="crm" url="http://192.168.20.140:8080/crm" 
+        homePage="login/index.action" 
+        ssoTokenStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.TokenDatabaseStore" 
+        ssoUserStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.CrmSSOUserSessionStore"/>
+        
+    <application id="hollycrm" url="http://192.168.9.220/hollycrm/" homePage=""/>
+    
+    <application id="hollycrmHF" url="http://10.202.200.100/hollycrm/" homePage=""/>
+     
+	<application id="pkp-pickup-web" url="http://foss.deppon.com/pkp-pickup-web/"  homePage="index.action" />
+	
+</sso>

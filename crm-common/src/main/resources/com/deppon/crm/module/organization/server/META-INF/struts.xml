@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+  <package name="organization" namespace="/organization" extends="crm-default">
+  
+     <!--加载首页 路径为：/organization/index.action-->
+    <action name="index" class="com.deppon.crm.module.organization.server.action.EmployeeAction">
+      <result name="success">/WEB-INF/pages/organization/index.html</result>
+    </action>
+  
+    <!--根据部门名字模糊查询出部门序列-->
+	<action name="querySeq" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="querySeq">
+	   <result name="success" type="json"></result>
+	</action> 
+	
+	<!--加载部门树-->
+	<action name="loadTree" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="loadDepartmentTree">
+      <result name="success" type="jsontree">
+        <param name="include">nodes</param>
+      </result>
+    </action>
+    
+    <!--查询所有员工-->
+   <action name="findAllEmployee" class="com.deppon.crm.module.organization.server.action.EmployeeAction" method="findAllEmployee">
+      <result name="success" type="json"/>
+    </action>
+    
+     <!--获得所有的事业部-->
+   <action name="queryAllBusiness" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="queryAllBusiness">
+      <result name="success" type="json"/>
+    </action>
+	<!--  获取集中结算部门  -->
+   <action name="acquireDeptByName" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="acquireDeptByName">
+      <result name="success" type="json">
+     	 <param name="includeProperties">focusDeptList</param>
+      </result>
+    </action>
+	<!--  获取集中结算部门  -->
+   <action name="acquireBusinessDeptByName" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="acquireBusinessDeptByName">
+      <result name="success" type="json">
+     	 <param name="includeProperties">focusDeptList</param>
+      </result>
+    </action>
+<!-- ..........................................备用ACTION............................... -->
+
+    <!--查询所有部门-->
+   <action name="findAllDepartment" class="com.deppon.crm.module.organization.server.action.EmployeeAction" method="findAllDepartment">
+      <result name="success" type="json"/>
+   </action>
+   
+   <!--存储部门信息-->
+    <action name="saveDepartment" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="saveDepartment">
+      <result name="success" type="json"/>
+    </action>
+    
+    <!--删除部门-->
+    <action name="deleteDepartment" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="deleteDepartment">
+      <result name="success" type="json"/>
+    </action> 
+     
+     <!--根据部门编号查询员工信息-->
+	<action name="EmployeeByDeptCodeForPage" class="com.deppon.crm.module.organization.server.action.EmployeeAction" method="EmployeeByDeptCodeForPage">
+	 <result name="success" type="json"></result>
+	</action> 
+	
+	<!--向数据库中加载上LEAF信息-->
+	<action name="allLeaf" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="allLeaf">
+	 <result name="success" type="json"></result>
+	</action>
+	
+	<!--加载查询树，废弃-->
+	 <action name="loadSearchTree" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="loadDepartmentSearchTree">
+      <result name="success" type="jsontree">
+        <param name="include">departmentTreeSearchMap</param>
+      </result>
+    </action> 
+    
+     <!--根据部门名称查询部门-->
+	<action name="searchDeptByDeptName" class="searchDeptAndEmployeeAction" method="searchDeptByDeptName">
+	 <result name="success" type="json"></result>
+	</action>
+	
+  </package>
+  
+</struts>

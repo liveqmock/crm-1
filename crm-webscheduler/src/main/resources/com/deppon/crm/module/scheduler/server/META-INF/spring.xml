@@ -1,0 +1,50 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<!-- 数据源 jndi方式 -->
+	<!-- 	<bean id="dataSource" -->
+	<!-- 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<!-- 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" /> -->
+	<!-- 		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" /> -->
+	<!-- 		<property name="username" value="develop" /> -->
+	<!-- 		<property name="password" value="develop" /> -->
+	<!-- 	</bean> -->
+
+
+	<bean id="mailSenderService"
+		class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+		<property name="host" value="smtp.deppon.com" />
+		<property name="userName" value="CRM@deppon.com" />
+		<property name="password" value="dp31350606" />
+	</bean>
+	<!-- Acrtion日志daoBean -->
+	<bean id="actionLogDao" class="com.deppon.crm.module.scheduler.server.dao.impl.ActionLogDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory_Log" />
+	</bean>
+
+	<!--Acrtion日志serviceBean -->
+	<bean id="actionLogService" class="com.deppon.crm.module.scheduler.server.service.impl.ActionLogService">
+		<property name="actionLogDao" ref="actionLogDao" />
+	</bean>	
+	
+	<bean id="schedulingControlDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SchedulingControlDao"/>
+	<!-- <bean id="potentialCustomerTimerManager" class="com.deppon.crm.module.scheduler.server.manager.PotentialCustomerTimerManager">
+		<property name="timerPotentialCustomerService" ref="timerPotentialCustomerService"></property>
+		<property name="mapOperate" ref="mapOperate"/>
+		<property name="baseDataManager" ref="baseDataManager"/>
+		<property name="ladingstationDepartmentManager" ref="ladingstationDepartmentManager"/>
+	</bean> -->
+	<bean id="schedulingControlService" class="com.deppon.crm.module.scheduler.server.service.impl.SchedulingControlService">
+		<property name="schedulingControlDao" ref="schedulingControlDao"></property>
+	</bean>
+	<bean id="timerPotentialCustomerService" class="com.deppon.crm.module.scheduler.server.service.TimerPotentialCustomerService">
+		<property name="custDao" ref="custDao"></property>
+	</bean>
+	<bean id="custDao" class="com.deppon.crm.module.scheduler.server.dao.impl.CustomerGetTempDao"/>
+	<bean id="memberTimerService" class="com.deppon.crm.module.scheduler.server.service.impl.MemberTimerService">
+		<property name="custTempDao" ref="custDao"/>
+	</bean>
+</beans>

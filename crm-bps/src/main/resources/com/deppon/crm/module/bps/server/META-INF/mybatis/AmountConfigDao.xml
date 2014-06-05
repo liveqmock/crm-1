@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.bps.server.dao.impl.AmountConfigDaoImpl">
+
+	<resultMap id="amountConfigMap"		type="com.deppon.crm.module.bps.server.util.AmountConfigEntity">
+		<result property="id" column="FID" />
+		<result property="mcName" column="MC_NAME" />
+		<result property="mcDefiniTionName" column="MC_DEFINITIONNAME" />
+		<result property="currentApproStepName" column="CURRENT_APPROSTEP_NAME" />
+		<result property="currentApproStepNo" column="CURRENT_APPROSTEP_NO" />
+		<result property="targetApproStepName" column="TARGET_APPROSTEP_NAME" />
+		<result property="targetApproStepNo" column="TARGET_APPROSTEP_NO" />
+		<result property="minAmount" column="MIN_AMOUNT" />
+		<result property="maxAmount" column="MAX_AMOUNT" />
+	</resultMap>
+	<resultMap id="claimNoSuffixMap" type="com.deppon.crm.module.bps.shared.domain.NoSuffixEntity">
+		<result property="id" column="FID" />
+		<result property="nextSuffix" column="FNextSuffix" />
+		<result property="suffixDate" column="FSuffixDate" />
+	</resultMap>
+	<sql id="partSql">
+		AF.FID,
+		AF.MC_NAME,
+		AF.MC_DEFINITIONNAME,
+		AF.CURRENT_APPROSTEP_NAME,
+		AF.CURRENT_APPROSTEP_NO,
+		AF.TARGET_APPROSTEP_NAME,
+		AF.TARGET_APPROSTEP_NO,
+		AF.MIN_AMOUNT,
+		AF.MAX_AMOUNT
+	</sql>
+	
+	<select id="queryForBranch" resultMap="amountConfigMap"
+		parameterType="com.deppon.crm.module.bps.server.util.AmountConfigEntity">
+		SELECT
+		<include refid="partSql" />
+		FROM T_CRM_AMOUNT_CONFIG AF where 1=1 
+		<if test="null != id and '' != id">
+			and AF.FID = #{id}
+		</if>
+		<if test="null != mcDefiniTionName and '' != mcDefiniTionName">
+			and AF.MC_DEFINITIONNAME = #{mcDefiniTionName}
+		</if>
+		<if test="null != currentApproStepNo and '' != currentApproStepNo">
+			and AF.CURRENT_APPROSTEP_NO = #{currentApproStepNo}
+		</if>
+		<if test="null != targetApproStepNo and '' != targetApproStepNo">
+			and AF.TARGET_APPROSTEP_NO = #{targetApproStepNo}
+		</if>
+	</select>
+	<select id="getNextSuffix" resultMap="claimNoSuffixMap">
+		select FID,FNextSuffix,FSuffixDate from T_ClaimNoSuffix
+	</select>
+
+	<insert id="insertNextSuffix" parameterType="string">
+		<![CDATA[ 
+		insert into T_ClaimNoSuffix(FNextSuffix, FSuffixDate) values (
+			#{nextSuffix},
+			sysdate
+		)
+		]]>
+	</insert>
+	
+	<update id="updateNextSuffix" parameterType="string">
+		update T_ClaimNoSuffix set FNextSuffix = #{nextSuffix}, FSuffixDate = sysdate
+	</update>
+	
+	<select id="procNextSuffix" statementType="CALLABLE">
+		{call Proc_rec_getNextSuffix(#{suffix,mode=OUT,jdbcType=VARCHAR})}
+	</select>
+	
+</mapper>

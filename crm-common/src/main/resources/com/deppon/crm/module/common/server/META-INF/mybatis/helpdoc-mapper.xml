@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.HelpDoc">
+
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="helpDocResultMap"
+		type="com.deppon.crm.module.common.shared.domain.HelpDoc">
+		<id property="id" column="fid" />
+		<result property="createDate" column="fcreatetime" />
+		<result property="createUser" column="fcreateuserid" />
+		<result property="modifyDate" column="flastupdatetime" />
+		<result property="modifyUser" column="flastmodifyuserid" />
+		<result property="helpTitle" column="fhelptitle" />
+		<result property="helpContent" column="fhelpcontent" />
+		<result property="belongModule" column="fbelongmodule" />
+		<result property="belongMenu" column="fbelongmenu" />
+		<result property="windowNum" column="fwindownum" />
+		<result property="active" column="factive" />
+	</resultMap>
+
+	<sql id="helpDocSqlField">fid, fcreatetime, fcreateuserid, flastupdatetime,
+		flastmodifyuserid, fhelptitle, fhelpcontent, fbelongmodule,
+		fbelongmenu,fwindownum, factive
+	</sql>
+
+	<!--新增待办事宜 -->
+	<insert id="addHelpDoc" parameterType="com.deppon.crm.module.common.shared.domain.HelpDoc">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_HelpDoc.NEXTVAL as id FROM DUAL
+			]]>
+		</selectKey>
+		<![CDATA[
+	        INSERT INTO t_crm_HelpDoc 
+	        (fid,
+	         fcreatetime, 
+             fcreateuserid, 
+             flastupdatetime, 
+             flastmodifyuserid, 
+             fhelptitle, 
+             fhelpcontent, 
+             fbelongmodule, 
+             fbelongmenu, 
+             fwindownum, 
+             factive
+	        ) 
+	        VALUES
+	        (
+	        #{id,jdbcType=VARCHAR},
+	        sysdate,
+	        #{createUser,jdbcType=VARCHAR},
+			sysdate,
+			#{modifyUser,jdbcType=VARCHAR},
+	        #{helpTitle,jdbcType=VARCHAR},
+	        #{helpContent,jdbcType=VARCHAR},
+	        #{belongModule,jdbcType=VARCHAR}, 
+	        #{belongMenu,jdbcType=VARCHAR}, 
+	        #{windowNum,jdbcType=VARCHAR}, 
+	        #{active,jdbcType=NUMERIC}
+	        )
+	   ]]>
+	</insert>
+
+	<update id="updateHelpDocById" parameterType="com.deppon.crm.module.common.shared.domain.HelpDoc">
+		UPDATE t_crm_HelpDoc SET
+		<if test="modifyUser != null and modifyUser != ''">
+			flastmodifyuserid=#{modifyUser,jdbcType=VARCHAR},
+		</if>
+		<if test="helpTitle != null and helpTitle != ''">
+			fhelptitle=#{helpTitle,jdbcType=VARCHAR},
+		</if>
+		<if test="helpContent != null and helpContent != ''">
+			fhelpcontent=#{helpContent,jdbcType=VARCHAR},
+		</if>
+		<if test="belongModule != null and belongModule != ''">
+			fbelongmodule=#{belongModule,jdbcType=VARCHAR},
+		</if>
+		<if test="belongMenu != null and belongMenu != ''">
+			fbelongMenu=#{belongMenu,jdbcType=VARCHAR},
+		</if>
+		<if test="windowNum != null and windowNum != ''">
+			fwindowNum=#{windowNum,jdbcType=VARCHAR},
+		</if>
+		<if test="active != null ">
+			factive=#{active,jdbcType=NUMERIC},
+		</if>
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{id}
+	</update>
+
+
+	<select id="getHelpDocById" parameterType="string" resultMap="helpDocResultMap">
+		SELECT
+		<include refid="helpDocSqlField" />
+		FROM T_CRM_HELPDOC where fid = #{id}
+	</select>
+
+	<select id="getHelpDocByWindowNum" parameterType="string"
+		resultMap="helpDocResultMap">
+		SELECT
+		<include refid="helpDocSqlField" />
+		FROM T_CRM_HELPDOC where fWindowNum = #{windowNum}
+	</select>
+
+	<select id="searchHelpDocByCondition" resultMap="helpDocResultMap">
+		SELECT
+		<include refid="helpDocSqlField" />
+		FROM T_CRM_HELPDOC
+		<where>
+			<if test="helpTitle != null and helpTitle != ''">
+				AND fhelptitle=#{helpTitle,jdbcType=VARCHAR}
+			</if>
+			<if test="belongModule != null and belongModule != ''">
+				AND fbelongmodule=#{belongModule,jdbcType=VARCHAR}
+			</if>
+			<if test="belongMenu != null and belongMenu != ''">
+				AND fbelongMenu=#{belongMenu,jdbcType=VARCHAR}
+			</if>
+			<if test="windowNum != null and windowNum != ''">
+				AND fwindowNum=#{windowNum,jdbcType=VARCHAR}
+			</if>
+			<if test="active != null ">
+				AND factive=#{active,jdbcType=NUMERIC}
+			</if>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(flastupdatetime) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(flastupdatetime) &lt;= #{endDate}
+			</if>
+		</where>
+		order by flastupdatetime desc,fcreatetime desc
+	</select>
+
+	<delete id="deleteById" parameterType="string"> 
+		<![CDATA[
+			delete from T_CRM_HELPDOC where fid=#{id}
+		]]>
+	</delete>
+
+	<select id="getCountByCondition" resultType="int">
+		SELECT count('X')
+		FROM T_CRM_HELPDOC
+		<where>
+			<if test="helpTitle != null and helpTitle != ''">
+				AND fhelptitle=#{helpTitle,jdbcType=VARCHAR}
+			</if>
+			<if test="belongModule != null and belongModule != ''">
+				AND fbelongmodule=#{belongModule,jdbcType=VARCHAR}
+			</if>
+			<if test="belongMenu != null and belongMenu != ''">
+				AND fbelongMenu=#{belongMenu,jdbcType=VARCHAR}
+			</if>
+			<if test="windowNum != null and windowNum != ''">
+				AND fwindowNum=#{windowNum,jdbcType=VARCHAR}
+			</if>
+			<if test="active != null ">
+				AND factive=#{active,jdbcType=NUMERIC}
+			</if>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(flastupdatetime) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(flastupdatetime) &lt;= #{endDate}
+			</if>
+		</where>
+	</select>
+
+
+</mapper>

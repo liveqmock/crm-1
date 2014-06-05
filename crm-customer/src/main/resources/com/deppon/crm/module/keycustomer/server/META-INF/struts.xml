@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="keycustomer" namespace="/keycustomer" extends="crm-default">
+		<!--待准入大客户列表界面 -->
+		<action name="toAccessKeycustIndex">
+			<result name="success">toAccessKeycustIndex.html</result>
+		</action>
+		<!--预退出大客户列表界面 -->
+		<action name="toExitKeycustIndex">
+			<result name="success">toExitKeycustIndex.html</result>
+		</action>
+		<!--大客户审批管理界面 -->
+		<action name="keycustApproveManager">
+			<result name="success">keycustApproveManager.html</result>
+		</action>
+		<!--大客户走货报告界面 -->
+		<action name="keycustShipmentReport">
+			<result name="success">keycustShipmentReport.html</result>
+		</action>
+		<!-- 待准入大客户列表查询 -->
+		<action name="searchKeycustList" class="keyCustomerAction"
+			method="searchKeycustList">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 大客户审批管理 工作流列表查询 -->
+		<action name="searchKeycustWorkflowList" class="keyCustomerAction"
+			method="searchKeycustWorkflowList">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 申请工作流 -->
+		<action name="applyWorlflow" class="keyCustomerAction" method="applyWorlflow">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 状态校验 -->
+		<action name="verifyKeyStatus" class="keyCustomerAction"
+			method="verifyKeyStatus">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 退出处理 -->
+		<action name="exitHadlle" class="keyCustomerAction" method="exitHadlle">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 退出处理 -->
+		<action name="createKeyCustomerWorkflowInfoByCustId" class="keyCustomerAction"
+			method="createKeyCustomerWorkflowInfoByCustId">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询客户 -->
+		<action name="searchMemberInfoListWithAuth" class="keyCustomerAction"
+			method="searchMemberInfoListWithAuth">
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+</struts>

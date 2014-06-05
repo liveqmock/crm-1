@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id ="baseDataDao" class="com.deppon.crm.module.customer.server.dao.impl.BaseDataDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="contactVaryDao" class="com.deppon.crm.module.customer.server.dao.impl.ContactVaryDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="changeMemberDeptDao" class="com.deppon.crm.module.customer.server.dao.impl.ChangeMemberDeptDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+		
+	<bean id ="contactIntegralDao" class="com.deppon.crm.module.customer.server.dao.impl.ContactIntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="waybillIntegralDao" class="com.deppon.crm.module.customer.server.dao.impl.WaybillIntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="giftDao" class="com.deppon.crm.module.customer.server.dao.impl.GiftDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="memberIntegralDao" class="com.deppon.crm.module.customer.server.dao.impl.MemberIntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="integralDao" class="com.deppon.crm.module.customer.server.dao.impl.IntegralDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id ="integRuleDao" class="com.deppon.crm.module.customer.server.dao.impl.IntegRuleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id ="rewardIntegRuleDao" class="com.deppon.crm.module.customer.server.dao.impl.RewardIntegRuleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="workFlowDao" class="com.deppon.crm.module.customer.server.dao.impl.WorkFlowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="contactDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ContactDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="alterMemberDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.AlterMemberDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="memberDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.MemberDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="contractDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ContractDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="examineRecordDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ExamineRecordDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="approvingWorkflowDataDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ApprovingWorkflowDataDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="prefrentialDealDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.PrefrentialDealDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="custLabelDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.CustLabelDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="ContractWorkflowDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.ContractWorkflowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="goodTradeMappingDao"
+		class="com.deppon.crm.module.customer.server.dao.impl.GoodTradeMappingDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 客户信用dao -->
+	<bean id="custCreditDao" 
+		class="com.deppon.crm.module.customer.server.dao.impl.CustCreditDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+</beans>

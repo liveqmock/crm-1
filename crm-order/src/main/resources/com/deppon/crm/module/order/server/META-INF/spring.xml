@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="sequenceTool" class="com.deppon.crm.module.order.server.dao.impl.SequenceTool">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="orderDao" class="com.deppon.crm.module.order.server.dao.impl.OrderDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="sequenceTool" ref="sequenceTool"></property>
+	</bean>
+	<bean id="orderOperationLogDao" class="com.deppon.crm.module.order.server.dao.impl.OrderOperationLogDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="sequenceTool" ref="sequenceTool"></property>
+	</bean>
+	<bean id="orderReminderDao" class="com.deppon.crm.module.order.server.dao.impl.OrderReminderDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="vehicleHistoryDao" class="com.deppon.crm.module.order.server.dao.impl.VehicleHistoryDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="orderValidator" class="com.deppon.crm.module.order.server.manager.OrderValidator" >
+	</bean>
+	
+	<bean id="vehicleHistoryService" class="com.deppon.crm.module.order.server.service.impl.VehicleHistoryService">
+		<property name="vehicleHistoryDao" ref="vehicleHistoryDao"></property>
+	</bean>
+	
+	<bean id = "vehicleHistoryManager" class="com.deppon.crm.module.order.server.manager.impl.VehicleHistoryManager">
+		<property name="vehicleHistoryService" ref="vehicleHistoryService"></property>
+	</bean>
+	<bean id="orderService" class="com.deppon.crm.module.order.server.service.impl.OrderService">
+		<property name="orderDao" ref="orderDao" />
+		<property name="orderReminderDao" ref="orderReminderDao" />
+		<property name="orderOperationLogDao" ref="orderOperationLogDao" />
+		<property name="waybillOperate" ref="waybillOperate" />
+		<property name="orderOperate" ref="orderOperate" />
+		<property name="smsSender" ref="smsInfoSender" />
+		<property name="customerOperate" ref="customerOperate" />
+		<property name="contactManager" ref="contactManager"/>
+		
+	</bean>
+
+	<bean id="orderManager" class="com.deppon.crm.module.order.server.manager.impl.OrderManager">
+		<property name="departmentService" ref="departmentService" />
+		<property name="orderService" ref="orderService" />
+		<property name="orderValidator" ref="orderValidator" />
+		<property name="customerManager" ref="memberManager" />
+		<property name="ladDeptManager" ref="ladingstationDepartmentManager" />
+		<property name="messageManager" ref="messageManager" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="vehicleHistoryManager" ref="vehicleHistoryManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="areaAddressManager" ref="areaAddressManager"/>
+		<property name="pilotCityManager" ref="pilotCityManager"></property>
+		<property name="orderOperate" ref="orderOperate" />
+		<property name="orderNumberRuleManager" ref="orderNumberRuleManager"></property>
+	</bean>
+
+	<bean id="orderAction" class="com.deppon.crm.module.order.server.action.OrderAction" scope="prototype">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="orderManager" ref="orderManager"></property>
+		<property name="vehicleHistoryManager" ref="vehicleHistoryManager"></property>
+		<property name="ladingstationDepartmentManager" ref="ladingstationDepartmentManager"></property>
+	</bean>
+	<bean id="listOrderAction" class="com.deppon.crm.module.order.server.action.ListOrderAction"
+		scope="prototype">
+		<property name="orderManager" ref="orderManager"></property>
+	</bean>
+	
+	<bean id="boundContactNumAction" class="com.deppon.crm.module.order.server.action.BoundContactNumAction"
+		scope="prototype">
+		<property name="contactManager" ref="contactManager"></property>
+		<property name="orderManager" ref="orderManager"></property>
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="unboundContactNumManager" ref="unboundContactNumManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+	</bean>
+	
+	<bean id="orderUtil" class="com.deppon.crm.module.order.server.util.OrderUtil">
+	</bean>
+	
+	<!-- 联系人编码解绑 -->
+	<bean id="unboundContactNumService" class="com.deppon.crm.module.order.server.service.impl.UnboundContactNumService">
+		<property name="customerOperate" ref="customerOperate"></property>
+		<property name="contactService" ref="contactService"></property>
+	</bean>
+	
+	<bean id="unboundContactNumManager" class="com.deppon.crm.module.order.server.manager.impl.UnboundContactNumManager">
+		<property name="unboundContactNumService" ref="unboundContactNumService"></property>
+		<property name="contactManager" ref="contactManager"></property>
+		<property name="smsSender" ref="smsInfoSender"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+	</bean>
+	
+	<!-- 订单号规则 -->
+	<bean id="orderNumberRuleDao" class="com.deppon.crm.module.order.server.dao.impl.OrderNumberRuleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="orderNumberRuleService" class="com.deppon.crm.module.order.server.service.impl.OrderNumberRuleService">
+		<property name="orderNumberRuleDao" ref="orderNumberRuleDao"></property>
+	</bean>
+	<bean id="orderNumberRuleManager" class="com.deppon.crm.module.order.server.manager.impl.OrderNumberRuleManager">
+		<property name="orderNumberRuleService" ref="orderNumberRuleService"></property>
+		<property name="ruleLogManager" ref="ruleLogManager"></property>
+	</bean>
+	<bean id="orderNumberRuleAction" class="com.deppon.crm.module.order.server.action.OrderNumberRuleAction"
+		scope="prototype">
+		<property name="orderNumberRuleManager" ref="orderNumberRuleManager"></property>
+	</bean>
+	<bean id="ruleLogDao" class="com.deppon.crm.module.order.server.dao.impl.RuleLogDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="ruleLogService" class="com.deppon.crm.module.order.server.service.impl.RuleLogService">
+		<property name="ruleLogDao" ref="ruleLogDao"></property>
+	</bean>
+	<bean id="ruleLogManager" class="com.deppon.crm.module.order.server.manager.impl.RuleLogManager">
+		<property name="ruleLogService" ref="ruleLogService"></property>
+	</bean>
+</beans>
+

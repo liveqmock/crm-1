@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="crm-default" extends="framework-default">
+
+		<result-types>
+			<result-type name="stringResult"
+				class="com.deppon.crm.module.frameworkimpl.server.action.StringResult" />
+		</result-types>
+		<!-- <interceptors> <interceptor-stack name="crmStack"> <interceptor-ref 
+			name="error" /> <interceptor-ref name="module" /> <interceptor-ref name="defaultStack" 
+			/> <interceptor-ref name="json" /> <interceptor-ref name="security"/> </interceptor-stack> 
+			</interceptors> <default-interceptor-ref name="crmStack" /> -->
+					
+		<!-- 自定义拦截器，用于监控平台start 2013.12.4 By ZhuPJ   -->
+		<interceptors>
+			<interceptor name="bizloggerInterceptor"
+				class="com.deppon.crm.module.common.server.interceptor.ExceptionInterceptor" />
+			<interceptor-stack name="bizloggerInterceptorWorkStack">
+				<interceptor-ref name="frameworkStack" />
+				<interceptor-ref name="bizloggerInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="bizloggerInterceptorWorkStack" /> 
+		<!-- 自定义拦截器，用于监控平台start 2013.12.4 By ZhuPJ -->
+		
+		
+<!-- 		<interceptors> -->
+<!--     		<interceptor name="webLog" class="com.deppon.foss.framework.server.web.interceptor.LogInterceptor"/> -->
+<!--     		<interceptor-stack name="crmStack"> -->
+<!--     			<interceptor-ref name="error"/> -->
+<!--     			<interceptor-ref name="module"/> -->
+<!--     			<interceptor-ref name="security"/> -->
+<!--     			<interceptor-ref name="defaultStack"/> -->
+<!--     			<interceptor-ref name="json"/> -->
+<!--     			<interceptor-ref name="validator"/> -->
+<!--     		</interceptor-stack> -->
+<!--     	</interceptors> -->
+<!--     	<default-interceptor-ref name="crmStack"/> -->
+    	
+		<global-results>
+			<result name="jspError">${referer}</result>
+			<result name="jsonError" type="jsonerror"></result>
+			<result name="jspLogin" type="redirect">/login/login.action</result>
+			<result name="jsonLogin" type="jsonerror"></result>
+		</global-results>
+	</package>
+</struts>

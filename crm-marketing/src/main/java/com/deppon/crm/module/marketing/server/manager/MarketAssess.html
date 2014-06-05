@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>营销效果评估报表java-doc</title>
+</head>
+<body>
+
+<a  name="flowchart">
+<fieldset>
+<legend>营销效果评估报表流程图</legend>
+<img alt="" src="doc-files4/营销效果评估报表-流程图.png">
+</fieldset>
+</a>
+<a  name="customerMode">
+<fieldset>
+<legend>营销效果评估报表概念模型</legend>
+<img alt="" src="doc-files4/类关系图.jpg">
+</fieldset>
+</a>
+
+<a  name="DevelopPlanMgr">
+<fieldset>
+<legend>客户开发效果评估报表规则设置</legend>
+<table border="1">
+<tr><td colspan="2" align="center">业务规则：</td><td></td></tr>
+<tr><td>RULE-A1</td><td>
+1、用户可在数据权限范围内，选择各级部门；<br>
+2、打开报表界面时，查询条件中默认显示用户所辖部门；<br>
+3、营运本部、事业部、大区、小区、营业部下拉菜单中，如果全部为空，则查询出各经营本部的数据；如果只选择经营本部，则查询出的数据为该经营本部下各事业部的数据；如果选择了某经营本部下某事业部，则查询出的数据为该事业部下各大区的数据；以此类推， 如果选择了、某营业部，则直接显示该营业部的数据。<br>
+4、选择部门的控件为五级联动，必须选择上一层级，其下级部门才能选择；任一层级的部门重新选择时，其下级所有部门（含下下级等）控件内的数据自动清空。<br>
+5、对于用户无数据权限选择的部门，控件设置为不可选择。<br>
+</td><td><a href="#saveMarketPlan">客户开发效果评估查询序列图设计</a></td></tr>
+<tr><td>RULE-A2</td><td>
+1、打开报表页面时，起始日期默认为当前月份的1日，结束日期默认为当前日期的前一天（如果本日为1日，则结束时间默认为当天）；<br>
+2、选择结束日期时，起始日期自动生成，显示为结束日期对应月份的1日；<br>
+</td><td></td></tr>
+<tr><td>RULE-A3</td><td>
+1、点击“查询”按钮，按部门和起止日期过滤条件，在列表中显示相应数据；<br>
+2、每页默认显示20条数据，可分页显示，每页显示条数可更改但不能大于100条；<br>
+3、列表中的“本月新增潜客数-**”（**表示潜客的客户来源）。
+</td><td></td></tr>
+<tr><td>RULE-A4</td><td>
+1、列表左侧的部门（不含“总计”所在行），采用逐层进入的方式，点击营运本部进入所辖事业部的数据列表，点击事业部进入所辖大区的数据列表，点击大区进入小区的数据列表，点击小区进入营业部的数据列表；<br>
+2、列表左侧的部门，表头字段根据查询结果的数据层级，可相应显示经营本部、事业部、大区、小区、营业部；<br>
+3、报表最后一行为求和项，定量数据（如本月新增潜客数等）为各区域数据的求和，比率数据（如本月新增潜客回访率等）为对应各项求和后的比值。<br>
+</td><td></td></tr>
+
+<tr><td>RULE-A5</td><td>
+1、点击“返回上一级”，则返回上一级部门进行查询，并在列表中更新查询结果。如果返回时超出用户数据权限，则提醒：您无权限查询上一层级数据。<br>
+2、如果当前查询的数据层级已经为经营本部，则返回功能不能使用。<br>
+
+</td><td><a href="#useCoupon">返回上级序列图设计</a></td></tr>
+
+<tr><td width = '80'>RULE-A6</td><td>
+1、	点击“导出查询结果”时，系统自动将当前查询条件下的列表数据导出成excel文件，其中每条数据的部门信息在excel文件中均显示为：营运本部、事业部、大区、小区、营业部。例如导出的数据为上海浦西大区的统计信息，则excel文件中显示为：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="" src="doc-files4/excel.png">	
+</td><td><a href="#autoCoupon">客户开发效果评估导出序列图设计</a></td></tr>
+
+<tr><td>RULE-A7</td><td>
+1、点击“导出权限下全部数据”时，忽视查询条件，系统自动将该用户数据权限下的所有数据导出成excel文件，其中每条数据的部门信息显示方式同RULE-A6。<br>
+</td><td></td></tr>
+
+<tr><td>RULE-A8</td><td>
+<font color = 'red'>1、每日凌晨生成本月1日至本日前一天的数据（如果当前时间为本月1日，则生成上月1日至上月最后一日的数据）；</font><br>
+2、用户在报表中查询时，系统从已生成的固定报表中筛选数据并显示。<br>
+<br>
+</td><td><a href="#searchMarketPlan">自动生成营销报表</a></td></tr>
+</table>
+</fieldset>
+</a>
+
+<a  name="coupon">
+<fieldset>
+<legend>客户维护效果评估报表规则</legend>
+<table border="1">
+<tr><td colspan="2" align="center">业务规则：</td><td></td></tr>
+<tr><td>RULE-A1</td><td>
+1、用户可在数据权限范围内，选择各级部门；<br>
+2、打开报表界面时，查询条件中默认显示用户所辖部门；<br>
+3、营运本部、事业部、大区、小区、营业部下拉菜单中，如果全部为空，则查询出各经营本部的数据；如果只选择经营本部，则查询出的数据为该经营本部下各事业部的数据；如果选择了某经营本部下某事业部，则查询出的数据为该事业部下各大区的数据；以此类推， 如果选择了、某营业部，则直接显示该营业部的数据。<br>
+4、选择部门的控件为五级联动，必须选择上一层级，其下级部门才能选择；任一层级的部门重新选择时，其下级所有部门（含下下级等）控件内的数据自动清空。<br>
+5、对于用户无数据权限选择的部门，控件设置为不可选择。<br>
+</td><td><a href="#changeStatus">客户维护效果评估报表序列图设计</a></td></tr>
+<tr><td>RULE-A2</td><td>
+1、打开报表页面时，起始日期默认为当前月份的1日，结束日期默认为当前日期的前一天（如果本日为1日，则结束时间默认为当天）；<br>
+2、选择结束日期时，起始日期自动生成，显示为结束日期对应月份的1日；<br>
+</td><td></td></tr>
+<tr><td>RULE-A3</td><td>
+1、点击“查询”按钮，按部门和起止日期过滤条件，在列表中显示相应数据；<br>
+2、每页默认显示20条数据，可分页显示，每页显示条数可更改但不能大于100条；<br>
+3、列表中的“本月新增潜客数-**”（**表示潜客的客户来源）。
+</td><td></td></tr>
+<tr><td>RULE-A4</td><td>
+1、列表左侧的部门（不含“总计”所在行），采用逐层进入的方式，点击营运本部进入所辖事业部的数据列表，点击事业部进入所辖大区的数据列表，点击大区进入小区的数据列表，点击小区进入营业部的数据列表；<br>
+2、列表左侧的部门，表头字段根据查询结果的数据层级，可相应显示经营本部、事业部、大区、小区、营业部；<br>
+3、报表最后一行为求和项，定量数据（如本月新增潜客数等）为各区域数据的求和，比率数据（如本月新增潜客回访率等）为对应各项求和后的比值。<br>
+</td><td></td></tr>
+
+<tr><td>RULE-A5</td><td>
+1、点击“返回上一级”，则返回上一级部门进行查询，并在列表中更新查询结果。如果返回时超出用户数据权限，则提醒：您无权限查询上一层级数据。<br>
+2、如果当前查询的数据层级已经为经营本部，则返回功能不能使用。<br>
+</td><td><a href="#useCoupon">返回上级序列图设计</a></td></tr>
+
+<tr><td width = '80'>RULE-A6</td><td>
+1、	点击“导出查询结果”时，系统自动将当前查询条件下的列表数据导出成excel文件，其中每条数据的部门信息在excel文件中均显示为：营运本部、事业部、大区、小区、营业部。例如导出的数据为上海浦西大区的统计信息，则excel文件中显示为：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="" src="doc-files4/excel.png">	
+</td><td><a href="#sendMessage">客户维护效果评估导出时序图</a></td></tr>
+
+<tr><td>RULE-A7</td><td>
+1、点击“导出权限下全部数据”时，忽视查询条件，系统自动将该用户数据权限下的所有数据导出成excel文件，其中每条数据的部门信息显示方式同RULE-A6。<br>
+</td><td></td></tr>
+
+<tr><td>RULE-A8</td><td>
+<font color = 'red'>1、每日凌晨生成本月1日至本日前一天的数据（如果当前时间为本月1日，则生成上月1日至上月最后一日的数据）；</font><br>
+2、用户在报表中查询时，系统从已生成的固定报表中筛选数据并显示。<br>
+<br>
+</td><td><a href="#searchMarketPlan">自动生成营销报表</a></td></tr>
+</table>
+</fieldset>
+</a>
+
+
+<div id="saveMarketPlan">
+<fieldset>
+<legend>客户开发效果评估查询序列图设计</legend>
+<img src="doc-files4/客户开发效果评估查询.jpg" alt="" border="1"><br>
+</fieldset>
+</div>
+<div id="autoCoupon">
+<fieldset>
+<legend>客户开发效果评估导出序列图设计</legend>
+<img alt="" src="doc-files4/客户开发效果评估导出.jpg">
+</fieldset>
+</div>
+<div id="useCoupon">
+<fieldset>
+<legend>返回上级序列图设计</legend>
+<img src="doc-files4/返回上级.jpg" alt="" border="1"><br>
+</fieldset>
+</div>
+<div id="searchMarketPlan">
+<fieldset>
+<legend>查询营销计划列表序列图设计</legend>
+<img src="doc-files4/自动生成营销报表.jpg" alt="" border="1"><br>
+</fieldset>
+</div>
+<div id="changeStatus">
+<a name="">
+<fieldset>
+<legend>客户维护效果评估查询时序图</legend>
+<img alt="" src="doc-files4/客户维护效果评估查询.jpg">
+</fieldset>
+</a>
+</div>
+<div id="sendMessage">
+<a name="">
+<fieldset>
+<legend>客户维护效果评估导出时序图</legend>
+<img src="doc-files4/客户维护效果评估导出.jpg" alt="" border="1"><br>
+</fieldset>
+</a>
+</div>
+</body>
+</html>

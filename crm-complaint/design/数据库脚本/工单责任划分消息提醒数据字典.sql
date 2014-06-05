@@ -1,0 +1,81 @@
+--待办消息（工单责任划分，统计员退回）
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'TASK_TYPE',
+   'STATISTICIANS_RETURNBACK',
+   '责任反馈退回',
+   'A',
+   2,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);
+-- 待办消息（工单责任划分，质检员退回）  
+   insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'TASK_TYPE',
+   'QUALITY_INSPECTOR_RETURNBACK',
+   '责任反馈无效',
+   'A',
+   2,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);
+--责任划分生成代办
+insert into t_code_detail
+  (FID,
+   FPARENTID,
+   FCODETYPE,
+   FCODE,
+   FCODEDESC,
+   FSTATUS,
+   FCODESEQ,
+   FLANGUAGE,
+   FCREATETIME,
+   FCREATEUSERID,
+   FLASTUPDATETIME,
+   FLASTMODIFYUSERID)
+values
+  (seq_id_detail.nextval,
+   0,
+   'TASK_TYPE',
+   'DUTY_MESSAGE',
+   '责任提示消息',
+   'A',
+   4,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);

@@ -1,0 +1,25 @@
+cancelOrder 验证将代码抽到validator，参数为orderId,   validator 方法应该返回一个boolean值 
+
+manager逻辑容易阅读，
+返回boolean值的时候都是以is开始
+
+getUpdateableOrder()->getOrderWithValidation()
+
+validator里不要访问数据库。
+validator里构造订单的状态验证
+在做操作记录的时候，方法需要将User作为一个对象传到manager
+一个manager尽可能调用一个service
+
+判断接货信息的方法改得简单 notChanged
+isNeedChangeStatus返回一个常量 常量配置 将方法拆开 改方法名
+validator放入manager
+checkObjectNull -->checkObjectNotNull()
+传一个列表给issamexxx()
+删掉 判断是否可以变化的dao方法
+
+if替换====
+isBacikCity
+
+业务对象 库的方式，库控件方式
+返回new的方式
+测试数据放在testdata里

@@ -1,0 +1,96 @@
+insert into t_code_head
+  (fid,
+   fcodetype,
+   fcodetypedesc,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_head.nextval,
+   'DUTY_COMPLAINT_LINK',
+   '工单责任投诉环节',
+   sysdate,
+   043260,
+   sysdate,
+   043260);
+
+--detail 
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'DUTY_COMPLAINT_LINK',
+   'RECEIVE_LINK',
+   '收货环节',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'DUTY_COMPLAINT_LINK',
+   'GOCARGO_LINK',
+   '走货环节',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);
+insert into t_code_detail
+  (fid,
+   fparentid,
+   fcodetype,
+   fcode,
+   fcodedesc,
+   fstatus,
+   fcodeseq,
+   flanguage,
+   fcreatetime,
+   fcreateuserid,
+   flastupdatetime,
+   flastmodifyuserid)
+values
+  (seq_id_detail.nextval,
+   0,
+   'DUTY_COMPLAINT_LINK',
+   'ARRIVAL_LINK',
+   '到货环节',
+   'A',
+   1,
+   'zh_CN',
+   sysdate,
+   1,
+   sysdate,
+   1);

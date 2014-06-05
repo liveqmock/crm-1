@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.order.shared.domain.VehicleHistory">
+		<resultMap type="com.deppon.crm.module.order.shared.domain.VehicleHistory" id="VehicleHistory">
+		<result column="FID" property="id" jdbcType="NUMERIC"/>
+		<result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP"/>
+		<result column="FCREATEUSERID" property="createUser" jdbcType="NUMERIC"/>
+		<result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="NUMERIC"/>
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP"/>
+		<result column="FUSEVEHICLEDEPTNAME" property="useVehicleDeptName" jdbcType="VARCHAR"/>
+		<result column="FUSERVEHICLEDEPTCODE" property="userVehicleDeptCode" jdbcType="VARCHAR"/>
+		<result column="FVEHICLETEAMNAME" property="vehicleTeamName" jdbcType="VARCHAR"/>
+		<result column="FVEHICLETEAMCODE" property="vehicleTeamCode" jdbcType="VARCHAR"/>
+	</resultMap>
+	<update id="updateVehicleHistory" parameterType="com.deppon.crm.module.order.shared.domain.VehicleHistory">
+			UPDATE T_ORD_BOOKVEHICLEHISTORY T SET T.FLASTUPDATETIME = SYSDATE
+			<if test="modifyUser!=null and modifyUser!=''">
+				,T.FLASTMODIFYUSERID = #{modifyUser,jdbcType=NUMERIC}
+			</if>
+			<if test="useVehicleDeptName!=null and useVehicleDeptName !=''">
+				,T.FUSEVEHICLEDEPTNAME = #{useVehicleDeptName,jdbcType=VARCHAR}
+			</if>
+			<if test="userVehicleDeptCode!=null and userVehicleDeptCode!=''">
+				,T.FUSERVEHICLEDEPTCODE = #{userVehicleDeptCode,jdbcType=VARCHAR}
+			</if>
+			<if test="vehicleTeamName!=null and vehicleTeamName!=''">
+				,T.FVEHICLETEAMNAME = #{vehicleTeamName,jdbcType=VARCHAR}
+			</if>
+			<if test="vehicleTeamCode!=null and vehicleTeamCode!=''">
+				,T.FVEHICLETEAMCODE = #{vehicleTeamCode,jdbcType=VARCHAR}
+			</if>
+			where T.FID = #{id,jdbcType=NUMERIC}
+	</update>
+	<!-- 保存 约车历史 -->
+	<insert id="saveVehicleHistory"
+		parameterType="com.deppon.crm.module.order.shared.domain.VehicleHistory">
+		<![CDATA[INSERT INTO
+		t_ord_bookVehicleHistory (
+		FID,FCREATETIME,FLASTUPDATETIME,FCREATEUSERID,FLASTMODIFYUSERID,FUSEVEHICLEDEPTNAME,
+		FUSERVEHICLEDEPTCODE,FVEHICLETEAMNAME,FVEHICLETEAMCODE)
+		values
+		(SQL_ID_VEHICLEHISTORY.nextval,sysdate,sysdate,
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{useVehicleDeptName,jdbcType=VARCHAR},
+		#{userVehicleDeptCode,jdbcType=VARCHAR}, 
+		#{vehicleTeamName,jdbcType=VARCHAR},
+		#{vehicleTeamCode,jdbcType=VARCHAR}
+		)
+		]]>
+	</insert>
+
+	<!-- 查询 约车历史 -->
+	<select id="queryVehicleHistory" parameterType="com.deppon.crm.module.order.shared.domain.VehicleHistory"
+		resultMap="VehicleHistory">
+		SELECT
+		FID,FCREATETIME,FUSEVEHICLEDEPTNAME,FUSERVEHICLEDEPTCODE,
+		FVEHICLETEAMNAME,FVEHICLETEAMCODE
+		FROM t_ord_bookVehicleHistory
+		WHERE 1=1
+		<if test="useVehicleDeptName != null and useVehicleDeptName != ''">
+			AND	FUSEVEHICLEDEPTNAME=#{useVehicleDeptName,jdbcType=VARCHAR}
+		</if>
+<!-- 		<if test="userVehicleDeptCode != null and userVehicleDeptCode != ''"> -->
+<!-- 			AND	FUSERVEHICLEDEPTCODE=#{userVehicleDeptCode,jdbcType=VARCHAR} -->
+<!-- 		</if> -->
+<!-- 		<if test="vehicleTeamName != null and vehicleTeamName != ''"> -->
+<!-- 			AND	FVEHICLETEAMNAME=#{vehicleTeamName,jdbcType=VARCHAR} -->
+<!-- 		</if> -->
+<!-- 		<if test="vehicleTeamCode != null and vehicleTeamCode != ''"> -->
+<!-- 			AND FVEHICLETEAMCODE=#{vehicleTeamCode,jdbcType=VARCHAR} -->
+<!-- 		</if> -->
+<!-- 			AND FID=#{id,jdbcType=NUMERIC} -->
+	</select>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo" >
+
+  <resultMap id="baseResultMap" type="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo" >
+    <id column="FID" property="id" jdbcType="DECIMAL" /> 
+    <result column="FPHONE_NUMBER" property="phoneNumber" jdbcType="VARCHAR" />
+    <result column="FMSGCONTENT" property="msgContent" jdbcType="VARCHAR" /> 
+    <result column="FSEND_STANDARD_DEPT_CODE" property="sendStandardDeptCode" jdbcType="VARCHAR" />
+    <result column="FSENDER_EMP_CODE" property="senderEmpCode" jdbcType="VARCHAR" />   
+    <result column="FIS_SENDED" property="isSended" jdbcType="INTEGER" />             
+    <result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+	
+	<insert id="insertCellphoneMsgInfoList" parameterType="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo">
+         INSERT INTO T_CUST_CELLPHONE_MESSAGE_INFO 
+          	(FID, 
+          	 FPHONE_NUMBER, 
+          	 FMSGCONTENT,
+          	 FSEND_STANDARD_DEPT_CODE,
+          	 FSENDER_EMP_CODE,
+          	 FIS_SENDED,
+          	 FCREATETIME)
+         VALUES
+         	(SEQ_CELLPHONE_MESSAGE_INFO.nextval,
+             #{phoneNumber},
+             #{msgContent},
+             #{sendStandardDeptCode},
+             #{senderEmpCode},
+             0,
+             sysdate
+             )
+         
+     </insert>
+     
+	 <select id="inquireCellphoneMsgInfo" resultMap="baseResultMap" resultType="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo"
+	 		 parameterType="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo">
+	    SELECT FID, 
+          	 FPHONE_NUMBER, 
+          	 FMSGCONTENT,
+          	 FSEND_STANDARD_DEPT_CODE,
+          	 FSENDER_EMP_CODE,
+          	 FIS_SENDED,
+          	 FCREATETIME
+	    FROM T_CUST_CELLPHONE_MESSAGE_INFO
+	    WHERE FIS_SENDED=0
+      	ORDER BY FCREATETIME ASC
+	    
+	  </select>
+	  
+	  <update id="updateCellphoneMsgInfo" parameterType="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo">
+	  	 update T_CUST_CELLPHONE_MESSAGE_INFO
+	  	 set FIS_SENDED			=#{isSended}
+	  	 where FID=#{id}
+	  </update>
+	  
+	  
+	  <update id="updateCellphoneMsgInfoAll" parameterType="map">
+	  	 update T_CUST_CELLPHONE_MESSAGE_INFO
+	  	 set FIS_SENDED	='1'
+	  	 where FID IN
+	  	  <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">  
+            #{id}  
+          </foreach>  
+	  </update>
+</mapper>

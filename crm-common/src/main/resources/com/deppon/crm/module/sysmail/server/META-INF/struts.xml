@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="sysmail" namespace="/sysmail" extends="crm-default">
+	   <!-- 邮件发送管理 --> 
+       <action name="sysmail" >
+           <result name="success">/WEB-INF/pages/sysmail/email.html</result>
+       </action>
+	   <!-- 邮件组查询 --> 
+       <action name="searchAllMailGroup" class="sysmailAction" method="searchAllMailGroup">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!-- 邮件组添加 -->
+       <action name="addMailGroup" class="sysmailAction" method="addMailGroup">
+           <result name="success" type="json"></result>
+       </action>
+       <!-- 邮件组修改 -->
+       <action name="updateMailGroup" class="sysmailAction" method="updateMailGroup">
+           <result name="success" type="json"></result>
+       </action>
+       <!-- 邮件组删除 -->
+       <action name="deleteMailGroup" class="sysmailAction" method="deleteMailGroup">
+           <result name="success" type="json"></result>
+       </action>
+       <!-- 添加收件人信息 -->
+       <action name="addMailPeople" class="sysmailAction" method="addMailPeople">
+       		<result name="success" type="json"></result>
+       </action>
+       <!-- 修改收件人信息 -->
+       <action name="updateMailPeople" class="sysmailAction" method="updateMailPeople">
+       		<result name="success" type="json"></result>
+       </action>
+	   <!-- 收件人查询 --> 
+       <action name="searchMailAccount" class="sysmailAction" method="searchMailAccount">
+           <result name="success" type="json"></result>
+       </action>
+	   <!-- 移出收件人 --> 
+       <action name="removeMailAccounts" class="sysmailAction" method="removeMailAccounts">
+           <result name="success" type="json"></result>
+       </action>
+	   <!-- 删除收件人 --> 
+       <action name="deleteMailAccounts" class="sysmailAction" method="deleteMailAccounts">
+           <result name="success" type="json"></result>
+       </action>
+	   <!-- 划分收件人到邮件组--> 
+       <action name="dividePeopleTo" class="sysmailAction" method="dividePeopleTo">
+           <result name="success" type="json"></result>
+       </action>
+	</package>
+</struts>

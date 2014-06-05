@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.client.shared.domain.OrderLog">
+	<resultMap id="OrderStatusLogRM"
+		type="com.deppon.crm.module.client.order.domain.OrderStatusLog">
+		<result property="id" column="OS_FID" />
+		<result property="orderNumber" column="OS_FORDERNUMBER" />
+		<result property="orderStatus" column="OS_FORDERSTATUS" />
+		<result property="orderSource" column="OS_FORDERSOURCE" />
+		<result property="logStatus" column="OS_FLOGSTATUS" />
+		<result property="updateTime" column="OS_FUPDATETIME" />
+		<result property="remark" column="OS_FREMARK" />
+		<result property="sendCount" column="OS_FSENDCOUNT"/>
+		<!-- <result property="isLocked" column="OS_FISLOCK" /> -->
+	</resultMap>
+	<sql id="OrderStatusLog_column">
+		<![CDATA[
+			OS.FID OS_FID,
+			OS.FORDERNUMBER OS_FORDERNUMBER,
+			OS.FORDERSTATUS OS_FORDERSTATUS,
+			OS.FORDERSOURCE OS_FORDERSOURCE,
+			OS.FLOGSTATUS OS_FLOGSTATUS,
+			OS.FUPDATETIME OS_FUPDATETIME,
+		    OS.FREMARK OS_FREMARK,
+		    OS.FLOCK OS_FISLOCK,
+		    OS.FSENDCOUNT OS_FSENDCOUNT
+		]]>
+	</sql>
+	<!-- 查询需反馈状态的订单信息日志集合 -->
+	<select id="queryOrderStatusUpdate" resultMap="OrderStatusLogRM" parameterType="int">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="OrderStatusLog_column" />
+		<![CDATA[	
+				from T_IF_ORDERSTATUSUPDATE OS 
+			WHERE 
+				OS.FLOGSTATUS='ready' and
+				os.fsendcount<4
+			AND ROWNUM <= #{size}
+		]]>
+	</select>
+	<!-- 修改订单日志状态为已完成 -->
+	<update id="updateManyLogs" parameterType="list">
+		<![CDATA[
+			UPDATE 
+				T_IF_ORDERSTATUSUPDATE OS 
+			SET 
+				OS.FLOGSTATUS = 'processed' 
+			WHERE 
+				OS.FID IN
+		]]>
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+	<update id="updateLogById" parameterType="com.deppon.crm.module.client.order.domain.OrderStatusLog" >
+		<![CDATA[
+			UPDATE 
+				T_IF_ORDERSTATUSUPDATE OS 
+			SET 
+				OS.FLOGSTATUS = #{logStatus},
+		    	OS.FSENDCOUNT = #{sendCount}
+			WHERE 
+				OS.FID = #{id}
+		]]>
+	</update>
+</mapper>

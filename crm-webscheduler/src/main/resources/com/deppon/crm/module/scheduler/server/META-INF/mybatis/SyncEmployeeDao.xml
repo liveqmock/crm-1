@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.shared.domain.OaEmployeeEntity">
+	<select id="queryEmployeeByDate"
+		resultType="com.deppon.crm.module.scheduler.shared.domain.OaEmployeeEntity">
+		<![CDATA[
+			SELECT T.EMPID 			ID,
+			       T.ORGID 			ORGID,
+			       T.EMPCODE 		EMPCODE,
+			       T.EMPNAME 		EMPNAME,
+			       T.GENDER 		GENDER,
+			       T.JOBNAME 		JOBNAME,
+			       T.BIRTHDATE 		BIRTHDAY,
+			       T.EMPSTATUS 		EMPSTATUS,
+			       T.INDATE 		INDATE,
+			       T.OUTDATE 		OUTDATE,
+			       T.OTEL 			OTEL,
+			       T.OADDRESS 		OADDRESS,
+			       T.OZIPCODE 		OZIPCODE,
+			       T.OEMAIL 		OEMAIL,
+			       T.MOBILENO 		MOBILENO,
+			       T.HTEL 			HTEL,
+			       T.HADDRESS		HADDRESS,
+			       T.HZIPCODE 		HZIPCODE,
+			       T.PEMAIL 		PEMAIL,
+			       T.WORKEXP 		WORKXP,
+			       T.REMARK 		REMARK,
+			       '' 				CREATEUSER,
+			       T.CREATETIME 	CREATEDATE,
+			       '' 				MODIFYUSER,
+			       T.LASTMODYTIME 	MODIFYDATE
+			  FROM OM_EMPLOYEE T
+		]]>
+		<if test="date!=null">
+			<![CDATA[
+				WHERE T.CREATETIME>=#{date,jdbcType=TIMESTAMP} OR T.LASTMODYTIME>=#{date,jdbcType=TIMESTAMP}
+			]]>
+		</if>
+	</select>
+	<select id="countEmpByEmpCode" resultType="int">
+		<![CDATA[
+			SELECT COUNT(FID) FROM T_ORG_EMPLOYEE T WHERE T.FEMPCODE=#{empCode,jdbcType=VARCHAR} 
+		]]>
+	</select>
+	
+	<!-- 新增员工信息 -->
+	<insert id="insertEmployee" parameterType="com.deppon.crm.module.scheduler.shared.domain.OaEmployeeEntity">
+<!-- 		<selectKey keyProperty="id" order="BEFORE" resultType="String"> -->
+<!-- 			<![CDATA[ -->
+<!-- 				SELECT SEQ_ID_EMPLOYEE.NEXTVAL AS id FROM DUAL  -->
+<!-- 			]]> -->
+<!-- 		</selectKey> -->
+		<![CDATA[
+			INSERT INTO T_ORG_EMPLOYEE
+			  (FID,
+			   FDEPTID,
+			   FEMPCODE,
+			   FEMPNAME,
+			   FGENDER,
+			   FPOSITION,
+			   FBIRTHDATE,
+			   FSTATUS,
+			   FINDATE,
+			   FOUTDATE,
+			   FOTEL,
+			   FOADDRESS,
+			   FOZIPCODE,
+			   FOEMAIL,
+			   FMOBILENO,
+			   FHTEL,
+			   FHADDRESS,
+			   FHZIPCODE,
+			   FPEMAIL,
+			   FWORKEXP,
+			   FREMARK,
+			   FCREATEUSERID,
+			   FCREATETIME,
+			   FLASTMODIFYUSERID,
+			   FLASTUPDATETIME)
+			VALUES
+			  (#{id,jdbcType=NUMERIC},
+			   #{orgId,jdbcType=NUMERIC},
+			   #{empCode,jdbcType=VARCHAR},
+			   #{empName,jdbcType=VARCHAR},
+			   #{gender,jdbcType=NUMERIC},
+			   #{jobName,jdbcType=VARCHAR},
+			   #{birthday,jdbcType=TIMESTAMP},
+			   #{empStatus,jdbcType=NUMERIC},
+			   #{inDate,jdbcType=TIMESTAMP},
+			   #{outDate,jdbcType=TIMESTAMP},
+			   #{oTel,jdbcType=VARCHAR},
+			   #{oAddress,jdbcType=VARCHAR},
+			   #{oZipCode,jdbcType=VARCHAR},
+			   #{oEmail,jdbcType=VARCHAR},
+			   #{mobileNo,jdbcType=VARCHAR},
+			   #{hTel,jdbcType=VARCHAR},
+			   #{hAddress,jdbcType=VARCHAR},
+			   #{hZipCode,jdbcType=VARCHAR},
+			   #{pEmail,jdbcType=VARCHAR},
+			   #{workExp,jdbcType=VARCHAR},
+			   #{remark,jdbcType=VARCHAR},
+			   #{createUser,jdbcType=VARCHAR},
+			   #{createDate,jdbcType=TIMESTAMP},
+			   #{modifyUser,jdbcType=VARCHAR},
+			   #{modifyDate,jdbcType=TIMESTAMP})
+		]]>	
+	</insert>
+	<!-- 删除测试数据 -->
+	<delete id="deleteEmployee">
+		DELETE FROM T_ORG_EMPLOYEE WHERE FEMPCODE=#{empCode,jdbcType=VARCHAR}
+	</delete>
+	<!-- 更新员工信息 -->
+	<update id="updateEmployee" parameterType="com.deppon.crm.module.scheduler.shared.domain.OaEmployeeEntity">
+		<![CDATA[
+			UPDATE T_ORG_EMPLOYEE T 
+				   SET T.FLASTUPDATETIME=SYSDATE
+		]]>
+		<if test="orgId!=0">
+			<![CDATA[,T.FDEPTID = #{orgId,jdbcType=VARCHAR}]]>
+		</if>
+<!-- 		<if test="empCode!=null and empCode!=''"> -->
+<!-- 			<![CDATA[,T.FEMPCODE=#{empCode,jdbcType=VARCHAR}]]> -->
+<!-- 		</if> -->
+		<if test="empName!=null and empName!=''">
+			<![CDATA[,T.FEMPNAME=#{empName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="gender!=null and gender!=''">
+			<![CDATA[,T.FGENDER=#{gender,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="jobName!=null and jobName!=''">
+			<![CDATA[,T.FPOSITION=#{jobName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="birthday!=null">
+			<![CDATA[,T.FBIRTHDATE=#{birthday,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="empStatus!=null">
+			<![CDATA[,T.FSTATUS=#{empStatus,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="inDate!=null">
+			<![CDATA[,T.FINDATE=#{inDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="outDate!=null">
+			<![CDATA[,T.FOUTDATE=#{outDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="oTel!=null and oTel!=''">
+			<![CDATA[,T.FOTEL=#{oTel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="oAddress!=null and oAddress!=''">
+			<![CDATA[,T.FOADDRESS=#{oAddress,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="oZipCode!=null and oZipCode!=''">
+			<![CDATA[,T.FOZIPCODE=#{oZipCode,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="oEmail!=null and oEmail!=''">
+			<![CDATA[,T.FOEMAIL=#{oEmail,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="mobileNo!=null and mobileNo!=''">
+			<![CDATA[,T.FMOBILENO=#{mobileNo,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="hTel!=null and hTel!=''">
+			<![CDATA[,T.FHTEL=#{hTel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="hAddress!=null and hAddress!=''">
+			<![CDATA[,T.FHADDRESS=#{hAddress,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="hZipCode!=null and hZipCode!=''">
+			<![CDATA[,T.FHZIPCODE=#{hZipCode,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="pEmail!=null and pEmail!=''">
+			<![CDATA[,T.FPEMAIL=#{pEmail,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="workExp!=null and workExp!=''">
+			<![CDATA[,T.FWORKEXP=#{workExp,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="remark!=null and remark!=''">
+			<![CDATA[,T.FREMARK=#{remark,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="createUser!=null and createUser!=''">
+			<![CDATA[,T.FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="createDate!=null">
+			<![CDATA[,T.FCREATETIME=#{createDate,jdbcType=TIMESTAMP}]]>
+		</if>
+		<if test="modifyUser!=null and modifyUser!=''">
+			<![CDATA[,T.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<![CDATA[
+			WHERE T.FEMPCODE=#{empCode,jdbcType=VARCHAR}
+		]]>
+	</update>
+	
+	<select id="getSysDate" resultType="Date">
+		<![CDATA[
+			SELECT SYSDATE FROM DUAL
+		]]>
+	</select>
+</mapper>

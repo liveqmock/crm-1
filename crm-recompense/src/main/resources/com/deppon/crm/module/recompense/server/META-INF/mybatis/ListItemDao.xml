@@ -1,0 +1,2442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.recompense.shared.domain.ListItem">
+	<!-- 奖励项resultMap -->
+	<resultMap id="AwardItemResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.AwardItem">
+		<result property="id" column="AI_ID" />
+		<result property="recompenseId" column="AI_RECOMPENSEID" />
+		<result property="awardType" column="AI_AWARDTYPE" />
+		<result property="deptId" column="AI_DEPTID" />
+		<result property="deptName" column="AI_DEPTNAME" />
+		<result property="userId" column="AI_USERID" />
+		<result property="userNumber" column="AI_USERNUMBER" />
+		<result property="amount" column="AI_AMOUNT" />
+		<result property="awardTargetType" column="AI_AWARDTARGETTYPE" />
+	</resultMap>
+
+	<!-- 付款单resultMap -->
+	<resultMap id="PaymentBillResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.PaymentBill">
+		<result property="id" column="PB_ID" />
+		<result property="recompenseId" column="PB_RECOMPENSEID" />
+		<result property="receivableAmount" column="PB_RECEIVABLEAMOUNT" />
+		<result property="freightCollectAmount" column="PB_FREIGHTCOLLECTAMOUNT" />
+		<result property="paymentType" column="PB_PAYMENTTYPE" />
+		<result property="paymentAmount" column="PB_PAYMENTAMOUNT" />
+		<association property="belongfinance" column="PB_BELONGFINANCE"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById" />
+		<association property="bankAccount"
+			javaType="com.deppon.crm.module.recompense.shared.domain.BankAccount">
+			<result property="id" column="PB_ID" />
+			<result property="bankName" column="PB_BANKNAME" />
+			<result property="branchName" column="PB_BRANCHNAME" />
+			<result property="openName" column="PB_OPENNAME" />
+			<result property="account" column="PB_ACCOUNT" />
+			<result property="mobile" column="PB_MOBILE" />
+			<result property="province" column="PB_PROVINCE" />
+			<result property="city" column="PB_CITY" />
+		</association>
+	</resultMap>
+
+	<!-- 消息提醒项resultMap -->
+	<resultMap id="MessageReminderResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.MessageReminder">
+		<result property="id" column="MR_ID" />
+		<result property="recompenseId" column="MR_RECOMPENSEID" />
+		<result property="reminderMethod" column="MR_REMINDERMETHOD" />
+		<result property="userNumber" column="MR_USERNUMBER" />
+		<result property="userName" column="MR_USERNAME" />
+		<result property="phoneNum" column="MR_PHONENUM" />
+		<result property="deptName" column="MR_DEPTNAME" />
+	</resultMap>
+
+	<!-- 附件项resultMap -->
+	<resultMap id="RecompenseAttachmentResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecompenseAttachment">
+		<result property="id" column="AC_ID" />
+		<result property="attachName" column="AC_ATTACHNAME" />
+		<result property="attachAddress" column="AC_ATTACHADDRESS" />
+		<result property="recompenseId" column="AC_RECOMPENSEID" />
+	</resultMap>
+
+	<!-- 追偿信息resultMap -->
+	<resultMap id="RecalledCompensationResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecalledCompensation">
+		<result property="id" column="RC_ID" />
+		<result property="deptId" column="RC_DEPTID" />
+		<result property="deptName" column="RC_DEPTNAME" />
+		<result property="recoveryTime" column="RC_RECOVERYTIME" />
+		<result property="suspendedAmount" column="RC_SUSPENDEDAMOUNT" />
+		<result property="compensateBackAmount" column="RC_BACKAMOUNT" />
+		<result property="compensateBackTime" column="RC_BACKTIME" />
+		<result property="returnDeductions" column="RC_RETURNDEDUCTIONS" />
+		<result property="assessmentReward" column="RC_ASSESSMENTREWARD" />
+		<result property="recompenseId" column="RC_RECOMPENSEID" />
+	</resultMap>
+
+	<!-- 货物运输项resultMap -->
+	<resultMap id="GoodsTransResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.GoodsTrans">
+		<result property="id" column="GT_ID" />
+		<result property="goodsName" column="GT_GOODSNAME" />
+		<result property="quality" column="GT_QUALITY" />
+		<result property="price" column="GT_PRICE" />
+		<result property="realPrice" column="GT_REALPRICE" />
+		<result property="insurType" column="GT_ISSUETYPE" />
+		<result property="description" column="GT_DESCRIPTION" />
+		<result property="number" column="GT_MUNBER" />
+		<result property="amount" column="GT_RECOMPENSEAMOUT" />
+		<result property="isClaims" column="GT_ISCLAIMS" />
+		<result property="recompenseId" column="GT_RECOMPENSEID" />
+		<result property="relationFlag" column="GT_RELATIONFLAG" />
+	</resultMap>
+
+	<!-- 理赔项resultMap -->
+	<resultMap id="RecompenseItemResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.RecompenseItem">
+		<result property="id" column="GT_ID" />
+		<result property="goodsName" column="GT_GOODSNAME" />
+		<result property="isIssue" column="GT_FISCLAIMS " />
+		<result property="insurType" column="GT_ISSUETYPE" />
+		<result property="quality" column="GT_FQUALITY" />
+		<result property="description" column="GT_FDESCRIPTION" />
+		<result property="amount" column="GT_RECOMPENSEAMOUT" />
+		<result property="recompenseId" column="GT_RECOMPENSEID" />
+	</resultMap>
+
+	<!-- 出险项resultMap -->
+	<resultMap id="IssueItemResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.IssueItem">
+		<result property="id" column="II_ID" />
+		<result property="insurType" column="II_INSURTYPE" />
+		<result property="quality" column="II_QUALITY" />
+		<result property="description" column="II_DESCRIPTION" />
+		<result property="recompenseId" column="II_RECOMPENSEID" />
+	</resultMap>
+
+	<!-- 入部门费用resultMap -->
+	<resultMap id="DeptChargeResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.DeptCharge">
+		<result property="id" column="DC_ID" />
+		<result property="recompenseId" column="DC_RECOMPENSEID" />
+		<result property="amount" column="DC_AMOUNT" />
+		<result property="deptId" column="DC_DEPTID" />
+		<result property="deptName" column="DC_DEPTNAME" />
+	</resultMap>
+
+	<!-- 责任部门费用resultMap -->
+	<resultMap id="ResponsibleDeptResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.ResponsibleDept">
+		<result property="id" column="rd_id" />
+		<result property="recompenseId" column="RD_RECOMPENSEID" />
+		<result property="deptId" column="RD_DEPTID" />
+		<result property="deptName" column="RD_DEPTNAME" />
+	</resultMap>
+
+	<!--跟进信息resultMap -->
+	<resultMap id="MessageResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.Message">
+		<result property="id" column="MG_ID" />
+		<result property="userId" column="MG_USERID" />
+		<result property="userName" column="MG_USERNAME" />
+		<result property="content" column="MG_CONTENT" />
+		<result property="createTime" column="MG_CREATETIME" />
+		<result property="recompenseId" column="MG_RECOMPENSEID" />
+	</resultMap>
+
+	<!-- 工作流信息resultMap -->
+	<resultMap id="WorkflowResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.OAWorkflow">
+		<result property="id" column="WF_ID" />
+		<result property="workflowNum" column="WF_WORKNUMBER" />
+		<result property="workflowType" column="WF_WORKTYPE" />
+		<result property="workflowStatus" column="WF_WORKSTATUS" />
+		<result property="commitDate" column="WF_COMMITDATE" />
+		<result property="auditDate" column="WF_AUDITDATE" />
+		<result property="auditopinion" column="WF_AUDITOPINION" />
+		<result property="recompenseId" column="WF_RECOMPENSEID" />
+		<result property="workflowNo" column="NC_WORKFLOWNO" />
+		<association property="commiter" column="WF_COMMITER"
+			select="com.deppon.crm.module.authorization.shared.domain.User.getById" />
+		<association property="auditPeople" column="WF_AUDITPEOPLE"
+			select="com.deppon.crm.module.authorization.shared.domain.User.getById" />
+		<association property="belongfinance" column="WF_BELONGFINANCE"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById" />
+		<association property="paymentBill"
+			javaType="com.deppon.crm.module.recompense.shared.domain.PaymentBill">
+			<result property="receivable" column="WF_RECEIVABLEAMOUNT" />
+			<result property="receivableAmount" column="WF_FREIGHTCOLLECTAMOUNT" />
+			<!-- <result property="paymentType" column="WF_PAYMENTTYPE" /> -->
+			<result property="paymentAmount" column="WF_PAYMENTAMOUNT" />
+			<association property="bankAccount"
+				javaType="com.deppon.crm.module.recompense.shared.domain.BankAccount">
+				<result property="openName" column="WF_OPENNAME" />
+				<result property="bankName" column="WF_BANKNAME" />
+				<result property="account" column="WF_ACCOUNTNAME" />
+				<result property="province" column="WF_PROVINCE" />
+				<result property="city" column="WF_CITY" />
+				<result property="branchName" column="WF_BRANCHNAME" />
+			</association>
+		</association>
+	</resultMap>
+
+	<!--入部门费用select params -->
+	<sql id="select_DeptCharge">
+		DC.FID DC_ID,
+		DC.FRECOMPENSEID DC_RECOMPENSEID,
+		DC.FAMOUNT
+		DC_AMOUNT,
+		DC.FDEPTID DC_DEPTID,
+		DC.FDEPTNAME DC_DEPTNAME
+	</sql>
+
+	<!--惩罚明细select params -->
+	<sql id="select_AwardItem">
+		AI.FID AI_ID,
+		AI.FRECOMPENSEID AI_RECOMPENSEID,
+		AI.FAWARDTYPE AI_AWARDTYPE,
+		AI.FDEPTID
+		AI_DEPTID,
+		AI.FDEPTNAME
+		AI_DEPTNAME,
+		AI.FUSERID AI_USERID,
+		AI.FUSERNUMBER AI_USERNUMBER,
+		AI.FAMOUNT
+		AI_AMOUNT,
+		AI.FAWARDTARGETTYPE AI_AWARDTARGETTYPE
+	</sql>
+
+	<!--付款单select params -->
+	<sql id="select_PaymentBill">
+		PB.FID PB_ID,
+		PB.FRECOMPENSEID PB_RECOMPENSEID,
+		PB.FRECEIVABLEAMOUNT PB_RECEIVABLEAMOUNT,
+		PB.FBELONGFINANCE
+		PB_BELONGFINANCE,
+		PB.FREIGHTCOLLECTAMOUNT PB_FREIGHTCOLLECTAMOUNT,
+		PB.FPAYMENTTYPE
+		PB_PAYMENTTYPE,
+		PB.FBANKNAME PB_BANKNAME,
+		PB.FPAYMENTAMOUNT PB_PAYMENTAMOUNT,
+		PB.FBRANCHNAME
+		PB_BRANCHNAME,
+		PB.FOPENNAME PB_OPENNAME,
+		PB.FACCOUNT PB_ACCOUNT,
+		PB.FMOBILE PB_MOBILE,
+		PB.FPROVINCE
+		PB_PROVINCE,
+		PB.FCITY PB_CITY
+	</sql>
+
+	<!-- 出险项select params -->
+	<sql id="select_IssueItem">
+		II.FID II_ID,
+		II.FINSURTYPE II_INSURTYPE,
+		II.FQUALITY
+		II_QUALITY,
+		II.FDESCRIPTION
+		II_DESCRIPTION,
+		II.FRECOMPENSEID
+		II_RECOMPENSEID
+	</sql>
+
+	<!--消息提醒select params -->
+	<sql id="select_MessageReminder">
+		MR.FID MR_ID,
+		MR.FRECOMPENSEID MR_RECOMPENSEID,
+		MR.FREMINDERMETHOD MR_REMINDERMETHOD,
+		MR.fUSERNUMBER MR_USERNUMBER,
+		MR.fUSERNAME MR_USERNAME,
+		MR.fPHONENUM MR_PHONENUM,
+		MR.fDEPTNAME
+		MR_DEPTNAME
+	</sql>
+
+	<!--附件select params -->
+	<sql id="select_RecompenseAttachment">
+		AC.FID AC_ID,
+		AC.FATTACHNAME AC_ATTACHNAME,
+		AC.FATTACHADDRESS AC_ATTACHADDRESS,
+		AC.FRECOMPENSEID AC_RECOMPENSEID
+	</sql>
+
+	<!--追偿信息select params -->
+	<sql id="select_RecalledCompensation">
+		<![CDATA[
+				RC.FID RC_ID,
+				RC.FRECOMPENSEID RC_RECOMPENSEID,
+				RC.FRECOVERYTIME RC_RECOVERYTIME,
+				RC.FDEPTID RC_DEPTID,
+				RC.FDEPTNAME RC_DEPTNAME,
+				nvl(RC.FSUSPENDEDAMOUNT,0) RC_SUSPENDEDAMOUNT,
+				nvl(RC.FBACKAMOUNT,0) RC_BACKAMOUNT,
+				RC.FBACKTIME RC_BACKTIME,
+				nvl(RC.FRETURNDEDUCTIONS,0) RC_RETURNDEDUCTIONS,
+				nvl(RC.FASSESSMENTREWARD,0) RC_ASSESSMENTREWARD
+		]]>
+	</sql>
+
+	<!--责任部门select params -->
+	<sql id="select_ResponsibleDept">
+		<![CDATA[
+				RD.FID RD_ID,
+				RD.FRECOMPENSEID RD_RECOMPENSEID,
+				RD.FDEPTID RD_DEPTID,
+				RD.FDEPTNAME RD_DEPTNAME
+		]]>
+	</sql>
+
+	<!--货物运输select params -->
+	<sql id="select_GoodsTrans">
+		GT.FID GT_ID,
+		GT.FGOODSNAME GT_GOODSNAME,
+		GT.FPRICE GT_PRICE,
+		GT.FNUMBER GT_QUALITY,
+		GT.FREALPRICE GT_REALPRICE,
+		GT.FRECOMPENSEID
+		GT_RECOMPENSEID,
+		GT.FISCLAIMS GT_ISCLAIMS ,
+		GT.FINSURTYPE
+		GT_ISSUETYPE,
+		GT.FDESCRIPTION GT_DESCRIPTION,
+		GT.FQUALITY GT_MUNBER,
+		GT.FAMOUNT
+		GT_RECOMPENSEAMOUT,
+		GT.FRELATIONFLAG GT_RELATIONFLAG
+	</sql>
+
+	<!--理赔项select params -->
+	<sql id="select_RecompenseItem">
+		GT.FID GT_ID,
+		GT.FGOODSNAME GT_GOODSNAME,
+		GT.FISCLAIMS
+		GT_FISCLAIMS ,
+		GT.FINSURTYPE
+		GT_ISSUETYPE,
+		GT.FDESCRIPTION
+		GT_DESCRIPTION,
+		GT.FQUALITY GT_QUALITY,
+		GT.FAMOUNT GT_RECOMPENSEAMOUT,
+		GT.FRECOMPENSEID GT_RECOMPENSEID
+	</sql>
+
+	<!--跟进信息select params -->
+	<sql id="select_Message">
+		MG.FID MG_ID,
+		MG.FUSERID MG_USERID,
+		MG.FUSERNAME MG_USERNAME,
+		MG.FCONTENT MG_CONTENT,
+		MG.FCREATETIME MG_CREATETIME,
+		MG.FRECOMPENSEID
+		MG_RECOMPENSEID
+	</sql>
+
+	<!-- 工作流 select parms -->
+	<sql id="select_OAWorkflow">
+		<![CDATA[
+		WF.FID AS WF_ID,WF.FWORKNUMBER AS WF_WORKNUMBER,
+		WF.FWORKTYPE AS WF_WORKTYPE,
+		WF.FWORKSTATUS AS	WF_WORKSTATUS,
+		WF.FCOMMITER AS WF_COMMITER,
+		WF.FCOMMITDATE AS		WF_COMMITDATE,
+		WF.FAUDITPEOPLE AS WF_AUDITPEOPLE,
+		WF.FAUDITDATE AS		WF_AUDITDATE ,
+		WF.FAUDITOPINION AS WF_AUDITOPINION,
+		WF.FBELONGFANANCEDEPT AS WF_BELONGFINANCE,
+		WF.FPAYMENTAMOUNT AS	WF_PAYMENTAMOUNT,
+		WF.FCYSAMOUNT AS WF_RECEIVABLEAMOUNT,
+		WF.FCYFAMOUNT AS		WF_CYFAMOUNT,
+		WF.FACCOUNTNAME AS WF_ACCOUNTNAME,
+		WF.FBANKNAME AS	WF_BANKNAME,
+		WF.FPROVINCEOFBANK AS WF_PROVINCE,
+		WF.FCITYOFBANK AS		WF_CITY,
+		WF.FBRANCHNAME AS WF_BRANCHNAME,
+		WF.FRECOMPENSEID AS	WF_RECOMPENSEID
+		 ]]>
+	</sql>
+	
+	<sql id="select_OAWorkflowNew">
+		<![CDATA[
+		WF.FID AS WF_ID,WF.FWORKNUMBER AS WF_WORKNUMBER,
+		WF.FWORKTYPE AS WF_WORKTYPE,
+		WF.FWORKSTATUS AS	WF_WORKSTATUS,
+		WF.FCOMMITER AS WF_COMMITER,
+		WF.FCOMMITDATE AS		WF_COMMITDATE,
+		WF.FAUDITPEOPLE AS WF_AUDITPEOPLE,
+		WF.FAUDITDATE AS		WF_AUDITDATE ,
+		WF.FAUDITOPINION AS WF_AUDITOPINION,
+		WF.FBELONGFANANCEDEPT AS WF_BELONGFINANCE,
+		WF.FPAYMENTAMOUNT AS	WF_PAYMENTAMOUNT,
+		WF.FCYSAMOUNT AS WF_RECEIVABLEAMOUNT,
+		WF.FCYFAMOUNT AS		WF_CYFAMOUNT,
+		WF.FACCOUNTNAME AS WF_ACCOUNTNAME,
+		WF.FBANKNAME AS	WF_BANKNAME,
+		WF.FPROVINCEOFBANK AS WF_PROVINCE,
+		WF.FCITYOFBANK AS		WF_CITY,
+		WF.FBRANCHNAME AS WF_BRANCHNAME,
+		WF.FRECOMPENSEID AS	WF_RECOMPENSEID,
+		((select a.fworkflowno from t_rec_normalclaim a where a.fprocessinstid=wf.fworknumber) ||        
+        (select b.fworkflowno from t_rec_overpay b where b.fworknumber=wf.fworknumber) ) as NC_WORKFLOWNO 
+		 ]]>
+	</sql>
+
+	<!-- 根据ID查询 奖罚明细 -->
+	<select id="queryAwardItemById" resultMap="AwardItemResultMap">
+		<![CDATA[ 	select 	]]>
+		<include refid="select_AwardItem" />
+		<![CDATA[
+		from	t_rec_AwardItem ai
+			where ai.fid = #{id}
+		 ]]>
+	</select>
+
+	<!-- 新增奖罚明细 -->
+	<insert id="insertAwardItem"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.AwardItem">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT SEQ_ID_AWARDITEM.NEXTVAL AS
+			ID FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_REC_AWARDITEM AI
+		(
+		AI.FID,
+		AI.FRECOMPENSEID,
+		AI.FAWARDTYPE,
+		AI.FDEPTID,
+		AI.FDEPTNAME,
+		AI.FUSERID,
+		AI.FUSERNUMBER,
+		AI.FAMOUNT,
+		AI.FAWARDTARGETTYPE
+		)values(
+		#{id},
+		#{recompenseId,jdbcType=VARCHAR},
+		#{awardType,jdbcType=VARCHAR},
+		#{deptId,jdbcType=NUMERIC},
+		#{deptName,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},
+		#{userNumber,jdbcType=VARCHAR},
+		#{amount,jdbcType=NUMERIC},
+		#{awardTargetType,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 根据ID修改奖罚明细 -->
+	<update id="updateAwardItemById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.AwardItem">
+		UPDATE T_REC_AWARDITEM
+		<set>
+			<if test="null != recompenseId and '' != recompenseId">
+				FRECOMPENSEID= #{recompenseId},
+			</if>
+			<if test="null != awardType and '' != awardType">
+				FAWARDTYPE= #{awardType},
+			</if>
+			<if test="null != deptId and '' != deptId">
+				FDEPTID= #{deptId},
+			</if>
+			<if test="null != deptName and '' != deptName">
+				FDEPTNAME= #{deptName},
+			</if>
+			<if test="null != userId and '' != userId">
+				FUSERID= #{userId},
+			</if>
+			<if test="null != userNumber and '' != userNumber">
+				FUSERNUMBER= #{userNumber},
+			</if>
+			<if test="null != amount and '' != amount">
+				FAMOUNT= #{amount},
+			</if>
+			<if test="null != awardTargetType and '' != awardTargetType">
+				FAWARDTARGETTYPE= #{awardTargetType}
+			</if>
+		</set>
+		<where>
+			FID = #{id}
+		</where>
+	</update>
+
+	<!-- 根据ID删除奖罚明细 -->
+	<delete id="deleteAwardItemById" parameterType="string"> 
+		<![CDATA[ 
+			DELETE T_REC_AWARDITEM WHERE FID = #{id} 
+ 		]]>
+	</delete>
+
+	<!-- 根据理赔项ID查询奖罚明细 -->
+	<select id="queryAwardItemByRecompenseId" resultMap="AwardItemResultMap"
+		parameterType="string">
+		<![CDATA[ 	select 	]]>
+		<include refid="select_AwardItem" />
+ 		<![CDATA[
+			from  t_rec_AwardItem  ai where ai.frecompenseId=#{recompenseId}
+		]]>
+	</select>
+
+	<!-- 根据理赔项ID删除奖罚明细 -->
+	<delete id="deleteAwardItemByRecompenseId" parameterType="String"> 
+		<![CDATA[ 
+			delete
+				 t_rec_AwardItem 
+ 			where
+ 				frecompenseId= #{recompenseId} 
+ 		]]>
+	</delete>
+
+	<!-- 根据理赔单id查询奖罚明细项 -->
+	<select id="queryByRecompenseId" parameterType="string"
+		resultMap="AwardItemResultMap">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_AwardItem" />
+		<![CDATA[
+			from  t_rec_AwardItem ai
+			where ai.frecompenseId = #{recompenseId}
+		]]>
+	</select>
+
+	<!-- 保存付款单 -->
+	<insert id="insertPaymentBill"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.PaymentBill">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			<![CDATA[
+				select
+					seq_id_paymentbill.nextval id 
+				from 
+					dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_paymentapp
+          		(	fid, frecompenseid,fbelongfinance,
+         			freceivableamount,freightcollectamount,fpaymentType,fpaymentAmount, 
+          			fopenname,fbankname,   faccount, fprovince,  fcity,  fbranchname )
+			values
+					(#{id},#{recompenseId, jdbcType=VARCHAR},#{belongfinance.id, jdbcType=VARCHAR},
+					#{receivableAmount, jdbcType=NUMERIC},#{freightCollectAmount, jdbcType=NUMERIC},
+					#{paymentType, jdbcType=VARCHAR},#{paymentAmount, jdbcType=NUMERIC},	
+					#{bankAccount.openName, jdbcType=VARCHAR},	#{bankAccount.bankName, jdbcType=VARCHAR},
+					#{bankAccount.account, jdbcType=VARCHAR},	#{bankAccount.province, jdbcType=VARCHAR},
+					#{bankAccount.city, jdbcType=VARCHAR},#{bankAccount.branchName, jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<!-- 根据ID查询付款单 -->
+	<select id="queryPaymentBillById" parameterType="string"
+		resultMap="PaymentBillResultMap">
+	<![CDATA[ 	select ]]>
+		<include refid="select_PaymentBill" />
+		<![CDATA[
+			from	t_rec_paymentapp pb
+			where
+				pb.fid =#{id}
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID查询付款单 -->
+	<select id="queryPaymentBillByRecompenseId" resultMap="PaymentBillResultMap"
+		parameterType="string">
+			<![CDATA[ 	select ]]>
+		<include refid="select_PaymentBill" />
+		<![CDATA[
+			from	t_rec_paymentapp pb
+			where
+				pb.frecompenseId =#{recompenseId}
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID删除付款单 -->
+	<delete id="deletePaymentBillByRecompenseId" parameterType="string">
+		<![CDATA[ 
+		delete from	t_rec_paymentapp 
+		where frecompenseId=#{recompenseId}
+		 ]]>
+	</delete>
+
+	<!-- 根据ID修改付款单 待改进 -->
+	<update id="updatePaymentBillById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.PaymentBill">
+		UPDATE T_REC_PAYMENTAPP
+		<set>
+			<if test="null != recompenseId">
+				FRECOMPENSEID=#{recompenseId, jdbcType=VARCHAR},
+			</if>
+			<!-- <if test="null != belongfinance">fbelongfinance=#{belongfinance.id, 
+				jdbcType=VARCHAR},</if> -->
+			<if test="null != receivableAmount">
+				FRECEIVABLEAMOUNT=#{receivableAmount, jdbcType=NUMERIC},
+			</if>
+			<if test="null != freightCollectAmount">
+				FREIGHTCOLLECTAMOUNT=#{freightCollectAmount,
+				jdbcType=NUMERIC},
+			</if>
+			<if test="null != paymentType">
+				FPAYMENTTYPE=#{paymentType, jdbcType=VARCHAR},
+			</if>
+			<!-- <if test="null != paymentAmount and paymentAmount!='' "> -->
+			<!-- FPAYMENTAMOUNT=#{paymentAmount, jdbcType=NUMERIC} -->
+			<!-- </if> -->
+			<if test=" null != bankAccount.bankName and bankAccount.bankName!='' ">
+				FBANKNAME=#{bankAccount.bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="null != bankAccount.account and bankAccount.account!='' ">
+				FACCOUNT=#{bankAccount.account,jdbcType=VARCHAR},
+			</if>
+			<if test="null != bankAccount.province and bankAccount.province!='' ">
+				FPROVINCE=#{bankAccount.province,jdbcType=VARCHAR},
+			</if>
+			<if test="null != bankAccount.city and bankAccount.city!='' ">
+				FCITY=#{bankAccount.city, jdbcType=VARCHAR},
+			</if>
+			<if test="null != bankAccount.branchName and bankAccount.branchName!='' ">
+				FBRANCHNAME=#{bankAccount.branchName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount.openName!=null and bankAccount.openName!='' ">
+				FOPENNAME=#{bankAccount.openName, jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE
+		FID = #{id}
+	</update>
+
+	<!-- 根据ID删除付款单 -->
+	<delete id="deletePaymentBillById"> 
+		<![CDATA[ 
+			delete
+				t_rec_paymentapp 
+			where
+				fid=#{id} 
+		]]>
+	</delete>
+
+	<!-- 保存消息提醒 -->
+	<insert id="insertMessageReminder"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.MessageReminder">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT
+			SEQ_ID_MESSAGEREMINDER.NEXTVAL ID FROM DUAL
+		</selectKey>
+		insert into t_rec_messagereminder(
+		FID,FRECOMPENSEID,FREMINDERMETHOD,FUSERNUMBER,FUSERNAME,FPHONENUM,FDEPTNAME
+		)values(
+		#{id},
+		#{recompenseId,jdbcType=VARCHAR},
+		#{reminderMethod,jdbcType=VARCHAR},
+		#{userNumber,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR},
+		#{phoneNum,jdbcType=VARCHAR},
+		#{deptName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 根据Id查询消息提醒 -->
+	<select id="queryMessageReminderById" resultMap="MessageReminderResultMap">
+		<![CDATA[ 	select ]]>
+		<include refid="select_MessageReminder" />
+		<![CDATA[
+		from t_rec_MessageReminder mr
+			where 
+				mr.fid = #{id}
+		]]>
+	</select>
+
+	<!-- 根据理赔单Id查询消息提醒 -->
+	<select id="queryMessageReminderByRecompenseId" resultMap="MessageReminderResultMap">
+		<![CDATA[ 	select ]]>
+		<include refid="select_MessageReminder" />
+		<![CDATA[
+		from t_rec_MessageReminder mr
+			where 
+				mr.frecompenseId= #{recompenseId}
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID删除消息提醒 -->
+	<delete id="deleteMessageReminderByRecompenseId" parameterType="string">
+		<![CDATA[ 
+		delete from	t_rec_MessageReminder 
+		where frecompenseId=#{recompenseId}
+		 ]]>
+	</delete>
+
+	<!-- 根据ID删除消息提醒 -->
+	<delete id="deleteMessageReminderById"> 
+		<![CDATA[ 
+			delete 
+				t_rec_MessageReminder 
+			where 
+				fid = #{id} 
+		]]>
+	</delete>
+
+	<!-- 根据ID修改消息提醒 -->
+	<update id="updateMessageReminderById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.MessageReminder">
+		UPDATE T_REC_MESSAGEREMINDER
+		<set>
+			<if test="null != recompenseId">
+				FRECOMPENSEID = #{recompenseId,jdbcType=VARCHAR},
+			</if>
+			<if test="null != reminderMethod">
+				FREMINDERMETHOD = #{reminderMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="null != userNumber">
+				FUSERNUMBER = #{userNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="null != userName">
+				FUSERNAME = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="null != phoneNum">
+				FPHONENUM = #{phoneNum,jdbcType=VARCHAR},
+			</if>
+			<if test="null != deptName">
+				FDEPTNAME = #{deptName,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE FID = #{id}
+	</update>
+
+	<!-- 保存附件清单 -->
+	<insert id="insertAttachment"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseAttachment">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			<![CDATA[
+				select
+					seq_id_recompenseattachment.nextval id
+				from
+					dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_attachinfomation
+				(fid, fattachName , fattachAddress,frecompenseId)
+			values 
+				(#{id},#{attachName,jdbcType=VARCHAR},
+				#{attachAddress,jdbcType=VARCHAR},
+				#{recompenseId,jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<!-- 更新附件清单 -->
+	<update id="updateAttachmentReminderById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseAttachment">
+		update t_rec_attachinfomation
+		<set>
+			<if test="null != attachName">
+				fattachName=#{attachName,jdbcType=VARCHAR},
+			</if>
+			<if test="null != attachAddress"> 
+				fattachAddress=#{attachAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="null != recompenseId"> 
+				frecompenseId=#{recompenseId,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where fid=#{id}
+	</update>
+
+	<!-- 根据理赔单id查询附件清单 -->
+	<select id="queryAttachmentByRecompenseId" resultMap="RecompenseAttachmentResultMap">
+	<![CDATA[select]]>
+		<include refid="select_RecompenseAttachment" />
+		<![CDATA[
+		from t_rec_attachinfomation ac
+			where
+				ac.frecompenseId = #{recompenseId}
+		]]>
+	</select>
+
+	<!-- 根据id查询附件清单 -->
+	<select id="queryAttachmentById" resultMap="RecompenseAttachmentResultMap">
+		<![CDATA[select]]>
+		<include refid="select_RecompenseAttachment" />
+		<![CDATA[
+		from t_rec_attachinfomation ac
+			where 
+				ac.fid =#{id}
+		]]>
+	</select>
+
+	<!-- 根据Id删除附件清单 -->
+	<delete id="deleteAttachmentById">
+		<![CDATA[
+			delete 
+				t_rec_attachinfomation 
+			where
+				fid=#{id}
+		]]>
+	</delete>
+
+	<!-- 根据理赔单Id删除附件清单 -->
+	<delete id="deleteAttachmentByRecompenseId" parameterType="string">
+	  <![CDATA[ 
+	  delete from t_rec_attachinfomation 
+	  where frecompenseId= #{recompenseId}
+	  ]]>
+	</delete>
+
+	<!-- 保存追偿信息 -->
+	<insert id="insertRecalledComp"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecalledCompensation">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			<![CDATA[
+				select
+					seq_id_recalledcompensation.nextval id
+				from
+					dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_recalledcompensation
+				(fid, frecompenseId, frecoveryTime, fdeptId,
+				fdeptName,fsuspendedAmount,fBackAmount,
+				fBackTime,freturnDeductions,fassessmentReward)
+			values 
+				(#{id},#{recompenseId,jdbcType=VARCHAR},
+				#{recoveryTime,jdbcType=TIMESTAMP},
+				#{deptId,jdbcType=NUMERIC},
+				#{deptName,jdbcType=VARCHAR},
+				#{suspendedAmount,jdbcType=NUMERIC},
+				#{compensateBackAmount,jdbcType=NUMERIC},
+				#{compensateBackTime,jdbcType=TIMESTAMP},
+				#{returnDeductions,jdbcType=NUMERIC},
+				#{assessmentReward,jdbcType=NUMERIC})
+		]]>
+	</insert>
+
+	<!-- 根据ID查询追偿信息 -->
+	<select id="queryRecalledCompById" resultMap="RecalledCompensationResultMap">
+	<![CDATA[ 	select ]]>
+		<include refid="select_RecalledCompensation" /> 
+		<![CDATA[ 
+		from  t_rec_recalledcompensation rc
+			where 
+				rc.fid =#{id} 
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID查询追偿信息 -->
+	<select id="queryRecalledCompByRecompenseId" resultMap="RecalledCompensationResultMap">
+	<![CDATA[ 	select ]]>
+		<include refid="select_RecalledCompensation" /> 
+		<![CDATA[ 
+		from  t_rec_recalledcompensation rc
+			where
+				rc.frecompenseId=#{recompenseId} 
+		]]>
+	</select>
+
+	<!-- 根据理赔单id删除追偿信息 -->
+	<delete id="deleteRecalledCompByRecompenseId" parameterType="string">
+		<![CDATA[ 
+		delete from	t_rec_recalledcompensation 
+		where frecompenseId = #{recompenseId}
+		 ]]>
+	</delete>
+
+	<!-- 根据ID删除追偿信息 -->
+	<delete id="deleteRecalledCompById"> 
+		<![CDATA[
+			delete
+				t_rec_recalledcompensation 
+			where
+				fid=#{id}
+		]]>
+	</delete>
+
+	<!-- 根据ID修改追偿信息 待改进 -->
+	<update id="updateRecalledCompById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.RecalledCompensation">
+		update t_rec_recalledcompensation
+		<set>
+			<if test=" null != recompenseId"> frecompenseId=#{recompenseId,jdbcType=VARCHAR},</if>
+			<if test=" null != recoveryTime"> frecoveryTime=#{recoveryTime,jdbcType=TIMESTAMP},</if>
+			<if test=" null != deptId"> fdeptId=#{deptId,jdbcType=VARCHAR},</if>
+			<if test=" null != deptName"> fdeptName=#{deptName,jdbcType=VARCHAR},</if>
+			<if test=" null != suspendedAmount"> fsuspendedAmount=#{suspendedAmount,jdbcType=NUMERIC},
+			</if>
+			<if test=" null != compensateBackAmount">fBackAmount=#{compensateBackAmount,jdbcType=NUMERIC},
+			</if>
+			<if test=" null != compensateBackTime">fBackTime=#{compensateBackTime,jdbcType=TIMESTAMP},</if>
+			<if test=" null != returnDeductions"> freturnDeductions=#{returnDeductions,jdbcType=VARCHAR},
+			</if>
+			<if test=" null != assessmentReward"> fassessmentReward=#{assessmentReward,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where fid = #{id}
+	</update>
+
+	<!-- 保存货物运输项 -->
+	<insert id="insertGoodsTrans"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.GoodsTrans">
+		<selectKey keyProperty="id" order="BEFORE" resultType="string">
+			<![CDATA[
+				select	seq_id_GoodsTrans.nextval id	 from	dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_GoodsTrans
+				(fid, fgoodsName,fnumber,fprice,frecompenseId,
+				fquality,frealprice,finsurtype,fdescription,famount,fisclaims,FRELATIONFLAG)
+			values 
+				(#{id},#{goodsName,jdbcType=VARCHAR},
+				#{quality, jdbcType=NUMERIC},#{price, jdbcType=NUMERIC},
+				#{recompenseId, jdbcType=VARCHAR},#{number,jdbcType=NUMERIC},
+				#{realPrice,jdbcType=NUMERIC},#{insurType,jdbcType=NUMERIC},
+				#{description, jdbcType=VARCHAR},	#{amount, jdbcType=NUMERIC},
+				#{isClaims,jdbcType=NUMERIC},#{relationFlag,jdbcType=NUMERIC})
+		]]>
+	</insert>
+
+	<!-- 根据ID查询货物运输项 -->
+	<select id="queryGoodsTransById" resultMap="GoodsTransResultMap">
+	<![CDATA[ 	select ]]>
+		<include refid="select_GoodsTrans" />
+		<![CDATA[
+		from t_rec_GoodsTrans gt
+			where 
+				gt.fid =#{id}
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID查询货物运输项 -->
+	<select id="queryGoodsTransByRecompenseId" resultMap="GoodsTransResultMap"
+		parameterType="string">
+	<![CDATA[ 	select ]]>
+		<include refid="select_GoodsTrans" />
+		<![CDATA[ 
+		from t_rec_GoodsTrans gt
+			where
+				gt.frecompenseId=#{recompenseId}
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID查询理赔项 -->
+	<select id="queryRecompenseItemById" resultMap="RecompenseItemResultMap"
+		parameterType="string">
+	<![CDATA[ 	select ]]>
+		<include refid="select_RecompenseItem" />
+		<![CDATA[ 
+		from t_rec_GoodsTrans gt
+			where
+				gt.fid=#{id} and gt.fisclaims =1
+		]]>
+	</select>
+
+	<!-- 根据理赔单ID查询理赔项 -->
+	<select id="queryRecompenseItemByRcomId" resultMap="RecompenseItemResultMap"
+		parameterType="string">
+	<![CDATA[ 	select ]]>
+		<include refid="select_RecompenseItem" />
+		<![CDATA[ 
+		from t_rec_GoodsTrans gt
+			where
+				gt.frecompenseId=#{recompenseId} and gt.fisclaims=1
+		]]>
+	</select>
+
+	<!-- 根据id删除理赔项 -->
+	<!-- <update id="deleteRecompenseItemById" parameterType="string"> -->
+	<!-- update -->
+	<!-- t_rec_GoodsTrans -->
+	<!-- set -->
+	<!-- fisclaims=0,fdescription=null,finsurtype=null,famount=null,fquality=null -->
+	<!-- where fid=#{id} -->
+	<!-- </update> -->
+	<!-- 根据id删除理赔项 -->
+	<!-- <update id="deleteRecompenseItemByRecompenId" parameterType="string"> -->
+	<!-- update -->
+	<!-- t_rec_GoodsTrans -->
+	<!-- set -->
+	<!-- fisclaims=0,fdescription=null,finsurtype=null,famount=null,fquality=null -->
+	<!-- where frecompenseId=#{id} -->
+	<!-- </update> -->
+
+	<!-- 根据理赔单ID删除货物运输项 -->
+	<delete id="deleteGoodsTransByRecompenseId" parameterType="string">
+		<![CDATA[ 
+		delete from t_rec_GoodsTrans
+		where frecompenseId=#{recompenseId}  
+		 ]]>
+	</delete>
+
+	<!-- 根据ID删除货物运输项 -->
+	<delete id="deleteGoodsTransById" parameterType="string"> 
+		<![CDATA[ 
+			delete
+				t_rec_GoodsTrans 
+			where 
+				fid=#{id}
+		]]>
+	</delete>
+
+	<!-- 根据ID修改货物运输 待改进 -->
+	<update id="updateGoodsTransById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.GoodsTrans">
+		update
+		t_rec_GoodsTrans
+		<set>
+			<if test="null != goodsName">fgoodsName=#{goodsName,jdbcType=VARCHAR},</if>
+			<if test="null != quality">fnumber=#{quality, jdbcType=NUMERIC},</if>
+			<if test="null != price">fprice=#{price, jdbcType=NUMERIC},	</if>
+			<if test="null != recompenseId">frecompenseId=#{recompenseId, jdbcType=VARCHAR},</if>
+			<if test="null != number">fquality=#{number,jdbcType=NUMERIC},</if>
+			<if test="null != realPrice"> frealprice=#{realPrice,jdbcType=NUMERIC},</if>
+			<if test="null != insurType">finsurtype=#{insurType,jdbcType=NUMERIC},</if>
+			<if test="null != description"> fdescription=#{description, jdbcType=VARCHAR},</if>
+			<if test="null != number"> famount=#{amount, jdbcType=NUMERIC},</if>
+			<if test="null != isClaims"> fisclaims=#{isClaims,jdbcType=NUMERIC}</if>
+		</set>
+		where
+		fid = #{id}
+	</update>
+	<!-- 新增理赔项 待改进 -->
+	<!-- <update id="insertRecompenseItem" parameterType="com.deppon.crm.module.recompense.shared.domain.RecompenseItem"> -->
+	<!-- <![CDATA[ -->
+	<!-- update -->
+	<!-- t_rec_GoodsTrans -->
+	<!-- ]]> -->
+	<!-- <set> -->
+	<!-- fisclaims = 1, -->
+	<!-- <choose> -->
+	<!-- <when test="null == insurType and '' != insertType">finsurtype=null,</when> -->
+	<!-- <otherwise>finsurtype=#{insurType},</otherwise> -->
+	<!-- </choose> -->
+	<!-- <choose> -->
+	<!-- <when test="null == description and '' != description">fDescription=null,</when> -->
+	<!-- <otherwise>fDescription=#{description},</otherwise> -->
+	<!-- </choose> -->
+	<!-- <choose> -->
+	<!-- <when test="null == quality and '' != quality">fquality =null,</when> -->
+	<!-- <otherwise> fquality =#{quality},</otherwise> -->
+	<!-- </choose> -->
+	<!-- <choose> -->
+	<!-- <when test="null == amount and '' != amount">famount =null</when> -->
+	<!-- <otherwise>famount =#{amount}</otherwise> -->
+	<!-- </choose> -->
+	<!-- </set> -->
+	<!-- <![CDATA[ -->
+	<!-- where -->
+	<!-- fid = #{id} -->
+	<!-- ]]> -->
+	<!-- </update> -->
+
+	<!-- 保存责任部门项 -->
+	<insert id="insertResponsibleDept"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.ResponsibleDept">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			<![CDATA[
+  				select 
+  					seq_id_responsibledept.nextval id
+  				from 
+  					dual
+  			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_ResponsibleDept
+				(fid,frecompenseId,fdeptId,fdeptName) 
+			values
+				(#{id},
+				#{recompenseId, jdbcType=VARCHAR},
+				#{deptId, jdbcType=VARCHAR},
+				#{deptName, jdbcType=VARCHAR})
+		]]>
+	</insert>
+
+	<!-- 根据id查询责任部门项 -->
+	<select id="queryResponsibleDeptById" resultMap="ResponsibleDeptResultMap"
+		parameterType="string">
+	<![CDATA[	select	]]>
+		<include refid="select_ResponsibleDept" />
+		<![CDATA[	
+				from 	t_rec_ResponsibleDept rd
+			 where 		rd.fid = #{id}
+		]]>
+	</select>
+
+	<!-- 根据理赔单id查询责任部门项 -->
+	<select id="queryResponsibleDeptByRecompenseId" resultMap="ResponsibleDeptResultMap"
+		parameterType="string">
+	<![CDATA[	select	]]>
+		<include refid="select_ResponsibleDept" />
+		<![CDATA[	
+				from 	t_rec_ResponsibleDept rd
+			where
+				rd.frecompenseId = #{fecompenseId}
+		]]>
+	</select>
+	<!-- 根据id删除责任部门项 -->
+	<delete id="deleteResponsibleDeptById" parameterType="string">
+		<![CDATA[
+			delete 
+				t_rec_ResponsibleDept 
+			where 
+				fid = #{id}
+		]]>
+	</delete>
+	<!-- 根据理赔单id查询责任部门项 -->
+	<delete id="deleteResponsibleDeptByRecompenseId" parameterType="string">
+		<![CDATA[
+			delete t_rec_ResponsibleDept
+			where frecompenseId=#{recompenseId}
+				]]>
+	</delete>
+
+	<!-- 根据理赔单id修改责任部门项 -->
+	<update id="updateResponsibleDeptById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.ResponsibleDept">
+		update
+		t_rec_ResponsibleDept
+		<set>
+			<if test="null  != recompenseId">frecompenseId = #{recompenseId, jdbcType=VARCHAR},</if>
+			<if test="null  != deptId">fdeptId=#{deptId, jdbcType=VARCHAR},</if>
+			<if test="null  != deptName">fdeptName=#{deptName, jdbcType=VARCHAR}</if>
+		</set>
+		where
+		fid = #{id}
+	</update>
+
+
+
+	<!-- 通过理赔单id删除运单 -->
+	<delete id="deleteWaybillByRecompenseId" parameterType="string"> 
+		<![CDATA[ 
+			delete 
+				t_rec_waybill 
+			where 
+				frecompenseId =#{id} 
+		]]>
+	</delete>
+	<!-- 通过id删除运单 -->
+	<delete id="deleteWaybillBy" parameterType="string">
+			<![CDATA[ 
+			delete t_rec_waybill 
+			where 		fId =#{id} 
+		]]>
+	</delete>
+
+	<!-- 保存跟进信息 -->
+	<insert id="insertMessage"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Message">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			<![CDATA[
+				select
+					seq_id_message.nextval id
+				from
+					dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_Message
+				(fid,fuserId,fuserName,fcontent,fcreateTime,frecompenseId)
+			values
+				(#{id},
+				#{userId,jdbcType=VARCHAR},
+				#{userName,jdbcType=VARCHAR},
+				#{content,jdbcType=VARCHAR},
+				#{createTime,jdbcType=TIMESTAMP},
+				#{recompenseId,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	<!-- 更新跟进信息 -->
+	<update id="updateMessageById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Message">
+		update t_rec_Message
+		<set>
+			<if test="null != userId">fuserId=#{userId,jdbcType=VARCHAR},</if>
+			<if test="null != userName">fuserName=#{userName,jdbcType=VARCHAR},</if>
+			<if test="null != content"> fcontent=#{content,jdbcType=VARCHAR},</if>
+			<if test="null != createTime">fcreateTime=#{createTime,jdbcType=TIMESTAMP},</if>
+			<if test="null != recompenseId"> frecompenseId=#{recompenseId,jdbcType=VARCHAR}</if>
+		</set>
+		where fid = #{id}
+	</update>
+
+	<!-- 根据id查询跟进信息 -->
+	<select id="queryMessageById" resultMap="MessageResultMap"
+		parameterType="string">
+		select
+		<include refid="select_Message" />
+		from t_rec_Message mg
+		where mg.fid =#{id}
+	</select>
+
+	<!-- 根据ID删除跟进信息 -->
+	<delete id="deleteMessageById"> 
+		<![CDATA[
+			delete
+				t_rec_Message 
+			where
+				fid=#{id} 
+		]]>
+	</delete>
+	<!-- 根据理赔单ID查询跟进信息 -->
+	<select id="queryMessageByRecompenseId" resultMap="MessageResultMap">
+	<![CDATA[ 	select ]]>
+		<include refid="select_Message" />
+		from t_rec_Message mg
+		where mg.frecompenseId = #{recompenseId}
+	</select>
+	<!-- 根据理赔单ID删除跟进信息 -->
+	<delete id="deleteMessageByRecompenseId" parameterType="string">
+		<![CDATA[ 
+		delete from	t_rec_Message
+		where frecompenseId=#{recompenseId} 
+		 ]]>
+	</delete>
+
+	<!-- 保存入部门费用 -->
+	<insert id="insertDeptCharge"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.DeptCharge">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			select seq_id_deptcharge.nextval as
+			id from dual
+		</selectKey>
+		<![CDATA[
+			insert into	t_rec_DeptCharge
+				(fid,frecompenseId,fdeptId,fdeptName,famount)
+			values
+				(#{id},
+				#{recompenseId,jdbcType=VARCHAR},
+				#{deptId,jdbcType=VARCHAR},
+				#{deptName,jdbcType=VARCHAR},
+				#{amount, jdbcType=NUMERIC})
+		]]>
+	</insert>
+
+	<!-- 根据ID查询入部门费用 -->
+	<select id="queryDeptChargeById" resultMap="DeptChargeResultMap"
+		parameterType="string">
+		<![CDATA[select]]>
+		<include refid="select_DeptCharge" />
+		<![CDATA[
+		from	t_rec_DeptCharge dc
+			where dc.fid = #{id}
+		]]>
+	</select>
+	<!-- 根据理赔单ID获取入部门费用 -->
+	<select id="queryDeptChargeByRecompenseId" resultMap="DeptChargeResultMap"
+		parameterType="string">
+		<![CDATA[select]]>
+		<include refid="select_DeptCharge" />
+		from t_rec_DeptCharge dc
+		where dc.frecompenseId = #{recompenseId}
+	</select>
+	<!-- 根据理赔单id删除入部门费用项 -->
+	<delete id="deleteDeptChargeByRecompenseId" parameterType="string">
+		<![CDATA[
+		delete t_rec_DeptCharge
+		where frecompenseId=#{recompenseId}
+		]]>
+	</delete>
+	<!-- 根据ID删除入部门费用 -->
+	<delete id="deleteDeptChargeById" parameterType="string">
+		<![CDATA[
+			delete
+				t_rec_DeptCharge
+			where
+				fid = #{id}
+		]]>
+	</delete>
+	<!-- 根据ID修改入部门费用 待修改 -->
+	<update id="updateDeptChargeById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.DeptCharge">
+		update
+		t_rec_DeptCharge
+		<set>
+			<if test="null != recompenseId">frecompenseId = #{recompenseId,jdbcType=VARCHAR},</if>
+			<if test="null != deptId">fdeptId = #{deptId,jdbcType=VARCHAR},</if>
+			<if test="null != deptName">fdeptName = #{deptName,jdbcType=VARCHAR},</if>
+			<if test="null != amount">famount = #{amount,jdbcType=VARCHAR}</if>
+		</set>
+		where
+		fid = #{id}
+	</update>
+
+
+	<!-- 保存出险信息 -->
+	<insert id="insertIssueItem"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.IssueItem">
+		<selectKey order="BEFORE" keyProperty="id" resultType="string">
+			<![CDATA[
+				select
+					seq_id_issueitem.nextval id
+				from
+					dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into t_rec_issueitem
+				(fid,finsurType,fquality,fdescription,frecompenseId)
+			values
+				(#{id},
+				#{insurType,jdbcType=VARCHAR},
+				#{quality,jdbcType=NUMERIC},
+				#{description,jdbcType=VARCHAR},
+				#{recompenseId,jdbcType=VARCHAR})	
+		]]>
+	</insert>
+	<!-- 批量保存出险信息 -->
+	<insert id="insertList" parameterType="list">
+		<selectKey order="BEFORE" keyProperty="id" resultType="string">
+			<![CDATA[
+				select
+					seq_id_issueitem.nextval id
+				from
+					dual
+			]]>
+		</selectKey>
+		<foreach collection="list" open="(" close=")" index="item"
+			separator=",">
+		<![CDATA[
+			insert into t_rec_issueitem
+				(fid,finsurType,fquality,fdescription,frecompenseId)
+			values
+				(#{id},
+				#{item.insurType,jdbcType=VARCHAR},
+				#{item.quality,jdbcType=NUMERIC},
+				#{item.description,jdbcType=VARCHAR},
+				#{item.recompenseId,jdbcType=VARCHAR})	
+		]]>
+		</foreach>
+	</insert>
+	<!-- 根据ID查询出险信息 -->
+	<select id="queryIssueItemById" parameterType="string"
+		resultMap="IssueItemResultMap">
+	<![CDATA[ select ]]>
+		<include refid="select_IssueItem" />
+		<![CDATA[
+		 from t_rec_issueitem ii 
+			where	ii.fid =#{id}
+		]]>
+	</select>
+	<!-- 根据理赔单ID查询出险信息 -->
+	<select id="queryIssueItemByRecompenseId" resultMap="IssueItemResultMap"
+		parameterType="string">
+		<![CDATA[ select ]]>
+		<include refid="select_IssueItem" />
+		<![CDATA[
+		 from t_rec_issueitem ii 
+			where		ii.frecompenseId =#{recompenseId}
+		]]>
+	</select>
+	<!-- 根据ID删除出险信息 -->
+	<delete id="deleteIssueItemById" parameterType="string"> 
+		<![CDATA[ 
+			delete from 
+				t_rec_issueitem 
+			where
+				fid=#{id}
+		]]>
+	</delete>
+	<!-- 根据id修改出险信息 待改进 -->
+	<update id="updateIssueItemById"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.IssueItem">
+		update t_rec_issueitem
+		<set>
+			<if test="null != insurType">finsurType=#{insurType}, </if>
+			<if test="null != quality">fquality=#{quality}, </if>
+			<if test="null != description">fdescription=#{description}, </if>
+			<if test="null != recompenseId">frecompenseId=#{recompenseId}  </if>
+		</set>
+		where
+		fid = #{id}
+	</update>
+
+	<!-- 根据理赔id删除出险项 -->
+	<delete id="deleteIssueItemByRecompenseId" parameterType="string"> 
+		<![CDATA[ delete from t_rec_issueitem where frecompenseId=#{recompenseId}  ]]>
+	</delete>
+
+	<!-- 保存工作流信息 -->
+	<insert id="insertOAWorkflow"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.OAWorkflow">
+		<selectKey keyProperty="id" order="BEFORE" resultType="string">
+			select seq_id_workflow.nextval id
+			from dual
+		</selectKey>
+	<![CDATA[
+		insert into t_rec_workflow ( fid,fworknumber,fworktype,fworkstatus ,
+		 												fcommiter,fcommitdate,fauditpeople,fauditdate,
+		 												fauditopinion, fbelongfanancedept,fpaymentamount, fcysamount, 
+		 												fcyfamount, faccountname,fbankname,fprovinceofbank,
+		 												fcityofbank,fbranchname,frecompenseid)
+   									values 
+							   					(	#{id},	#{workflowNum,jdbcType=NUMERIC},
+													#{workflowType,jdbcType=NUMERIC},
+													#{workflowStatus,jdbcType=NUMERIC},
+													#{commiter.id,jdbcType=NUMERIC},
+													#{commitDate,jdbcType=TIMESTAMP},
+													#{auditPeople.id,jdbcType=NUMERIC},
+													#{auditDate,jdbcType=TIMESTAMP},
+													#{auditopinion,jdbcType=VARCHAR},
+													#{paymentBill.belongfinance.id,jdbcType=NUMERIC},
+													#{paymentBill.paymentAmount,jdbcType=NUMERIC},
+													#{paymentBill.receivableAmount,jdbcType=NUMERIC},
+													#{paymentBill.freightCollectAmount,jdbcType=NUMERIC},
+													#{paymentBill.bankAccount.account,jdbcType=VARCHAR},
+													#{paymentBill.bankAccount.bankName,jdbcType=VARCHAR},
+													#{paymentBill.bankAccount.province,jdbcType=VARCHAR},
+													#{paymentBill.bankAccount.city,jdbcType=VARCHAR},
+													#{paymentBill.bankAccount.branchName,jdbcType=VARCHAR},
+													#{recompenseId,jdbcType=VARCHAR})
+	]]>
+	</insert>
+	<!-- OA审批工作流_修改 -->
+	<update id="updateOAWorkflow"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.OAWorkflow">
+		UPDATE
+		t_rec_workflow
+		<set>
+			<if test="workflowStatus!=null and '' !=workflowStatus ">fworkstatus=#{workflowStatus,jdbcType=NUMERIC},</if>
+			<if test="commiter!=null and '' !=commiter ">fcommiter=#{commiter.id,jdbcType=NUMERIC},</if>
+			<if test="commitDate!=null and '' !=commitDate ">fcommitdate=#{commitDate,jdbcType=TIMESTAMP},</if>
+			<if test="auditPeople!=null and '' !=auditPeople ">fauditpeople=#{auditPeople.id,jdbcType=NUMERIC},</if>
+			<if test="auditDate!=null and '' !=auditDate ">fauditdate=#{auditDate,jdbcType=TIMESTAMP},</if>
+			<if test="auditopinion!=null and '' !=auditopinion ">fauditopinion=#{auditopinion,jdbcType=VARCHAR}</if>
+		</set>
+		WHERE
+		FID = #{id}
+	</update>
+	<select id="queryOAWorkflowByRecompenseId" parameterType="string"
+		resultMap="WorkflowResultMap">
+		select
+		<include refid="select_OAWorkflowNew" />
+		from t_rec_workflow wf 
+		where wf.frecompenseId = #{recompenseId}
+	</select>
+
+	<select id="getWorkflowByWorkflowNum" parameterType="string"
+		resultMap="WorkflowResultMap">
+		select
+		<include refid="select_OAWorkflow" />
+		from t_rec_workflow wf
+		where wf.fworknumber = #{workflowNum} and
+		rownum=1
+	</select>
+
+	<!--查询理赔单当前类型的最后一个工作流 -->
+	<select id="getWorkflowByAppIdAndType" parameterType="map"
+		resultMap="WorkflowResultMap">
+		SELECT
+		<include refid="select_OAWorkflow" />
+		FROM T_REC_WORKFLOW WF LEFT JOIN T_REC_RECOMPENSE RP
+		ON
+		WF.FRECOMPENSEID=RP.FID
+		WHERE WF.FRECOMPENSEID
+		= #{appId} AND
+		RP.FRECOMPENSETYPE=#{type} AND
+		ROWNUM=1
+	</select>
+
+	<delete id="deleteOAWorkflowById" parameterType="string">
+		delete
+		t_rec_workflow where fid =#{id}
+	</delete>
+
+	<delete id="deleteOAWorkflowByRecompenseId" parameterType="string">
+		delete
+		t_rec_workflow where frecompenseid =#{recompenseId}
+	</delete>
+
+	<!-- 多赔映射 -->
+	<resultMap id="OverpayResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.Overpay">
+		<id property="id" column="FID" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATEUSERID" />
+		<result property="modifyDate" column="FLASTUPDATETIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+		<result property="overpayAmount" column="FOVERPAYAMOUNT" />
+		<result property="totalAmount" column="FTOTALAMOUNT" />
+		<result property="recoverYszk" column="FISRECOVERYSZK" />
+		<result property="overpayReason" column="FOVERPAYREASON" />
+		<result property="workNumber" column="FWORKNUMBER" />
+		<result property="workflowNo" column="FWORKFLOWNO" />
+		<result property="applyStandardCode" column="FAPPLYSTANDARDCODE" />
+		<result property="applyDeptId" column="FAPPLYDEPTID" />
+		<result property="recompenseId" column="FRECOMPENSEID" />
+
+		<association property="deptAccount" column="FOVERPAYACCOUNTDEPTID"
+			select="com.deppon.crm.module.authorization.shared.domain.User.getById" />
+
+		<association property="overpayBu" column="FOVERPAYBUID"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department"
+			select="com.deppon.crm.module.organization.shared.domain.Department.getById" />
+
+	</resultMap>
+
+	<!-- 多赔表字段 -->
+	<sql id="OverpayTableField">
+		FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,
+		FRECOMPENSEID,FOVERPAYAMOUNT,FTOTALAMOUNT,FISRECOVERYSZK,FOVERPAYACCOUNTDEPTID,FOVERPAYBUID,FOVERPAYREASON,FWORKNUMBER,FWORKFLOWNO,FAPPLYSTANDARDCODE,FAPPLYDEPTID   
+	</sql>
+
+	<!-- 多赔新增 -->
+	<insert id="insertOverpay"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Overpay">
+		<selectKey keyProperty="id" order="BEFORE" resultType="string">
+			SELECT SEQ_ID_OVERPAY.NEXTVAL ID
+			FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_REC_OVERPAY(
+		<include refid="OverpayTableField" />
+		)
+		VALUES(#{id},sysdate,#{createUser,jdbcType=VARCHAR},sysdate,#{modifyUser,jdbcType=VARCHAR},
+		#{recompenseId,jdbcType=NUMERIC},#{overpayAmount,jdbcType=NUMERIC},#{totalAmount,jdbcType=NUMERIC},#{recoverYszk,jdbcType=VARCHAR},#{deptAccount.id,jdbcType=NUMERIC},
+		#{overpayBu.id,jdbcType=NUMERIC},#{overpayReason,jdbcType=VARCHAR},#{workNumber,jdbcType=VARCHAR},#{workflowNo,jdbcType=VARCHAR},#{applyStandardCode,jdbcType=VARCHAR},
+		#{applyDeptId,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 多赔修改 -->
+	<update id="updateOverpay" 
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Overpay">
+		update T_REC_OVERPAY 
+		<set>
+			<if test="null != createUser and '' != createUser">
+				FCREATEUSERID = #{createUser},
+			</if>
+			<if test="null != modifyUser and '' != modifyUser">
+				FLASTMODIFYUSERID = #{modifyUser},
+			</if>
+			<if test="null != recompenseId and '' != recompenseId">
+				FRECOMPENSEID = #{recompenseId},
+			</if>
+			<if test="null != overpayAmount and '' != overpayAmount">
+				FOVERPAYAMOUNT = #{overpayAmount},
+			</if>
+			<if test="null != totalAmount and '' != totalAmount">
+				FTOTALAMOUNT = #{totalAmount},
+			</if>
+			<if test="null != recoverYszk and '' != recoverYszk">
+				FISRECOVERYSZK = #{recoverYszk},
+			</if>
+			<if test="null != deptAccount.id and '' != deptAccount.id">
+				FOVERPAYACCOUNTDEPTID = #{deptAccount.id},
+			</if>
+			<if test="null != overpayBu.id and '' != overpayBu.id">
+				FOVERPAYBUID = #{overpayBu.id},
+			</if>
+			<if test="null != overpayReason and '' != overpayReason">
+				FOVERPAYREASON = #{overpayReason},
+			</if>
+			<if test="null != workNumber and '' != workNumber">
+				FWORKNUMBER = #{workNumber},
+			</if>
+			<if test="null != applyStandardCode and '' != applyStandardCode">
+				FAPPLYSTANDARDCODE = #{applyStandardCode},
+			</if>
+			<if test="null != applyDeptId and '' != applyDeptId">
+				FAPPLYDEPTID = #{applyDeptId} 
+			</if>
+			where fworkflowno = #{workflowNo}
+		</set>
+	</update>
+
+	<delete id="deleteOverpayByRecompenseId" parameterType="string">
+		delete
+		t_rec_overpay where frecompenseid =#{recompenseId}
+	</delete>
+
+	<!-- 根据ID查询 -->
+	<select id="getOverpayById" parameterType="string" resultMap="OverpayResultMap">
+		SELECT
+		<include refid="OverpayTableField" />
+		FROM T_REC_OVERPAY WHERE FID=#{id}
+	</select>
+	<!-- 根据理赔单ID倒序查询对应的多赔单 -->
+	<select id="getOverpayByRecompenseId" parameterType="string"
+		resultMap="OverpayResultMap">
+		SELECT
+		<include refid="OverpayTableField" />
+		FROM T_REC_OVERPAY WHERE FRECOMPENSEID=#{recompenseId} ORDER BY
+		FCREATETIME DESC
+	</select>
+	<!-- 按工作流号查询多赔 -->
+	<select id="getOverpayByWorkflowNum" parameterType="string"
+		resultMap="OverpayResultMap">
+		SELECT
+		<include refid="OverpayTableField" />
+		FROM T_REC_OVERPAY WHERE FRECOMPENSEID=#{recompenseId} and
+		fworknumber=#{workflowNum} and rownum=1
+		ORDER BY FCREATETIME DESC
+	</select>
+
+	<!-- 在线理赔申请映射 -->
+	<resultMap id="OnlineApplyResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.OnlineApply">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATEUSERID" />
+		<result property="modifyDate" column="FLASTUPDATETIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+
+		<result property="recompenseMethod" column="frecompenseMethod" />
+		<result property="recompenseType" column="frecompenseType" />
+		<result property="waybillNumber" column="fwaybillNumber" />
+		<result property="customerNum" column="fcustomerNum" />
+		<result property="customerId" column="fcustomerId" />
+		<result property="recompenseAmount" column="frecompenseAmount" />
+		<result property="chineseAmount" column="fchineseAmount" />
+		<result property="insurAmount" column="finsurAmount" />
+		<result property="recompenseReason" column="frecompenseReason" />
+		<result property="rejectReason" column="frejectReason" />
+		<result property="applyTime" column="fapplyTime" />
+		<result property="rejectTime" column="frejectTime" />
+		<result property="idCard" column="fidCard" />
+		<result property="bankName" column="fbankName" />
+		<result property="branchName" column="fbranchName" />
+		<result property="openName" column="fopenName" />
+		<result property="account" column="faccount" />
+		<result property="mobile" column="fmobile" />
+		<result property="telphone" column="ftelphone" />
+		<result property="province" column="fprovince" />
+		<result property="city" column="fcity" />
+		<result property="county" column="fcounty" />
+		<result property="onlineUser" column="fonlineUser" />
+		<result property="transType" column="ftransType" />
+		<result property="startStation" column="fstartStation" />
+		<result property="endStation" column="fendStation" />
+		<result property="sendDate" column="fsendDate" />
+		<result property="applyDeptId" column="fapplyDeptId" />
+		<result property="Status" column="fStatus" />
+		<result property="recompenseId" column="frecompenseId" />
+
+		<result property="partA" column="FPARTA" />
+		<result property="partAsign" column="FPARTASIGN" />
+		<result property="partAsignDate" column="FPARTASIGNDATE" />
+		<result property="partB" column="FPARTB" />
+		<result property="partBAsign" column="FPARTBSIGN" />
+		<result property="partBAsignDate" column="FPARTBSIGNDATE" />
+		<result property="applyPart" column="FapplyPart" />
+		<result property="leaveCompany" column="fleaveCompany" />
+		<result property="arriveCompany" column="farriveCompany" />
+		<result property="frontImage" column="ffrontImage" />
+		<result property="backImage" column="fbackImage" />
+		<result property="bankCode" column="fbankCode" />
+		<result property="branchCode" column="fbranchCode" />
+		<result property="provinceCode" column="fprovinceCode" />
+		<result property="cityCode" column="fcityCode" />
+		<result property="belongsArea" column="fbelongsArea" />
+		<result property="belongsAreaName" column="fbelongsAreaName" />
+		<result property="hastenCount" column="FHASTENCOUNT" />
+		<result property="lastHastenTime" column="FLASTHASTENTIME" />
+	</resultMap>
+
+	<!-- 在线理赔申请表字段 -->
+	<sql id="OnlineApplyTableField">
+		FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,
+		fRECOMPENSEMETHOD,fRECOMPENSETYPE,fWAYBILLNUMBER,fCUSTOMERNUM,fCUSTOMERID,
+		fRECOMPENSEAMOUNT,fchineseAmount,fINSURAMOUNT,fRECOMPENSEREASON,
+		fREJECTREASON,fAPPLYTIME,fREJECTTIME,fIDCARD,fBANKNAME,fBRANCHNAME,fOPENNAME,
+		fACCOUNT,fMOBILE,fTELPHONE,fPROVINCE,fCITY,fCOUNTY,fONLINEUSER,fTRANSTYPE,
+		fSTARTSTATION,fENDSTATION,fSENDDATE,fAPPLYDEPTID,fSTATUS,fRECOMPENSEID,
+		FPARTA,FPARTASIGN,FPARTASIGNDATE,FPARTB,FPARTBSIGN,FPARTBSIGNDATE,FapplyPart,
+		FLEAVECOMPANY,FARRIVECOMPANY,FFRONTIMAGE,FBACKIMAGE,FBANKCODE,FBRANCHCODE,
+		FPROVINCECODE,FCITYCODE,FBELONGSAREA,FBELONGSAREANAME,FHASTENCOUNT,FLASTHASTENTIME
+	</sql>
+
+	<!-- 在线理赔申请_新增 -->
+	<insert id="insertOnlineApply"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.OnlineApply">
+		<selectKey keyProperty="id" order="BEFORE" resultType="string">
+			SELECT SEQ_ID_ONLINEAPPLY.NEXTVAL ID
+			FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_REC_ONLINEAPPLY(
+		<include refid="OnlineApplyTableField" />
+		)
+		VALUES(#{id},sysdate,#{createUser,jdbcType=VARCHAR},sysdate,#{modifyUser,jdbcType=VARCHAR},
+		#{recompenseMethod,jdbcType=VARCHAR},#{recompenseType,jdbcType=VARCHAR},#{waybillNumber,jdbcType=VARCHAR},#{customerNum,jdbcType=VARCHAR},#{customerId,jdbcType=VARCHAR},
+		#{recompenseAmount,jdbcType=NUMERIC},#{chineseAmount,jdbcType=VARCHAR},#{insurAmount,jdbcType=NUMERIC},#{recompenseReason,jdbcType=VARCHAR},
+		#{rejectReason,jdbcType=VARCHAR},#{applyTime,jdbcType=TIMESTAMP},#{rejectTime,jdbcType=TIMESTAMP},#{idCard,jdbcType=VARCHAR},#{bankName,jdbcType=VARCHAR},#{branchName,jdbcType=VARCHAR},#{openName,jdbcType=VARCHAR},
+		#{account,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{telphone,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{county,jdbcType=VARCHAR},#{onlineUser,jdbcType=VARCHAR},#{transType,jdbcType=VARCHAR},
+		#{startStation,jdbcType=VARCHAR},#{endStation,jdbcType=VARCHAR},#{sendDate,jdbcType=TIMESTAMP},#{applyDeptId,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{recompenseId,jdbcType=VARCHAR},
+		#{partA,jdbcType=VARCHAR},#{partAsign,jdbcType=VARCHAR},#{partAsignDate,jdbcType=TIMESTAMP},#{partB,jdbcType=VARCHAR},#{partBAsign,jdbcType=VARCHAR},#{partBAsignDate,jdbcType=TIMESTAMP},#{applyPart,jdbcType=VARCHAR},
+		#{leaveCompany,jdbcType=VARCHAR},#{arriveCompany,jdbcType=VARCHAR},#{frontImage,jdbcType=VARCHAR},#{backImage,jdbcType=VARCHAR},#{bankCode,jdbcType=VARCHAR},#{branchCode,jdbcType=VARCHAR},#{provinceCode,jdbcType=VARCHAR},
+		#{cityCode,jdbcType=VARCHAR},#{belongsArea,jdbcType=VARCHAR},#{belongsAreaName,jdbcType=VARCHAR},
+		#{hastenCount,jdbcType=NUMERIC},#{lastHastenTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<!-- 在线理赔申请_修改 -->
+	<update id="updateOnlineApply"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.OnlineApply">
+		UPDATE
+		T_REC_ONLINEAPPLY
+		<set>
+			<if test="createDate!=null ">
+				FCREATETIME=#{createDate},
+			</if>
+			<if test="recompenseMethod!=null and '' !=recompenseMethod ">
+				frecompenseMethod=#{recompenseMethod},
+			</if>
+			<if test="recompenseType!=null and '' !=recompenseType ">
+				frecompenseType=#{recompenseType},
+			</if>
+			<if test="waybillNumber!=null and '' !=waybillNumber ">
+				fwaybillNumber=#{waybillNumber},
+			</if>
+			<if test="customerNum!=null and '' !=customerNum ">
+				fcustomerNum=#{customerNum},
+			</if>
+			<if test="customerId!=null and '' !=customerId ">
+				fcustomerId=#{customerId},
+			</if>
+			<if test="recompenseAmount!=null and '' !=recompenseAmount ">
+				frecompenseAmount=#{recompenseAmount},
+			</if>
+			<if test="chineseAmount!=null and '' !=chineseAmount ">
+				fchineseAmount=#{chineseAmount},
+			</if>
+			<if test="insurAmount!=null and '' !=insurAmount ">
+				finsurAmount=#{insurAmount},
+			</if>
+			<if test="recompenseReason!=null and '' !=recompenseReason ">
+				frecompenseReason=#{recompenseReason},
+			</if>
+			<if test="rejectReason!=null and '' !=rejectReason ">
+				frejectReason=#{rejectReason},
+			</if>
+			<if test="applyTime!=null and '' !=applyTime ">
+				fapplyTime=#{applyTime},
+			</if>
+			<if test="rejectTime!=null and '' !=rejectTime ">
+				frejectTime=#{rejectTime},
+			</if>
+			<if test="idCard!=null and '' !=idCard ">
+				fidCard=#{idCard},
+			</if>
+			<if test="bankName!=null and '' !=bankName ">
+				fbankName=#{bankName},
+			</if>
+			<if test="branchName!=null and '' !=branchName ">
+				fbranchName=#{branchName},
+			</if>
+			<if test="openName!=null and '' !=openName ">
+				fopenName=#{openName},
+			</if>
+			<if test="account!=null and '' !=account ">
+				faccount=#{account},
+			</if>
+			<if test="mobile!=null and '' !=mobile ">
+				fmobile=#{mobile},
+			</if>
+			<if test="telphone!=null and '' !=telphone ">
+				ftelphone=#{telphone},
+			</if>
+			<if test="province!=null and '' !=province ">
+				fprovince=#{province},
+			</if>
+			<if test="city!=null and '' !=city ">
+				fcity=#{city},
+			</if>
+			<if test="county!=null and '' !=county ">
+				fcounty=#{county},
+			</if>
+			<if test="onlineUser!=null and '' !=onlineUser ">
+				fonlineUser=#{onlineUser},
+			</if>
+			<if test="transType!=null and '' !=transType ">
+				ftransType=#{transType},
+			</if>
+			<if test="startStation!=null and '' !=startStation ">
+				fstartStation=#{startStation},
+			</if>
+			<if test="endStation!=null and '' !=endStation ">
+				fendStation=#{endStation},
+			</if>
+			<if test="sendDate!=null and '' !=sendDate ">
+				fsendDate=#{sendDate},
+			</if>
+			<if test="applyDeptId!=null and '' !=applyDeptId ">
+				fapplyDeptId=#{applyDeptId},
+			</if>
+			<if test="Status!=null and '' !=Status ">
+				fStatus=#{Status},
+			</if>
+			<if test="recompenseId!=null and '' !=recompenseId ">
+				frecompenseId=#{recompenseId},
+			</if>
+			<if test="partA!=null and '' !=partA ">
+				FPARTA=#{partA},
+			</if>
+			<if test="partAsign!=null and '' !=partAsign ">
+				FPARTASIGN=#{partAsign},
+			</if>
+			<if test="partAsignDate!=null and '' !=partAsignDate ">
+				FPARTASIGNDATE=#{partAsignDate},
+			</if>
+			<if test="partB!=null and '' !=partB ">
+				FPARTB=#{partB},
+			</if>
+			<if test="partBAsign!=null and '' !=partBAsign ">
+				FPARTBSIGN=#{partBAsign},
+			</if>
+			<if test="applyPart!=null and '' !=applyPart ">
+				FapplyPart=#{applyPart},
+			</if>
+			<if test="partBAsignDate!=null and '' !=partBAsignDate ">
+				FPARTBSIGNDATE=#{partBAsignDate},
+			</if>
+			<if test="leaveCompany!=null and '' !=leaveCompany ">
+				fleaveCompany=#{leaveCompany},
+			</if>
+			<if test="arriveCompany!=null and '' !=arriveCompany ">
+				farriveCompany=#{arriveCompany},
+			</if>
+			<if test="frontImage!=null and '' !=frontImage ">
+				ffrontImage=#{frontImage},
+			</if>
+			<if test="backImage!=null and '' !=backImage ">
+				fbackImage=#{backImage},
+			</if>
+			<if test="bankCode!=null and '' !=bankCode ">
+				fbankCode=#{bankCode},
+			</if>
+			<if test="branchCode!=null and '' !=branchCode ">
+				fbranchCode=#{branchCode},
+			</if>
+			<if test="provinceCode!=null and '' !=provinceCode ">
+				fprovinceCode=#{provinceCode},
+			</if>
+			<if test="cityCode!=null and '' !=cityCode ">
+				fcityCode=#{cityCode},
+			</if>
+			<if test="belongsArea!=null and '' !=belongsArea ">
+				fbelongsArea=#{belongsArea},
+			</if>
+			<if test="belongsAreaName!=null and '' !=belongsAreaName ">
+				fbelongsAreaName=#{belongsAreaName},
+			</if>
+			<if test="hastenCount!=null and '' !=hastenCount ">
+				fhastencount=#{hastenCount},
+			</if>
+			<if test="lastHastenTime!=null and '' !=lastHastenTime ">
+				flasthastentime=#{lastHastenTime},
+			</if>
+			FLASTUPDATETIME=sysdate
+		</set>
+		WHERE
+		FID = #{id}
+	</update>
+	<!-- 在线理赔申请_修改 状态 -->
+	<update id="updateOnlineApplyStatusByRecompenseId"
+		parameterType="map">
+		UPDATE
+		T_REC_ONLINEAPPLY SET
+		fStatus=#{status},FLASTUPDATETIME=sysdate
+		WHERE
+		FRECOMPENSEID =
+		#{recompenseId}
+	</update>
+	<!--在线理赔拒绝-->
+	<update id="updateOnlineApplyInfoByRecompenseId" parameterType="map">
+		UPDATE
+		T_REC_ONLINEAPPLY SET
+		fStatus=#{status},FLASTUPDATETIME=sysdate,FREJECTREASON=#{rejectReason},FREJECTTIME=sysdate
+		WHERE
+		FRECOMPENSEID =
+		#{recompenseId}
+	</update>
+	<!-- 在线理赔申请_查询_根据ID -->
+	<select id="getOnlineApplyById" parameterType="string"
+		resultMap="OnlineApplyResultMap">
+		SELECT
+		<include refid="OnlineApplyTableField" />
+		FROM T_REC_ONLINEAPPLY WHERE FID=#{id}
+	</select>
+
+	<!-- 在线理赔申请_查询_根据运单号 -->
+	<select id="getOnlineApplyByWaybillNum" parameterType="string"
+		resultMap="OnlineApplyResultMap">
+		SELECT D.FDEPTNAME acceptDeptName,
+		O.*
+		FROM T_REC_ONLINEAPPLY O LEFT JOIN T_ORG_DEPARTMENT D ON O.FAPPLYDEPTID = D.FID
+		WHERE FWAYBILLNUMBER=#{waybillNum}
+	</select>
+
+	<!-- 在线理赔申请_查询_根据理赔单ID -->
+	<select id="getOnlineApplyByRecompenseId" parameterType="string"
+		resultMap="OnlineApplyResultMap">
+		SELECT
+		<include refid="OnlineApplyTableField" />
+		FROM T_REC_ONLINEAPPLY WHERE FRECOMPENSEID=#{recompenseId}
+	</select>
+
+	<!-- 在线理赔申请_查询_根据条件 -->
+	<select id="searchOnlineApplyByCondition" parameterType="map"
+		resultMap="OnlineApplyResultMap">
+		select * from (
+		SELECT row_number() over(order by O.Fcreatetime desc)
+		row_num,D.FDEPTNAME acceptDeptName,O.*
+		FROM T_REC_ONLINEAPPLY O LEFT JOIN T_ORG_DEPARTMENT D ON O.FAPPLYDEPTID = D.FID
+		<where>
+			<if test="deptId!=null and deptId!='' ">
+				FAPPLYDEPTID=#{deptId}
+			</if>
+			<if test="statusList!=null and statusList.size>0 ">
+				AND O.FSTATUS IN
+				<foreach collection="statusList" item="item" open="(" close=")"
+					separator=",">
+					#{item,jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+		) rn where row_num between #{start} and #{end}
+	</select>
+
+	<!-- 在线理赔申请满足条件的记录数 -->
+	<select id="getOnlineApplyCountByCondition" parameterType="map"
+		resultType="long">
+		SELECT COUNT(FID) FROM T_REC_ONLINEAPPLY
+		<where>
+			<if test="deptId!=null and deptId!='' ">
+				FAPPLYDEPTID=#{deptId}
+			</if>
+			<if test="statusList!=null and statusList.size>0 ">
+				AND FSTATUS IN
+				<foreach collection="statusList" item="item" open="(" close=")"
+					separator=",">
+					#{item,jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<!-- 冲帐映射 -->
+	<resultMap id="BalanceResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.Balance">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATEUSERID" />
+		<result property="modifyDate" column="FLASTUPDATETIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+
+		<result property="recompenseId" column="FRECOMPENSEID" />
+		<result property="billNum" column="FBILLNUM" />
+		<result property="usableAmount" column="FUSABLEAMOUNT" />
+		<result property="balanceAmount" column="FBALANCEAMOUNT" />
+		<result property="surplusAmount" column="FSURPLUSAMOUNT" />
+	</resultMap>
+
+	<!-- 冲帐表字段 -->
+	<sql id="BalanceTableField">
+		FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,
+		FRECOMPENSEID,FBILLNUM,FUSABLEAMOUNT,FBALANCEAMOUNT,FSURPLUSAMOUNT
+	</sql>
+
+	<!-- 冲帐_新增 -->
+	<insert id="insertBalance"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Balance">
+		<selectKey keyProperty="id" order="BEFORE" resultType="string">
+			SELECT SEQ_ID_BALANCE.NEXTVAL ID
+			FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_REC_BALANCE(
+		<include refid="BalanceTableField" />
+		)
+		VALUES(#{id},sysdate,#{createUser,jdbcType=VARCHAR},sysdate,#{modifyUser,jdbcType=VARCHAR},
+		#{recompenseId,jdbcType=VARCHAR},#{billNum,jdbcType=VARCHAR},#{usableAmount,jdbcType=VARCHAR},#{balanceAmount,jdbcType=VARCHAR},#{surplusAmount,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 冲帐_查询_根据条件 -->
+	<select id="searchBalanceByCondition" parameterType="map"
+		resultMap="BalanceResultMap">
+		SELECT
+		<include refid="BalanceTableField" />
+		FROM T_REC_BALANCE
+		<where>
+			<if test="recompenseId!=null and recompenseId !='' ">
+				FRECOMPENSEID=#{recompenseId}
+			</if>
+		</where>
+	</select>
+
+	<!-- 该理赔单的冲帐金额 -->
+	<select id="getBalanceAmountCountByRecompenseId" parameterType="string"
+		resultType="double">
+		SELECT SUM(FBALANCEAMOUNT) FROM T_REC_BALANCE
+		<where>
+			FRECOMPENSEID=#{recompenseId}
+		</where>
+	</select>
+
+	<!-- 在线理赔申请_查询_根据登陸用戶和运单条件 -->
+	<select id="getOnlineApplyByOnlineUser" parameterType="map"
+		resultMap="OnlineApplyResultMap">
+		SELECT
+		<include refid="OnlineApplyTableField" />
+		FROM T_REC_ONLINEAPPLY
+		<where>
+			<if test="onlineUser!=null and onlineUser!='' ">
+				and FonlineUser=#{onlineUser}
+			</if>
+			<if test="waybillNum!=null and waybillNum!='' ">
+				and FwaybillNumber=#{waybillNum}
+			</if>
+		</where>
+		order by Fcreatetime desc
+	</select>
+	<!-- 在线理赔申请_查询_根据接口查询条件 -->
+	<select id="getOnlineApplyByInterCondition" parameterType="map"
+		resultMap="OnlineApplyResultMap">
+		select * from (
+		SELECT row_number() over(order by Fcreatetime desc)
+		row_num,
+		<include refid="OnlineApplyTableField" />
+		FROM T_REC_ONLINEAPPLY
+		<where>
+			<if test="onlineUser!=null and onlineUser!='' ">
+				and FonlineUser=#{onlineUser}
+			</if>
+			<if test="waybillNum!=null and waybillNum!='' ">
+				and FwaybillNumber=#{waybillNum}
+			</if>
+			<if test="startTime!=null and endTime!=null ">
+				and Fcreatetime between #{startTime} and #{endTime}
+			</if>
+		</where>
+		)rn where row_num between #{start} and #{limit} order by row_num
+	</select>
+
+	<!-- 在线理赔申请_查询_根据接口查询条件 统计个数 -->
+	<select id="getOnlineApplyByInterConditionCount" parameterType="map"
+		resultType="int">
+		SELECT count(*) as num
+		FROM T_REC_ONLINEAPPLY
+		<where>
+			<if test="onlineUser!=null and onlineUser!='' ">
+				and FonlineUser=#{onlineUser}
+			</if>
+			<if test="waybillNum!=null and waybillNum!='' ">
+				and FwaybillNumber=#{waybillNum}
+			</if>
+			<if test="startTime!=null and endTime!=null ">
+				and Fcreatetime between #{startTime} and #{endTime}
+			</if>
+		</where>
+	</select>
+
+	<!-- 理赔付款优化需求新增内容 -->
+	<resultMap id="BankCityRM"
+		type="com.deppon.crm.module.common.shared.domain.BankCity">
+		<result property="id" column="BC_FID" />
+		<result property="code" column="BC_FCODE" />
+		<result property="name" column="BC_FNAME" />
+		<result property="provinceId" column="BC_FPROVINCEID" />
+		<result property="cancel" column="BC_FCANCEL" />
+		<result property="createTime" column="BC_FCREATETIME" />
+		<result property="createUserId" column="BC_FCREATEUSERID" />
+		<result property="lastUpdateTime" column="BC_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="BC_FLASTMODIFYUSERID" />
+	</resultMap>
+	<sql id="BankCity_column">
+		<![CDATA[
+			BC.FID BC_FID,
+			BC.FCODE BC_FCODE,
+			BC.FNAME BC_FNAME,
+			BC.FPROVINCEID BC_FPROVINCEID,
+			BC.FCANCEL BC_FCANCEL,
+			BC.FCREATETIME BC_FCREATETIME,
+			BC.FCREATEUSERID BC_FCREATEUSERID,
+			BC.FLASTUPDATETIME BC_FLASTUPDATETIME,
+			BC.FLASTMODIFYUSERID BC_FLASTMODIFYUSERID
+		]]>
+	</sql>
+	<resultMap id="BankProvinceRM"
+		type="com.deppon.crm.module.common.shared.domain.BankProvince">
+		<result property="id" column="BP_FID" />
+		<result property="code" column="BP_FCODE" />
+		<result property="name" column="BP_FNAME" />
+		<result property="cancel" column="BP_FCANCEL" />
+		<result property="createTime" column="BP_FCREATETIME" />
+		<result property="createUserId" column="BP_FCREATEUSERID" />
+		<result property="lastUpdateTime" column="BP_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="BP_FLASTMODIFYUSERID" />
+	</resultMap>
+	<sql id="BankProvince_column">
+		<![CDATA[
+			BP.FID BP_FID,
+			BP.FCODE BP_FCODE,
+			BP.FNAME BP_FNAME,
+			BP.FCANCEL BP_FCANCEL,
+			BP.FCREATETIME BP_FCREATETIME,
+			BP.FCREATEUSERID BP_FCREATEUSERID,
+			BP.FLASTUPDATETIME BP_FLASTUPDATETIME,
+			BP.FLASTMODIFYUSERID BP_FLASTMODIFYUSERID
+		]]>
+	</sql>
+	<resultMap id="AccountBranchRM"
+		type="com.deppon.crm.module.common.shared.domain.AccountBranch">
+		<result property="id" column="AB_FID" />
+		<result property="createTime" column="AB_FCREATETIME" />
+		<result property="createUserId" column="AB_FCREATEUSERID" />
+		<result property="lastUpdateTime" column="AB_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="AB_FLASTMODIFYUSERID" />
+		<result property="bankId" column="AB_FBANKID" />
+		<result property="code" column="AB_FCODE" />
+		<result property="name" column="AB_FNAME" />
+		<result property="provinceId" column="AB_FPROVINCEID" />
+		<result property="cityId" column="AB_FCITYID" />
+		<result property="cancel" column="AB_FCANCEL" />
+	</resultMap>
+	<sql id="AccountBranch_column">
+		<![CDATA[
+			AB.FID AB_FID,
+			AB.FCREATETIME AB_FCREATETIME,
+			AB.FCREATEUSERID AB_FCREATEUSERID,
+			AB.FLASTUPDATETIME AB_FLASTUPDATETIME,
+			AB.FLASTMODIFYUSERID AB_FLASTMODIFYUSERID,
+			AB.FBANKID AB_FBANKID,
+			AB.FCODE AB_FCODE,
+			AB.FNAME AB_FNAME,
+			AB.FPROVINCEID AB_FPROVINCEID,
+			AB.FCITYID AB_FCITYID,
+			AB.FCANCEL AB_FCANCEL
+		]]>
+	</sql>
+
+	<resultMap id="AccountBankRM"
+		type="com.deppon.crm.module.common.shared.domain.AccountBank">
+		<result property="id" column="AK_FID" />
+		<result property="createTime" column="AK_FCREATETIME" />
+		<result property="lastUpdateTime" column="AK_FLASTUPDATETIME" />
+		<result property="lastModifyUserId" column="AK_FLASTMODIFYUSERID" />
+		<result property="name" column="AK_FNAME" />
+		<result property="code" column="AK_FCODE" />
+		<result property="createUserId" column="AK_FCREATEUSERID" />
+		<result property="cancel" column="AK_FCANCEL" />
+	</resultMap>
+	<sql id="AccountBank_column">
+		<![CDATA[
+			AK.FID AK_FID,
+			AK.FCREATETIME AK_FCREATETIME,
+			AK.FLASTUPDATETIME AK_FLASTUPDATETIME,
+			AK.FLASTMODIFYUSERID AK_FLASTMODIFYUSERID,
+			AK.FNAME AK_FNAME,
+			AK.FCODE AK_FCODE,
+			AK.FCREATEUSERID AK_FCREATEUSERID,
+			AK.FCANCEL AK_FCANCEL
+		]]>
+	</sql>
+	<resultMap id="PaymentResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.Payment">
+		<result property="id" column="FID" />
+		<result property="createUserId" column="FCREATEUSERID" />
+		<result property="createTime" column="FCREATEIME" />
+		<result property="recompenseId" column="FRECOMPENSEID" />
+		<result property="paymentMode" column="FPAYMENTMODE" />
+		<result property="accountProp" column="FACCOUNTPROP" />
+		<result property="openName" column="FOPENNAME" />
+		<result property="account" column="FACCOUNT" />
+		<result property="mobile" column="FMOBILE" />
+		<result property="paymentStatus" column="FPAYMENTSTATUS" />
+		<result property="applyTime" column="FAPPLYTIME" />
+		<association property="bank" column="FBANKNAME"
+			select="com.deppon.crm.module.common.server.domain.ProvinceCity.queryAccountBankById"
+			javaType="com.deppon.crm.module.common.shared.domain.AccountBank">
+		</association>
+		<association property="bankProvice" column="FPROVINCE"
+			select="com.deppon.crm.module.common.server.domain.ProvinceCity.queryBankProvinceById"
+			javaType="com.deppon.crm.module.common.shared.domain.BankProvince">
+		</association>
+		<association property="branch" column="FBRANCHNAME"
+			select="com.deppon.crm.module.common.server.domain.ProvinceCity.queryAccountBranchById"
+			javaType="com.deppon.crm.module.common.shared.domain.AccountBranch">
+		</association>
+		<association property="bankCity" column="FCITY"
+			select="com.deppon.crm.module.common.server.domain.ProvinceCity.queryBankCityById"
+			javaType="com.deppon.crm.module.common.shared.domain.BankCity">
+		</association>
+	</resultMap>
+	<sql id="payment_select_sql">
+		P.FID FID,
+		P.FCREATEUSERID FCREATEUSERID,
+		P.FCREATEDATE
+		FCREATEDATE,
+		P.FRECOMPENSEID FRECOMPENSEID,
+		P.FPAYMENTMODE FPAYMENTMODE,
+		P.FACCOUNTPROP FACCOUNTPROP,
+		P.FOPENNAME FOPENNAME,
+		P.FBANKNAME
+		FBANKNAME,
+		P.FACCOUNT FACCOUNT,
+		P.FPROVINCE FPROVINCE,
+		P.FCITY FCITY,
+		P.FBRANCHNAME FBRANCHNAME,
+		P.FMOBILE FMOBILE,
+		P.FPAYMENTSTATUS
+		FPAYMENTSTATUS,
+		P.FAPPLYTIME FAPPLYTIME
+	</sql>
+
+	<!-- 保存账号信息 -->
+	<insert id="insertPayment"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Payment">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT SEQ_ID_PAYMENT.NEXTVAL AS
+			ID FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_REC_PAYMENT
+		(
+		FID,
+		FCREATEUSERID,
+		FCREATEDATE,
+		FRECOMPENSEID,
+		FPAYMENTMODE,
+		FACCOUNTPROP,
+		FOPENNAME ,
+		FBANKNAME,
+		FACCOUNT ,
+		FPROVINCE ,
+		FCITY ,
+		FBRANCHNAME,
+		FMOBILE ,
+		FPAYMENTSTATUS,
+		FAPPLYTIME
+		)values(
+		#{id},
+		#{createUserId,jdbcType=VARCHAR},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{recompenseId,jdbcType=VARCHAR},
+		#{paymentMode,jdbcType=VARCHAR},
+		#{accountProp,jdbcType=VARCHAR},
+		#{openName,jdbcType=VARCHAR},
+		#{bank.id,jdbcType=VARCHAR},
+		#{account,jdbcType=VARCHAR},
+		#{bankProvice.id,jdbcType=VARCHAR},
+		#{bankCity.id,jdbcType=VARCHAR},
+		#{branch.id,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{paymentStatus,jdbcType=VARCHAR},
+		#{applyTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="updatePaymentStatus"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Payment">
+		UPDATE T_REC_PAYMENT
+		<set>
+			<if test="null !=paymentStatus and '' != paymentStatus">
+				FPAYMENTSTATUS= #{paymentStatus}
+			</if>
+		</set>
+		<where>
+			FID = #{id}
+		</where>
+	</update>
+	<select id="searchPaymentHistory" resultMap="PaymentResultMap"
+		parameterType="string">
+		select
+		<include refid="payment_select_sql" />
+		from T_REC_PAYMENT p left join t_crm_accountbank AK on
+		p.FBANKNAME=AK.FID
+		left join t_crm_accountbranch AB on
+		AB.FID=p.FBRANCHNAME left join t_crm_bankcity BC
+		on BC.FID=p.FCITY
+		left join t_crm_bankprovince BP on
+		BP.FID=p.FPROVINCE
+		where
+		FRECOMPENSEID=#{recompenseId}
+		order by
+		FCREATEDATE
+	</select>
+	<select id="findPaymentById"
+		resultType="com.deppon.crm.module.recompense.shared.domain.Payment"
+		parameterType="map">
+		select
+		<include refid="payment_select_sql" />
+		from T_REC_PAYMENT
+		where
+		FID=#{id}
+
+	</select>
+
+	<select id="findCreateCustList" resultType="String">
+		select fwaybillnumber
+		from T_REC_CREATECUST_HIS where fcreatetype = #{type}
+	</select>
+
+	<insert id="insertCreateCust" parameterType="map">
+		INSERT INTO
+		T_REC_CREATECUST_HIS
+		(FWAYBILLNUMBER, FCREATETYPE, FCREATETIME)
+		VALUES
+		(#{waybillnum,jdbcType=VARCHAR},
+		#{type,jdbcType=TIMESTAMP}, 0)
+	</insert>
+
+	<update id="updateCreateCust" parameterType="map">
+		UPDATE
+		T_REC_CREATECUST_HIS
+		set FCREATETIME=1
+		WHERE
+		FWAYBILLNUMBER=#{waybillnum} and
+		FCREATETYPE = #{type}
+	</update>
+	
+	<select id="searchOnlineApply" 
+		parameterType="com.deppon.crm.module.recompense.shared.domain.OnlineApplyCondition"
+		resultMap="OnlineApplyResultMap">
+		select acceptDays,acceptDeptName,acceptDate,
+		<include refid="OnlineApplyTableField"/>	
+  		FROM (SELECT nvl(TRUNC(sysdate) - TRUNC(O.Flastupdatetime),0) ACCEPTDAYS, 
+  		O.*,R.FCREATETIME acceptDate,D.FDEPTNAME acceptDeptName
+          FROM T_REC_ONLINEAPPLY O
+          LEFT JOIN T_REC_RECOMPENSE R
+            ON O.FWAYBILLNUMBER = R.FWAYBILLNUMBER
+          LEFT JOIN T_ORG_DEPARTMENT D 
+          	ON O.FAPPLYDEPTID = D.FID
+        <where>
+        	<if test="waybillNumber!=null and waybillNumber!='' ">
+				AND O.FWAYBILLNUMBER=#{waybillNumber}
+			</if>
+			<if test="reportDate!=null and reportDateTo!=null ">
+				 AND O.FCREATETIME BETWEEN #{reportDate} AND #{reportDateTo}+1
+			</if>
+			<if test="onlineApplyStatus!=null and onlineApplyStatus!='' ">
+				AND O.FSTATUS=#{onlineApplyStatus}
+			</if>
+			<if test="acceptDept!=null and acceptDept!='' ">
+				AND O.FAPPLYDEPTID=#{acceptDept}
+			</if>
+			<if test="belongsArea!=null and belongsArea!='' ">
+				AND O.FBELONGSAREA=#{belongsArea}
+			</if>
+			<if test="claimAmount!=null and claimAmount!='' ">
+				AND O.FRECOMPENSEAMOUNT BETWEEN #{claimAmountStart} AND #{claimAmountEnd}
+			</if>
+			<if test="transType!=null and transType!='' and transType == 'TRANS_VEHICLE'">
+				AND O.FTRANSTYPE in ('FLF','FSF','LRF','SRF','PLF','FV')
+			</if>
+			<if test="transType!=null and transType!='' and transType == 'TRANS_AIRCRAFT'">
+				AND O.FTRANSTYPE in ('AF')
+			</if>
+			<if test="transType!=null and transType!='' and transType == 'TRANS_EXPRESS'">
+				AND O.FTRANSTYPE in ('PACKAGE')
+			</if>
+        </where>
+         ) T
+	         <where>
+	         	<if test="acceptTime!=null and acceptTimeTo!=null ">
+					 AND ACCEPTDAYS >= #{acceptTime} 
+					 AND ACCEPTDAYS &lt;= #{acceptTimeTo}
+				</if>
+	         </where>
+	      order by FCREATETIME DESC
+	</select>
+	<select id="searchOnlineApplyCount" 
+		parameterType = "com.deppon.crm.module.recompense.shared.domain.OnlineApplyCondition"
+		resultType="long" >
+		select count(*)	
+  		FROM (SELECT nvl(TRUNC(sysdate) - TRUNC(O.Flastupdatetime),0) ACCEPTDAYS, 
+  		O.*,R.FCREATETIME acceptDate,D.FDEPTNAME acceptDeptName
+          FROM T_REC_ONLINEAPPLY O
+          LEFT JOIN T_REC_RECOMPENSE R
+            ON O.FWAYBILLNUMBER = R.FWAYBILLNUMBER
+          LEFT JOIN T_ORG_DEPARTMENT D 
+          	ON O.FAPPLYDEPTID = D.FID
+        <where>
+        	<if test="waybillNumber!=null and waybillNumber!='' ">
+				AND O.FWAYBILLNUMBER=#{waybillNumber}
+			</if>
+			<if test="reportDate!=null and reportDateTo!=null ">
+				 AND O.FCREATETIME BETWEEN #{reportDate} AND #{reportDateTo}+1
+			</if>
+			<if test="onlineApplyStatus!=null and onlineApplyStatus!='' ">
+				AND O.FSTATUS=#{onlineApplyStatus}
+			</if>
+			<if test="acceptDept!=null and acceptDept!='' ">
+				AND O.FAPPLYDEPTID=#{acceptDept}
+			</if>
+			<if test="belongsArea!=null and belongsArea!='' ">
+				AND O.FBELONGSAREA=#{belongsArea}
+			</if>
+			<if test="claimAmount!=null and claimAmount!='' ">
+				AND O.FRECOMPENSEAMOUNT BETWEEN #{claimAmountStart} AND #{claimAmountEnd}
+			</if>
+			<if test="transType!=null and transType!='' and transType == 'TRANS_VEHICLE'">
+				AND O.FTRANSTYPE in ('FLF','FSF','LRF','SRF','PLF','FV')
+			</if>
+			<if test="transType!=null and transType!='' and transType == 'TRANS_AIRCRAFT'">
+				AND O.FTRANSTYPE in ('AF')
+			</if>
+			<if test="transType!=null and transType!='' and transType == 'TRANS_EXPRESS'">
+				AND O.FTRANSTYPE in ('PACKAGE')
+			</if>
+        </where>
+         ) T
+	         <where>
+	         	<if test="acceptTime!=null and acceptTimeTo!=null ">
+					 AND ACCEPTDAYS >= #{acceptTime} 
+					 AND ACCEPTDAYS &lt;= #{acceptTimeTo}
+				</if>
+	         </where>
+	</select>
+	
+	<!-- 按工作流号查询多赔 -->
+	<select id="getOverpayByWorkflowNo" parameterType="string"
+		resultMap="OverpayResultMap">
+		SELECT
+		<include refid="OverpayTableField" />
+		FROM T_REC_OVERPAY WHERE fworkflowNo=#{workflowNo} and rownum=1
+		ORDER BY FCREATETIME DESC
+	</select>
+	
+	
+	<resultMap id = "detailOverpay" extends="OverpayResultMap" type="com.deppon.crm.module.recompense.shared.domain.Overpay">  
+		 <result property="waybillNumber" column="fwaybillNumber"/>  
+		 <result property="transType" column="ftransType"/>  
+		 <result property="crateUserName" column="fempname"/>  
+		 <result property="recompenseType" column="frecompenseType"/>  
+		 <result property="realAmount" column="frealAmount"/>  
+	</resultMap> 
+	
+	
+	<select id="getDetailOverpayByWorkNumber" parameterType="string"
+		resultMap="detailOverpay">
+		SELECT
+			ov.FID,
+			ov.FCREATETIME,
+			ov.FCREATEUSERID,
+			ov.FLASTUPDATETIME,
+			ov.FLASTMODIFYUSERID,
+			ov.FRECOMPENSEID,
+			ov.FOVERPAYAMOUNT,
+			ov.FTOTALAMOUNT,
+			ov.FISRECOVERYSZK,
+			ov.FOVERPAYACCOUNTDEPTID,
+			ov.FOVERPAYBUID,
+			ov.FOVERPAYREASON,
+			ov.FWORKNUMBER,
+			ov.FWORKFLOWNO,
+			ov.FAPPLYSTANDARDCODE,
+			ov.FAPPLYDEPTID,
+			rec.fwaybillNumber,
+			rec.ftransType,
+			rec.frecompenseType,
+			rec.frealAmount,
+			emp.fempname 
+			FROM T_REC_OVERPAY  ov
+		left join
+			 t_rec_recompense rec on ov.frecompenseid=rec.fid
+		left join 
+			 t_org_employee emp on ov.fcreateuserid=emp.fid
+		where 
+			ov.fworknumber=#{workNumber}
+	</select>
+	
+	
+</mapper>

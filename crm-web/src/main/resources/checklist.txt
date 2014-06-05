@@ -1,0 +1,17 @@
+1、所有引用crm-interface-client包的web应用,在webapp目录下需要有关于接口的配置文件interfaceInvokeConfig.xml,此文件存放在SVN目录为：https://192.168.17.204:443/svn/Routine_Programs/P004 CRM项目/01 项目管理/08 程序代码/branches/CRM_dev_v0.00.01/Code/1-CRM/crm-web/src/main/webapp。
+
+2、在引用crm-interface-client包的时候，如果应用com.deppon.crm.module.client.sms.impl.SmsSenderImpl类的对象进行短信发送操作，那么需要把当前机器的IP地址配置到短信接口接收系统的应用中去，负责人是程蓓蓓。并且短信对端系统需要提供访问用户名和密码。
+
+3、在发布web应用的时候需要确定，需要容器中配置JNDI资源，
+
+4、礼品申请，只有经营经理才能进行申请
+
+5、接口组数据库需要创建序列，
+	create sequence SEQ_T_IF_LOG
+	minvalue 1
+	maxvalue 9999999999999999999999999999
+	start with 8361
+	increment by 1
+	cache 20
+	order;
+6、

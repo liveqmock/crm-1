@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+                           
+    <context:property-placeholder location="classpath:main.properties" />
+    <context:component-scan base-package="com.deppon.esb" />
+    <bean id="orderService"
+		class="com.deppon.esb.jms.service.impl.OrderService">
+		<property name="jmsSenderExecutor" ref="jmsSenderExecutor" />
+		<property name="jmsSender" ref="jmsSender" />
+		<property name="interval" value="10" />
+	</bean>
+	<bean id="jmsSender" class="com.deppon.esb.jms.JMSSender">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="queueCrt" ref="createOrderQueue" />
+		<property name="queueDel" ref="deleteOrderQueue" />
+		<property name="crtnumber" value="1" />
+		<property name="delnumber" value="2" />
+		<property name="jsonconverter" ref="jsonConverter" />
+	</bean>
+	<bean id="jmsSenderWithSize" class="com.deppon.esb.jms.JMSSenderWithSize">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="queueCrt" ref="createOrderQueue" />
+		<property name="queueDel" ref="deleteOrderQueue" />
+		<property name="jsonconverter" ref="jsonConverter" />
+		<property name="messageSize" value="524288" />
+	</bean>
+
+	<bean id="jmsSenderExecutor" class="com.deppon.esb.jms.JMSSenderExecutor">
+		<property name="corePoolSize" value="8" />
+		<property name="maxPoolSize" value="8" />
+	</bean>
+    <bean id="createOrderQueue" class="com.ibm.mq.jms.MQQueue">
+		<constructor-arg value="QU_ORDER_CRT_LE"></constructor-arg>
+	</bean>
+	<bean id="deleteOrderQueue" class="com.ibm.mq.jms.MQQueue">
+		<constructor-arg value="QU_ORDER_DEL_LE"></constructor-arg>
+	</bean>
+
+	
+
+	
+    
+                           
+    <!-- WebSphere MQ Connection Factory -->
+	<bean id="mqConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="hostName">
+			<value>${queue.hostname}</value>
+		</property>
+		<property name="port">
+			<value>${queue.port}</value>
+		</property>
+		<property name="queueManager">
+			<value>${queue.manager}</value>
+		</property>
+		<property name="transportType">
+			<value>1</value>
+		</property>
+	</bean>
+
+	<!-- JMS Queue Connection Factory -->
+	<bean id="jmsConnectionFactory"
+		class="org.springframework.jms.connection.SingleConnectionFactory">
+		<property name="targetConnectionFactory">
+			<ref bean="mqConnectionFactory" />
+		</property>
+		<!-- <property name="pubSubDomain">
+			<value>false</value>
+		</property> -->
+	</bean>
+
+	<!-- JMS Destination Resolver -->
+	<bean id="jmsDestinationResolver"
+		class="org.springframework.jms.support.destination.DynamicDestinationResolver">
+	</bean>
+
+	<!-- JMS Queue Template -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<ref bean="jmsConnectionFactory" />
+		</property>
+		<property name="destinationResolver">
+			<ref bean="jmsDestinationResolver" />
+		</property>
+		<!-- <property name="pubSubDomain">
+			<value>false</value>
+		</property> -->
+		<property name="receiveTimeout">
+			<value>20000</value>
+		</property>
+	</bean>
+	
+	<bean id="messageService" class="com.test.testspringjmsmq.MessageService" />
+</beans>

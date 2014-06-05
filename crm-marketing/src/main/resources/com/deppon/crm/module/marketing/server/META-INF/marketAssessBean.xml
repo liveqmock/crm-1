@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="marketAssessDaoImpl" class="com.deppon.crm.module.marketing.server.dao.impl.MarketAssessDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="marketAssessServiceImpl" class="com.deppon.crm.module.marketing.server.service.impl.MarketAssessServiceImpl">
+		<property name="marketAssessDaoImpl" ref="marketAssessDaoImpl"/>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="marketAssessManagerImpl" class="com.deppon.crm.module.marketing.server.manager.impl.MarketAssessManagerImpl">
+		<property name="marketAssessServiceImpl" ref="marketAssessServiceImpl"></property>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="marketAssessJobManagerImpl" class="com.deppon.crm.module.marketing.server.manager.impl.MarketAssessJobManagerImpl">
+		<property name="MarketAssessManager" ref="marketAssessManagerImpl"></property>
+	</bean>
+</beans>

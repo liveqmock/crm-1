@@ -1,0 +1,24 @@
+-- 消息发送 Add/modify columns 
+alter table T_CUST_CELLPHONE_MESSAGE_INFO modify FMSGCONTENT VARCHAR2(1000);
+commit;
+-- 工单处理结果表
+alter table T_CUST_RESULT add fprocstandard VARCHAR2(1000);
+comment on column T_CUST_RESULT.fprocstandard is '处理标准字段';
+commit;
+-- 工单添加字段
+-- Add/modify columns 
+alter table T_CUST_COMPLAINT add fbussceneid VARCHAR2(10);
+alter table T_CUST_COMPLAINT add fbusscenename VARCHAR2(150);
+alter table T_CUST_COMPLAINT add fsceneressonid VARCHAR2(10);
+alter table T_CUST_COMPLAINT add fsceneressonname VARCHAR2(150);
+
+comment on column T_CUST_COMPLAINT.fbussceneid is '业务场景ID';
+comment on column T_CUST_COMPLAINT.fbusscenename is '业务场景名称';
+comment on column T_CUST_COMPLAINT.fsceneressonid is '场景原因ID';
+comment on column T_CUST_COMPLAINT.fsceneressonname is '场景原因名称';
+commit;
+-- 业务项、业务范围、业务类型
+alter table T_CUST_COMPLAINT modify FBUSITEMNAME VARCHAR2(150);
+alter table T_CUST_COMPLAINT modify FBUSSCOPENAME VARCHAR2(150);
+alter table T_CUST_COMPLAINT modify FBUSTYPENAME VARCHAR2(150);
+commit;

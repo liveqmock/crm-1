@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.servicerecovery.shared.domain.ServiceRecovery">
+	<!--服务补救表映射 -->
+	<resultMap id="serviceRecoveryResultMap"
+		type="com.deppon.crm.module.servicerecovery.shared.domain.ServiceRecovery">
+		<id property="id" column="fid" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="createUser" column="FCREATEUSER" />
+		<result property="modifyDate" column="FUPDATETIME" />
+		<result property="modifyUser" column="FUPDATEUSER" />
+		<result property="waybillNumber" column="FWAYBILLNUMBER" />
+		<result property="customerType" column="FCUSTOMERTYPE" />
+		<result property="customerNum" column="FCUSTOMERNUM" />
+		<result property="customerName" column="FCUSTOMERNAME" />
+		<result property="waybillAmount" column="FWAYBILLAMOUNT" />
+		<result property="reductionAmount" column="FREDUCTIONAMOUNT" />
+		<result property="outboundTime" column="FOUTBOUNDTIME" />
+		<result property="financeDept" column="FFINANCEDEPT" />
+		<result property="financeDeptName" column="FFINANCEDEPTNAME" />
+		<result property="operator" column="FOPERATOR" />
+		<result property="operatorName" column="FOPERATORNAME" />
+		<result property="reductionType" column="FREDUCTIONTYPE" />
+		<result property="totalPackage" column="FTOTALPACKAGE" />
+		<result property="damagePackage" column="FDAMAGEPACKAGE" />
+		<result property="recoveryReason" column="FRECOVERYREASON" />
+		<result property="applicant" column="FAPPLICANT" />
+		<result property="applicantName" column="FAPPLICANTNAME" />
+		<result property="applyDept" column="FAPPLYDEPT" />
+		<result property="applyDeptName" column="FAPPLYDEPTNAME" />
+		<result property="applyTime" column="FAPPLYTIME" />
+		<result property="applyStatus" column="FAPPLYSTATUS" />
+		<result property="oaWorkflowNum" column="FOAWORKFLOWNUM" />
+		<result property="verifyTime" column="FVERIFYTIME" />
+		<result property="verifier" column="FVERIFIER" />
+		<result property="verifierName" column="FVERIFIERNAME" />
+		<result property="subsidiary" column="FSUBSIDIARY" />
+		<result property="customerLevel" column="fcustomerLevel" />
+		<result property="contactName" column="fcontactName" />
+		<result property="tranType" column="ftranType" />
+		<result property="workflowNo" column="FWORKFLOWNO" />
+		<result property="party" column="fparty" />
+	</resultMap>
+	<sql id="selectPartSQL">
+		ss.fid,
+		ss.fcreateuser,
+		ss.fupdateuser,
+		ss.fupdatetime,
+		ss.fcreatetime,
+		ss.fwaybillNumber,
+		ss.fcustomerType,
+		ss.fcustomerNum,
+		ss.fcustomerName,
+		ss.fwaybillAmount,
+		ss.freductionAmount,
+		ss.foutboundTime,
+		ss.ffinanceDept,
+		fd.fdeptname ffinanceDeptName,
+		ss.foperator ,
+		op.fempname foperatorName,
+		ss.freductionType,
+		ss.ftotalPackage,
+		ss.fdamagePackage,
+		ss.frecoveryReason,
+		ss.fapplicant,
+		ap.fempname
+		fapplicantName,
+		ss.fapplyDept,
+		dp.fdeptname fapplyDeptName,
+		ss.fapplyTime,
+		ss.fapplyStatus,
+		ss.foaWorkflowNum,
+		ss.fverifyTime,
+		ss.fverifier,
+		vf.fempname fverifierName,
+		ss.fsubsidiary,
+		ss.fcustomerLevel,
+		ss.fcontactName,
+		ss.ftranType,
+		ss.fworkflowno,
+		ss.fparty
+	</sql>
+	<sql id="conditionSql">
+		<where>
+			<if test="null != waybillNumbers and '' != waybillNumbers">
+				<!-- AND FWAYBILLNUMBER = #{waybillNumber} -->
+				ss.fwaybillnumber in
+				<foreach collection="waybillNumbers" item="waybillNumber"
+					open="(" close=")" separator=",">
+					#{waybillNumber}
+				</foreach>
+
+			</if>
+			<if test="null != customerType and '' != customerType">
+				AND ss.FCUSTOMERTYPE = #{customerType}
+			</if>
+			<if test="null != reductionType and '' != reductionType">
+				AND ss.FREDUCTIONTYPE = #{reductionType}
+			</if>
+			<if test="null != applyStatus and '' != applyStatus">
+				AND ss.FAPPLYSTATUS = #{applyStatus}
+			</if>
+			<if test="null != applyDept and '' != applyDept">
+				AND ss.FAPPLYDEPT = #{applyDept}
+			</if>
+			<if test="null != startDate and '' != startDate">
+				AND trunc(ss.FCREATETIME) >= #{startDate}
+			</if>
+			<if test="null != endDate and '' != endDate">
+				AND trunc(ss.FCREATETIME) &lt;= #{endDate}
+			</if>
+			<if test="null != tranType and '' != tranType">
+				AND ss.ftranType = #{tranType}
+			</if>
+		</where>
+	</sql>
+
+
+	<!-- 保存服务补救 -->
+	<insert id="addServiceRecovery"
+		parameterType="com.deppon.crm.module.servicerecovery.shared.domain.ServiceRecovery">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+		<![CDATA[
+		 	select	SEQ_ID_SERVICE_RECOVERY_ID.nextval id from dual
+		 ]]>
+		</selectKey>
+		<![CDATA[
+		insert into t_rec_servicerecovery (
+		 fid,
+ 		fcreateuser,
+  		fupdateuser,
+  		fupdatetime,
+  		fcreatetime,
+  		fwaybillNumber,
+  		fcustomerType,
+  		fcustomerNum,
+  		fcustomerName,
+  		fwaybillAmount,
+  		freductionAmount,
+  		foutboundTime,
+  		ffinanceDept,
+  		foperator,
+  		freductionType,
+  		ftotalPackage,
+  		fdamagePackage,
+  		frecoveryReason,
+ 		fapplicant,
+  		fapplyDept,
+  		fapplyTime,
+  		fapplyStatus,
+  		foaWorkflowNum,
+  		fverifyTime,
+  		fverifier,
+  		fsubsidiary,
+  		fcustomerLevel,
+		fcontactName,
+		ftranType,
+		fparty )
+		values(
+		#{id},
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=TIMESTAMP},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{waybillNumber,jdbcType=VARCHAR},
+		#{customerType,jdbcType=VARCHAR},
+		#{customerNum,jdbcType=VARCHAR},
+		#{customerName,jdbcType=VARCHAR},
+		#{waybillAmount,jdbcType=NUMERIC},
+		#{reductionAmount,jdbcType=NUMERIC},
+		#{outboundTime,jdbcType=TIMESTAMP},
+		#{financeDept,jdbcType=VARCHAR},
+		#{operator,jdbcType=VARCHAR},
+		#{reductionType,jdbcType=VARCHAR},
+		#{totalPackage,jdbcType=NUMERIC},
+		#{damagePackage,jdbcType=NUMERIC},
+		#{recoveryReason,jdbcType=VARCHAR},
+		#{applicant,jdbcType=VARCHAR},
+		#{applyDept,jdbcType=VARCHAR},
+		#{applyTime,jdbcType=TIMESTAMP},
+		#{applyStatus,jdbcType=VARCHAR},
+		#{oaWorkflowNum,jdbcType=VARCHAR},
+		#{verifyTime,jdbcType=TIMESTAMP},
+		#{verifier,jdbcType=VARCHAR},
+		#{subsidiary,jdbcType=VARCHAR},
+		#{customerLevel,jdbcType=VARCHAR},
+		#{contactName,jdbcType=VARCHAR},
+		#{tranType,jdbcType=VARCHAR},
+		#{party,jdbcType=VARCHAR}
+		)
+		]]>
+	</insert>
+	<select id="searchServiceRecoveryByCondition"
+		parameterType="com.deppon.crm.module.servicerecovery.shared.domain.ServiceRecoverySearchCondition"
+		resultMap="serviceRecoveryResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_servicerecovery ss
+		left join t_org_employee op on
+		ss.foperator=op.fid
+		left join t_org_employee
+		ap on ss.fapplicant=ap.fid
+		left join t_org_employee vf on
+		ss.fverifier=vf.fid
+		left join
+		t_org_department dp on
+		ss.fapplyDept=dp.fid
+		left join t_org_department
+		fd on
+		ss.ffinanceDept=fd.fid
+		<include refid="conditionSql" />
+		order by ss.fapplyTime desc
+
+	</select>
+	<select id="countServiceRecoveryByCondition"
+		parameterType="com.deppon.crm.module.servicerecovery.shared.domain.ServiceRecoverySearchCondition"
+		resultType="int">
+		select count('x') from t_rec_servicerecovery ss
+		<include refid="conditionSql" />
+	</select>
+
+	<select id="getServiceRecoveryById" parameterType="string"
+		resultMap="serviceRecoveryResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_servicerecovery ss
+		left join t_org_employee op on
+		ss.foperator=op.fid
+		left join t_org_employee
+		ap on ss.fapplicant=ap.fid
+		left join t_org_employee vf on
+		ss.fverifier=vf.fid
+		left join
+		t_org_department dp on
+		ss.fapplyDept=dp.fid
+		left join t_org_department
+		fd on
+		ss.ffinanceDept=fd.fid
+		where ss.fid=#{serviceRecoveryId}
+	</select>
+
+	<select id="findValidServiceRecoveryByNum" parameterType="string"
+		resultMap="serviceRecoveryResultMap">
+		select
+		<include refid="selectPartSQL" />
+		from t_rec_servicerecovery ss
+		left join t_org_employee op on
+		ss.foperator=op.fid
+		left join t_org_employee ap on ss.fapplicant=ap.fid
+		left join t_org_employee vf on ss.fverifier=vf.fid
+		left join
+		t_org_department dp on ss.fapplyDept=dp.fid
+		left join t_org_department
+		fd on
+		ss.ffinanceDept=fd.fid
+		where
+		ss.fwaybillnumber=#{waybillNum} and
+		ss.FAPPLYSTATUS not in ('UNAGREE')
+
+	</select>
+
+	<select id="findServiceRecoveryByOaWorkflowNum" parameterType="string"
+		resultMap="serviceRecoveryResultMap">
+		select
+		<include refid="selectPartSQL" />
+		,ap.fposition position
+		from t_rec_servicerecovery ss
+		left join t_org_employee op on
+		ss.foperator=op.fid
+		left join t_org_employee ap on ss.fapplicant=ap.fid
+		left join t_org_employee vf on ss.fverifier=vf.fid
+		left join
+		t_org_department dp on ss.fapplyDept=dp.fid
+		left join t_org_department
+		fd on
+		ss.ffinanceDept=fd.fid
+		where
+		ss.foaworkflownum=#{oaWorkflowNum}
+	</select>
+
+	<select id="findServiceRecoveryByWorkflowNo" parameterType="string"
+		resultMap="serviceRecoveryResultMap">
+		select
+		<include refid="selectPartSQL" />
+		,ap.fempcode empCode
+		from t_rec_servicerecovery ss
+		left join t_org_employee op on
+		ss.foperator=op.fid
+		left join t_org_employee ap on ss.fapplicant=ap.fid
+		left join t_org_employee vf on ss.fverifier=vf.fid
+		left join
+		t_org_department dp on ss.fapplyDept=dp.fid
+		left join t_org_department
+		fd on
+		ss.ffinanceDept=fd.fid
+		where
+		ss.fworkflowNo=#{workflowNo} 
+	</select>
+
+	<update id="updateServiceRecoveryWorkflowNum">
+		update t_rec_servicerecovery ss set
+		ss.foaworkflownum=#{workflowNum}, ss.fworkflowno=#{workflowNo} 
+		where ss.fid=#{id}
+	</update>
+
+	<update id="updateServiceRecovery"
+		parameterType="com.deppon.crm.module.servicerecovery.shared.domain.ServiceRecovery">
+		update t_rec_servicerecovery ss set
+		<if test="null != applyStatus and '' != applyStatus">
+			ss.fapplyStatus=#{applyStatus,jdbcType=VARCHAR},
+		</if>
+		<if test="null != verifyTime and '' != verifyTime">
+			ss.fverifyTime=#{verifyTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="null != verifier and '' != verifier">
+			ss.fverifier=#{verifier,jdbcType=VARCHAR},
+		</if>
+		<if test="null != customerNum and '' != customerNum">
+			ss.fcustomernum=#{customerNum,jdbcType=VARCHAR}
+		</if>
+		where ss.fid=#{id}
+	</update>
+
+	<delete id="delteById" parameterType="string">
+		delete from
+		t_rec_servicerecovery ss where ss.fid=#{id}
+	</delete>
+
+</mapper>

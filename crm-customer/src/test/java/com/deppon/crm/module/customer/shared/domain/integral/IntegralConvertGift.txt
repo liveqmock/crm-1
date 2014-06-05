@@ -1,0 +1,16 @@
+score,fscore,NUMERIC
+type,ftype,VARCHAR
+contact.id,fcontactId,VARCHAR
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid,VARCHAR
+gift.id,fgiftId,VARCHAR
+convertNumber,fconvertNumber,NUMERIC
+convertIdCard,fconvertIdCard,VARCHAR
+workFlowId,fworkFlowId,VARCHAR
+convertTime,fconvertTime,DATE
+sendTime,fsendTime,DATE
+isSend,fisSend,NUMERIC
+sendStatus,fsendStatus,VARCHAR

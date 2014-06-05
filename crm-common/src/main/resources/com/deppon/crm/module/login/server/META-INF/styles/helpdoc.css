@@ -1,0 +1,45 @@
+@CHARSET "UTF-8";
+
+.helpstyle ol{ 
+	list-style-type:none;
+	padding-left: 5px;
+
+}
+.helpstyle ul{
+	list-style-type:none;
+	font-size:14px;
+	font-weight:bold;
+	line-height:28px;
+	font-family:"微软雅黑";
+	padding-left: 5px;
+}
+.helpstyle span{
+	font-weight:bold;
+	font-family:"微软雅黑";
+	font-size:15px;
+	color:#373c64;
+	
+}
+.helpstyle h1{
+	font-size:14px;
+	font-family:"微软雅黑";
+	font-weight:bold;
+	color:#373c64;
+}
+.helpstyle li{
+	font-size:13px;
+	line-height:22px;
+	font-family:"微软雅黑";
+	text-indent:30px;
+	font-weight:normal;
+}
+/*问题解答模块的样式*/	
+.guide{
+	width:230px;
+	float:right;
+	margin-bottom:0px;
+}
+.qastyle{
+	background-image:url(../../images/common/deppon/bg.png);
+	background-repeat:no-repeat;
+}

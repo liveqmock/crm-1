@@ -1,0 +1,17 @@
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastupdateuserid,VARCHAR
+addressType,faddressType,VARCHAR
+address,faddress,VARCHAR
+startTime,fstartTime,DATE
+endTime,fendTime,DATE
+billRequest,fbillRequest,VARCHAR
+hasStopCost,fhasStopCost,VARCHAR
+payType,fpayType,VARCHAR
+isSendToFloor,fisSendToFloor,NUMERIC
+otherNeed,fotherNeed,VARCHAR
+shuttleAddressId,fshuttleAddressId,VARCHAR
+linkManId,flinkManId,VARCHAR 
+isMainAddress,fisMainAddress,VARCHAR

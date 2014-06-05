@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.WorkFlow">
+	<insert id="insertWorkFlow" parameterType="com.deppon.crm.module.customer.shared.domain.WorkFlow">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_workflow.nextval as id FROM DUAL
+		</selectKey>
+		insert into t_cust_workflow(
+		FID,FCREATETIME,FCREATEUSERID,
+		FLASTUPDATETIME,FLASTMODIFYUSERID,FUSERID,FUSERNAME,
+		FSTATUS,FWORKFLOWID,FWORKFLOWNAME,FDEPTID,
+		FDEPTNAME,fappId)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		sysdate,#{modifyUser,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},#{workFlowId,jdbcType=NUMERIC},
+		#{workFLowName,jdbcType=VARCHAR},#{deptId,jdbcType=VARCHAR},
+		#{deptName,jdbcType=VARCHAR},#{appId,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateWorkFlowStatusByWorkFLowId" parameterType="map">
+		update t_cust_workflow set FSTATUS = #{status,jdbcType=VARCHAR} 
+		, FLASTUPDATETIME = sysdate ,FLASTMODIFYUSERID = #{modifyUser}
+		where fworkFlowId = #{workFlowId}
+	</update>
+	
+	<select id="searchWorkFLow" parameterType="com.deppon.crm.module.customer.shared.domain.WorkFlowCondition" resultMap="WorkFlowRM">
+		select 
+		<include refid="WorkFlow_column"/>
+		from t_cust_workflow w
+		<include refid="searchWorFLowCondition"/>
+		<include refid="orderByCon"/>
+	</select>
+	
+	<sql id="orderByCon">
+		ORDER BY W.FCREATETIME DESC
+	</sql>
+	
+	<select id="countSearchWorkFlow" parameterType="com.deppon.crm.module.customer.shared.domain.WorkFlowCondition" resultType="int">
+		select 
+		count(1)
+		from t_cust_workflow w
+		<include refid="searchWorFLowCondition"/>
+	</select>
+	
+	<select id="searchMydisposeWorkFlow" parameterType="com.deppon.crm.module.customer.shared.domain.WorkFlowCondition" resultMap="WorkFlowRM">
+		select 
+		<include refid="WorkFlow_column"/>
+		from t_cust_workflow w
+		join t_cust_examinerecord e on w.fworkflowid = e.fworkflowid
+		<include refid="searchMydisposeWorkFlowCondition"/>
+		<include refid="orderByCon"/>
+	</select>
+	
+	<select id="countSearchMydisposeWorkFlow" parameterType="com.deppon.crm.module.customer.shared.domain.WorkFlowCondition" resultType="int">
+		select 
+		count(1)
+		from t_cust_workflow w
+		join t_cust_examinerecord e on w.fworkflowid = e.fworkflowid
+		<include refid="searchMydisposeWorkFlowCondition"/>
+	</select>
+	
+	<sql id="searchMydisposeWorkFlowCondition">
+		<where>
+			<if test=" workflowId != null  and workflowId != ''  ">
+				and w.FWORKFLOWID=#{workflowId,jdbcType=NUMERIC}
+			</if>
+			<if test=" workflowName != null  and workflowName != ''  ">
+				and w.FWORKFLOWNAME=#{workflowName,jdbcType=VARCHAR}
+			</if>
+			<if test=" applicationStatus != null  and applicationStatus != ''  ">
+				and w.FSTATUS=#{applicationStatus,jdbcType=VARCHAR}
+			</if>
+			<if test=" deptId != null  and deptId != ''  ">
+				and w.FDEPTID=#{deptId,jdbcType=NUMERIC}
+			</if>
+			<if test=" createUser != null  and createUser != ''  ">
+				and e.fdisposeuserid=#{createUser,jdbcType=VARCHAR}
+			</if>
+			<if test=" startDate != null  and startDate != ''  ">
+				<![CDATA[
+					and TRUNC(w.FCREATETIME) >= #{startDate,jdbcType=DATE}
+				]]>
+			</if>
+			<if test=" endDate != null  and endDate != ''  ">
+				<![CDATA[
+					and TRUNC(w.FCREATETIME) <= #{endDate,jdbcType=DATE}
+				]]>
+			</if>
+		</where> 
+	</sql>
+	
+	<sql id="searchWorFLowCondition">
+		<where>
+			<if test=" workflowId != null  and workflowId != ''  ">
+				and w.FWORKFLOWID=#{workflowId,jdbcType=NUMERIC}
+			</if>
+			<if test=" workflowName != null  and workflowName != ''  ">
+				and w.FWORKFLOWNAME=#{workflowName,jdbcType=VARCHAR}
+			</if>
+			<if test=" applicationStatus != null  and applicationStatus != ''  ">
+				and w.FSTATUS=#{applicationStatus,jdbcType=VARCHAR}
+			</if>
+			<if test=" deptId != null  and deptId != ''  ">
+				and w.FDEPTID=#{deptId,jdbcType=NUMERIC}
+			</if>
+			<if test=" createUser != null  and createUser != ''  ">
+				and w.FUSERID=#{createUser,jdbcType=VARCHAR}
+			</if>
+			<if test=" startDate != null  and startDate != ''  ">
+				<![CDATA[
+					and TRUNC(w.FCREATETIME) >= #{startDate,jdbcType=DATE}
+				]]>
+			</if>
+			<if test=" endDate != null  and endDate != ''  ">
+				<![CDATA[
+					and TRUNC(w.FCREATETIME) <= #{endDate,jdbcType=DATE}
+				]]>
+			</if>
+		</where> 
+	</sql>
+	
+	<resultMap id="WorkFlowRM"
+	 type="com.deppon.crm.module.customer.shared.domain.WorkFlow">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTUPDATEUSERID" jdbcType = "VARCHAR" />
+		<result property="userId" column="FUSERID" jdbcType = "VARCHAR" />
+		<result property="userName" column="FUSERNAME" jdbcType = "VARCHAR" />
+		<result property="status" column="FSTATUS" jdbcType = "VARCHAR" />
+		<result property="workFlowId" column="FWORKFLOWID" jdbcType = "NUMERIC" />
+		<result property="workFLowName" column="FWORKFLOWNAME" jdbcType = "VARCHAR" />
+		<result property="deptId" column="FDEPTID" jdbcType = "VARCHAR" />
+		<result property="deptName" column="FDEPTNAME" jdbcType = "VARCHAR" />
+		<result property="appId" column="FAPPID" jdbcType = "VARCHAR" />
+	</resultMap>
+	
+	<sql id="WorkFlow_column">
+		W.FID,
+		W.FCREATETIME,
+		W.FCREATEUSERID,
+		W.FLASTUPDATETIME,
+		W.FLASTMODIFYUSERID,
+		W.FUSERID,
+		W.FUSERNAME,
+		W.FSTATUS,
+		W.FWORKFLOWID,
+		W.FWORKFLOWNAME,
+		W.FDEPTID,
+		W.FDEPTNAME,
+		W.FAPPID
+	</sql>
+	
+</mapper>

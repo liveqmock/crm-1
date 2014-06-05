@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.Gift">
+
+<insert id="insertGift" parameterType="com.deppon.crm.module.customer.shared.domain.integral.Gift" >
+	<selectKey keyProperty="id" order="BEFORE" resultType="String">
+	select SEQ_ID_gift.nextval as id from dual
+	</selectKey>
+	insert into t_cust_gift(
+	FID,FCREATETIME,FCREATEUSERID,
+	FGIFTNAME,FNEEDPOINTS,FINVENTNUMBER,FGIFTVALUE,
+	FREALVALUE,FGIFTDESC,FGIFTNUMBER,FBEGINTIME,
+	FENDTIME,FDEPARTMENTID,FISSTART)
+	 values(
+	#{id},
+	sysdate,#{createUser,jdbcType=VARCHAR},
+	#{giftName,jdbcType=VARCHAR},#{needPoints,jdbcType=NUMERIC},
+	#{inventNumber,jdbcType=NUMERIC},#{giftValue,jdbcType=NUMERIC},
+	#{realValue,jdbcType=NUMERIC},#{giftDesc,jdbcType=VARCHAR},
+	#{giftNumber,jdbcType=VARCHAR},#{beginTime,jdbcType=DATE},
+	#{endTime,jdbcType=DATE},#{department.id,jdbcType=VARCHAR},
+	#{isStart,jdbcType=NUMERIC}
+	)
+</insert>
+
+<resultMap id="GiftRM"
+	type="com.deppon.crm.module.customer.shared.domain.integral.Gift">
+	<id property="id" column="FID" jdbcType = "VARCHAR" />
+	<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+	<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+	<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+	<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+	<result property="giftName" column="FGIFTNAME" jdbcType = "VARCHAR" />
+	<result property="needPoints" column="FNEEDPOINTS" jdbcType = "NUMERIC" />
+	<result property="inventNumber" column="FINVENTNUMBER" jdbcType = "NUMERIC" />
+	<result property="giftValue" column="FGIFTVALUE" jdbcType = "NUMERIC" />
+	<result property="realValue" column="FREALVALUE" jdbcType = "NUMERIC" />
+	<result property="giftDesc" column="FGIFTDESC" jdbcType = "VARCHAR" />
+	<result property="giftNumber" column="FGIFTNUMBER" jdbcType = "VARCHAR" />
+	<result property="beginTime" column="FBEGINTIME" jdbcType = "DATE" />
+	<result property="endTime" column="FENDTIME" jdbcType = "DATE" />
+	<result property="isStart" column="FISSTART" jdbcType = "NUMERIC" />
+	<result property="cname" column="CNAME" jdbcType = "VARCHAR" />
+	<result property="mname" column="MNAME" jdbcType = "VARCHAR" />
+	<association property="department" select="com.deppon.crm.module.organization.shared.domain.Department.getById" column="FDEPARTMENTID"></association>
+</resultMap>
+
+<select id="getGiftById" parameterType="string"  resultMap="GiftRM" >
+	SELECT
+	<include refid="Gift_column"/>
+	FROM T_CUST_GIFT
+	WHERE FID = #{id}
+</select>
+
+<select id="countGetGifts" parameterType="com.deppon.crm.module.customer.shared.domain.integral.Gift" resultType="long" >
+	SELECT
+	count(*)
+	<include refid="getGiftsCondition"/>
+</select>
+
+<select id="getGifts" parameterType="com.deppon.crm.module.customer.shared.domain.integral.Gift" resultMap="GiftRM">
+	SELECT
+	<include refid="Gift_column_name"/>
+	<include refid="getGiftsCondition_name"/>
+</select>
+
+<sql id="getGiftsCondition_name">
+	FROM T_CUST_GIFT A LEFT JOIN T_ORG_EMPLOYEE B ON A.FCREATEUSERID = B.FID
+	                   LEFT JOIN T_ORG_EMPLOYEE C ON A.FLASTMODIFYUSERID = C.FID
+	      
+	<where>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and A.FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and A.FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and A.FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and A.FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and A.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" giftName != null  and giftName != ''  ">
+		<![CDATA[and A.FGIFTNAME like #{giftName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" needPoints != null  and needPoints != ''  ">
+		<![CDATA[and A.FNEEDPOINTS=#{needPoints,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" inventNumber != null  and inventNumber != ''  ">
+		<![CDATA[and A.FINVENTNUMBER=#{inventNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" giftValue != null  and giftValue != ''  ">
+		<![CDATA[and A.FGIFTVALUE=#{giftValue,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" realValue != null  and realValue != ''  ">
+		<![CDATA[and A.FREALVALUE=#{realValue,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" giftDesc != null  and giftDesc != ''  ">
+		<![CDATA[and A.FGIFTDESC=#{giftDesc,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" giftNumber != null  and giftNumber != ''  ">
+		<![CDATA[and A.FGIFTNUMBER=#{giftNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beginTime != null  and beginTime != ''  ">
+		<![CDATA[and TRUNC(A.FBEGINTIME) <= TRUNC(sysdate)]]>
+		</if>
+		<if test=" endTime != null  and endTime != ''  ">
+		<![CDATA[and TRUNC(A.FENDTIME) >= TRUNC(sysdate)]]>
+		</if>
+		<if test=" department != null  and department != ''  ">
+		<!-- 当deptId为空的时候，代表全部可以查询 -->
+		<![CDATA[and (A.FDEPARTMENTID=#{department.id,jdbcType=VARCHAR} or A.FDEPARTMENTID is null)]]>
+		</if>
+		<if test=" isStart != null ">
+		<![CDATA[and A.FISSTART=#{isStart,jdbcType=NUMERIC}]]>
+		</if>
+	</where>	
+</sql>
+
+<sql id="getGiftsCondition">
+	FROM T_CUST_GIFT
+	<where>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" giftName != null  and giftName != ''  ">
+		<![CDATA[and FGIFTNAME like #{giftName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" needPoints != null  and needPoints != ''  ">
+		<![CDATA[and FNEEDPOINTS=#{needPoints,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" inventNumber != null  and inventNumber != ''  ">
+		<![CDATA[and FINVENTNUMBER=#{inventNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" giftValue != null  and giftValue != ''  ">
+		<![CDATA[and FGIFTVALUE=#{giftValue,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" realValue != null  and realValue != ''  ">
+		<![CDATA[and FREALVALUE=#{realValue,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" giftDesc != null  and giftDesc != ''  ">
+		<![CDATA[and FGIFTDESC=#{giftDesc,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" giftNumber != null  and giftNumber != ''  ">
+		<![CDATA[and FGIFTNUMBER=#{giftNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beginTime != null  and beginTime != ''  ">
+		<![CDATA[and TRUNC(FBEGINTIME) <= TRUNC(sysdate)]]>
+		</if>
+		<if test=" endTime != null  and endTime != ''  ">
+		<![CDATA[and TRUNC(FENDTIME) >= TRUNC(sysdate)]]>
+		</if>
+		<if test=" department != null  and department != ''  ">
+		<!-- 当deptId为空的时候，代表全部可以查询 -->
+		<![CDATA[and (FDEPARTMENTID=#{department.id,jdbcType=VARCHAR} or FDEPARTMENTID is null)]]>
+		</if>
+		<if test=" isStart != null ">
+		<![CDATA[and FISSTART=#{isStart,jdbcType=NUMERIC}]]>
+		</if>
+	</where>	
+</sql>
+
+<update id="updateGift" parameterType="com.deppon.crm.module.customer.shared.domain.integral.Gift">
+	UPDATE
+    T_CUST_GIFT
+	SET FLASTUPDATETIME = sysdate 
+	,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+	<if test=" giftName != null  and giftName != ''  ">
+	<![CDATA[,FGIFTNAME=#{giftName,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" needPoints != null  and needPoints != ''  ">
+	<![CDATA[,FNEEDPOINTS=#{needPoints,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" inventNumber != null  and inventNumber != ''  ">
+	<![CDATA[,FINVENTNUMBER=#{inventNumber,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" giftValue != null  and giftValue != ''  ">
+	<![CDATA[,FGIFTVALUE=#{giftValue,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" realValue != null  and realValue != ''  ">
+	<![CDATA[,FREALVALUE=#{realValue,jdbcType=NUMERIC}]]>
+	</if>
+	<if test=" giftDesc != null  and giftDesc != ''  ">
+	<![CDATA[,FGIFTDESC=#{giftDesc,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" giftNumber != null  and giftNumber != ''  ">
+	<![CDATA[,FGIFTNUMBER=#{giftNumber,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" beginTime != null  and beginTime != ''  ">
+	<![CDATA[,FBEGINTIME=#{beginTime,jdbcType=DATE}]]>
+	</if>
+	<if test=" endTime != null  and endTime != ''  ">
+	<![CDATA[,FENDTIME=#{endTime,jdbcType=DATE}]]>
+	</if>
+	<if test=" department != null  and department != ''  ">
+	<![CDATA[,FDEPARTMENTID=#{department.id,jdbcType=VARCHAR}]]>
+	</if>
+	<if test=" isStart != null ">
+	<![CDATA[,FISSTART=#{isStart,jdbcType=VARCHAR}]]>
+	</if>
+	WHERE FID = #{id}
+</update>
+<sql id="Gift_column_name">
+	A.FID,
+	A.FCREATETIME,
+	A.FCREATEUSERID,
+	A.FLASTUPDATETIME,
+	A.FLASTMODIFYUSERID,
+	A.FGIFTNAME,
+	A.FNEEDPOINTS,
+	A.FINVENTNUMBER,
+	A.FGIFTVALUE,
+	A.FREALVALUE,
+	A.FGIFTDESC,
+	A.FGIFTNUMBER,
+	A.FBEGINTIME,
+	A.FENDTIME,
+	A.FDEPARTMENTID,
+	A.FISSTART,
+	B.FEMPNAME CNAME,
+	C.FEMPNAME MNAME
+</sql>
+<sql id="Gift_column">
+	FID,
+	FCREATETIME,
+	FCREATEUSERID,
+	FLASTUPDATETIME,
+	FLASTMODIFYUSERID,
+	FGIFTNAME,
+	FNEEDPOINTS,
+	FINVENTNUMBER,
+	FGIFTVALUE,
+	FREALVALUE,
+	FGIFTDESC,
+	FGIFTNUMBER,
+	FBEGINTIME,
+	FENDTIME,
+	FDEPARTMENTID,
+	FISSTART
+</sql>
+
+<delete id="deleteGift" parameterType="String">
+  delete t_cust_gift where fid = #{id}
+</delete>
+
+</mapper>

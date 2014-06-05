@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="marketingReport" namespace="/marketingReport" extends="crm-default">
+		<!-- 预警客户回访效果与流失监控（日报表） -->
+		<action name="monthReport">
+			<result name="success">marketingMonthReport.html</result>
+		</action>
+		<!-- 导出预警客户回访效果与流失监控（日报表）的excel -->
+		<action name="exportWarnLostCustReportExcel" class="warnLostCustReportAction" method="exportWarnLostCustReportExcel">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 导出预警客户详细 -->
+		<action name="exportWarnLostCustDetail" class="warnLostCustReportAction" method="exportWarnLostCustDetail">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 下载导出的的excel文件 -->
+		<action name="downloadDetail" class="warnLostCustReportAction" method="downloadDetail">
+			<result name="success" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelStream</param>
+				<param name="contentDisposition">attachment;filename="${exportExcelName}"</param>
+			</result>
+		</action>
+		<!-- 固定客户流失率统计报表（月报表） -->
+		<action name="dayReport">
+			<result name="success">marketingDayReport.html</result>
+		</action>
+		<!-- 预警客户明细 -->
+		<action name="warmCustDetal">
+			<result name="success">warmCustDetal.html</result>
+		</action>
+		<!-- 商机报表 -->
+		<action name="boReport">
+			<result name="success">businessOpportunityReport.html</result>
+		</action>
+	    <!-- 查询商机报表信息 -->
+		<action name ="searchBoReport" class="boReportAction" method="searchBoReport">
+			<result name="success" type="json"></result>
+		</action>
+			    <!--创建商机报表信息 -->
+		<action name ="createBoReportExcel" class="boReportAction" method="createBoReportExcel">
+			<result name="success" type="json"></result>
+		</action>
+			    <!--   将成功导出的服务器端生成的excel报表文件下载到本地-->
+	    <action name="exportBoReportExcel" class="boReportAction" method="exportBoReportExcel">
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param> 
+				
+			</result>
+		</action>
+		<!--预警客户明细表格加载-->
+		<action name ="queryWarnLostCust" class="warnLostCustReportAction" method="queryWarnLostCust">
+			<result name="success" type="json"></result>
+		</action>
+		<!--预警客户统计日报表表格加载-->
+		<action name ="queryWarnCustReportDailyBatch" class="warnLostCustReportAction" method="queryWarnCustReportDailyBatch">
+			<result name="success" type="json"></result>
+		</action>
+		<!--预警客户统计日报表表格最后一条数据(统计总数据)-->
+		<action name ="queryWarnLostCustDailyTotal" class="warnLostCustReportAction" method="queryWarnLostCustDailyTotal">
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+</struts>

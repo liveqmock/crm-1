@@ -1,0 +1,3 @@
+<workflows>
+  <workflow name="recompense.xml" type="file" location="recompense.xml" />
+</workflows>

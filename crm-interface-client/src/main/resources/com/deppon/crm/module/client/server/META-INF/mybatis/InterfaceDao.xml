@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.client.common.dao.IInterfaceDao">
+	<resultMap id="InterfaceAddressConfigRM"
+		type="com.deppon.crm.module.client.common.domain.InterfaceAddressConfig">
+		<result property="id" column="IA_FID" />
+		<result property="address" column="IA_FADDRESS" />
+		<result property="code" column="IA_FCODE" />
+		<result property="serviceClass" column="IA_FSERVICECLASS" />
+		<result property="userName" column="IA_FUSERNAME" />
+		<result property="password" column="IA_FPASSWORD" />
+		<result property="slnName" column="IA_FSLNNAME" />
+		<result property="dcName" column="IA_FDCNAME" />
+		<result property="language" column="IA_FLANGUAGE" />
+		<result property="dbType" column="IA_FDBTYPE" />
+		<result property="targetSystem" column="IA_FTARGETSYSTEM" />
+		<result property="emailReceiver" column="IA_FEMAILRECEIVER" />
+	</resultMap>
+	<sql id="InterfaceAddressConfig_column">
+		<![CDATA[
+			IA.FID IA_FID,
+			IA.FADDRESS IA_FADDRESS,
+			IA.FCODE IA_FCODE,
+			IA.FSERVICECLASS IA_FSERVICECLASS,
+			IA.FUSERNAME IA_FUSERNAME,
+			IA.FPASSWORD IA_FPASSWORD,
+			IA.FSLNNAME IA_FSLNNAME,
+			IA.FDCNAME IA_FDCNAME,
+			IA.FLANGUAGE IA_FLANGUAGE,
+			IA.FDBTYPE IA_FDBTYPE,
+			IA.FEMAILRECEIVER IA_FEMAILRECEIVER,
+			IA.FTARGETSYSTEM IA_FTARGETSYSTEM
+		]]>
+	</sql>
+	<select id="queryAll" resultMap="InterfaceAddressConfigRM">
+		<![CDATA[ 
+			SELECT 
+		]]>
+		<include refid="InterfaceAddressConfig_column" />
+		<![CDATA[
+ 			FROM T_IF_INTERFACEADDRESS IA
+		]]>
+	</select>
+	<select id="searchValueByKey" parameterType="string" resultType="string">
+		<![CDATA[ 
+			select FVALUE from T_CRM_SCHEDULINGCONTROLKV where FKEY=#{fkey}
+		]]>
+	</select>
+</mapper>

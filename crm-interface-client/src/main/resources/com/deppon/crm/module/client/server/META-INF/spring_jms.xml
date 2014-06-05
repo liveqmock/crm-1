@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/jms
+	http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+	">
+	<!-- <bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="transportType">
+			<util:constant static-field="com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP" />
+		</property>
+		<property name="queueManager" value="QM_APP" />
+		<property name="hostName" value="192.168.17.141" />
+		<property name="channel" value="CRM.CLIENT" />
+		<property name="port" value="1428" />
+	</bean> -->
+	<!-- 发出CRM请求 -->
+	<bean id="crmToEsbInfoSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbRequestSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_CRM_REQUEST_COM_OUT" />
+	</bean>
+	<!-- 发出CRM响应 -->
+	<bean id="crmToEsbResponseSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbResponseSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_CRM_RESPONSE_COM_OUT" />
+	</bean>
+	<!-- 发送CRM状态 -->
+	<bean id="crmToEsbStaSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbStatusSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_ESB_STATUS" />
+	</bean>
+
+	<!-- 异常发送 -->
+	<bean id="crmToEsbExceptionSender"
+		class="com.deppon.crm.module.client.esb.trans.CrmToEsbExceptionSender">
+		<property name="template" ref="crmToEsbTemplate" />
+		<property name="qName" value="RQ_ESB_EXCEPTION" />
+	</bean>
+
+	<bean id="crmToEsbTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean>
+
+	<!-- 事务管理 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager"
+		class="org.springframework.jms.connection.JmsTransactionManager">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean> -->
+</beans>	

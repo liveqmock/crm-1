@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="scheduler" namespace="/scheduler" extends="crm-default">
+    	
+		<!-- hpf begin -->
+		<!-- 规则管理 index -->
+		<action name="rulemanager">
+			<result name="success">ruleSearch.html</result>
+		</action>
+		<!-- 规则分页数据 -->
+		<action name="ruleSearchListPager" class="regulationAction" method="ruleSearchListPager">
+			<result name="success" type="json" >
+				<param name="includeProperties">pnList,totalCount</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!-- 规则 添加 -->
+		<action name="ruleAdd" class="regulationAction" method="ruleAdd">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 规则 修改 -->
+		<action name="ruleUpdate" class="regulationAction" method="ruleUpdate">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 规则 删除 -->
+		<action name="ruleDelete" class="regulationAction" method="ruleDelete">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- hpf end -->
+		
+		<action name="logmanager" >
+			<result name="success" >logSearch.html</result>
+		</action>
+		
+		<!-- 任务管理 index -->
+		<action name="taskmanager">
+			<result name="success">taskManagement.html</result>
+		</action>
+		
+		<!-- 任务查询 -->
+		<action name="searchTaskByCondition" class='taskAction' method='searchTaskByCondition'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 按照ID任务查询 -->
+		<action name="searchJobSchedualById" class='taskAction' method='searchJobSchedualById'>
+			<result name="success" type='json'></result>
+		</action>
+		<!-- 任务新增 -->
+		<action name="submitTask" class='taskAction' method='submitTask'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 任务删除 -->
+		<action name="deleteTask" class='taskAction' method='deleteTask'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 任务修改 -->
+		<action name="modifyTask" class='taskAction' method='modifyTask'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 任务启动 -->
+		<action name="startupTask" class='taskAction' method='startupTask'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 任务执行 -->
+		<action name="executeTask" class='taskAction' method='executeTask'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 任务停止 -->
+		<action name="stopTask" class='taskAction' method='stopTask'>
+			<result name="success" type='json'></result>
+		</action>
+		
+		<!-- 日志查询 -->
+		<action name="searchLogByCondition" class="logAction" method="searchLogByCondition">
+			<result name="success" type="json">
+				<param name="includeProperties">logList,totalCount</param>
+			</result>
+		</action>
+		
+		<!-- 监控定时器日志 -->
+		<action name="searchLogList" class="logAction" method="searchLogList">
+			<result name="success" type="json">
+				<param name="includeProperties">logList</param>
+			</result>
+		</action>
+		
+		
+    </package>
+</struts>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is just example. please change for your real system. -->
+<sso currentApplication="crm" url="http://crm.deppon.com/crm/"
+	homePage="login/index.action" ssoTokenStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.TokenDatabaseStore" 
+	ssoUserStore="com.deppon.crm.module.frameworkimpl.server.ssoImpl.CrmSSOUserSessionStore">
+
+	<application id="hollycrm" url="http://58.210.213.132:8080/hollycrm/"
+		homePage=""/>
+</sso>

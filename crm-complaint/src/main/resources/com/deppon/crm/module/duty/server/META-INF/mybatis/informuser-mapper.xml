@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.InformUser">
+	<resultMap id="informUserMap"
+		type="com.deppon.crm.module.duty.shared.domain.InformUser">
+		<id column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FDUTYID" property="dutyId" jdbcType="VARCHAR" />
+		<result column="FUSERNAME" property="userName" jdbcType="VARCHAR" />
+		<result column="FUSERNO" property="userNo" jdbcType="VARCHAR" />
+		<result column="FUSERPOSITION" property="userPosition" jdbcType="VARCHAR" />
+		<result column="FUSERCONTACT" property="userContact" jdbcType="VARCHAR" />
+		<result column="FDEPTID" property="deptId" jdbcType="VARCHAR" />
+		<result column="FUSERID" property="userId" jdbcType="VARCHAR" />
+		<result column="FDEPTNAME" property="deptName" jdbcType="VARCHAR" />
+		<result column="FVIRTUALCODING" property="virtualCode" jdbcType="VARCHAR" />	
+	</resultMap>
+	
+	<sql id="InformUser_Column_List" >
+      FID
+      ,FDUTYID
+      ,FUSERNAME
+      ,FUSERNO
+      ,FUSERPOSITION
+      ,FUSERCONTACT
+      ,FDEPTID
+      ,FUSERID
+      ,FDEPTNAME
+      ,FVIRTUALCODING
+    </sql>
+    <!--根据条件查询对象 -->
+	<select id="searchInformUser" parameterType="com.deppon.crm.module.duty.shared.domain.InformUser" 
+		resultMap="informUserMap">
+		SELECT  
+    	<include refid="InformUser_Column_List" />
+    		FROM T_CUST_INFORMUSER 
+    	<where>
+	    	<if test="id!=null">
+	    		FID = #{id}
+	    	</if>         
+	   		<if test="dutyId!=null"> 
+				AND FDUTYID  = #{dutyId}        
+	  		</if>  
+	  		<if test="userName!=null and userName!=''"> 
+				AND FUSERNAME  = #{userName}        
+	  		</if>      
+	  		<if test="userNo!=null and userNo!=''"> 
+				AND FUSERNO = #{userNo}        
+	  		</if>  
+	  		<if test="userPosition!=null and userPosition!=''"> 
+				AND FUSERPOSITION = #{userPosition}        
+	  		</if>   
+	  		<if test="userContact!=null and userContact!=''"> 
+				AND FUSERCONTACT = #{userContact}        
+	  		</if>
+	  		<if test="deptName!=null and deptName!=''"> 
+				AND FDEPTNAME = #{deptName}        
+	  		</if> 
+	  		<if test="virtualCode!=null and virtualCode!=''"> 
+				AND FVIRTUALCODING = #{virtualCode}        
+	  		</if>   
+	  		<if test="deptId!=null"> 
+				AND FDEPTID = #{deptId}        
+	  		</if>   
+	  		<if test="userId!=null"> 
+				AND FUSERID = #{userId}        
+	  		</if>           
+  		</where> 
+	</select>
+	
+   <!--查询单个对象 -->
+  <select id="selectInformUserByPrimaryKey" resultMap="informUserMap" parameterType="java.lang.Long" >
+  	select 
+    <include refid="InformUser_Column_List" />
+    from T_CUST_INFORMUSER
+    where FID = #{id}
+  </select>
+  <!--修改通知对象 -->
+  <update id="updateInformUser" parameterType="com.deppon.crm.module.duty.shared.domain.InformUser" >
+     update T_CUST_INFORMUSER
+    <set>
+      <if test="dutyId != null" >
+        FDUTYID = #{dutyId},
+      </if>
+      <if test="userName != null" >
+        FUSERNAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userNo != null" >
+        FUSERNO = #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userPosition != null" >
+        FUSERPOSITION = #{userPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="userContact != null" >
+        FUSERCONTACT = #{userContact,jdbcType=VARCHAR},
+      </if>
+      <if test="deptName!=null and deptName!=''"> 
+		FDEPTNAME = #{deptName},      
+ 	  </if> 
+ 	  <if test="virtualCode!=null and virtualCode!=''"> 
+		FVIRTUALCODING = #{virtualCode},        
+ 		</if> 
+ 	  <if test="busType!=null and busType!=''"> 
+		FBUSTYPE = #{busType},        
+ 	  </if>    
+      <if test="deptId != null" >
+        FDEPTID = #{deptId},
+      </if>
+      <if test="userId != null" >
+        FUSERID = #{userId},
+      </if>
+    </set>
+    where FID = #{id}
+  </update>
+  <!--插入通知对象 -->
+   <insert id="insertInformUser" parameterType="com.deppon.crm.module.duty.shared.domain.InformUser">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_CRM_INFORMUSER.nextval AS
+				id FROM DUAL
+		</selectKey>
+				INSERT INTO T_CUST_INFORMUSER
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+			  <if test="dutyId != null" >
+				FDUTYID,
+			  </if>
+			  <if test="userName != null" >
+				FUSERNAME,
+			  </if>
+			  <if test="userNo != null" >
+				FUSERNO,
+			  </if>
+			  <if test="userPosition != null" >
+				FUSERPOSITION,
+			  </if>
+			  <if test="userContact != null" >
+				FUSERCONTACT,
+			  </if>
+			  <if test="deptName!=null"> 
+				FDEPTNAME,      
+		 	  </if> 
+		 	  <if test="virtualCode!=null"> 
+				FVIRTUALCODING,        
+		 		</if> 
+              <if test="deptId != null" >
+				FDEPTID,
+			  </if>
+              <if test="userId != null" >
+				FUSERID,
+			  </if>
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+				#{id},
+			  <if test="dutyId != null" >
+				#{dutyId},
+			  </if>
+			  <if test="userName != null" >
+				#{userName},
+			  </if>
+			  <if test="userNo != null" >
+				#{userNo},
+			  </if>
+			  <if test="userPosition != null" >
+				#{userPosition},
+			  </if>
+			  <if test="userContact != null" >
+				#{userContact},
+			  </if>
+			  <if test="deptName!=null"> 
+				#{deptName},      
+		 	  </if> 
+		 	  <if test="virtualCode!=null"> 
+				#{virtualCode},        
+		 		</if> 
+              <if test="deptId != null" >
+				#{deptId},
+			  </if>
+              <if test="userId != null" >
+				#{userId},
+			  </if>
+	    </trim>
+  </insert>
+  <!-- 批量删除方案信息 -->
+  <delete id="deleteInformUsers" parameterType="map">
+  		DELETE FROM T_CUST_INFORMUSER
+  		<![CDATA[WHERE FID IN ]]>
+		<foreach collection="ids" open="(" close=")" separator=","
+				item="id">
+		<![CDATA[	#{id}  ]]>
+		</foreach>
+  </delete>
+  
+    <!-- 批量删除根据责任ID -->
+  <delete id="deleteInformUsersByDutyId" parameterType="map">
+  		DELETE FROM T_CUST_INFORMUSER
+  	     where FDUTYID = #{dutyId}
+  </delete>
+</mapper>

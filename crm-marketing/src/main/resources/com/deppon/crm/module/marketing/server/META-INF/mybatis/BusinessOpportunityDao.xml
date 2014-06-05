@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunity">
+	<resultMap
+		type="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunity"
+		id="BusinessOpportunity">
+		<id column="FID" property="id" jdbcType="VARCHAR" />
+		<!-- 商机编码 -->
+		<result column="FBUSINESSCODE" property="boNumber" jdbcType="VARCHAR" />
+		<!-- 商机名称 -->
+		<result column="FBUSINESSNAME" property="boName" jdbcType="VARCHAR" />
+		<!-- 商机描述 -->
+		<result column="FBUSINESSDESC" property="boDesc" jdbcType="VARCHAR" />
+		<!-- 预计成功时间 -->
+		<result column="FFORECASTSUCCESSTIME" property="expectSuccessDate"
+			jdbcType="TIMESTAMP" />
+		<!-- 商机阶段 -->
+		<result column="FBUSINESSSTEP" property="boStep" jdbcType="VARCHAR" />
+		<!-- 商机状态 -->
+		<result column="FBUSINESSSTATUS" property="boStatus" jdbcType="VARCHAR" />
+		<!-- 预计发货金额 -->
+		<result column="FFORECASTAMOUNT" property="expectDeliveryAmount"
+			jdbcType="VARCHAR" />
+		<!-- 预计成功几率 -->
+		<result column="FFORECASTSUCCESSRATE" property="expectSuccessOdds"
+			jdbcType="VARCHAR" />
+		<!-- 关闭原因键值 -->
+		<result column="FFAILREASONCODE" property="closeReasonCode"
+			jdbcType="VARCHAR" />
+		<!-- 关闭原因描述 -->
+		<result column="FFAILREASON" property="closeReasonDesc"
+			jdbcType="VARCHAR" />
+		<!-- 商机确认 -->
+		<result column="FISHASBUSINESS" property="isBOConfirm"
+			jdbcType="VARCHAR" />
+		<!-- 客户需求简介 -->
+		<result column="FCUSTREQUIREMENT" property="customerDemandDesc"
+			jdbcType="VARCHAR" />
+		<!-- 解决方案简述 -->
+		<result column="FSOLUTIONS" property="solutionDesc" jdbcType="VARCHAR" />
+		<!-- 招投标项目 -->
+		<result column="FISBIDDINGPROJECT" property="isBidProject"
+			jdbcType="VARCHAR" />
+		<!-- 竞争情况信息 -->
+		<result column="FCOMPETITION" property="competitiveInfo"
+			jdbcType="VARCHAR" />
+		<!-- 商机创建时间 -->
+		<result column="FCREATETIME" property="createTime" jdbcType="TIMESTAMP" />
+		<!-- 最后修改时间 -->
+		<result column="FLASTMODIFYTIME" property="modifyTime"
+			jdbcType="TIMESTAMP" />
+		<!-- 所属部门 -->
+		<result column="FDEPTID" property="deptId" jdbcType="VARCHAR" />
+		<!-- 所属部门 -->
+		<result column="FDEPTNAME" property="deptName" jdbcType="VARCHAR" />
+		<!-- 商机创建人 -->
+		<association property="creator"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<!-- 商机创建人Id -->
+			<result property="id" column="FCREATEUSERID" />
+			<!-- 商机创建人名称 -->
+			<result property="empCode" column="FCREATORCODE" />
+			<!-- 商机创建人编码 -->
+			<result property="empName" column="FCREATORNAME" />
+		</association>
+		<!-- 商机执行人 -->
+		<association property="operator"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<!-- 商机执行人Id -->
+			<result property="id" column="FOPERATOR" />
+			<!-- 商机执行人名称 -->
+			<result property="empCode" column="FOPERATORCODE" />
+			<!-- 商机执行人编码 -->
+			<result property="empName" column="FOPERATORNAME" />
+		</association>
+		<!-- 最后修改人 -->
+		<association property="modifier"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<!-- 修改人Id -->
+			<result property="id" column="FLASTMODIFYUSERID" />
+			<!-- 修改人名称 -->
+			<result property="empCode" column="FMODIFIERCODE" />
+			<!-- 修改人编码 -->
+			<result property="empName" column="FMODIFIERNAME" />
+		</association>
+		<!-- 客户 -->
+		<association property="customer"
+			javaType="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunityCustomer">
+			<!-- 客户Id -->
+			<result property="custId" column="FCUSTID" />
+			<!-- 客户名称 -->
+			<result property="custName" column="FCUSTNAME" />
+			<!-- 客户编码 -->
+			<result property="custNumber" column="FCUSTNUMBER" />
+			<!-- 客户一级行业 -->
+			<result property="custFirstType" column="FFIRSTTRADE" />
+			<!-- 客户二级行业 -->
+			<result property="custSecondType" column="FSECONDTRADE" />
+			<!-- 联系人Id -->
+			<result property="mainLinkmanId" column="FLINKMANID" />
+			<!-- 联系人姓名 -->
+			<result property="mainLinkmanName" column="FLINKMANNAME" />
+			<!-- 联系人电话 -->
+			<result property="mainLinkmanPhone" column="FLINKMANPHONE" />
+			<!-- 联系人手机 -->
+			<result property="mainLinkmanMobile" column="FLINKMANMOBILE" />
+		</association>
+	</resultMap>
+
+	<resultMap type="com.deppon.crm.module.marketing.shared.domain.BoReportInfo"
+		id="BoReportInfo">
+		<!-- 经营本部 -->
+		<result column="deptId" property="deptId" />
+		<result column="deptName" property="deptName" />
+		<!-- 经营本部 -->
+		<result column="divisionId" property="divisionId" />
+		<result column="divisionName" property="divisionName" />
+		<!-- 事业部 -->
+		<result column="bizId" property="bizId" />
+		<result column="bizName" property="bizName" />
+		<!-- 新建商机数量 -->
+		<result column="createNum" property="createNum" />
+		<!-- 当前进行中商机数 -->
+		<result column="ongoingNum" property="ongoingNum" />
+		<!-- 当前超期进行中商机数 -->
+		<result column="extendedNum" property="extendedNum" />
+		<!-- 当前已休眠商机数 -->
+		<result column="dormantNum" property="dormantNum" />
+		<!-- 商机预计发货总金额 -->
+		<result column="expectDeliveryAmount" property="expectDeliveryAmount" />
+		<!-- 当前初步接触阶段商机数 -->
+		<result column="contactNum" property="contactNum" />
+		<!-- 本月初步接触阶段商机回访次数 -->
+		<result column="contactReturnVisitNum" property="contactReturnVisitNum" />
+		<!-- 本月初步接触阶段转化商机数 -->
+		<result column="contactTransNum" property="contactTransNum" />
+		<!-- 初步接触阶段转化率 -->
+		<result column="contactTransRate" property="contactTransRate" />
+		<!-- 当前需求分析阶段商机数 -->
+		<result column="analyzeNum" property="analyzeNum" />
+		<!-- 本月需求分析阶段商机回访次数 -->
+		<result column="analyzeReturnVisitNum" property="analyzeReturnVisitNum" />
+		<!-- 本月需求分析阶段转化商机数 -->
+		<result column="analyzeTransNum" property="analyzeTransNum" />
+		<!-- 需求分析阶段转化率 -->
+		<result column="analyzeTransRate" property="analyzeTransRate" />
+		<!-- 当前制定方案阶段商机数 -->
+		<result column="schemeNum" property="schemeNum" />
+		<!-- 本月制定方案阶段商机回访次数 -->
+		<result column="schemeReturnVisitNum" property="schemeReturnVisitNum" />
+		<!-- 本月制定方案阶段转化商机数 -->
+		<result column="schemeTransNum" property="schemeTransNum" />
+		<!-- 制定方案阶段转化率 -->
+		<result column="schemeTransRate" property="schemeTransRate" />
+		<!-- 当前报价/竞标阶段商机数 -->
+		<result column="offerNum" property="offerNum" />
+		<!-- 本月报价/竞标阶段商机回访次数 -->
+		<result column="offerReturnVisitNum" property="offerReturnVisitNum" />
+		<!-- 本月报价/竞标阶段转化商机数 -->
+		<result column="offerTransNum" property="offerTransNum" />
+		<!-- 报价/竞标阶段转化率 -->
+		<result column="offerTransRate" property="offerTransRate" />
+		<!-- 当前持续发货阶段商机数 -->
+		<result column="deliverNum" property="deliverNum" />
+		<!-- 本月持续发货阶段商机回访次数 -->
+		<result column="deliverReturnVisitNum" property="deliverReturnVisitNum" />
+		<!-- 本月持续发货阶段转化商机数 -->
+		<result column="deliverTransNum" property="deliverTransNum" />
+		<!-- 持续发货阶段转化率 -->
+		<result column="deliverTransRate" property="deliverTransRate" />
+		<!-- 失败关闭商机数 -->
+		<result column="failureNum" property="failureNum" />
+		<!-- 成功关闭商机数 -->
+		<result column="successNum" property="successNum" />
+		<!-- 商机成功率 -->
+		<result column="successRate" property="successRate" />
+		<!-- 开发成功商机对应客户发货量 -->
+		<result column="deliverAmount" property="deliverAmount" />
+		<!-- 本月应执行的商机日程数量 -->
+		<result column="scheduleNum" property="scheduleNum" />
+		<!-- 本月内实际执行的商机日程数量 -->
+		<result column="performNum" property="performNum" />
+		<!-- 本月商机日程完成率 -->
+		<result column="performRate" property="performRate" />
+	</resultMap>
+
+	<sql id="BusinessOpportunityColumns">
+		<![CDATA[
+			BO.FID,
+			BO.FBUSINESSCODE,
+			BO.FBUSINESSNAME,
+			BO.FBUSINESSDESC,
+			BO.FCUSTID,
+			BO.FOPERATOR,
+			BO.FFORECASTSUCCESSTIME,
+			BO.FBUSINESSSTEP,
+			BO.FBUSINESSSTATUS,
+			BO.FFORECASTAMOUNT,
+			BO.FFORECASTSUCCESSRATE,
+			BO.FISHASBUSINESS,
+			BO.FCUSTREQUIREMENT,
+			BO.FSOLUTIONS,
+			BO.FISBIDDINGPROJECT,
+			BO.FCOMPETITION,
+			BO.FFAILREASON,
+			BO.FFAILREASONCODE,
+			BO.FCREATETIME,
+			BO.FCREATEUSERID,
+			BO.FLASTMODIFYTIME,
+			BO.FLASTMODIFYUSERID,
+			BO.FDEPTID,
+			DEPT.FDEPTNAME,
+			CUS.FCUSTNAME           AS FCUSTNAME,
+			CUS.FCUSTNUMBER         AS FCUSTNUMBER,
+			CUS.FTRADEID            AS FFIRSTTRADE,
+			CUS.FSECONDTRADE        AS FSECONDTRADE,
+			MAN.FID                 AS FLINKMANID,
+			MAN.FNAME               AS FLINKMANNAME,
+			MAN.FOFFERTEL           AS FLINKMANPHONE,
+			MAN.FMOBILETEL          AS FLINKMANMOBILE,
+			EMC.FEMPCODE            AS FCREATORCODE,
+			EMC.FEMPNAME            AS FCREATORNAME,
+			EMO.FEMPCODE            AS FOPERATORCODE,
+			EMO.FEMPNAME            AS FOPERATORNAME,
+			EMM.FEMPCODE            AS FMODIFIERCODE,
+			EMM.FEMPNAME            AS FMODIFIERNAME
+			]]>
+	</sql>
+
+	<sql id="BusinessOpportunityNumberGenerator">
+		<![CDATA[
+			(SELECT 'SJ' || TO_CHAR(SYSDATE, 'YYYYMMDD') ||
+			       LPAD(NVL2(MN, TO_NUMBER(SUBSTR(MN, -5)), 0) + 1, 5, '0')
+			  FROM (SELECT MAX(FBUSINESSCODE) MN
+			          FROM T_MARK_BUSINESSOPPORTUNITY
+			         WHERE FCREATETIME > TRUNC(SYSDATE)))]]>
+	</sql>
+
+	<sql id="queryBusinessOpportunityByConditionWhere">
+		<where>
+			<if test="deptType == 1">
+				<![CDATA[ AND BO.FDEPTID = #{deptId} ]]>
+			</if>
+			<choose>
+				<when test="boNumber != null and boNumber != ''">
+					<![CDATA[ AND BO.FBUSINESSCODE = #{boNumber} ]]>
+				</when>
+				<when test="customerId != null and customerId != ''">
+					<![CDATA[ AND BO.FCUSTID = #{customerId} ]]>
+				</when>
+				<when test="customerNum != null and customerNum != ''">
+					<![CDATA[ AND CUS.FCUSTNUMBER = #{customerNum} ]]>
+				</when>
+				<when test="contactMobile != null and contactMobile != ''">
+					<![CDATA[ AND MAN.FMOBILETEL = #{contactMobile} ]]>
+				</when>
+				<when
+					test="contactName != null and contactName != '' and contactPhone != null and contactPhone != ''">
+					<![CDATA[ AND MAN.FNAME = #{contactName} AND MAN.FOFFERTEL = #{contactPhone}]]>
+				</when>
+				<otherwise>
+					<if test="boName != null and boName != ''">
+						<![CDATA[ AND BO.FBUSINESSNAME like #{boName} ]]>
+					</if>
+					<if test="customerName != null and customerName != ''">
+						<![CDATA[ AND CUS.FCUSTNAME = #{customerName} ]]>
+					</if>
+					<if test="contactName != null and contactName != ''">
+						<![CDATA[ AND MAN.FNAME = #{contactName} ]]>
+					</if>
+					<if test="contactPhone != null and contactPhone != ''">
+						<![CDATA[ AND MAN.FOFFERTEL = #{contactPhone} ]]>
+					</if>
+					<if test="boStatus != null and boStatus != ''">
+						<![CDATA[ AND BO.FBUSINESSSTATUS = #{boStatus} ]]>
+					</if>
+					<if test="boStep != null and boStep != ''">
+						<![CDATA[ AND BO.FBUSINESSSTEP = #{boStep} ]]>
+					</if>
+					<![CDATA[ AND BO.FCREATETIME BETWEEN #{beginTime} AND #{endTime} ]]>
+				</otherwise>
+			</choose>
+		</where>
+	</sql>
+
+	<sql id="queryBusinessOpportunityFrom">
+		<![CDATA[ FROM T_MARK_BUSINESSOPPORTUNITY BO
+					  LEFT JOIN T_CUST_CUSTBASEDATA CUS
+					    ON BO.FCUSTID = CUS.FID
+					  LEFT JOIN T_CUST_CUSTLINKMAN MAN
+					    ON CUS.FID = MAN.FCUSTID
+					   AND MAN.FISMAINLINKMAN = 1   
+					  LEFT JOIN T_ORG_DEPARTMENT DEPT
+					    ON BO.FDEPTID = DEPT.FID
+					  LEFT JOIN T_ORG_EMPLOYEE EMC
+					    ON BO.FCREATEUSERID = EMC.FID
+					  LEFT JOIN T_ORG_EMPLOYEE EMO
+					    ON BO.FOPERATOR = EMO.FID
+					  LEFT JOIN T_ORG_EMPLOYEE EMM
+					    ON BO.FLASTMODIFYUSERID = EMM.FID
+					   ]]>
+	</sql>
+
+	<!-- 查询商机信息列表 -->
+	<select id="queryBusinessOpportunityByCondition"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunityCondition"
+		resultMap="BusinessOpportunity">
+		<![CDATA[ SELECT * FROM ( ]]>
+		<![CDATA[ SELECT ROW_NUMBER() OVER(ORDER BY BO.FCREATETIME DESC) RN,]]>
+		<include refid="BusinessOpportunityColumns" />
+		<include refid="queryBusinessOpportunityFrom" />
+		<include refid="queryBusinessOpportunityByConditionWhere" />
+		<![CDATA[ ) WHERE RN BETWEEN #{start} + 1 AND #{start} + #{limit} ]]>
+	</select>
+
+	<!-- 统计商机信息列表数量 -->
+	<select id="countBusinessOpportunityByCondition"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunityCondition"
+		resultType="long">
+		<![CDATA[ SELECT COUNT(1) ]]>
+		<include refid="queryBusinessOpportunityFrom" />
+		<include refid="queryBusinessOpportunityByConditionWhere" />
+	</select>
+
+	<!-- 查询商机信息 -->
+	<select id="queryBusinessOpportunityById" parameterType="string"
+		resultMap="BusinessOpportunity">
+		<![CDATA[ SELECT ]]>
+		<include refid="BusinessOpportunityColumns" />
+		<include refid="queryBusinessOpportunityFrom" />
+		<![CDATA[ WHERE BO.FID = #{id} ]]>
+	</select>
+
+	<!-- 查询客户进行中的商机信息 -->
+	<select id="queryBusinessOpportunityActiveByCust" parameterType="map"
+		resultMap="BusinessOpportunity">
+		<![CDATA[ SELECT ]]>
+		<include refid="BusinessOpportunityColumns" />
+		<include refid="queryBusinessOpportunityFrom" />
+		<![CDATA[ WHERE BO.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT') ]]>
+		<if test="custId != null and custId != ''">
+			<![CDATA[ AND BO.FCUSTID = #{custId} ]]>
+		</if>
+		<if test="custNum != null and custNum != ''">
+			<![CDATA[ AND CUS.FCUSTNUMBER = #{custNum} ]]>
+		</if>
+	</select>
+
+	<!-- 往商机信息表中插入数据 -->
+	<insert id="insertBusinessOpportunity"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunity">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_BUSINESSOPPORTUNITY.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_MARK_BUSINESSOPPORTUNITY(
+			FID,
+			FBUSINESSCODE,
+			FBUSINESSNAME,
+			FBUSINESSDESC,
+			FCUSTID,
+			FOPERATOR,
+			FFORECASTSUCCESSTIME,
+			FBUSINESSSTEP,
+			FBUSINESSSTATUS,
+			FFORECASTAMOUNT,
+			FFORECASTSUCCESSRATE,
+			FISHASBUSINESS,
+			FCUSTREQUIREMENT,
+			FSOLUTIONS,
+			FISBIDDINGPROJECT,
+			FCOMPETITION,
+			FFAILREASON,
+			FFAILREASONCODE,
+			FCREATETIME,
+			FCREATEUSERID,
+			FLASTMODIFYTIME,
+			FLASTMODIFYUSERID,
+			FDEPTID,
+			FBIZID,
+			FREMINDTIME)
+		VALUES(
+			#{id},
+			]]><include refid="BusinessOpportunityNumberGenerator" /><![CDATA[,
+			#{boName,jdbcType=VARCHAR},
+			#{boDesc,jdbcType=VARCHAR},
+			#{customer.custId,jdbcType=VARCHAR},
+			#{operator.id,jdbcType=VARCHAR},
+			#{expectSuccessDate,jdbcType=DATE},
+			#{boStep,jdbcType=VARCHAR},
+			#{boStatus,jdbcType=VARCHAR},
+			#{expectDeliveryAmount,jdbcType=NUMERIC},
+			#{expectSuccessOdds,jdbcType=NUMERIC},
+			#{isBOConfirm,jdbcType=VARCHAR},
+			#{customerDemandDesc,jdbcType=VARCHAR},
+			#{solutionDesc,jdbcType=VARCHAR},
+			#{isBidProject,jdbcType=VARCHAR},
+			#{competitiveInfo,jdbcType=VARCHAR},
+			#{closeReasonDesc,jdbcType=VARCHAR},
+			#{closeReasonCode,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{creator.id,jdbcType=VARCHAR},
+			#{modifyTime,jdbcType=TIMESTAMP},
+			#{modifier.id,jdbcType=VARCHAR},
+			#{deptId,jdbcType=VARCHAR},
+			#{bizId,jdbcType=VARCHAR},
+			0)]]>
+	</insert>
+
+
+	<!-- 往商机信息日志表中插入数据 -->
+	<insert id="insertOperationLog"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.BoOperationLog">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_BOOPERATIONLOG.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_MARK_BOOPERATIONLOG(FID, FBOID, FPREVSTEP, FCURRENTSTEP, FOPERATOR, FOPERATORTIME)
+		VALUES(
+			#{id},
+			#{boId,jdbcType=VARCHAR},
+			#{prevStep,jdbcType=VARCHAR},
+			#{currentStep,jdbcType=VARCHAR},
+			#{operator,jdbcType=VARCHAR},
+			#{operationTime,jdbcType=TIMESTAMP})]]>
+	</insert>
+
+	<!-- 商机信息表修改 -->
+	<update id="updateBusinessOpportunityById"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.BusinessOpportunity">
+		<![CDATA[ UPDATE T_MARK_BUSINESSOPPORTUNITY SET ]]>
+		<if test="boStep != null and boStep != ''">
+				<![CDATA[ FBUSINESSSTEP = #{boStep,jdbcType=VARCHAR}, ]]>
+		</if>
+		<if test="boStatus != null and boStatus != ''">
+				<![CDATA[ FBUSINESSSTATUS = #{boStatus,jdbcType=VARCHAR}, ]]>
+		</if>
+		<if test="closeReasonDesc != null and closeReasonDesc != ''">
+				<![CDATA[ FFAILREASON = #{closeReasonDesc,jdbcType=VARCHAR}, ]]>
+		</if>
+		<if test="closeReasonCode != null and closeReasonCode != ''">
+				<![CDATA[ FFAILREASONCODE = #{closeReasonCode,jdbcType=VARCHAR}, ]]>
+		</if>
+		<if test="isBOConfirm != null and isBOConfirm != ''">
+				<![CDATA[ FISHASBUSINESS = #{isBOConfirm,jdbcType=VARCHAR}, ]]>
+		</if>
+		<if test="operator != null and operator.id != null and operator.id != ''">
+				<![CDATA[ FOPERATOR = #{operator.id,jdbcType=VARCHAR}, ]]>
+		</if>
+		<![CDATA[	
+			FFORECASTAMOUNT = #{expectDeliveryAmount,jdbcType=NUMERIC},
+			FFORECASTSUCCESSTIME = #{expectSuccessDate,jdbcType=DATE},
+			FFORECASTSUCCESSRATE = #{expectSuccessOdds,jdbcType=NUMERIC}, 
+			FBUSINESSDESC = #{boDesc,jdbcType=VARCHAR},
+			FISBIDDINGPROJECT = #{isBidProject,jdbcType=VARCHAR}, 
+			FCUSTREQUIREMENT = #{customerDemandDesc,jdbcType=VARCHAR},
+			FSOLUTIONS = #{solutionDesc,jdbcType=VARCHAR},
+			FCOMPETITION = #{competitiveInfo,jdbcType=VARCHAR}, 
+			FLASTMODIFYTIME = #{modifyTime,jdbcType=TIMESTAMP}, 
+			FLASTMODIFYUSERID = #{modifier.id,jdbcType=VARCHAR}
+		WHERE FID =	#{id}
+		]]>
+	</update>
+
+	<!-- 查询一个月内到期商机信息列表 -->
+	<select id="queryBusinessOpportunityForRemind" resultMap="BusinessOpportunity">
+		<![CDATA[ SELECT ]]>
+		<include refid="BusinessOpportunityColumns" />
+		<include refid="queryBusinessOpportunityFrom" />
+		<![CDATA[ WHERE BO.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT')
+		   AND BO.FREMINDTIME = 0
+		   AND BO.FFORECASTSUCCESSTIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE) + 30 ]]>
+	</select>
+
+	<!-- 标记一个月内到期商机信息列表已提醒 -->
+	<update id="updateBusinessOpportunityInRemind">
+		<![CDATA[ 
+		UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		   SET BO.FREMINDTIME = 1
+		 WHERE BO.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT')
+		   AND BO.FREMINDTIME = 0
+		   AND BO.FFORECASTSUCCESSTIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE) + 30 ]]>
+	</update>
+
+	<!-- 通过回访更新最后修改时间 -->
+	<update id="updateBusinessOpportunityLastTime">
+		<![CDATA[ 
+		MERGE INTO T_MARK_BUSINESSOPPORTUNITY BO
+		USING (SELECT B.FID BOID, MAX(V.FDATE) LASTTIME
+		         FROM T_MARK_BUSINESSOPPORTUNITY B
+		        INNER JOIN T_CUST_SCHEDULE S
+		           ON S.FCOMFROM = 'BUSINESS'
+		          AND S.FCOMEFROMID = B.FID
+		        INNER JOIN T_CUST_RETURNVISIT V
+		           ON S.FID = V.FSCHEDULEID
+		        WHERE B.FLASTMODIFYTIME < V.FDATE
+		        GROUP BY B.FID) VT
+		ON (BO.FID = VT.BOID)
+		WHEN MATCHED THEN
+		  UPDATE SET BO.FLASTMODIFYTIME = VT.LASTTIME ]]>
+	</update>
+
+	<!-- 进行中和休眠的转进行中 -->
+	<update id="updateBusinessOpportunityInOngoing">
+		<![CDATA[ 
+		UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		   SET BO.FBUSINESSSTATUS = 'ONGOING'
+		 WHERE BO.FFORECASTSUCCESSTIME >= TRUNC(SYSDATE)
+		   AND (BO.FBUSINESSSTATUS = 'EXTENDED' OR
+		       (BO.FBUSINESSSTATUS = 'DORMANT' AND
+		       BO.FLASTMODIFYTIME > TRUNC(SYSDATE) - 30)) ]]>
+	</update>
+
+	<!-- 超时的时候转超期进行中 -->
+	<update id="updateBusinessOpportunityInExtended">
+		<![CDATA[ 
+		UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		   SET BO.FBUSINESSSTATUS = 'EXTENDED'
+		 WHERE BO.FFORECASTSUCCESSTIME < TRUNC(SYSDATE)
+		   AND (BO.FBUSINESSSTATUS = 'ONGOING' OR
+		       (BO.FBUSINESSSTATUS = 'DORMANT' AND
+		       BO.FLASTMODIFYTIME > TRUNC(SYSDATE) - 30)) ]]>
+	</update>
+
+	<!-- 进行中和超期进行中的商机转休眠 -->
+	<update id="updateBusinessOpportunityInDormant">
+		<![CDATA[ 
+		UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		   SET BO.FBUSINESSSTATUS = 'DORMANT'
+		 WHERE BO.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED')
+		   AND BO.FLASTMODIFYTIME < TRUNC(SYSDATE) - 30 ]]>
+	</update>
+
+	<!-- 超期关闭 -->
+	<update id="updateBusinessOpportunityInExpireFailure">
+		<![CDATA[ 
+		 UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		    SET (BO.FBUSINESSSTATUS, BO.FFAILREASON, BO.FFAILREASONCODE) =
+		        (SELECT 'FAILURE', CD.FCODEDESC, CD.FCODE
+		           FROM T_CODE_DETAIL CD
+		          WHERE CD.FCODETYPE = 'BO_CLOSE_REASON'
+		            AND CD.FCODE = 'EXPIRE')
+		  WHERE BO.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT')
+		    AND BO.FCREATETIME < ADD_MONTHS(TRUNC(SYSDATE), -6) ]]>
+	</update>
+
+	<!-- 休眠关闭 -->
+	<update id="updateBusinessOpportunityInDormantFailure">
+		<![CDATA[ 
+		  UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		    SET (BO.FBUSINESSSTATUS, BO.FFAILREASON, BO.FFAILREASONCODE) =
+		        (SELECT 'FAILURE', CD.FCODEDESC, CD.FCODE
+		           FROM T_CODE_DETAIL CD
+		          WHERE CD.FCODETYPE = 'BO_CLOSE_REASON'
+		            AND CD.FCODE = 'DORMANT')
+		  WHERE BO.FBUSINESSSTATUS = 'DORMANT'
+		    AND BO.FLASTMODIFYTIME < TRUNC(SYSDATE) - 60 ]]>
+	</update>
+
+	<!-- 发货金额达标、已是大客户和通过大客户工作流 ，商机转成功关闭 -->
+	<update id="updateBusinessOpportunityInSuccess">
+		<![CDATA[ 
+		UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		   SET BO.FBUSINESSSTATUS = 'SUCCESS'
+		 WHERE BO.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT')
+		   AND (EXISTS (SELECT FID
+		                  FROM T_CUST_CUSTBASEDATA
+		                 WHERE FISKEYCUSTOMER = 1
+		                   AND FID = BO.FCUSTID) OR EXISTS
+		        (SELECT FCUSTID
+		           FROM (SELECT FYEAR,
+		                        FMONTH,
+		                        FCUSTID,
+		                        SUM(NVL(FFPREPAYAMOUNT, 0) + NVL(FARRIVEDAOUNT, 0) -
+		                            NVL(FAGENTRECEIVEPAY, 0) - NVL(FREFUNDRABATE, 0)) AS AMOUNT
+		                   FROM T_CRM_CUSTANALYSEBYDAY
+		                  WHERE FCANALYSETYPE = 1
+		                    AND FANALYSEDAY BETWEEN
+		                        TRUNC(ADD_MONTHS((SYSDATE - 1), -2), 'MM') AND
+		                        TRUNC(ADD_MONTHS((SYSDATE - 1), 1), 'MM') - 1
+		                  GROUP BY FYEAR, FMONTH, FCUSTID)
+		          WHERE AMOUNT >= 10000
+		            AND FCUSTID = BO.FCUSTID
+		          GROUP BY FCUSTID
+		         HAVING COUNT(1) = 3))
+		]]>
+	</update>
+
+	<!-- 客户竞标投标转持续发货状态 -->
+	<update id="updateBusinessOpportunityStepDeliver">
+		<![CDATA[ 
+		UPDATE T_MARK_BUSINESSOPPORTUNITY BO
+		   SET BO.FBUSINESSSTEP = 'DELIVER', BO.FLASTMODIFYTIME = SYSDATE
+		 WHERE BO.FBUSINESSSTEP = 'OFFER'
+		   AND BO.FCOMPETITION IS NOT NULL
+		   AND EXISTS
+		 (SELECT FCUSTID
+		          FROM (SELECT FYEAR,
+		                       FMONTH,
+		                       FCUSTID,
+		                       SUM(NVL(FFPREPAYAMOUNT, 0) + NVL(FARRIVEDAOUNT, 0) -
+		                           NVL(FAGENTRECEIVEPAY, 0) - NVL(FREFUNDRABATE, 0)) AS AMOUNT
+		                  FROM T_CRM_CUSTANALYSEBYDAY
+		                 WHERE FCANALYSETYPE = 1
+		                   AND FANALYSEDAY BETWEEN
+		                       TRUNC(ADD_MONTHS((SYSDATE - 1), -1), 'MM') AND
+		                       TRUNC(ADD_MONTHS((SYSDATE - 1), 1), 'MM') - 1
+		                 GROUP BY FYEAR, FMONTH, FCUSTID)
+		         WHERE FCUSTID = BO.FCUSTID
+		         GROUP BY FCUSTID
+		        HAVING COUNT('X') = 2 AND COUNT(CASE WHEN AMOUNT >= 10000 THEN AMOUNT ELSE NULL END) >= 1)
+		]]>
+	</update>
+
+	<!-- 往商机信息日志表中插入数据 -->
+	<insert id="insertOperationLogStepDeliver">
+		<![CDATA[
+			INSERT INTO T_MARK_BOOPERATIONLOG
+			  (FID, FBOID, FPREVSTEP, FCURRENTSTEP, FOPERATOR, FOPERATORTIME)
+			  SELECT SEQ_ID_BOOPERATIONLOG.NEXTVAL, BO.FID, 'OFFER', 'DELIVER', BO.FLASTMODIFYUSERID, SYSDATE
+			    FROM T_MARK_BUSINESSOPPORTUNITY BO
+			   WHERE BO.FBUSINESSSTEP = 'OFFER'
+			     AND BO.FCOMPETITION IS NOT NULL
+			     AND EXISTS
+			   (SELECT FCUSTID
+			            FROM (SELECT FYEAR,
+			                         FMONTH,
+			                         FCUSTID,
+			                         SUM(NVL(FFPREPAYAMOUNT, 0) + NVL(FARRIVEDAOUNT, 0) -
+			                             NVL(FAGENTRECEIVEPAY, 0) - NVL(FREFUNDRABATE, 0)) AS AMOUNT
+			                    FROM T_CRM_CUSTANALYSEBYDAY
+			                   WHERE FCANALYSETYPE = 1
+			                     AND FANALYSEDAY BETWEEN
+			                         TRUNC(ADD_MONTHS((SYSDATE - 1), -1), 'MM') AND
+			                         TRUNC(ADD_MONTHS((SYSDATE - 1), 1), 'MM') - 1
+			                   GROUP BY FYEAR, FMONTH, FCUSTID)
+			           WHERE FCUSTID = BO.FCUSTID
+			           GROUP BY FCUSTID
+			          HAVING COUNT('X') = 2 AND COUNT(CASE WHEN AMOUNT >= 10000 THEN AMOUNT ELSE NULL END) >= 1)]]>
+	</insert>
+
+	<!-- 商机效果评估报表日报表 -->
+	<select id="calcBoReportForDaily" statementType="CALLABLE">
+		<![CDATA[
+		{call sp_boreport_daily}
+		]]>
+	</select>
+
+
+	<!-- 商机效果评估报表查询 -->
+	<select id="queryBoReportByCondition" parameterType="map"
+		statementType="CALLABLE">    
+		<![CDATA[
+		{call sp_boreport_query(#{deptId,mode=IN,jdbcType=TIMESTAMP},
+							#{endTime,mode=IN,jdbcType=TIMESTAMP},
+							#{BoReportInfos,mode=OUT,jdbcType=CURSOR,javaType=java.sql.ResultSet,resultMap=BoReportInfo})}  
+		]]>
+	</select>
+</mapper>

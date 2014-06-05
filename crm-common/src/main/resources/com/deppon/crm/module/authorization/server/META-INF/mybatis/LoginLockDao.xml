@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.User">
+	<!-- 查询最后一次错误密码时间 -->
+	<select id="queryUserlastErrTime" resultType="DATE">
+		<![CDATA[
+			SELECT T.FLASTERRTIME FROM T_AUTH_USER T WHERE T.FLOGINNAME = #{loginName,jdbcType=VARCHAR}
+		]]>
+	</select>
+	
+	<!-- 新增最后一次错误时间 -->
+	<insert id="insertLastErrTime" parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+		<![CDATA[
+			UPDATE T_AUTH_USER T SET T.FLASTERRTIME = SYSDATE WHERE T.FLOGINNAME = #{loginName,jdbcType=VARCHAR} 
+		]]>
+	</insert>
+	<!-- 清除最后一次时间 -->
+	<update id="cleanUserlastErrTime" parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+		<![CDATA[
+			UPDATE T_AUTH_USER T SET T.FLASTERRTIME = NULL WHERE T.FLOGINNAME = #{loginName,jdbcType=VARCHAR} 
+		]]>
+	</update>
+	
+	<!-- 清除失败次数 -->
+	 <update id="cleanErrorTimes" parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+	 	<![CDATA[
+	 		UPDATE T_AUTH_USER T SET T.FERRORTIMES = 0 WHERE T.FLOGINNAME = #{loginName,jdbcType=VARCHAR} 
+	 	]]>
+	 </update>
+	 
+	 <!-- 查询错误次数queryErrorTimes -->
+	 <select id="queryErrorTimes" parameterType="com.deppon.crm.module.authorization.shared.domain.User" resultType="int">
+	 	<![CDATA[
+	 		SELECT T.FERRORTIMES FROM T_AUTH_USER T WHERE T.FLOGINNAME=#{loginName,jdbcType=VARCHAR}
+	 	]]>
+	 </select>
+	 
+	 <!-- 更新失败次数 -->
+	 <update id="updateErrorTimes" parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+	 	<![CDATA[
+	 		UPDATE T_AUTH_USER T SET T.FERRORTIMES = T.FERRORTIMES + 1 WHERE T.FLOGINNAME =#{loginName,jdbcType=VARCHAR}
+	 	]]>
+	 </update>
+</mapper>

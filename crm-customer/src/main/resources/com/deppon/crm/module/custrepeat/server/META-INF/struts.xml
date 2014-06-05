@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="custrepeat" namespace="/custrepeat" extends="crm-default">
+		
+	    <!--疑似重复客户列表页面-->
+		<action name="custRepeatSearch">
+			<result name="success">custRepeatSearch.html</result>
+	    </action>
+	    <!--查询疑似重复的主客户集合-->
+	    <action name="searchMainRepeatCustList" class="repeatedCustAction" method="searchMainRepeatCustList">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--查询疑似重复的客户组-根据主客户ID-->
+	    <action name="searchGroupRepeatCustList" class="repeatedCustAction" method="searchGroupRepeatCustList">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--查询疑似重复 确定重复处理-->
+	    <action name="confirmRepeat" class="repeatedCustAction" method="confirmRepeat">
+			<result name="success" type="json" />
+		</action>
+		<!--查询疑似重复客户 不重复处理-->
+	    <action name="confirmNotRepeat" class="repeatedCustAction" method="confirmNotRepeat">
+			<result name="success" type="json" />
+		</action>
+		<!-- 查询客户集合信息 -->
+		<action name="searchCustomerList" class="repeatedCustAction" method="searchCustomerList">
+			<result name="success" type="json" />
+		</action>
+		
+	</package>
+</struts>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.RegionPartition">
+	<sql id="searchRegionPartitionColumns">
+		<![CDATA[
+			SELECT
+			REG.FID id,
+			REG.FDEPTID deptId,
+			REG.FREGIONID regionId,
+			REG.FCREATEDATE createDate,
+			REG.FCREATEUSER createUser,
+			REG.FMODIFYDATE modifyDate,
+			REG.FMODIFYUSER modifyUser
+		]]>
+	</sql>
+	<sql id="regionDeptColumns">
+		<![CDATA[
+			SELECT DISTINCT
+				D.FID deptId,
+				D.FDEPTNAME deptName,
+				REG.FREGIONID regionId,
+				REG.FCREATEDATE createDate,
+				REG.FCREATEUSER createUser,
+				REG.FMODIFYDATE modifyDate,
+				REG.FMODIFYUSER modifyUser
+			FROM T_ORG_DEPARTMENT D
+			LEFT JOIN T_CRM_REGIONPARTITION REG
+			ON D.FID = REG.FDEPTID
+		]]>
+	</sql>
+	<sql id="regionDeptUnionColumns">
+		<![CDATA[
+			UNION					
+		]]>
+		<include refid="regionDeptColumns"/>
+		<![CDATA[
+			JOIN T_CRM_LADINGSTATION LA
+			ON D.FSTANDARDCODE = LA.FSTANDARDCODE
+			AND D.FPARENTID = #{parentId,jdbcType=VARCHAR}
+		]]>
+	</sql>
+	<select id="searchRegionDept" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchDeptCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.RegionPartition">
+		<include refid="regionDeptColumns"/>
+		<![CDATA[
+			JOIN T_CRM_DEPTCHARACTER C
+					ON D.FID = C.FDEPTID
+					AND C.FDEPTCHARACTER = #{authCharacter,jdbcType=VARCHAR} 
+					AND C.FOWNER = #{owner,jdbcType=VARCHAR}
+					AND D.FSTATUS = 1
+		]]>
+		<choose>
+			<when test="authCharacter == &quot;HEADQUARTERS&quot;">
+			</when>
+			<when test="authCharacter == &quot;DIVISION&quot;">
+				<![CDATA[
+					AND D.FPARENTID = #{parentId,jdbcType=VARCHAR}					
+				]]>
+				<include refid="regionDeptUnionColumns"/>
+				<![CDATA[
+					AND LA.FIFDIVISION = '1'					
+				]]>				
+			</when>
+			<when test="authCharacter == &quot;BIG_REGION&quot;">
+				<![CDATA[
+					AND D.FPARENTID = #{parentId,jdbcType=VARCHAR}				
+				]]>
+				<include refid="regionDeptUnionColumns"/>
+				<![CDATA[
+					AND LA.FIFBIGREGION = '1'
+				]]>	
+			</when>
+			<when test="authCharacter == &quot;SMALL_REGION&quot;">
+				<![CDATA[
+					AND D.FPARENTID = #{parentId,jdbcType=VARCHAR}		
+				]]>
+				<include refid="regionDeptUnionColumns"/>
+				<![CDATA[
+					AND LA.FIFSMALLREGION = '1'
+				]]>	
+			</when>
+			<when test="authCharacter == &quot;SALES_DEPARTMENT&quot;">
+				<![CDATA[
+					AND D.FPARENTID = #{deptId,jdbcType=VARCHAR}				
+				]]>
+				<include refid="regionDeptUnionColumns"/>
+				<![CDATA[
+					AND LA.FIFBUSSINESSDEPT = '1'
+				]]>
+			</when>
+		</choose>
+	</select>
+	<select id="searchDpetCharacterByDeptId" parameterType="map"
+		resultType="String">
+		<![CDATA[
+			SELECT DEPTCHARACTER FROM(
+				SELECT 1 ROW_ ,CA.FDEPTCHARACTER DEPTCHARACTER 
+				FROM T_CRM_DEPTCHARACTER CA
+				JOIN T_ORG_DEPARTMENT D
+				ON CA.FDEPTID = D.FID
+				WHERE CA.FDEPTID = #{deptId,jdbcType=VARCHAR}
+  			    AND CA.FOWNER = #{owner,jdbcType=VARCHAR}
+  			    AND D.FPRINCIPAL = #{empCode,jdbcType=VARCHAR}
+  			    AND D.FSTATUS=1
+			UNION
+			SELECT 
+     			2 ROW_ ,(CASE LA.FIFDIVISION||LA.FIFBIGREGION||LA.FIFSMALLREGION||LA.FIFBUSSINESSDEPT 
+           		WHEN '1000' THEN 'DIVISION' 
+           		WHEN '0100' THEN 'BIG_REGION'
+           		WHEN '0010' THEN 'SMALL_REGION'
+           		WHEN '0001' THEN 'SALES_DEPARTMENT'
+           		END ) DEPTCHARACTER
+			FROM T_CRM_LADINGSTATION LA
+			JOIN T_ORG_DEPARTMENT D
+			ON LA.FSTANDARDCODE = D.FSTANDARDCODE
+			WHERE D.FID = #{deptId,jdbcType=VARCHAR}
+			AND D.FPRINCIPAL = #{empCode,jdbcType=VARCHAR}
+			AND D.FSTATUS=1
+			ORDER BY ROW_
+			) WHERE ROWNUM = 1 AND DEPTCHARACTER IS NOT NULL
+		]]>
+	</select>
+	<select id="searchRegionByDeptId" resultType="com.deppon.crm.module.marketing.shared.domain.RegionPartition">
+		<include refid="searchRegionPartitionColumns"/>
+		<![CDATA[
+			FROM T_CRM_REGIONPARTITION REG
+			JOIN T_ORG_DEPARTMENT D
+			ON REG.FDEPTID = D.FID
+			WHERE REG.FDEPTID = #{deptId,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<select id="countRegionByDeptId" resultType="int">
+		<![CDATA[
+			SELECT COUNT(1)
+			FROM T_CRM_REGIONPARTITION REG
+			JOIN T_ORG_DEPARTMENT D
+			ON REG.FDEPTID = D.FID
+			WHERE REG.FDEPTID = #{deptId,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<select id="searchRegionByParentId" resultType="com.deppon.crm.module.marketing.shared.domain.RegionPartition">
+		<include refid="searchRegionPartitionColumns"/>
+		<![CDATA[
+			FROM T_CRM_REGIONPARTITION REG
+			JOIN T_ORG_DEPARTMENT D
+			ON REG.FDEPTID = D.FID
+			WHERE D.FPARENTID = #{parentId,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<insert id="insertRegionPartition" parameterType="com.deppon.crm.module.marketing.shared.domain.RegionPartition">
+		<![CDATA[
+			MERGE INTO T_CRM_REGIONPARTITION REG
+			USING(
+				SELECT
+					#{deptId,jdbcType=VARCHAR} FDEPTID,
+					#{regionId,jdbcType=VARCHAR} FREGIONID,
+					#{createDate,jdbcType=DATE} FCREATEDATE,
+					#{createUser,jdbcType=VARCHAR} FCREATEUSER,
+					#{modifyDate,jdbcType=DATE} FMODIFYDATE,
+					#{modifyUser,jdbcType=VARCHAR} FMODIFYUSER
+				FROM DUAL
+				) T1
+				ON( REG.FDEPTID = T1.FDEPTID )
+				WHEN MATCHED THEN
+				UPDATE SET 
+					REG.FREGIONID = T1.FREGIONID,
+					REG.FMODIFYDATE =  T1.FMODIFYDATE,
+					REG.FMODIFYUSER = T1.FMODIFYUSER
+				WHEN NOT MATCHED THEN
+				INSERT(
+					FID,
+					FDEPTID,
+					FREGIONID,
+					FCREATEDATE,
+					FCREATEUSER,
+					FMODIFYDATE,
+					FMODIFYUSER
+				) VALUES(
+					SEQ_ID_CRM_REGIONPARTITION.nextval,
+					T1.FDEPTID,
+					T1.FREGIONID,
+					T1.FCREATEDATE,
+					T1.FCREATEUSER,
+					T1.FMODIFYDATE,
+					T1.FMODIFYUSER
+				)
+		]]>
+	</insert>
+	<delete id="deleteRegionPartitionByDeptId">
+		<![CDATA[
+			DELETE FROM T_CRM_REGIONPARTITION 
+			WHERE FDEPTID = #{deptId,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	
+	<select id="searchRegionsByDeptId" parameterType="String"
+	resultType="com.deppon.crm.module.marketing.shared.domain.RegionPartition">
+	<![CDATA[
+	SELECT
+	      REG.FID id,
+	      REG.FDEPTID deptId,
+	      REG.FREGIONID regionId,
+	      REG.FCREATEDATE createDate,
+	      REG.FCREATEUSER createUser,
+	      REG.FMODIFYDATE modifyDate,
+	      REG.FMODIFYUSER modifyUser,
+	      DECODE(#{deptId,jdbcType=VARCHAR}-D.FPARENTID,0,1,2) color  
+      FROM T_CRM_REGIONPARTITION REG
+      JOIN T_ORG_DEPARTMENT D
+     	 ON REG.FDEPTID = D.FID
+      WHERE REG.FDEPTID=#{deptId,jdbcType=VARCHAR} 
+      OR (EXISTS (SELECT 1 FROM T_CRM_REGIONPARTITION R WHERE R.FDEPTID=#{deptId,jdbcType=VARCHAR})
+      AND  D.FPARENTID=#{deptId,jdbcType=VARCHAR})
+	]]>
+	</select>
+</mapper>
+
+

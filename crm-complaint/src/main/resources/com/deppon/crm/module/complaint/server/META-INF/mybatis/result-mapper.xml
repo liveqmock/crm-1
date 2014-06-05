@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.Result">
+	<resultMap id="baseResultMap"
+		type="com.deppon.crm.module.complaint.shared.domain.Result">
+		<id column="fid" property="fid" jdbcType="DECIMAL" />
+		<result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+		<result column="FCREATEUSERID" property="createuserid"
+			jdbcType="DECIMAL" />
+		<result column="FLASTUPDATETIME" property="lastupdatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="lastmodifyuserid"
+			jdbcType="DECIMAL" />
+		<result column="FCOMPLAINID" property="complainid" jdbcType="DECIMAL" />
+		<result column="FDEALMATTERS" property="dealmatters" jdbcType="VARCHAR" />
+		<result column="FTASKPARTMENTID" property="taskpartmentid"
+			jdbcType="DECIMAL" />
+			
+		<result column="FTASKPROPERTIES" property="taskproperties" jdbcType="VARCHAR" />
+		<result column="FFEEDTIMELIMIT" property="feedtimelimit"
+			jdbcType="DECIMAL" />
+		<result column="FPROCESSLTIMEIMIT" property="processtimelimit"
+			jdbcType="DECIMAL" />
+		<result column="FAPPDELAY" property="appdelay"
+			jdbcType="DECIMAL" />
+		<result column="FRESULTS" property="results" jdbcType="VARCHAR" />
+		<result column="FPRORECORD" property="prorecord" jdbcType="VARCHAR" />
+		<result column="FIFOVERTIME" property="ifovertime"
+			jdbcType="VARCHAR" />
+			
+		<result column="FIFMATURITY" property="ifmaturity" jdbcType="VARCHAR" />
+		<result column="FDEALMAN" property="dealman" jdbcType="VARCHAR" />
+		<result column="FDEALTIME" property="dealtime"
+			jdbcType="TIMESTAMP" />
+	    <result column="FSTAT" property="stat" jdbcType="VARCHAR" />
+	    <result column="FTASKDEPTNAME" property="ftaskDeptName" jdbcType="VARCHAR" />
+	    <result column="FDELAY" property="delay" jdbcType="VARCHAR" />
+	    <result column="FISBACK" property="isBack" jdbcType="VARCHAR" />
+	    <result column="lastprocessltimeimit" property="lastprocessltimeimit" jdbcType="DECIMAL" />
+	    <result column="lastfeedtimelimit" property="lastfeedtimelimit" jdbcType="DECIMAL" />
+	    <result column="FPROCESSTYPE" property="dealType" jdbcType="VARCHAR" />
+	    <result column="FPOSTPONEREASON" property="postponeReason" jdbcType="VARCHAR" />
+	    <result column="FJOBCODE" property="jobCode" jdbcType="VARCHAR" />
+	    <result column="FDEPTTYPE" property="deptType" jdbcType="VARCHAR" />
+	    <result column="FPROCSTANDARD" property="procStandard" jdbcType="VARCHAR" />
+	    
+	</resultMap>
+	
+	<sql id="insertResultFields">
+		FID, 
+		FCREATETIME, 
+		FCREATEUSERID, 
+		FLASTUPDATETIME, 
+		FLASTMODIFYUSERID,
+		FCOMPLAINID, 
+		FDEALMATTERS, 
+		FTASKPARTMENTID, 
+		FTASKPROPERTIES,
+		FFEEDTIMELIMIT, 
+		FPROCESSLTIMEIMIT, 
+		FDEALMAN, 
+		FDEALTIME,
+		FPROCESSTYPE,
+		FPOSTPONEREASON,
+		FTASKDEPTNAME,
+		FJOBCODE,
+		FPROCSTANDARD
+	</sql>
+		<!--处理结果select params -->
+	<sql id="select_Result">
+		FID, 
+		FCREATETIME, 
+		FCREATEUSERID, 
+		FLASTUPDATETIME, 
+		FLASTMODIFYUSERID,
+		FCOMPLAINID, 
+		FDEALMATTERS, 
+		FTASKPARTMENTID, 
+		FTASKPROPERTIES,
+		FFEEDTIMELIMIT, 
+		FPROCESSLTIMEIMIT, 
+		FAPPDELAY, 
+		FRESULTS, 
+		FPRORECORD,
+		FIFOVERTIME, 
+		FIFMATURITY, 
+		FDEALMAN, 
+		FDEALTIME,
+		FDELAY,
+		FISBACK,
+		FPROCESSTYPE,
+		FPOSTPONEREASON,
+		FJOBCODE,
+		FPROCSTANDARD
+	</sql>
+<!-- 	
+	<select id="getSeqId" resultType="int">
+		<![CDATA[
+			SELECT SEQ_ID_CUST_RESULT.NEXTVAL ID FROM DUAL
+		]]>
+	</select> -->
+	
+	<!-- 根据工单ID查询任务部门处理结果 -->
+	<select id="queryResultByComplaintId" resultMap="baseResultMap" parameterType="string">
+		<![CDATA[ 	select 	]]>
+		<include refid="select_Result" />
+ 		<![CDATA[
+			from  T_CUST_RESULT where FCOMPLAINID=#{complaintId} and fdepttype = 0
+		]]>
+	</select>
+	
+	<!-- 根据工单ID查询任务部门处理结果 (供complaint-mapper中的BaseResultMap使用)-->
+	<select id="queryResultByComplaintId4BaseResultMap" 
+		resultType="com.deppon.crm.module.complaint.shared.domain.Result" 
+		parameterType="string">
+		<![CDATA[ 	SELECT 	FID
+			FROM  T_CUST_RESULT WHERE FCOMPLAINID=#{complaintId} and fdepttype = 0
+		]]>
+	</select>
+	
+	<select id="selectResultByCompId" resultMap="baseResultMap"
+	parameterType="map">
+	 SELECT fid, fcreatetime, fcreateuserid, flastupdatetime, flastmodifyuserid, 
+		fcomplainid, fdealmatters, ftaskpartmentid, ftaskproperties, ffeedtimelimit, 
+		fprocessltimeimit, fappdelay, fresults, fprorecord, fifovertime, fifmaturity, 
+		fdealman, fdealtime, fstat, ftaskdeptname, fdelay,FISBACK,FPROCESSTYPE,FPOSTPONEREASON,FPROCSTANDARD
+		FROM T_CUST_RESULT
+		WHERE FCOMPLAINID=#{compId}	and fdepttype = 0
+		
+	</select>
+	
+		<!-- 查询任务部门处理结果_根据处理结果ID -->
+	<select id="queryResultByID" resultMap="baseResultMap"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.Result">
+		SELECT
+		<include refid="select_Result" />
+		FROM
+		T_CUST_RESULT 
+		WHERE FID
+		= #{id}
+	</select>
+	
+	<!-- 新增任务部门处理结果 -->
+	<insert id="insertResult"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.Result">
+		<selectKey keyProperty="fid" order="BEFORE" resultType="DECIMAL">
+			select SEQ_ID_CUST_RESULT.NEXTVAL as fid from dual
+		</selectKey>
+		
+		INSERT INTO
+		T_CUST_RESULT (
+		<include refid="insertResultFields" />
+		)values(
+		#{fid},
+		sysdate,
+		#{createuserid,dbcType=DECIMAL},
+		sysdate,
+		#{lastmodifyuserid,jdbcType=DECIMAL},
+		#{complainid,jdbcType=DECIMAL},
+		#{dealmatters,jdbcType=VARCHAR},
+		#{taskpartmentid,jdbcType=DECIMAL},
+		#{taskproperties,jdbcType=VARCHAR},
+		#{feedtimelimit,jdbcType=DECIMAL},
+		#{processtimelimit,jdbcType=DECIMAL},
+		#{dealman,jdbcType=VARCHAR},
+		#{dealtime,jdbcType=TIMESTAMP},
+		#{dealType,jdbcType=VARCHAR},
+		#{postponeReason,jdbcType=VARCHAR},
+		#{ftaskDeptName,jdbcType=VARCHAR},
+		#{jobCode,jdbcType=VARCHAR},
+		#{procStandard,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 新增出发部门处理结果 -->
+	<insert id="insertLEAVEResult"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.Result">
+		<selectKey keyProperty="fid" order="BEFORE" resultType="DECIMAL">
+			select SEQ_ID_CUST_RESULT.NEXTVAL as fid from dual
+		</selectKey>
+		
+		INSERT INTO
+		T_CUST_RESULT (
+			FID, 
+			FCREATETIME, 
+			FCREATEUSERID, 
+			FLASTUPDATETIME, 
+			FLASTMODIFYUSERID,
+			FCOMPLAINID, 
+			FDEALMATTERS, 
+			FTASKPARTMENTID, 
+			FTASKPROPERTIES,
+			FFEEDTIMELIMIT, 
+			FPROCESSLTIMEIMIT, 
+			FDEALMAN, 
+			FDEALTIME,
+			FPROCESSTYPE,
+			FPOSTPONEREASON,
+			FTASKDEPTNAME,
+			FJOBCODE,
+			FDEPTTYPE,
+			FPROCSTANDARD
+		)values(
+		#{fid},
+		sysdate,
+		#{createuserid,dbcType=DECIMAL},
+		sysdate,
+		#{lastmodifyuserid,jdbcType=DECIMAL},
+		#{complainid,jdbcType=DECIMAL},
+		#{dealmatters,jdbcType=VARCHAR},
+		#{taskpartmentid,jdbcType=DECIMAL},
+		#{taskproperties,jdbcType=VARCHAR},
+		#{feedtimelimit,jdbcType=DECIMAL},
+		#{processtimelimit,jdbcType=DECIMAL},
+		#{dealman,jdbcType=VARCHAR},
+		#{dealtime,jdbcType=TIMESTAMP},
+		#{dealType,jdbcType=VARCHAR},
+		#{postponeReason,jdbcType=VARCHAR},
+		#{ftaskDeptName,jdbcType=VARCHAR},
+		#{jobCode,jdbcType=VARCHAR},
+		#{deptType,jdbcType=CHAR},
+		#{procStandard,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 更新任务部门处理结果 -->
+	<update id="updateResult" parameterType="com.deppon.crm.module.complaint.shared.domain.Result">
+	UPDATE T_CUST_RESULT SET
+		<if test="createDate != null and createDate != ''">
+			FCREATETIME=#{createDate},
+		</if>
+		<if test="createUser != null and createUser != ''">
+			FCREATEUSERID=#{createUser},
+		</if>
+		<if test="modifyUser != null and modifyUser != ''">
+			FLASTMODIFYUSERID=#{modifyUser},
+		</if>
+		<if test="complainid != null and complainid != ''">
+			FCOMPLAINID=#{complainid},
+		</if>
+		<if test="dealmatters != null and dealmatters != ''">
+			FDEALMATTERS=#{dealmatters},
+		</if>
+		<if test="taskpartmentid != null and taskpartmentid != ''">
+			FTASKPARTMENTID=#{taskpartmentid},
+		</if>
+		<if test="taskproperties != null and taskproperties != ''">
+			FTASKPROPERTIES=#{taskproperties},
+		</if>
+		<if test="feedtimelimit != null">
+			FFEEDTIMELIMIT=#{feedtimelimit},
+		</if>
+		<if test="processtimelimit != null">
+			FPROCESSLTIMEIMIT=#{processtimelimit},
+		</if>
+		<if test="appdelay != null and appdelay != ''">
+			FAPPDELAY=#{appdelay},
+		</if>
+		<if test="results != null and results != ''">
+			FRESULTS=#{results},
+		</if>
+		<if test="prorecord != null and prorecord != ''">
+			FPRORECORD=#{prorecord},
+		</if>
+		<if test="ifovertime != null and ifovertime != ''">
+			FIFOVERTIME=#{ifovertime},
+		</if>
+		<if test="ifmaturity != null and ifmaturity != ''">
+			FIFMATURITY=#{ifmaturity},
+		</if>
+		<if test="dealman != null and dealman != ''">
+			FDEALMAN=#{dealman},
+		</if>
+		<if test="dealtime != null and dealtime != ''">
+			FDEALTIME=#{dealtime},
+		</if>		
+		FSTAT=#{stat, jdbcType=VARCHAR},		
+		<if test="delay != null and delay != ''">
+			FDELAY=#{delay},
+		</if>
+		<if test="isBack != null and isBack != ''">
+			<if test="isBack == 'clear'">
+				FISBACK=null,
+			</if>
+			<if test="isBack != 'clear'">
+				FISBACK=#{isBack},
+			</if>
+		</if>
+		<if test="dealType != null and dealType != ''">
+			FPROCESSTYPE=#{dealType},
+		</if>
+		<if test="postponeReason!= null and postponeReason!=''">
+			FPOSTPONEREASON=#{postponeReason},
+		</if>	
+		<if test="ftaskDeptName!= null and ftaskDeptName!=''">
+			FTASKDEPTNAME=#{ftaskDeptName},
+		</if>
+		<if test="jobCode != null">
+			FJOBCODE=#{jobCode},
+		</if>
+		<if test="procStandard != null">
+			FPROCSTANDARD=#{procStandard},
+		</if>
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{fid}
+
+	</update>
+	
+	<delete id="deleteResult" parameterType="com.deppon.crm.module.complaint.shared.domain.Result">
+		DELETE FROM T_CUST_RESULT 
+        WHERE FID=#{fid}  
+	</delete>
+	
+	<select id="searchResultByCondition" resultMap="baseResultMap"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.ResultSearchCondition">
+		SELECT
+		    results.FID as FID, 
+		    results.FCREATETIME as FCREATETIME, 
+		    results.FCREATEUSERID as FCREATEUSERID, 
+		    results.FLASTUPDATETIME as FLASTUPDATETIME, 
+		    results.FLASTMODIFYUSERID as FLASTMODIFYUSERID,
+		    results.FPROCESSTYPE as FPROCESSTYPE,
+		    results.FPROCSTANDARD as FPROCSTANDARD,
+		    FCOMPLAINID, 
+		    FDEALMATTERS, 
+		    FTASKPARTMENTID,  
+		    FTASKPROPERTIES,
+		    FFEEDTIMELIMIT, 
+		    FPROCESSLTIMEIMIT, 
+		    results.FAPPDELAY as FAPPDELAY, 
+		    FRESULTS, 
+		    FPRORECORD,
+		    FIFOVERTIME, 
+		    FIFMATURITY, 
+		    EMPLOYEE.Fempname AS FDEALMAN,
+		    FDEALTIME,
+			FISBACK,
+			FSTAT,
+			FPOSTPONEREASON,
+			FDELAY,
+		    department.fdeptname as ftaskDeptName
+	    FROM T_CUST_RESULT results
+	    LEFT JOIN t_org_employee EMPLOYEE on EMPLOYEE.FEMPCODE=results.fdealman
+	    LEFT JOIN t_org_department department on department.fid=results.ftaskpartmentid
+		WHERE 1=1 and results.fdepttype = 0 
+		<if test="null != complainid and  '' != complainid" >
+			AND FCOMPLAINID=#{complainid}
+		</if>
+		<if test="null != taskpartmentid and '' != taskpartmentid">
+			 AND FTASKPARTMENTID=#{taskpartmentid}
+		</if>
+		<if test="null != stat and  '' != stat" >
+			AND FSTAT=#{stat}
+		</if>
+		<if test="null != delay and  '' != delay" >
+			AND FDELAY=#{delay}
+		</if>
+	</select>
+	
+		<!-- 根据工单ID查询任务部门处理结果 -->
+	<select id="getExpireResultByComplaintId" resultMap="baseResultMap" parameterType="com.deppon.crm.module.complaint.shared.domain.Complaint">
+		<![CDATA[ 	select 	]]>
+		<include refid="select_Result" />
+ 		
+			from  T_CUST_RESULT where FCOMPLAINID=#{fid} and fdepttype = 0
+		<![CDATA[
+		and ((fprocessltimeimit-((sysdate-to_date(to_char(fcreatetime,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss'))*24))<0)
+		]]>
+	</select>
+	
+	<select id="getExpireFeedBackResultByComplaintId" resultMap="baseResultMap" parameterType="com.deppon.crm.module.complaint.shared.domain.Complaint">
+		<![CDATA[ 	select 	]]>
+		<include refid="select_Result" />
+ 		
+			from  T_CUST_RESULT where FCOMPLAINID=#{fid} and fdepttype = 0
+		<![CDATA[
+		and ((FFEEDTIMELIMIT-((sysdate-to_date(to_char(fcreatetime,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss'))*24*60))<0)
+		]]>
+	</select>
+	<select id="getResultInfoByCompId" resultMap="baseResultMap"
+	parameterType="map">
+		select t.*,
+       decode(lastprocessltimeimit, 0, 1, 0) fifovertime,
+       decode(lastfeedtimelimit, 0, 1, 0) fifmaturity
+  from (SELECT fid,
+               decode( SIGN(round(fprocessltimeimit - (decode(fdealtime, null, sysdate, fdealtime) - to_date(to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss'), 'yyyy-mm-dd hh24:mi:ss')) * 24) ), - 1,0,round(fprocessltimeimit - (decode(fdealtime, null, sysdate, fdealtime) - to_date(to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss'), 'yyyy-mm-dd hh24:mi:ss')) * 24) )lastprocessltimeimit,
+               decode(SIGN(round(ffeedtimelimit -
+                                 (decode(fdealtime, null, sysdate, fdealtime) -
+                                 to_date(to_char(fcreatetime,
+                                                  'yyyy-mm-dd hh24:mi:ss'),
+                                          'yyyy-mm-dd hh24:mi:ss')) * 24 * 60) ), - 1,
+               0,round(ffeedtimelimit -
+                       (decode(fdealtime, null, sysdate, fdealtime) -
+                       to_date(to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss'),
+                                'yyyy-mm-dd hh24:mi:ss')) * 24 * 60) ) lastfeedtimelimit,
+               fcreatetime,
+               fcreateuserid,
+               flastupdatetime,
+               flastmodifyuserid,
+               fcomplainid,
+               fdealmatters,
+               ftaskpartmentid,
+               fprocessltimeimit,
+               fappdelay,
+				(select fcodedesc
+                  from t_code_detail
+                 where fcode = ftaskproperties) || ':' ||
+               decode(r.fprocesstype,
+                       'employee',
+                       (select fempname from t_org_employee where fid = ftaskpartmentid ),
+                       (select fdeptname from t_org_department where fid = ftaskpartmentid) ) fresults,
+               (select fempname from T_ORG_EMPLOYEE
+                  where fid = r.fcreateuserid) || '于' ||
+               to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss ') || '处理' fprorecord,
+               (select fempname from T_ORG_EMPLOYEE where fempcode = fdealman) fdealman,
+               fdealtime,
+               fstat,
+               ftaskdeptname,
+               fdelay,
+               FISBACK,
+               FFEEDTIMELIMIT,
+               FPROCESSTYPE,
+               ftaskproperties,
+               fjobcode,
+               FPROCSTANDARD
+          FROM T_CUST_RESULT r
+         WHERE FCOMPLAINID = #{compId} and fdepttype = 0) t
+	</select>
+	
+	<select id="getReturnResultInfoByCompId" resultMap="baseResultMap"
+	parameterType="map">
+		select t.*,
+       decode(lastprocessltimeimit, 0, 1, 0) fifovertime,
+       decode(lastfeedtimelimit, 0, 1, 0) fifmaturity
+  from (SELECT fid,
+               decode( SIGN(round(fprocessltimeimit - (decode(fdealtime, null, sysdate, fdealtime) - to_date(to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss'), 'yyyy-mm-dd hh24:mi:ss')) * 24) ), - 1,0,round(fprocessltimeimit - (decode(fdealtime, null, sysdate, fdealtime) - to_date(to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss'), 'yyyy-mm-dd hh24:mi:ss')) * 24) )lastprocessltimeimit,
+               decode(SIGN(round(ffeedtimelimit -
+                                 (decode(fdealtime, null, sysdate, fdealtime) -
+                                 to_date(to_char(fcreatetime,
+                                                  'yyyy-mm-dd hh24:mi:ss'),
+                                          'yyyy-mm-dd hh24:mi:ss')) * 24 * 60) ), - 1,
+               0,round(ffeedtimelimit -
+                       (decode(fdealtime, null, sysdate, fdealtime) -
+                       to_date(to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss'),
+                                'yyyy-mm-dd hh24:mi:ss')) * 24 * 60) ) lastfeedtimelimit,
+               fcreatetime,
+               fcreateuserid,
+               flastupdatetime,
+               flastmodifyuserid,
+               fcomplainid,
+               fdealmatters,
+               ftaskpartmentid,
+               fprocessltimeimit,
+               fappdelay,
+               (select fcodedesc
+                  from t_code_detail
+                 where fcode = ftaskproperties) || ':' ||
+               decode(r.fprocesstype,
+                       'employee',
+                       (select fempname from t_org_employee where fid = ftaskpartmentid ),
+                       (select fdeptname from t_org_department where fid = ftaskpartmentid) ) fresults,
+               (select fempname from T_ORG_EMPLOYEE
+                  where fid = r.fcreateuserid) || '于' ||
+               to_char(fcreatetime, 'yyyy-mm-dd hh24:mi:ss ') || '处理' fprorecord,
+               (select fempname from T_ORG_EMPLOYEE where fempcode = fdealman) fdealman,
+               fdealtime,
+               fstat,
+               ftaskdeptname,
+               fdelay,
+               FISBACK,
+               FFEEDTIMELIMIT,
+               FPROCESSTYPE,
+               ftaskproperties,
+               fjobcode,
+               FPROCSTANDARD
+          FROM T_CUST_RESULT r
+         WHERE FCOMPLAINID = #{compId} and fdepttype = 0 and (fstat = 'TASK_RETURNED'
+           or  FCOMPLAINID in (select tc.fid 
+                    from t_cust_complaint tc
+                   where tc.fid =#{compId}
+                     and tc.fprostatus in ('DEPT_RETURNED_UPGRADE',
+                                          'DEPT_RETURNED_PROCESS_ALL',
+                                          'DEPT_RETURNED_APPROVAL_ALL',
+                                          'APPROVAL_RETURNED')
+             ))
+           ) t
+	</select>
+</mapper>

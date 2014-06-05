@@ -1,0 +1,67 @@
+<style>
+.dp_table {
+	font-family:微软雅黑;
+	table-layout:fixed;
+	border-collapse:collapse;
+	border-spacing:0;
+	border:1px solid #ccc;
+	border-top:0;
+	margin:10px auto;
+	width:600px;
+}
+.dp_table td{
+	padding:5px;
+	font-size:13px;
+	border-top:1px solid #ccc;
+}
+.dp_table th{
+	border-top:1px solid #ccc;
+	padding:5px;
+	font-size:13px;
+	font-family:微软雅黑;
+	font-weight:normal;
+	width:80px;
+	padding:5px 10px;
+	border-right:1px solid #ccc;
+	background-color:#f6f6f6;
+	background-image:-webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f6f6f6), color-stop(100%, #e9e9e9));
+}
+</style>
+
+<font class="dp_font"> 同事您好！<br /></font> 
+#if($sendType=="attachments")
+<font class="dp_font"> 
+&nbsp;&nbsp;附件《信用较差客户明细表-$title》为$deptName 截止$year年$month月$day日信用较差客户明细表，请及时查看并做好应收账款工作！
+</font> 
+#elseif($sendType=="NoAttachments")
+<font class="dp_font"> 
+&nbsp;&nbsp;《信用较差客户明细表-$title》为$deptName 截止$year年$month月$day日信用较差客户明细表，因文件较大故不进行附件发送，请到CRM中查看并做好应收账款工作！
+</font> 
+#end
+</p>
+<font class="dp_font"> 此邮件是由系统自动生成.</font></p>
+<div> 
+  <font class="dp_font"> 生成规则（满足以下条件）： </font>
+  <table class="dp_table">
+    <tr>
+      <th>1</th>
+      <td>临时欠款超过$maxOverdraftDay天未还临时欠款客户</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>按照月结合同规定时间后$monthEndOvertake天未还款的月结客户</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>逾期$overdueMonth天未还款的客户</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>最长一笔临欠达到$earliestDay天（含）的临时欠款客户</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>距离规定结款日期前$beforePaymentdateDay天未还款的月结客户</td>
+    </tr>
+  </table>
+</div>

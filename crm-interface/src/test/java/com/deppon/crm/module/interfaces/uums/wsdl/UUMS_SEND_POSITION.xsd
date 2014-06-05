@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/uums/inteface/domain/usermanagement"
+	xmlns:tns="http://www.deppon.com/uums/inteface/domain/usermanagement" elementFormDefault="qualified">
+	
+	<complexType name="SendPositionRequest">
+        <annotation>
+        	<documentation>职位信息中有员工职位信息，此数据存储在UUMS系统中，故需要将职位信息从UUMS系统同步至业务系统；</documentation></annotation>
+        <sequence>
+			<element name="positionInfo" type="tns:PositionInfo" minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>职位信息</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="PositionInfo">
+		<sequence>
+			<element name="id" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位信息ID</documentation>
+				</annotation>
+			</element>
+			<element name="positionChangeId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位信息变动ID</documentation>
+				</annotation>
+			</element>
+			<element name="positionCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位编码</documentation>
+				</annotation>
+			</element>
+			<element name="positionName" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位名称</documentation>
+				</annotation>
+			</element>
+			<element name="lastModifyTime" type="dateTime" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>最后更新时间</documentation>
+				</annotation>
+			</element>
+			<element name="status" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>信息状态：1-已撤销；2-未撤销</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SendPositionResponse">
+		<sequence>
+			<element name="successCount" type="int" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>成功总数</documentation>
+				</annotation>
+			</element>
+			<element name="failedCount" type="int" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>失败总数</documentation>
+				</annotation>
+			</element>
+			<element name="processResult" type="tns:SendPositionProcessReult" minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>处理明细</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SendPositionProcessReult">
+		<sequence>
+			<element name="positionChangeId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位信息变动ID</documentation>
+				</annotation>
+			</element>
+			<element name="result" type="boolean" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>处理结果，是否成功 [0: 失败, 1： 成功]</documentation>
+				</annotation>
+			</element>
+			<element name="reason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+			 
+			<element name="positionCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位编码</documentation>
+				</annotation>
+			</element>
+			<element name="positionName" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位名称</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-删除</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+
+	<element name="SendPositionRequest" type="tns:SendPositionRequest">
+	</element>
+
+	<element name="SendPositionResponse" type="tns:SendPositionResponse">
+	</element>
+
+</schema>

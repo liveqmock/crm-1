@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.multipart.maxSize" value="524288000" />
+	<package name="common" namespace="/common" extends="crm-default">
+
+<!-- 安全控件访问 -->
+		<action name="checkHardwareInfo" class="checkHardwareAction"
+			method="checkHardwareInfo">
+			<result name="success" type="stringResult" >
+				<param name="stringName">token</param>
+			</result>
+		</action>
+		
+
+		<action name="uploadTest">
+			<result name="success">Upload.html</result>
+		</action>
+		<!-- 通过数据字典key,得到所有的数据字典数据 -->
+		<action name="queryAllDataDictionaryByKeys"
+			class="com.deppon.crm.module.common.server.action.DataDictionaryAction"
+			method="queryAllDataDictionaryByKeys">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="areaAddressIndex" class="areaAddressAction"
+			method="areaAddressIndex">
+			<result name="success">/WEB-INF/pages/common/areaTabPanel.html</result>
+		</action>
+		<action name="searchCommonCities" class="areaAddressAction"
+			method="searchCommonCities">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchCitiesByName" class="areaAddressAction"
+			method="searchCitiesByName">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchAllProvinceList" class="areaAddressAction"
+			method="searchAllProvinceList">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchAreaByCity" class="areaAddressAction"
+			method="searchAreaByCity">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchCityByProvince" class="areaAddressAction"
+			method="searchCityByProvince">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--问题反馈-->
+		<action name="showProblemList" class="problemAction"
+			method="showProblemList">
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="searchCityById" class="areaAddressAction" method="searchCityById">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchProvinceById" class="areaAddressAction"
+			method="searchProvinceById">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchAreaById" class="areaAddressAction" method="searchAreaById">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 银行信息action -->
+		<action name="searchBankInfoByBankView" class="bankInfoAction"
+			method="searchBankInfoByBankView">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 获取用户信息 -->
+		<action name="queryUserInfo"
+			class="com.deppon.crm.module.login.server.action.IndexAction" method="queryUserInfo">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 得到登陆用户默认所在部门所在城市 -->
+		<action name="acquireDeptCity" class="businessDeptAction"
+			method="acquireDeptCity">
+			<result name="success" type="json">
+				<param name="includeProperties">currentCity</param>
+			</result>
+		</action>
+		<!-- 当前登录用户所属部门集合 -->
+		<action name="acquireCurrentUserDeptList" class="businessDeptAction"
+			method="acquireCurrentUserDeptList">
+			<result name="success" type="json">
+				<param name="includeProperties">currentUserDeptList</param>
+			</result>
+		</action>
+
+
+		<!-- 部门选择器action -->
+		<action name="searchDeptByDeptName"
+			class="com.deppon.crm.module.organization.server.action.SearchDeptAndEmployeeAction"
+			method="searchDeptByDeptName">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 用户选择器action -->
+		<action name="searchEmpByCondition"
+			class="com.deppon.crm.module.organization.server.action.SearchDeptAndEmployeeAction"
+			method="searchEmpByCondition">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 文件上传 不保存到数据库 -->
+		<action name="fileUpload"
+			class="com.deppon.crm.module.common.file.action.FileUploadAction"
+			method="fileUpload">
+			<result name="success" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="error" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+
+		<!-- 文件下载 -->
+		<action name="downLoad"
+			class="com.deppon.crm.module.common.file.action.FileDownLoadAction"
+			method="downLoad">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream;charset=ISO8859-1</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+			</result>
+		</action>
+
+		<!-- 模板下载 -->
+		<action name="templateDownLoad"
+			class="com.deppon.crm.module.common.file.action.FileTemplateDownLoadAction"
+			method="templateDownLoad">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream;charset=ISO8859-1</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+			</result>
+		</action>
+
+		<!-- 文件删除（删除数据库中的数据，同时删除磁盘上的文件） -->
+		<action name="deleteFileInfo"
+			class="com.deppon.crm.module.common.file.action.FileOperateAction"
+			method="deleteFileInfo">
+			<result name="success" type="json">
+			</result>
+		</action>
+
+		<!-- 文件查询（sourceId、sourceType必需，比如：想查询合同ID为1的这个合同的附件，sourceId就设为1，sourceType设为HETONG(与新增时设置的值一致)） -->
+		<action name="searchListByCondition"
+			class="com.deppon.crm.module.common.file.action.FileOperateAction"
+			method="searchListByCondition">
+			<result name="success" type="json">
+			</result>
+		</action>
+
+		<!-- hpf-跳转-大小城市页面 -->
+		<action name="citySearchIndex">
+			<result name="success">/WEB-INF/pages/common/citySearch.html</result>
+		</action>
+		<!-- hpf-查询-大小城市集合 -->
+		<action name="searchCityList" method="searchCityList" class="authorizeAction">
+			<result name="success" type="json">
+				<param name="includeProperties">cityList,totalCount</param>
+			</result>
+		</action>
+		<!-- 进入 “始发网点与受理部门基础资料”页面 -->
+		<action name="landStatDept">
+			<result name="success">/WEB-INF/pages/common/ladingStationDepartPanel.html
+			</result>
+		</action>
+		<!-- 搜索所有始发网点与受理部门基础资料 -->
+		<action name="searchLadingStatDeptByCondition" class="ladingStationDeptAction"
+			method="searchLadingStatDeptByCondition">
+			<result name="success" type="json">
+				<param name="includeProperties">landStatDepartList,totalCount</param>
+			</result>
+		</action>
+		<!-- hpf-跳转-城市省份维护 -->
+		<action name="regionIndex">
+			<result name="success">/WEB-INF/pages/common/regionIndex.html</result>
+		</action>
+		<!-- hpf-查询-省份集合- 分页 -->
+		<action name="searchProvinceList_pager" method="searchProvinceList_pager"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties">provinceList,totalCount</param>
+			</result>
+		</action>
+		<!-- hpf-查询-城市集合-分页 -->
+		<action name="searchCityList_pager" method="searchCityList_pager"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties">cityList,totalCount</param>
+			</result>
+		</action>
+		<!-- hpf-查询-区县集合-分页 -->
+		<action name="searchAreaList_pager" method="searchAreaList_pager"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties">areaList,totalCount</param>
+			</result>
+		</action>
+		<!-- hpf-查询-省份集合 -->
+		<action name="searchProvinceList" method="searchProvinceList"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties">provinceList</param>
+			</result>
+		</action>
+
+		<!-- hpf-查询-城市集合-根据省份id -->
+		<action name="searchCityListById" method="searchCityListById"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties">cityList</param>
+			</result>
+		</action>
+
+		<!-- hpf-保存或修改-省份信息 -->
+		<action name="saveOrUpdateProvince" method="saveOrUpdateProvince"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties"></param>
+			</result>
+		</action>
+		<!-- hpf-保存或修改-城市信息 -->
+		<action name="saveOrUpdateCity" method="saveOrUpdateCity"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties"></param>
+			</result>
+		</action>
+		<!-- hpf-保存或修改-区县信息 -->
+		<action name="saveOrUpdateArea" method="saveOrUpdateArea"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties"></param>
+			</result>
+		</action>
+
+
+		<!-- hpf-删除-省份信息 -->
+		<action name="deleteProvinceList" method="deleteProvinceList"
+			class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties"></param>
+			</result>
+		</action>
+
+		<!-- hpf-删除-城市信息 -->
+		<action name="deleteCityList" method="deleteCityList" class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties"></param>
+			</result>
+		</action>
+
+		<!-- hpf-删除-区县信息 -->
+		<action name="deleteAreaList" method="deleteAreaList" class="RegionAction">
+			<result name="success" type="json">
+				<param name="includeProperties"></param>
+			</result>
+		</action>
+
+		<!-- 修改始发网点与受理部门基础资料 -->
+		<action name="editLadingstationDepartment" class="ladingStationDeptAction"
+			method="editLadingstationDepartment">
+			<result name="success" type="json" />
+		</action>
+
+
+		<!-- 始发网点模糊查询 -->
+		<action name="searchStartNetByDeptName" class="ladingStationDeptAction"
+			method="searchStartNetByDeptName">
+			<result name="success" type="json">
+				<param name="includeProperties">startNetList</param>
+			</result>
+		</action>
+
+		<!-- 新增始发网点与受理部门关系 -->
+		<action name="createLadingstationDepartment" class="ladingStationDeptAction"
+			method="createLadingstationDepartment">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 批量导入始发网点与受理部门关系 -->
+		<action name="importLadingstationDept" class="ladingStationDeptAction"
+			method="importLadingstationDept">
+			<result name="success" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="error" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+
+		<!-- 删除始发网点与受理部门关系 -->
+		<action name="invalidLadingstationDepartment" class="ladingStationDeptAction" method="invalidLadingstationDept">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 发送超级信息sHtml给后端 -->
+		<action name="addSuperMessage" class="messageAction" method="addSuperMessage">
+			<result name="success" type="json"/>
+		</action>
+		
+		<!-- 发送超级信息页面 -->
+        <action name="sendSuperMsg" >
+			<result name="success">sendSuperHtml.html</result>
+	    </action>
+	    
+	    <!-- 帮助系统：增、修、删、查/用力查 -->
+		<action name="addDoc" class="helpDocAction" method="addHelpDoc">
+			<result name="success" type="json"/><!-- 新增 -->
+		</action>
+		<action name="updDoc" class="helpDocAction" method="updateHelpDocById">
+			<result name="success" type="json"/><!-- 修改 -->
+		</action>
+		<action name="delDoc" class="helpDocAction" method="deleteHelpDocById">
+			<result name="success" type="json"/><!-- 删除 -->
+		</action>
+		<action name="searchDoc" class="helpDocAction" method="searchHelpDocByCondition">
+			<result name="success" type="json"/><!-- 查询: -->
+		</action>
+		<action name="searchDocById" class="helpDocAction" method="searchHelpDocById">
+			<result name="success" type="json"/><!-- 查询：使用id()(未使用) -->
+		</action>
+		<action name="searchDocByNum" class="helpDocAction" method="searchHelpDocByWindowNum">
+			<result name="success" type="json"/><!-- 查询：使用windowNum(未使用)-->
+		</action>
+        <action name="docManagement" >			<!-- 帮助管理后台界面 -->
+			<result name="success">docManagement.html</result>
+	    </action>
+
+	    <!-- 公告系统：增、修、删、查/用力查	帮助管理后台界面 -->
+		
+		<action name="searchNotices" class="noticeAction" method="searchNotices">
+			<result name="success" type="json"/><!-- 1.查询全部公告(无条件): -->
+		</action>
+		
+		<action name="addNotice" class="noticeAction" method="addNotice">
+			<result name="success" type="json"/><!-- 2.新增 -->
+		</action>
+		<action name="updateNotice" class="noticeAction" method="updateNotice">
+			<result name="success" type="json"/><!-- 3.更新单条公告 -->
+		</action>
+		<action name="deleteNoticeById" class="noticeAction" method="deleteNoticeById">
+			<result name="success" type="json"/><!-- 4.删除单条公告 -->
+		</action>
+		<action name="delteNoticesByIdList" class="noticeAction" method="delteNoticesByIdList">
+			<result name="success" type="json"/><!-- 5.批量删除公告 -->
+		</action>
+		<action name="changeStatus" class="noticeAction" method="updateNoticesByIdList">
+			<result name="success" type="json"/><!-- 6.批量更改公告action为false -->
+		</action>
+
+	    <action name="searchIndexNotices" class="noticeAction" method="searchIndexNotices">
+			<result name="success" type="json"/><!-- 7.首页默认查询: -->
+		</action>
+		
+		<action name="moreNotice" >
+			<result name="success">/WEB-INF/pages/common/moreNotice.html</result><!-- 8.跳转到更多公告界面 -->
+		</action>
+		
+		<action name="searchMoreNotices" class="noticeAction" method="searchMoreNotices">
+			<result name="success" type="json"/><!-- 9.更多公告界面查询 -->
+		</action>
+		
+		<action name="updateNoticeVisitsById" class="noticeAction" method="updateNoticeVisitsById">
+			<result name="success" type="json"/><!-- 10.更新访问次数: -->
+		</action>
+		
+		<action name="topNotice" class="noticeAction" method="topNotice">
+			<result name="success" type="json" /><!--11.置顶公告-->
+		</action>
+		
+        <action name="noticeManagement" >			<!-- 帮助管理后台界面 -->
+			<result name="success">noticeManagement.html</result>
+	    </action>
+	    	<!--8.工作日维护-->
+		<action name="specialDay">
+			<result name="success">specialDay.html</result>
+		</action>
+		
+		<!--9.根据输入条件查询-->
+		<action name="searchSpecialDayByCondition" class="specialDayAction"
+			method="searchSpecialDayByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--10.新增-->
+		<action name="submitSpecialDay" class="specialDayAction"
+			method="submitSpecialDay">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--11.根据ID查询-->
+		<action name="getSpecialDayById" class="specialDayAction"
+			method="getSpecialDayById">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--12.修改-->
+		<action name="updateSpecialDay" class="specialDayAction"
+			method="updateSpecialDay">
+			<result name="success" type="json"></result>
+		</action>
+		
+		
+		<!--13.p量删除-->
+		<action name="deleteSpecialDayByIdArrayList" class="specialDayAction"
+			method="deleteSpecialDayByIdArrayList">
+			<result name="success" type="json"></result>
+		</action>
+	    
+	    <action name="findNoticeById" class="noticeAction" method="findNoticeById">
+			<result name="success" type="json"/><!-- .根据ID查询公告: -->
+		</action>
+		
+		<action name="searchIndexNewNotice" class="noticeAction" method="searchIndexNewNotice">
+			<result name="success" type="json"/><!-- .查询最新的一条公告: -->
+		</action>
+		
+		<!-- 公告预览html界面 -->
+		 <action name="noticePriviewWin">
+			<result name="success">/WEB-INF/pages/common/noticePreviewWin.html</result>
+	    </action>
+	    
+	    <!-- 公告详情html界面 -->
+		 <action name="noticeDetailWin">
+			<result name="success">/WEB-INF/pages/common/noticeDetailWin.html</result>
+	    </action> 
+	    <!-- 数据字典维护的html页面 -->
+		<action name="dDetail">
+			<result name="success">/WEB-INF/pages/common/dataDictionary.html</result>
+		</action>
+		<!-- 数据字典头维护的html页面 -->
+		<action name="dHead">
+			<result name="success">/WEB-INF/pages/common/dataDictionaryHead.html</result>
+		</action>
+		 <!-- 查询数据字典头，详细 -->
+		<action name="querydetailbyconditions" class="datadictionaryManagementAction"
+			method="querydetailbyconditions">
+			<result name="success" type="json"></result>
+		</action>
+	     <!-- 查询数据字典头 -->
+		<action name="queryheadall" class="datadictionaryManagementAction"
+			method="queryheadall">
+			<result name="success" type="json"></result>
+		</action>
+		  <!-- 新增数据字典详细 -->
+		<action name="insertdetail" class="datadictionaryManagementAction"
+			method="insertdetail">
+			<result name="success" type="json"></result>
+		</action>
+		  <!-- 修改数据字典详细 -->
+		<action name="updatedetailnew" class="datadictionaryManagementAction"
+			method="updatedetailnew">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 删除数据字典详细 -->
+		<action name="deldetail" class="datadictionaryManagementAction"
+			method="deldetail">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 修改数据字典头 -->
+		<action name="updateHead" class="datadictionaryManagementAction"
+			method="updateHead">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 删除数据字典头 -->
+		<action name="delHead" class="datadictionaryManagementAction"
+			method="delHead">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 新增数据字典头 -->  
+		<action name="insertHead" class="datadictionaryManagementAction"
+			method="insertHead">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 根据编码类型判断是否有关联 -->  
+		<action name="querydetailbycodetype" class="datadictionaryManagementAction"
+			method="querydetailbycodetype">
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+</struts>

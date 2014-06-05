@@ -1,0 +1,3094 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.AlterMember">
+
+	<!-- 维护 -->
+	<update id="updateLinkmanCustType" parameterType="com.deppon.crm.module.customer.shared.domain.Member">
+	<![CDATA[
+		UPDATE T_CUST_CUSTLINKMAN LL
+		SET LL.FBELONGCUSTTYPE = #{custType,jdbcType=VARCHAR}
+		WHERE  LL.FISMAINLINKMAN = '1' 
+		       AND LL.FCUSTID = #{id,jdbcType=NUMERIC}  
+	]]>
+	</update>	
+<!-- 根据ID查询联系人信息 没有会员信息 -->
+	<select id="queryContactNoMemberByNumber" resultMap="ContactNoMemberRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CT 
+					
+				WHERE 
+					CT.FNUMBER = #{number} 
+				AND 
+					CT.FSTATUS <> 2
+		]]>
+	</select>
+
+	<!-- 根据日志ID查询修改数据 -->
+	<select id="searchApproveDataByLogId" resultMap="approveDataRM">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="ApproveData_column" />
+		<![CDATA[	
+		  	FROM 
+		  		T_CUST_APPROVEDATA AD
+		  	WHERE 
+		  		AD.fmemberOperationLogId = #{logId} 
+		]]>
+	</select>
+	
+	<!-- 查询会员是否为临担的月结合同客户 -->
+	<select id="queryMemberIsMethodCust" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(*)
+			 FROM 
+			 	T_CUST_CONTRACT C
+			 INNER JOIN 
+			 	T_CUST_CONTRACTDEPT D 
+			 ON 
+			 	C.FID = D.FCONTRACTID
+			 WHERE 
+			 	C.FCONTRACTSTATUS = '1'
+			 	AND C.FPAYWAY = 'MONTH_END'
+			 	AND C.FCONTRACTBEGINDATE <= SYSDATE
+			    AND C.FCUSTID = #{custId} 
+			    AND D.FDEPTID = #{deptId} 
+		]]>
+	</select>
+
+	<!-- 查询会员是否为快递的月结合同客户-->
+	<select id="queryMemberIsExpPayWayCust" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(*)
+			 FROM 
+			 	T_CUST_CONTRACT C
+			 INNER JOIN 
+			 	T_CUST_CONTRACTDEPT D 
+			 ON 
+			 	C.FID = D.FCONTRACTID
+			 WHERE 
+			 	C.FCONTRACTSTATUS = '1'
+			 	AND C.FEXPAYWAY = 'MONTH_END'
+			 	AND C.FCONTRACTBEGINDATE <= SYSDATE
+			    AND C.FCUSTID = #{custId} 
+		]]>
+	</select>
+	<select id="getPreferenceAddressIdByContactId" parameterType="string"
+		resultType="string">
+		select
+		fid
+		from
+		T_CUST_PREFERENCEADDRESS
+		where
+		FLINKMANID =
+		#{contactId}
+	</select>
+
+	<select id="getPreferenceAddressByContactId" parameterType="map"
+		resultMap="PreferenceAddressRM">
+		SELECT
+		<include refid="PreferenceAddress_column" />
+		FROM T_CUST_CUSTLINKMAN L
+		JOIN T_CUST_PREFERENCEADDRESS PA
+		ON
+		PA.FLINKMANID = L.FID
+		WHERE L.FID = #{contactId}
+		<if test="addressType !=null and addressType != ''">
+			AND (PA.FADDRESSTYPE =#{addressType} OR
+			PA.FADDRESSTYPE='RECEIVE_SEND_GOODS')
+		</if>
+	</select>
+	<!-- 	根据联系人Id查询联系人偏好地址 -->
+	<select id="queryPreferenceAddressByContactId" parameterType = "string"
+		resultMap="PreferenceAddressRM">
+		SELECT 
+		<include refid="PreferenceAddress_column" />
+		FROM T_CUST_PREFERENCEADDRESS PA
+		WHERE 
+		FSTATUS = 0
+		AND
+		FLINKMANID = #{contractId}
+		
+	</select>
+	
+	<update id="losePreferenceAddressByContactId" parameterType="string">
+		UPDATE
+		T_CUST_PREFERENCEADDRESS
+		SET
+		FLASTUPDATETIME = sysdate,
+		FSTATUS = 2
+		where
+		FLINKMANID = #{contactId}
+	</update>
+
+	<!-- 根据联系人编码查询会员信息 -->
+	<select id="getMemberByLinkmanId" resultMap="MemberRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		<include refid="Contact_column" />
+		,
+		<include refid="MemberOperationLog_column"/>
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+       			LEFT JOIN 
+          			T_CUST_CUSTLINKMAN CT
+        		ON 
+          			CT.FCUSTID = CB.FID AND 
+        			CT.FSTATUS <> 2
+        		LEFT JOIN
+        		    t_cust_memberoperationlog MO
+        		ON MO.FMEMBERID = CB.FID
+        		AND MO.FISEFFECT = 1
+				WHERE 
+				 	CB.FCUSTSTATUS <> 2 AND
+					CT.FID = #{linkmanId}
+		]]>
+	</select>
+	<!-- 修改会员状态 -->
+	<update id="updateMemberStatus" parameterType="Map">
+		<![CDATA[
+			UPDATE 
+				T_CUST_CUSTBASEDATA 
+			SET 
+				FCUSTSTATUS = #{status}
+				]]>
+		<if test="modifyUser != null and modifyUser != ''">
+			<![CDATA[,FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR} ]]>
+		</if>
+		<![CDATA[ 
+			,FLASTUPDATETIME = sysdate 
+			]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[,FVERSIONNUMBER = (FVERSIONNUMBER+1) ]]>
+		</if>
+		<![CDATA[ WHERE FID = #{id} ]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[AND FVERSIONNUMBER = #{versionNumber,jdbcType=NUMERIC} ]]>
+		</if>
+	</update>
+	<!-- 保存审批数据 -->
+	<insert id="insertApproveData"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ApproveData">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_APPROVEDATA.NEXTVAL FROM DUAL
+			]]>
+		</selectKey>
+		<![CDATA[
+			INSERT INTO
+				T_CUST_APPROVEDATA(FID,FCLASSID,FCLASSNAME,FFIELDNAME,
+				FNEWVALUE,FOLDVALUE,FWORKFLOWID,FHANDLETYPE,fmemberOperationLogId)
+			VALUES(
+					#{id,jdbcType=NUMERIC},#{classId,jdbcType=NUMERIC},
+					#{className,jdbcType=VARCHAR},#{fieldName,jdbcType=VARCHAR},
+					#{newValue,jdbcType=VARCHAR},#{oldValue,jdbcType=VARCHAR},
+					#{workFlowId,jdbcType=NUMERIC},#{handleType,jdbcType=NUMERIC},
+					#{memberOperationLogId,jdbcType=NUMERIC}
+					)
+		]]>
+	</insert>
+	<!-- 根据工作流条件查询工作流数据 -->
+	<select id="queryWorkflowByCondition" resultMap="TodoWorkflowRM">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="TodoWorkflow_column" />
+		<include refid="searchCondition" />
+	</select>
+	<!-- 根据工作流条件查询我要处理的工作流数据 -->
+	<select id="queryMyWorkflowByCondition" resultMap="MyTodoWorkflowRM">
+		<![CDATA[SELECT ]]>
+		<include refid="TodoWorkflow_column" />
+		,
+		<include refid="WorkFlow_column" />
+		<include refid="searchCondition" />
+	</select>
+
+	<sql id="searchCondition">
+		<![CDATA[	
+			FROM T_CRM_TODOWORKFLOW TW
+			join t_cust_workflow WF
+			on TW.FWORKFLOWID = WF.FWORKFLOWID
+			WHERE TW.FTODOFLAG = 'TODO' 
+		]]>
+		<if test="workflowId != null and workflowId != ''">
+			<![CDATA[
+			  		AND TW.FWORKFLOWID = #{workflowId} 
+			]]>
+		</if>
+		<if test="workflowName != null and workflowName != ''">
+			<![CDATA[
+			  		AND TW.FWORKFLOWNAME = #{workflowName} 
+			]]>
+		</if>
+		<if test="ownerRoleIds != null and ownerRoleIds != ''">
+			<![CDATA[ AND TW.FROLEID in ]]>
+			<foreach collection="ownerRoleIds" open="(" close=")"
+				separator="," item="ownerRoleId">
+			<![CDATA[	${ownerRoleId}  ]]>
+			</foreach>
+		</if>
+		<if test="ownerDeptId != null and ownerDeptId != ''">
+			<![CDATA[
+			  		AND TW.FDEPTID = #{ownerDeptId} 
+			]]>
+		</if>
+		<if test="applicationStatus != null and applicationStatus != ''">
+			<![CDATA[
+			  		AND WF.FSTATUS = #{applicationStatus} 
+			]]>
+		</if>
+		<if test="deptId != null and deptId != ''">
+			<![CDATA[
+			  		AND WF.FDEPTID = #{deptId} 
+			]]>
+		</if>
+		<if test="createUser != null and createUser != ''">
+			<![CDATA[
+			  		AND WF.FUSERID = #{createUser} 
+			]]>
+		</if>
+		<if test="startDate != null">
+			<![CDATA[
+			  		AND TRUNC(WF.FCREATETIME) >= #{startDate} 
+			]]>
+		</if>
+		<if test="endDate != null">
+			<![CDATA[
+			  		AND TRUNC(WF.FCREATETIME) <= #{endDate} 
+			]]>
+		</if>
+	</sql>
+
+	<!-- 根据工作流条件查询工作流数据总数 -->
+	<select id="countWorkflowByCondition" resultType="int">
+		SELECT COUNT(*)
+		<include refid="searchCondition" />
+	</select>
+	
+	<!-- 根据工作流ID查询审批数据 -->
+	<select id="searchADByWorkflowId" resultMap="approveDataRM">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="ApproveData_column" />
+		<![CDATA[	
+		  	FROM 
+		  		T_CUST_APPROVEDATA AD
+		  	WHERE 
+		  		AD.FWORKFLOWID = #{workFlowId} 
+		]]>
+	</select>
+	<!-- 根据类名，字段名获取审批类型 -->
+	<select id="queryTypeByField" resultType="String">
+		<![CDATA[
+			SELECT 
+				AD.FAPPROVETYPE
+			FROM 
+				T_CUST_APPROVEFIELDSET AD
+ 			WHERE 
+ 				AD.FCLASSNAME = #{className} AND 
+   				AD.FCLASSFIELD = #{fieldName}
+		]]>
+	</select>
+	<!-- 修改账号信息 -->
+	<update id="updateAccountById"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Account">
+		<![CDATA[	
+			UPDATE
+				T_CUST_ACCOUNT
+			SET FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null">
+			<![CDATA[,FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bank != null">
+			<![CDATA[,FBANK=#{bank,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bankId != null">
+			<![CDATA[,FBANKID=#{bankId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" subBankname != null">
+			<![CDATA[,FSUBBANKNAME=#{subBankname,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" subBanknameId != null">
+			<![CDATA[,FSUBBANKNAMEID=#{subBanknameId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isdefaultaccount != null">
+			<![CDATA[,FISDEFAULTACCOUNT=#{isdefaultaccount,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" bankAccount != null">
+			<![CDATA[,FBANKACCOUNT=#{bankAccount,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" countName != null">
+			<![CDATA[,FCOUNTNAME=#{countName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" relation != null">
+			<![CDATA[,FRELATION=#{relation,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bankProvinceId != null">
+			<![CDATA[,FBANKPROVINCEID=#{bankProvinceId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" accountNature != null">
+			<![CDATA[,FACCOUNTNATURE=#{accountNature,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" accountUse != null">
+			<![CDATA[,FACCOUNTUSE=#{accountUse,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bankCityId != null">
+			<![CDATA[,FBANKCITYID=#{bankCityId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" financeLinkman != null">
+			<![CDATA[,FFINANCELINKMAN=#{financeLinkman,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" financeLinkmanId != null">
+			<![CDATA[,FFINANCELINKMANID=#{financeLinkmanId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManMobile != null">
+			<![CDATA[,FLINKMANMOBILE=#{linkManMobile,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManPhone != null">
+			<![CDATA[,FLINKMANPHONE=#{linkManPhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bankArea != null">
+			<![CDATA[,FBANKAREA=#{bankArea,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" lastUpdateDeptId != null">
+			<![CDATA[,FLASTUPDATEDEPTID=#{lastUpdateDeptId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDeptId != null">
+			<![CDATA[,FCREATEDEPTID=#{createDeptId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" belongcustom != null">
+			<![CDATA[,FBELONGCUSTOM=#{belongcustom,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" bankProvinceName != null">
+			<![CDATA[,fbankProvinceName=#{bankProvinceName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bankCityName != null">
+			<![CDATA[,fbankCityName=#{bankCityName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" status != null">
+			<![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		</if>
+		<![CDATA[WHERE FID = #{id} ]]>
+	</update>
+	
+	<!-- 修改账号信息 -->
+	<update id="updateAccountAllInfo"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Account">
+			UPDATE
+				T_CUST_ACCOUNT
+			SET FLASTUPDATETIME = sysdate
+			<![CDATA[,FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBANK=#{bank,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBANKID=#{bankId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FSUBBANKNAME=#{subBankname,jdbcType=VARCHAR}]]>
+			<![CDATA[,FSUBBANKNAMEID=#{subBanknameId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FISDEFAULTACCOUNT=#{isdefaultaccount,jdbcType=NUMERIC}]]>
+			<![CDATA[,FBANKACCOUNT=#{bankAccount,jdbcType=VARCHAR}]]>
+			<![CDATA[,FCOUNTNAME=#{countName,jdbcType=VARCHAR}]]>
+			<![CDATA[,FRELATION=#{relation,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBANKPROVINCEID=#{bankProvinceId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FACCOUNTNATURE=#{accountNature,jdbcType=VARCHAR}]]>
+			<![CDATA[,FACCOUNTUSE=#{accountUse,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBANKCITYID=#{bankCityId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FFINANCELINKMAN=#{financeLinkman,jdbcType=VARCHAR}]]>
+			<![CDATA[,FFINANCELINKMANID=#{financeLinkmanId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FLINKMANMOBILE=#{linkManMobile,jdbcType=VARCHAR}]]>
+			<![CDATA[,FLINKMANPHONE=#{linkManPhone,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBANKAREA=#{bankArea,jdbcType=VARCHAR}]]>
+			<![CDATA[,FLASTUPDATEDEPTID=#{lastUpdateDeptId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FCREATEDEPTID=#{createDeptId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBELONGCUSTOM=#{belongcustom,jdbcType=NUMERIC}]]>
+			<![CDATA[,fbankProvinceName=#{bankProvinceName,jdbcType=VARCHAR}]]>
+			<![CDATA[,fbankCityName=#{bankCityName,jdbcType=VARCHAR}]]>
+			<![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		<![CDATA[WHERE FID = #{id,jdbcType=VARCHAR} ]]>
+	</update>
+	
+	<!-- 修改会员信息 -->
+	<update id="updateMemberById" parameterType="com.deppon.crm.module.customer.shared.domain.Member">
+	    <![CDATA[
+	    	UPDATE
+				T_CUST_CUSTBASEDATA
+			SET 
+				FLASTUPDATETIME = sysdate
+		]]>
+		<if test=" modifyUser != null ">
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custNumber != null ">
+             <![CDATA[,FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" degree != null ">
+             <![CDATA[,FDEGREE=#{degree,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custName != null ">
+             <![CDATA[,FCUSTNAME=#{custName,jdbcType=VARCHAR}]]>
+		</if>
+		<!-- 李学兴修改，公司地址，注册地址的 修改 （二期填坑，，以后所有的registAddress 都保存到FCOMPADDR） -->
+		<if test=" registAddress != null ">
+             <![CDATA[,FCOMPADDR=#{registAddress,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" tradeId != null ">
+             <![CDATA[,FTRADEID=#{tradeId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" secondTrade != null ">
+             <![CDATA[,FSECONDTRADE=#{secondTrade,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custType != null ">
+             <![CDATA[,FCUSTTYPE=#{custType,jdbcType=VARCHAR}]]>
+		</if>
+
+		<if test=" taxregNumber != null ">
+             <![CDATA[,FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" companyProperty != null ">
+             <![CDATA[,FCOMPANYPROPERTY=#{companyProperty,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custNature != null ">
+             <![CDATA[,FCUSTNATURE=#{custNature,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" province != null ">
+             <![CDATA[,FPROVINCE=#{province,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" provinceId != null ">
+             <![CDATA[,FPROVINCEID=#{provinceId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" city != null ">
+             <![CDATA[,FCITY=#{city,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" cityId != null ">
+             <![CDATA[,FCITYID=#{cityId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isSpecial != null ">
+             <![CDATA[,FISSPECIAL=#{isSpecial,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" isRedeempoints != null ">
+             <![CDATA[,FISREDEEMPOINTS=#{isRedeempoints,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" isImportCustor != null ">
+             <![CDATA[,FISIMPORTCUSTOR=#{isImportCustor,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" isAcceptMarket != null ">
+             <![CDATA[,FISACCEPTMARKET=#{isAcceptMarket,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" brandWorth != null ">
+             <![CDATA[,FBRANDWORTH=#{brandWorth,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" channelSource != null ">
+             <![CDATA[,FCHANNELSOURCE=#{channelSource,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" channel != null ">
+             <![CDATA[,FCHANNEL=#{channel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" preferenceService != null ">
+             <![CDATA[,FPREFERENCESERVICE=#{preferenceService,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" companyScop != null ">
+             <![CDATA[,FCOMPANYSCOP=#{companyScop,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" lastYearProfit != null ">
+             <![CDATA[,FLASTYEARPROFIT=#{lastYearProfit,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" lastYearIncome != null ">
+             <![CDATA[,FLASTYEARINCOME=#{lastYearIncome,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" isFocusPay != null ">
+             <![CDATA[,FISFOCUSPAY=#{isFocusPay,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" focusDeptId != null ">
+             <![CDATA[,FFOCUSDEPTID=#{focusDeptId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" billTitle != null ">
+             <![CDATA[,FBILLTITLE=#{billTitle,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isParentCompany != null ">
+             <![CDATA[,FISPARENTCOMPANY=#{isParentCompany,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" parentNumber != null ">
+             <![CDATA[,FPARENTNUMBER=#{parentNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" parentCompanyId != null ">
+             <![CDATA[,FPARENTCOMPANYID=#{parentCompanyId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" registerFund != null ">
+             <![CDATA[,FREGISTERFUND=#{registerFund,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" procRedit != null ">
+             <![CDATA[,FPROCREDIT=#{procRedit,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" recommendCust != null ">
+             <![CDATA[,FRECOMMENDCUST=#{recommendCust,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" remark != null ">
+             <![CDATA[,FREMARK=#{remark,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" simpleName != null ">
+             <![CDATA[,FSIMPLENAME=#{simpleName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isTranGoods != null ">
+             <![CDATA[,FISTRANGOODS=#{isTranGoods,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" areaId != null ">
+             <![CDATA[,FAREAID=#{areaId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" deptId != null ">
+             <![CDATA[,FDEPTID=#{deptId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactId != null ">
+             <![CDATA[,FCONTACTID=#{contactId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custStatus != null ">
+             <![CDATA[,FCUSTSTATUS=#{custStatus,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" responsibillity != null ">
+             <![CDATA[,FRESPONSIBILLITY=#{responsibillity,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" versionNumber != null ">
+             <![CDATA[,FVERSIONNUMBER=#{versionNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" focusDeptName != null ">
+             <![CDATA[,ffocusDeptName=#{focusDeptName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custCategory != null ">
+             <![CDATA[,FCUSTCATEGORY=#{custCategory,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isKeyCustomer != null ">
+             <![CDATA[,FISKEYCUSTOMER=#{isKeyCustomer,jdbcType=VARCHAR}]]>
+		</if>
+        <![CDATA[		
+        	WHERE FID = #{id}
+        ]]>
+	</update>
+	
+	<!-- 修改会员信息 -->
+	<update id="updateMemberAllInfo" parameterType="com.deppon.crm.module.customer.shared.domain.Member">
+	    	UPDATE
+				T_CUST_CUSTBASEDATA
+			SET 
+				FLASTUPDATETIME = sysdate
+             <![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}]]>
+             <![CDATA[,FDEGREE=#{degree,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTNAME=#{custName,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCOMPADDR=#{registAddress,jdbcType=VARCHAR}]]>
+             <![CDATA[,FTRADEID=#{tradeId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTTYPE=#{custType,jdbcType=VARCHAR}]]>
+             <![CDATA[,FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCOMPANYPROPERTY=#{companyProperty,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTNATURE=#{custNature,jdbcType=VARCHAR}]]>
+             <![CDATA[,FPROVINCE=#{province,jdbcType=VARCHAR}]]>
+             <![CDATA[,FPROVINCEID=#{provinceId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCITY=#{city,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCITYID=#{cityId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FISSPECIAL=#{isSpecial,jdbcType=NUMERIC}]]>
+             <![CDATA[,FISREDEEMPOINTS=#{isRedeempoints,jdbcType=NUMERIC}]]>
+             <![CDATA[,FISIMPORTCUSTOR=#{isImportCustor,jdbcType=NUMERIC}]]>
+             <![CDATA[,FISACCEPTMARKET=#{isAcceptMarket,jdbcType=NUMERIC}]]>
+             <![CDATA[,FBRANDWORTH=#{brandWorth,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCHANNELSOURCE=#{channelSource,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCHANNEL=#{channel,jdbcType=VARCHAR}]]>
+             <![CDATA[,FPREFERENCESERVICE=#{preferenceService,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCOMPANYSCOP=#{companyScop,jdbcType=VARCHAR}]]>
+             <![CDATA[,FLASTYEARPROFIT=#{lastYearProfit,jdbcType=NUMERIC}]]>
+             <![CDATA[,FLASTYEARINCOME=#{lastYearIncome,jdbcType=NUMERIC}]]>
+             <![CDATA[,FISFOCUSPAY=#{isFocusPay,jdbcType=NUMERIC}]]>
+             <![CDATA[,FFOCUSDEPTID=#{focusDeptId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FBILLTITLE=#{billTitle,jdbcType=VARCHAR}]]>
+             <![CDATA[,FISPARENTCOMPANY=#{isParentCompany,jdbcType=NUMERIC}]]>
+             <![CDATA[,FPARENTNUMBER=#{parentNumber,jdbcType=VARCHAR}]]>
+             <![CDATA[,FPARENTCOMPANYID=#{parentCompanyId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FREGISTERFUND=#{registerFund,jdbcType=NUMERIC}]]>
+             <![CDATA[,FPROCREDIT=#{procRedit,jdbcType=NUMERIC}]]>
+             <![CDATA[,FRECOMMENDCUST=#{recommendCust,jdbcType=VARCHAR}]]>
+             <![CDATA[,FREMARK=#{remark,jdbcType=VARCHAR}]]>
+             <![CDATA[,FSIMPLENAME=#{simpleName,jdbcType=VARCHAR}]]>
+             <![CDATA[,FISTRANGOODS=#{isTranGoods,jdbcType=NUMERIC}]]>
+             <![CDATA[,FAREAID=#{areaId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FDEPTID=#{deptId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCONTACTID=#{contactId,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTSTATUS=#{custStatus,jdbcType=VARCHAR}]]>
+             <![CDATA[,FRESPONSIBILLITY=#{responsibillity,jdbcType=VARCHAR}]]>
+             <![CDATA[,FVERSIONNUMBER=#{versionNumber,jdbcType=NUMERIC}]]>
+             <![CDATA[,FFOCUSDEPTNAME=#{focusDeptName,jdbcType=VARCHAR}]]>
+             <![CDATA[,FSECONDTRADE=#{secondTrade,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTCATEGORY=#{custCategory,jdbcType=VARCHAR}]]>
+             <![CDATA[,FCUSTGROUP=#{custGroup,jdbcType=VARCHAR}]]>
+             
+        	WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 修改接送货地址 -->
+	<update id="updateShuttleAddressById"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ShuttleAddress">
+		 <![CDATA[ 
+		 	UPDATE
+		    	T_CUST_SHUTTLEADDRESS
+			SET 
+				FLASTUPDATETIME = sysdate 
+		]]>
+		<if test=" modifyUser != null ">
+			<![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" memberId != null ">
+			<![CDATA[,FMEMBERID=#{memberId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" addressType != null ">
+			<![CDATA[,FADDRESSTYPE=#{addressType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" address != null ">
+			<![CDATA[,FADDRESS=#{address,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" province != null ">
+			<![CDATA[,FPROVINCE=#{province,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" city != null ">
+			<![CDATA[,FCITY=#{city,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" area != null ">
+			<![CDATA[,FAREA=#{area,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" postcode != null ">
+			<![CDATA[,FPOSTCODE=#{postcode,jdbcType=VARCHAR}]]>
+		</if>
+		<![CDATA[ WHERE FID = #{id} ]]>
+	</update>
+	
+	<update id="updateShuttleAddressAllInfo"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ShuttleAddress">
+		 <![CDATA[ 
+		 	UPDATE
+		    	T_CUST_SHUTTLEADDRESS
+			SET 
+				FLASTUPDATETIME = sysdate 
+		]]>
+			<![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			<![CDATA[,FMEMBERID=#{memberId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FADDRESSTYPE=#{addressType,jdbcType=VARCHAR}]]>
+			<![CDATA[,FADDRESS=#{address,jdbcType=VARCHAR}]]>
+			<![CDATA[,FPROVINCE=#{province,jdbcType=VARCHAR}]]>
+			<![CDATA[,FCITY=#{city,jdbcType=VARCHAR}]]>
+			<![CDATA[,FAREA=#{area,jdbcType=VARCHAR}]]>
+			<![CDATA[,FPOSTCODE=#{postcode,jdbcType=VARCHAR}]]>
+		<![CDATA[ WHERE FID = #{id,jdbcType=VARCHAR} ]]>
+	</update>
+	
+	<!-- 修改联系人 -->
+	<update id="updateContactById"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contact">
+		 <![CDATA[ 
+		 	UPDATE
+		    	T_CUST_CUSTLINKMAN
+			SET 
+				FLASTUPDATETIME = sysdate 
+		]]>
+		<if test=" modifyUser != null ">
+			<![CDATA[,FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" number != null ">
+			<![CDATA[,FNUMBER=#{number,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" name != null ">
+			<![CDATA[,FNAME=#{name,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" idCard != null ">
+			<![CDATA[,FIDCARD=#{idCard,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkmanType != null ">
+			<![CDATA[,FLINKMANTYPE=#{linkmanType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isMainLinkMan != null ">
+			<![CDATA[,FISMAINLINKMAN=#{isMainLinkMan,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" sex != null ">
+			<![CDATA[,FSEX=#{sex,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" telPhone != null ">
+			<![CDATA[,FOFFERTEL=#{telPhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" mobilePhone != null ">
+			<![CDATA[,FMOBILETEL=#{mobilePhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" duty != null ">
+			<![CDATA[,FDUTY=#{duty,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" dutyDept != null ">
+			<![CDATA[,FDUTYDEPT=#{dutyDept,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bornDate != null ">
+			<![CDATA[,FBORNDATE=#{bornDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" gainave != null ">
+			<![CDATA[,FGAINAVE=#{gainave,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" decisionRight != null ">
+			<![CDATA[,FDECISIONRIGHT=#{decisionRight,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" nativePlace != null ">
+			<![CDATA[,FNATIVEPLACE=#{nativePlace,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" personLove != null ">
+			<![CDATA[,FPERSONLOVE=#{personLove,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" folk != null ">
+			<![CDATA[,FFOLK=#{folk,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" email != null ">
+			<![CDATA[,FEMAIL=#{email,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" qqNumber != null ">
+			<![CDATA[,FQQNUMBER=#{qqNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" msn != null ">
+			<![CDATA[,FMSN=#{msn,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ww != null ">
+			<![CDATA[,FWW=#{ww,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" acceptDeptid != null ">
+			<![CDATA[,FACCEPTDEPTID=#{acceptDeptid,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" defaultId != null ">
+			<![CDATA[,FDEFAULTID=#{defaultId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" versionId != null ">
+			<![CDATA[,FVERSIONID=#{versionId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custId != null ">
+			<![CDATA[,FCUSTID=#{custId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="cardTypeCon != null">
+			,FIDTYPE = #{cardTypeCon,jdbcType=VARCHAR}	
+		</if>
+		<if test="belongCustType != null">
+			,FBELONGCUSTTYPE = #{belongCustType,jdbcType=VARCHAR}	
+		</if>
+		<if test="lat != null">
+			<![CDATA[,FLAT=#{lat,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="lng != null">
+			<![CDATA[,FLNG=#{lng,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ffax != null  and ffax != ''  ">
+		<![CDATA[,FFAX=#{ffax,jdbcType=VARCHAR}]]>
+		</if>
+			 <![CDATA[ WHERE FID = #{id} ]]>
+	</update>
+	
+	<update id="updateContactAllInfo"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contact">
+		 <![CDATA[ 
+		 	UPDATE
+		    	T_CUST_CUSTLINKMAN
+			SET 
+				FLASTUPDATETIME = sysdate 
+		]]>
+			<![CDATA[,FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			<![CDATA[,FNUMBER=#{number,jdbcType=VARCHAR}]]>
+			<![CDATA[,FNAME=#{name,jdbcType=VARCHAR}]]>
+			<![CDATA[,FIDCARD=#{idCard,jdbcType=VARCHAR}]]>
+			<![CDATA[,FLINKMANTYPE=#{linkmanType,jdbcType=VARCHAR}]]>
+			<![CDATA[,FISMAINLINKMAN=#{isMainLinkMan,jdbcType=NUMERIC}]]>
+			<![CDATA[,FSEX=#{sex,jdbcType=VARCHAR}]]>
+			<![CDATA[,FOFFERTEL=#{telPhone,jdbcType=VARCHAR}]]>
+			<![CDATA[,FMOBILETEL=#{mobilePhone,jdbcType=VARCHAR}]]>
+			<![CDATA[,FDUTY=#{duty,jdbcType=VARCHAR}]]>
+			<![CDATA[,FDUTYDEPT=#{dutyDept,jdbcType=VARCHAR}]]>
+			<![CDATA[,FBORNDATE=#{bornDate,jdbcType=DATE}]]>
+			<![CDATA[,FGAINAVE=#{gainave,jdbcType=VARCHAR}]]>
+			<![CDATA[,FDECISIONRIGHT=#{decisionRight,jdbcType=VARCHAR}]]>
+			<![CDATA[,FNATIVEPLACE=#{nativePlace,jdbcType=VARCHAR}]]>
+			<![CDATA[,FPERSONLOVE=#{personLove,jdbcType=VARCHAR}]]>
+			<![CDATA[,FFOLK=#{folk,jdbcType=VARCHAR}]]>
+			<![CDATA[,FEMAIL=#{email,jdbcType=VARCHAR}]]>
+			<![CDATA[,FQQNUMBER=#{qqNumber,jdbcType=VARCHAR}]]>
+			<![CDATA[,FMSN=#{msn,jdbcType=VARCHAR}]]>
+			<![CDATA[,FWW=#{ww,jdbcType=VARCHAR}]]>
+			<![CDATA[,FFAX=#{ffax,jdbcType=VARCHAR}]]>
+			<![CDATA[,FACCEPTDEPTID=#{acceptDeptid,jdbcType=VARCHAR}]]>
+			<![CDATA[,FDEFAULTID=#{defaultId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FVERSIONID=#{versionId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FCUSTID=#{custId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FIDTYPE = #{cardTypeCon,jdbcType=VARCHAR}	]]>
+			<![CDATA[,FBELONGCUSTTYPE = (select cc.fcusttype from t_cust_custbasedata cc where cc.fid = fcustid )]]>
+			<![CDATA[ WHERE FID = #{id,jdbcType=VARCHAR} ]]>
+	</update>
+	
+	<!-- 修改偏好地址 -->
+	<update id="updatePreferenceAddressById"
+		parameterType="com.deppon.crm.module.customer.shared.domain.PreferenceAddress">
+		 <![CDATA[
+		  	UPDATE
+		    	T_CUST_PREFERENCEADDRESS
+			SET 
+				FLASTUPDATETIME = sysdate 
+		]]>
+		<if test=" modifyUser != null ">
+			<![CDATA[,FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" addressType != null ">
+			<![CDATA[,FADDRESSTYPE=#{addressType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" address != null ">
+			<![CDATA[,FADDRESS=#{address,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" startTime != null ">
+			<![CDATA[,FSTARTTIME=#{startTime,jdbcType=DATE}]]>
+		</if>
+		<if test=" endTime != null ">
+			<![CDATA[,FENDTIME=#{endTime,jdbcType=DATE}]]>
+		</if>
+		<if test=" billRequest != null ">
+			<![CDATA[,FBILLREQUEST=#{billRequest,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" hasStopCost != null ">
+			<![CDATA[,FHASSTOPCOST=#{hasStopCost,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" payType != null ">
+			<![CDATA[,FPAYTYPE=#{payType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isSendToFloor != null ">
+			<![CDATA[,FISSENDTOFLOOR=#{isSendToFloor,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" otherNeed != null ">
+			<![CDATA[,FOTHERNEED=#{otherNeed,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" shuttleAddressId != null ">
+			<![CDATA[,FSHUTTLEADDRESSID=#{shuttleAddressId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManId != null ">
+			<![CDATA[,FLINKMANID=#{linkManId,jdbcType=VARCHAR }]]>
+		</if>
+			 <![CDATA[ WHERE FID = #{id} ]]>
+	</update>
+	
+	<!-- 修改偏好地址 -->
+	<update id="updatePreferenceAddressAllInfo"
+		parameterType="com.deppon.crm.module.customer.shared.domain.PreferenceAddress">
+		  	UPDATE
+		    	T_CUST_PREFERENCEADDRESS
+			SET 
+				FLASTUPDATETIME = sysdate 
+			<![CDATA[,FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			<![CDATA[,FADDRESSTYPE=#{addressType,jdbcType=VARCHAR}]]>
+			<![CDATA[,FADDRESS=#{address,jdbcType=VARCHAR}]]>
+			<![CDATA[,FISMAINADDRESS=#{isMainAddress,jdbcType=VARCHAR}]]>
+			<![CDATA[,FSTARTTIME=#{startTime,jdbcType=TIMESTAMP}]]>
+			<![CDATA[,FENDTIME=#{endTime,jdbcType=TIMESTAMP}]]>
+			<![CDATA[,FBILLREQUEST=#{billRequest,jdbcType=VARCHAR}]]>
+			<![CDATA[,FHASSTOPCOST=#{hasStopCost,jdbcType=VARCHAR}]]>
+			<![CDATA[,FPAYTYPE=#{payType,jdbcType=VARCHAR}]]>
+			<![CDATA[,FISSENDTOFLOOR=#{isSendToFloor,jdbcType=NUMERIC}]]>
+			<![CDATA[,FOTHERNEED=#{otherNeed,jdbcType=VARCHAR}]]>
+			<![CDATA[,FSHUTTLEADDRESSID=#{shuttleAddressId,jdbcType=VARCHAR}]]>
+			<![CDATA[,FLINKMANID=#{linkManId,jdbcType=VARCHAR }]]>
+			<![CDATA[ WHERE FID = #{id,jdbcType=VARCHAR} ]]>
+	</update>
+	<!-- 审核数据表 -->
+	<resultMap id="approveDataRM"
+		type="com.deppon.crm.module.customer.shared.domain.ApproveData">
+		<result property="id" column="AD_FID" />
+		<result property="className" column="AD_FCLASSNAME" />
+		<result property="classId" column="AD_FCLASSID" />
+		<result property="fieldName" column="AD_FFIELDNAME" />
+		<result property="newValue" column="AD_FNEWVALUE" />
+		<result property="oldValue" column="AD_FOLDVALUE" />
+		<result property="workFlowId" column="AD_FWORKFLOWID" />
+		<result property="handleType" column="AD_FHANDLETYPE" />
+		<result property="memberOperationLogId" column="AD_fmemberOperationLogId"/>
+	</resultMap>
+	<!-- 审核数据字段 -->
+	<sql id="ApproveData_column">
+		<![CDATA[
+				AD.FID AD_FID,
+       			AD.FCLASSID AD_FCLASSID,
+      			AD.FCLASSNAME AD_FCLASSNAME,
+       			AD.FFIELDNAME AD_FFIELDNAME,
+       			AD.FNEWVALUE AD_FNEWVALUE,
+       			AD.FOLDVALUE AD_FOLDVALUE,
+       			AD.FWORKFLOWID AD_FWORKFLOWID,
+       			AD.FHANDLETYPE AD_FHANDLETYPE,
+       			AD.fmemberOperationLogId AD_fmemberOperationLogId
+		]]>
+	</sql>
+	<resultMap id="MemberResultRM"
+		type="com.deppon.crm.module.customer.shared.domain.MemberResult">
+		<result property="custId" column="MR_FCUSTID" />
+		<result property="address" column="MR_ADDRESS" />
+		<result property="custNum" column="MR_FCUSTNUM" />
+		<result property="custName" column="MR_FCUSTNAME" />
+		<result property="status" column="MR_FSTATUS" />
+		<result property="custGrade" column="MR_FCUSTGRADE" />
+		<result property="contactNum" column="MR_FCONTACTNUM" />
+		<result property="contactName" column="MR_FCONTACTNAME" />
+		<result property="mobileNum" column="MR_FMOBILENUM" />
+		<result property="telNum" column="MR_FTELNUM" />
+		<result property="deptId" column="MR_FDEPTID" />
+		<result property="deptName" column="MR_FDEPTNAME" />
+		<result property="remark" column="MR_FREMARK" />
+		<result property="trade" column="MR_FTRADE" />
+		<result property="secondTrade" column="MR_SECONDTRADE" />
+		<result property="custType" column="MR_FCUSTTYPE" />
+		<result property="taxregNum" column="MR_FTAXREGNUM" />
+		<result property="idCard" column="MR_FIDCARD" />
+		<result property="cityId" column="MR_FCITYID" />
+		<result property="cityName" column="MR_FCITYNAME" />
+		<result property="isMainLinkMan" column="MR_FISMAINLINKMAN" />
+		<result property="contactId" column="MR_CONTACTID" />
+		<result property="versionNumber" column="MR_FVERSIONNUMBER" />
+		<result property="custGroupPSR" column="MR_FCUSTGROUP" />
+		<result property="isKeyCustomer" column="MR_FISKEYCUSTOMER" />
+		<result property="custCategory" column="MR_FCUSTCATEGORY" />
+<!-- 		<collection property="custLabels" column="MR_FCUSTID" select="com.deppon.crm.module.customer.shared.domain.CustLabel.searchMemberCustLabel"></collection> -->
+
+	</resultMap>
+	<sql id="MemberResult_column">
+		<!-- 增加版本号的查询版本号 -->
+		<![CDATA[
+			CB.FID MR_FCUSTID,
+			CB.FCOMPADDR MR_ADDRESS,
+			CB.FCUSTNUMBER MR_FCUSTNUM,
+			CB.FCUSTNAME MR_FCUSTNAME,
+			CB.FDEGREE MR_FCUSTGRADE,
+			CB.FCUSTSTATUS MR_FSTATUS,
+			CT.FNUMBER MR_FCONTACTNUM,
+			CT.FNAME MR_FCONTACTNAME,
+			CT.FMOBILETEL MR_FMOBILENUM,
+			CT.FOFFERTEL MR_FTELNUM,
+			CB.FDEPTID MR_FDEPTID,
+			DEPT.FDEPTNAME MR_FDEPTNAME,
+			CB.FREMARK MR_FREMARK,
+			CB.FTRADEID MR_FTRADE,
+			CB.FSECONDTRADE MR_SECONDTRADE,
+			CB.FCUSTTYPE MR_FCUSTTYPE,
+			CB.FTAXREGNUMBER MR_FTAXREGNUM,
+			CT.FIDCARD MR_FIDCARD,
+			CB.FCITYID MR_FCITYID,
+			CITY.FNAME MR_FCITYNAME,
+			CT.FID MR_CONTACTID,
+			CT.FISMAINLINKMAN MR_FISMAINLINKMAN,
+			CB.FVERSIONNUMBER MR_FVERSIONNUMBER,
+			CB.FISKEYCUSTOMER MR_FISKEYCUSTOMER,
+			CB.FCUSTGROUP MR_FCUSTGROUP,
+			CB.FCUSTCATEGORY MR_FCUSTCATEGORY
+		]]>
+	</sql>
+	<!-- 查询符合条件的会员信息总数 -->
+	<select id="countMemberByCondition" resultType="int"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+			SELECT  COUNT(DISTINCT CB.FID)
+		]]>
+		<![CDATA[
+			FROM 
+			 	T_CUST_CUSTBASEDATA CB 
+  			LEFT JOIN 
+  				T_CUST_CUSTLINKMAN CT
+  			ON 
+  				CT.FCUSTID = CB.FID AND 
+        		CT.FSTATUS <> 2
+  			LEFT JOIN 
+  				T_ORG_DEPARTMENT DEPT 
+  			ON 
+  				DEPT.FID = CB.FDEPTID
+  			LEFT JOIN
+  			 	T_CRM_CITY CITY 
+  			ON 
+  				CITY.FID = CB.FCITYID
+  			WHERE  
+  				CB.FCUSTSTATUS <> 2 
+		]]>
+		<choose>
+			<when test="custNumber != null and custNumber != '' ">
+				<![CDATA[ 
+					AND CB.FCUSTNUMBER = #{custNumber}
+				]]>
+			</when>
+			<when test="linkManNumber != null and linkManNumber != '' ">
+				<![CDATA[
+					AND CT.FNUMBER = #{linkManNumber} 
+				 ]]>
+			</when>
+			<when test="idCard != null and idCard != '' ">
+				<![CDATA[ 
+					AND CT.FIDCARD = #{idCard}
+				]]>
+			</when>
+			<when test="mobile != null and mobile != '' ">
+				<![CDATA[
+					AND CT.FMOBILETEL = #{mobile} 
+				 ]]>
+			</when>
+			<when test="telePhone != null and telePhone != '' ">
+				<![CDATA[
+					AND CT.FOFFERTEL = #{telePhone}
+				 ]]>
+			</when>
+			<otherwise>
+				<if test="fisKeyCustomer!= null and fisKeyCustomer != '' ">
+					<![CDATA[
+							AND CB.FISKEYCUSTOMER = #{fisKeyCustomer}
+						 ]]>
+					</if>
+					<if test="custGroup!= null and custGroup != '' ">
+						<![CDATA[
+							AND CB.FCUSTGROUP = #{custGroup}
+						 ]]>
+					</if>
+					<if test="custCategory!= null and custCategory != '' ">
+					<![CDATA[
+						AND CB.FCUSTCATEGORY = #{custCategory}
+					 ]]>
+				</if>
+				<if test="deptIds != null and deptIds.size > 0 ">
+					<![CDATA[ AND CB.FDEPTID in ]]>
+					<foreach collection="deptIds" open="(" close=")" separator=","
+						item="dept">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+				</if>
+				<if test="custName != null and custName != '' ">
+					<![CDATA[
+						AND CB.FCUSTNAME like #{custName}
+					 ]]>
+				</if>
+				<if test="custSource != null and custSource != '' ">
+					<![CDATA[
+						AND CB.fchannelsource = #{custSource}
+					 ]]>
+				</if>
+				<if test="custGrad != null and custGrad != '' ">
+					<![CDATA[
+						AND CB.FDEGREE = #{custGrad}
+					 ]]>
+				</if>
+				<if test="linkManName != null and linkManName != '' ">
+					<![CDATA[
+						AND CT.FNAME = #{linkManName}
+					 ]]>
+				</if>
+				<if test="tradeId != null and tradeId != '' ">
+					<![CDATA[
+						AND CB.FTRADEID = #{tradeId}
+					 ]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != '' ">
+					<![CDATA[
+						AND CB.FSECONDTRADE = #{secondTrade}
+					 ]]>
+				</if>
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 根据条件查询会员信息 -->
+	<select id="queryMemberByCondition" resultMap="MemberResultRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="MemberResult_column" />
+		<![CDATA[
+			FROM 
+			 	T_CUST_CUSTBASEDATA CB 
+			 	LEFT JOIN 
+  				T_CUST_CUSTLINKMAN CT
+  			ON 
+  				CT.FCUSTID = CB.FID AND 
+        		CT.FSTATUS <> 2 
+        	LEFT JOIN 
+  				T_ORG_DEPARTMENT DEPT 
+  			ON 
+  				DEPT.FID = CB.FDEPTID
+  			LEFT JOIN
+  			 	T_CRM_CITY CITY 
+  			ON 
+  				CITY.FID = CB.FCITYID
+			WHERE 
+			    CB.FID IN (SELECT FID
+                    FROM (SELECT ROWS_.*, ROWNUM RN
+                            FROM (SELECT DISTINCT 
+		    IN_CB.FID,IN_CB.FCREATETIME
+			FROM 
+			 	T_CUST_CUSTBASEDATA IN_CB 
+  			LEFT JOIN 
+  				T_CUST_CUSTLINKMAN IN_CT
+  			ON 
+  				IN_CT.FCUSTID = IN_CB.FID AND 
+        		IN_CT.FSTATUS <> 2 
+  			WHERE 1=1
+  			]]>
+			<if test="custNumber == null || custNumber == '' ">
+				<![CDATA[
+					AND IN_CB.FCUSTSTATUS <> 2 
+				 ]]>
+			</if>
+			
+		<choose>
+			<when test="custNumber != null and custNumber != '' ">
+				<![CDATA[ 
+					AND IN_CB.FCUSTNUMBER = #{custNumber}
+				]]>
+			</when>
+			<when test="linkManNumber != null and linkManNumber != '' ">
+				<![CDATA[
+					AND IN_CT.FNUMBER = #{linkManNumber} 
+				 ]]>
+			</when>
+			<when test="idCard != null and idCard != '' ">
+				<![CDATA[ 
+					AND IN_CT.FIDCARD = #{idCard}
+				]]>
+			</when>
+			<when test="mobile != null and mobile != '' ">
+				<![CDATA[
+					AND IN_CT.FMOBILETEL = #{mobile} 
+				 ]]>
+			</when>
+			<when test="telePhone != null and telePhone != '' ">
+				<![CDATA[
+					AND IN_CT.FOFFERTEL = #{telePhone}
+				 ]]>
+			</when>
+			<otherwise>
+				<if test="fisKeyCustomer!= null and fisKeyCustomer != '' ">
+					<![CDATA[
+						AND IN_CB.FISKEYCUSTOMER = #{fisKeyCustomer}
+					 ]]>
+				</if>
+				<if test="custGroup!= null and custGroup != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTGROUP = #{custGroup}
+					 ]]>
+				</if>
+				<if test="custCategory!= null and custCategory != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTCATEGORY = #{custCategory}
+					 ]]>
+				</if>
+				<if test="deptIds != null and deptIds.size > 0 ">
+					<![CDATA[ AND IN_CB.FDEPTID in ]]>
+					<foreach collection="deptIds" open="(" close=")" separator=","
+						item="dept">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+				</if>
+				<if test="custName != null and custName != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTNAME like #{custName}
+					 ]]>
+				</if>
+				<if test="custGrad != null and custGrad != '' ">
+					<![CDATA[
+						AND IN_CB.FDEGREE = #{custGrad}
+					 ]]>
+				</if>
+				<if test="custSource != null and custSource != '' ">
+					<![CDATA[
+						AND IN_CB.FCHANNELSOURCE = #{custSource}
+					 ]]>
+				</if>
+				<if test="linkManName != null and linkManName != '' ">
+					<![CDATA[
+						AND IN_CT.FNAME like #{linkManName}
+					 ]]>
+				</if>
+				<if test="tradeId != null and tradeId != '' ">
+					<![CDATA[
+						AND IN_CB.FTRADEID = #{tradeId}
+					 ]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != '' ">
+					<![CDATA[
+						AND IN_CB.FSECONDTRADE = #{secondTrade}
+					 ]]>
+				</if>
+			</otherwise>
+		</choose>
+		<![CDATA[ORDER BY IN_CB.FCREATETIME DESC) ROWS_  WHERE ROWNUM <= (#{start}+#{limit}))
+              WHERE RN >#{start})
+              ORDER BY CB.FCREATETIME DESC ，CB.FCUSTNUMBER DESC
+         ]]>
+	</select>
+	<sql id="QueryMemberByConditionJoinSql">
+		<![CDATA[FROM 
+			 	T_CUST_CUSTBASEDATA CB 
+			 	LEFT JOIN 
+  				T_CUST_CUSTLINKMAN CT
+  			ON 
+  				CT.FCUSTID = CB.FID AND 
+        		CT.FSTATUS <> 2 
+        	LEFT JOIN 
+  				T_ORG_DEPARTMENT DEPT 
+  			ON 
+  				DEPT.FID = CB.FDEPTID
+  			LEFT JOIN
+  			 	T_CRM_CITY CITY 
+  			ON 
+  				CITY.FID = CB.FCITYID
+			WHERE 
+			    CB.FID IN (SELECT 
+		    IN_CB.FID
+			FROM 
+			 	T_CUST_CUSTBASEDATA IN_CB 
+  			LEFT JOIN 
+  				T_CUST_CUSTLINKMAN IN_CT
+  			ON 
+  				IN_CT.FCUSTID = IN_CB.FID AND 
+        		IN_CT.FSTATUS <> 2 ]]>
+	</sql>
+	<!-- 根据条件查询会员信息 -->
+	<select id="queryMemberByConditionNopage" resultMap="MemberResultRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="MemberResult_column" />
+		<include refid="QueryMemberByConditionJoinSql" />
+  		<![CDATA[	WHERE 
+  				IN_CB.FCUSTSTATUS <> 2 
+		]]>
+		
+		<choose>
+			<when test=" taxregNumber != null and taxregNumber != '' ">
+	             <![CDATA[AND CB.FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+			</when>		
+			<when test="custNumber != null and custNumber != '' ">
+				<![CDATA[ 
+					AND IN_CB.FCUSTNUMBER = #{custNumber}
+				]]>
+			</when>
+			<when test="linkManNumber != null and linkManNumber != '' ">
+				<![CDATA[
+					AND IN_CT.FNUMBER = #{linkManNumber} 
+				 ]]>
+			</when>
+			<when test="idCard != null and idCard != '' ">
+				<![CDATA[ 
+					AND IN_CT.FIDCARD = #{idCard}
+				]]>
+			</when>
+			<when test="mobile != null and mobile != '' ">
+				<![CDATA[
+					AND IN_CT.FMOBILETEL = #{mobile} 
+				 ]]>
+			</when>
+			<when test="telePhone != null and telePhone != '' ">
+				<![CDATA[
+					AND IN_CT.FOFFERTEL = #{telePhone}
+				 ]]>
+			</when>
+			<otherwise>
+				<if test="fisKeyCustomer!= null and fisKeyCustomer != '' ">
+					<![CDATA[
+						AND IN_CB.FISKEYCUSTOMER = #{fisKeyCustomer}
+					 ]]>
+				</if>
+				<if test="custGroup!= null and custGroup != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTGROUP = #{custGroup}
+					 ]]>
+				</if>
+				<if test="custCategory!= null and custCategory != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTCATEGORY = #{custCategory}
+					 ]]>
+				</if>
+				<if test="deptIds != null and deptIds.size > 0 ">
+					<![CDATA[ AND IN_CB.FDEPTID in ]]>
+					<foreach collection="deptIds" open="(" close=")" separator=","
+						item="dept">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+				</if>
+				<if test="custName != null and custName != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTNAME like #{custName}
+					 ]]>
+				</if>
+				<if test="custGrad != null and custGrad != '' ">
+					<![CDATA[
+						AND IN_CB.FDEGREE = #{custGrad}
+					 ]]>
+				</if>
+				<if test="custSource != null and custSource != '' ">
+					<![CDATA[
+						AND IN_CB.FCHANNELSOURCE = #{custSource}
+					 ]]>
+				</if>
+				<if test="linkManName != null and linkManName != '' ">
+					<![CDATA[
+						AND IN_CT.FNAME like #{linkManName}
+					 ]]>
+				</if>
+				<if test="tradeId != null and tradeId != '' ">
+					<![CDATA[
+						AND IN_CB.FTRADEID = #{tradeId}
+					 ]]>
+				</if>
+				<if test="secondTrade != null and secondTrade != '' ">
+					<![CDATA[
+						AND IN_CB.FSECONDTRADE = #{secondTrade}
+					 ]]>
+				</if>
+			</otherwise>
+		</choose>
+		)
+	</select>
+	
+		<!-- 根据条件查询会员信息 -->
+	<select id="queryArriveScatterMemberByCondition" resultMap="MemberResultRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+			SELECT 
+			CB.FID            MR_FCUSTID,
+	       CB.FCOMPADDR      MR_ADDRESS,
+	       CB.FCUSTNUMBER    MR_FCUSTNUM,
+	       CB.FCUSTNAME      MR_FCUSTNAME,
+	       CB.FDEGREE        MR_FCUSTGRADE,
+	       CB.FCUSTSTATUS    MR_FSTATUS,
+	       CB.FDEPTID        MR_FDEPTID,
+	       CB.FCOMPADDR      MR_FADDRESS,
+	       CB.FREMARK        MR_FREMARK,
+	       CB.FTRADEID       MR_FTRADE,
+	       CB.FSECONDTRADE   MR_SECONDTRADE,
+	       CB.FCUSTTYPE      MR_FCUSTTYPE,
+	       CB.FTAXREGNUMBER  MR_FTAXREGNUM,
+	       CB.FCITYID        MR_FCITYID,
+	       CB.FVERSIONNUMBER MR_FVERSIONNUMBER,
+	       CB.FISKEYCUSTOMER MR_FISKEYCUSTOMER,
+	       CB.FCUSTGROUP     MR_FCUSTGROUP,
+	       CB.FCUSTCATEGORY  MR_FCUSTCATEGORY
+		]]>
+		 FROM T_CUST_CUSTBASEDATA CB
+		 LEFT JOIN T_CUST_MARKETDEPT TE
+		 ON CB.FID=TE.FCUSTID
+  		<![CDATA[	WHERE 
+  				CB.FCUSTSTATUS <> 2  
+  				AND TE.FDEPTID IS NULL
+		]]>
+		<if test=" custGroup != null and custGroup != '' ">
+             <![CDATA[AND CB.FCUSTGROUP=#{custGroup,jdbcType=VARCHAR}]]>
+		</if>		
+		<if test=" custNature != null and custNature != '' ">
+             <![CDATA[AND CB.FCUSTNATURE=#{custNature,jdbcType=VARCHAR}]]>
+		</if>		
+		<if test=" deptId != null and deptId != '' ">
+             <![CDATA[AND CB.FDEPTID=#{deptId,jdbcType=VARCHAR}]]>
+		</if>		
+		<if test=" createDate != null and createDate != '' ">
+             <![CDATA[AND CB.FCREATETIME>#{createDate,jdbcType=VARCHAR}]]>
+		</if>		
+	</select>
+	
+	
+	<!-- 根据条件查询会员信息 360查询客户-->
+	<select id="queryMemberByConditionNopageFor360" resultMap="MemberResultRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="MemberResult_column" />
+		<include refid="QueryMemberByConditionJoinSql" />
+  		<![CDATA[	WHERE IN_CB.FCUSTSTATUS <> 2  ]]>
+		<choose>
+			<when test="custNumber != null and custNumber != '' ">
+				<![CDATA[ 
+					AND IN_CB.FCUSTNUMBER = #{custNumber}
+				]]>
+			</when>
+			<when test="linkManNumber != null and linkManNumber != '' ">
+				<![CDATA[
+					AND IN_CT.FNUMBER = #{linkManNumber} 
+				 ]]>
+			</when>
+			<when test="mobile != null and mobile != '' ">
+				<![CDATA[
+					AND IN_CT.FMOBILETEL = #{mobile} 
+				 ]]>
+			</when>
+			<when test=" taxregNumber != null and taxregNumber != '' ">
+	             <![CDATA[AND CB.FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+			</when>		
+			<when test="idCard != null and idCard != '' ">
+				<![CDATA[ 
+					AND IN_CT.FIDCARD = #{idCard}
+				]]>
+			</when>
+			<when test="telePhone != null and telePhone != '' ">
+				<![CDATA[
+					AND IN_CT.FOFFERTEL = #{telePhone}
+				 ]]>
+			</when>
+			<otherwise>
+<!-- 				<if test="deptIds != null and deptIds.size > 0 "> -->
+<!-- 					<![CDATA[ AND IN_CB.FDEPTID in ]]> -->
+<!-- 					<foreach collection="deptIds" open="(" close=")" separator="," -->
+<!-- 						item="dept"> -->
+<!-- 					<![CDATA[	${dept}  ]]> -->
+<!-- 					</foreach> -->
+<!-- 				</if> -->
+				<if test="custName != null and custName != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTNAME like #{custName}
+					 ]]>
+				</if>
+				<if test="custGrad != null and custGrad != '' ">
+					<![CDATA[
+						AND IN_CB.FDEGREE = #{custGrad}
+					 ]]>
+				</if>
+				<if test="linkManName != null and linkManName != '' ">
+					<![CDATA[
+						AND IN_CT.FNAME like #{linkManName}
+					 ]]>
+				</if>
+			</otherwise>
+		</choose>
+			and CB.FCUSTGROUP  = 'RC_CUSTOMER'
+		)
+	</select>
+	<!-- 根据条件查询会员信息 合同模块 -->
+	<select id="queryMemberByConditionForContract" resultMap="MemberResultRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="MemberResult_column" />
+		<include refid="QueryMemberByConditionJoinSql" />
+  		<![CDATA[	WHERE 
+  				IN_CB.FCUSTSTATUS <> 2 
+  				and IN_CB.FCUSTGROUP = 'RC_CUSTOMER'
+		]]>
+		<if test="deptIds != null and deptIds.size > 0 ">
+			<![CDATA[ AND IN_CB.FDEPTID in ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+		</if>
+		<choose>
+			<when test=" taxregNumber != null and taxregNumber != '' ">
+	             <![CDATA[AND CB.FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+			</when>		
+			<when test="custNumber != null and custNumber != '' ">
+				<![CDATA[ 
+					AND IN_CB.FCUSTNUMBER = #{custNumber}
+				]]>
+			</when>
+			<when test="linkManNumber != null and linkManNumber != '' ">
+				<![CDATA[
+					AND IN_CT.FNUMBER = #{linkManNumber} 
+				 ]]>
+			</when>
+			<when test="idCard != null and idCard != '' ">
+				<![CDATA[ 
+					AND IN_CT.FIDCARD = #{idCard}
+				]]>
+			</when>
+			<when test="mobile != null and mobile != '' ">
+				<![CDATA[
+					AND IN_CT.FMOBILETEL = #{mobile} 
+				 ]]>
+			</when>
+				<when test="memberId != null and memberId != '' ">
+				<![CDATA[
+					AND IN_CB.FID = #{memberId} 
+				 ]]>
+			</when>
+			<when test="telePhone != null and telePhone != '' ">
+				<![CDATA[
+					AND IN_CT.FOFFERTEL = #{telePhone}
+				 ]]>
+			</when>
+			<otherwise>
+				<if test="custName != null and custName != '' ">
+					<![CDATA[
+						AND IN_CB.FCUSTNAME like #{custName}
+					 ]]>
+				</if>
+				<if test="custGrad != null and custGrad != '' ">
+					<![CDATA[
+						AND IN_CB.FDEGREE = #{custGrad}
+					 ]]>
+				</if>
+				<if test="linkManName != null and linkManName != '' ">
+					<![CDATA[
+						AND IN_CT.FNAME like #{linkManName}
+					 ]]>
+				</if>
+				<if test="fisKeyCustomer != null and fisKeyCustomer != '' ">
+					<![CDATA[
+						AND IN_CB.FISKEYCUSTOMER  = #{fisKeyCustomer}
+					 ]]>
+				</if>
+			</otherwise>
+		</choose>
+		)
+	</select>
+	<!-- 根据会员ID查询会员基本信息 -->
+	<select id="queryMemberById" resultMap="MemberBaseRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />,
+		DP.FDEPTNAME DP_FDEPTNAME
+		FROM
+		T_CUST_CUSTBASEDATA CB
+		LEFT JOIN
+		T_ORG_DEPARTMENT DP
+		ON
+		DP.FID = CB.FDEPTID
+		WHERE CB.FID = #{id}
+	</select>
+	<select id="queryMemberExtendByCustId" resultMap="MemberExtend_ResultMap" parameterType="string">
+		SELECT 
+		<include refid="memberExtend_colums"/> 
+		FROM T_CUST_CUSTBASEDATA_EXTEND ED
+		WHERE ED.FCUSTID=#{id,jdbcType=VARCHAR}
+	</select>
+	<resultMap type="com.deppon.crm.module.customer.shared.domain.MemberExtend"
+		id="MemberExtend_ResultMap">
+		<result column="ED_FCUSTID" property="custId" />
+		<result column="ED_FISSEASON" property="isSeason" />
+		<result column="ED_FWARNSTATUS" property="warnStatus" />
+		<result column="ED_FVOLUMEPOTENTIAL" property="volumePotential" />
+		<result column="ED_FCREDITTIMES" property="creditTimes" />
+		<result column="ED_FISPOORCREDIT" property="isPoorCredit" />
+		<result column="ED_FLASTWARNTIME" property="lastWarnTime" />
+		<result column="ED_FPREDELIVERYTBEGINTIME" property="preDeliverytBeginTime" />
+		<result column="ED_FPREDELIVERYTENDTIME" property="preDeliverytEndTime" />
+		<result column="ED_FLOSTCAUSE" property="lostCause" />
+		<result column="ED_FOTHERLOSTCAUSE" property="otherLostCause" />
+		<result column="ED_FSEASONTIMS" property="seasonTims" />
+		<result column="ED_FISCONTINUEMARK" property="isContinueMark" />
+		<result column="ED_FDEVELOPMENTPHASE" property="developmentPhase" />
+		<result column="ED_FRECENTCOOP" property="recentCoop" />
+		<result column="ED_FCOOPINTENTION" property="coopIntention" />
+		<result column="ED_FRECENTGOODS" property="recentGoods" />
+		<result column="ED_FCUSTNEED" property="custNeed" />
+		<result column="ED_FISACCORD" property="isAccord" />
+		<result column="ED_FACCORDMARK" property="accordMark" />
+		<result column="ED_FOTHERRECENTCOOP" property="otherRecentCoop" />
+		
+	</resultMap>
+	
+	<sql id="memberExtend_colums">
+	   ED.FCUSTID ED_FCUSTID, 
+       ED.FISSEASON ED_FISSEASON,
+       ED.FWARNSTATUS ED_FWARNSTATUS,
+       ED.FVOLUMEPOTENTIAL ED_FVOLUMEPOTENTIAL,
+       ED.FCREDITTIMES ED_FCREDITTIMES,
+       ED.FISPOORCREDIT ED_FISPOORCREDIT,
+       ED.FLASTWARNTIME ED_FLASTWARNTIME,
+       ED.FPREDELIVERYTBEGINTIME ED_FPREDELIVERYTBEGINTIME,
+       ED.FPREDELIVERYTENDTIME ED_FPREDELIVERYTENDTIME,
+       ED.FLOSTCAUSE ED_FLOSTCAUSE,
+       ED.FOTHERLOSTCAUSE ED_FOTHERLOSTCAUSE,
+       ED.FSEASONTIMS ED_FSEASONTIMS,
+       ED.FISCONTINUEMARK ED_FISCONTINUEMARK,
+       ED.FDEVELOPMENTPHASE ED_FDEVELOPMENTPHASE,
+       ED.FRECENTCOOP ED_FRECENTCOOP,
+       ED.FCOOPINTENTION ED_FCOOPINTENTION,
+       ED.FRECENTGOODS ED_FRECENTGOODS,
+       ED.FCUSTNEED ED_FCUSTNEED,
+       ED.FISACCORD ED_FISACCORD,
+       ED.FACCORDMARK ED_FACCORDMARK,
+       ED.FOTHERRECENTCOOP ED_FOTHERRECENTCOOP
+	</sql>
+	
+	<select id="queryMemberByIdForContractDebtDay" resultMap="MemberRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		DP.FDEPTNAME DP_FDEPTNAME
+		FROM
+		T_CUST_CUSTBASEDATA CB
+		LEFT JOIN
+		T_ORG_DEPARTMENT DP
+		ON
+		DP.FID = CB.FDEPTID
+		WHERE CB.FID = #{id}
+	</select>
+	
+		<!-- 会员基层信息 -->
+	<resultMap id="MemberBaseRM"
+		type="com.deppon.crm.module.customer.shared.domain.Member">
+		<result property="custNumber" column="CB_FCUSTNUMBER" />
+		<result property="degree" column="CB_FDEGREE" />
+		<result property="custName" column="CB_FCUSTNAME" />
+		<result property="tradeId" column="CB_FTRADEID" />
+		<result property="secondTrade" column="CB_SECONDTRADE" />
+		<result property="custType" column="CB_FCUSTTYPE" />
+		<result property="taxregNumber" column="CB_FTAXREGNUMBER" />
+		<result property="companyProperty" column="CB_FCOMPANYPROPERTY" />
+		<result property="custNature" column="CB_FCUSTNATURE" />
+		<result property="province" column="CB_FPROVINCE" />
+		<result property="provinceId" column="CB_FPROVINCEID" />
+		<result property="city" column="CB_FCITY" />
+		<result property="cityId" column="CB_FCITYID" />
+		<result property="isSpecial" column="CB_FISSPECIAL" />
+		<result property="isRedeempoints" column="CB_FISREDEEMPOINTS" />
+		<result property="isImportCustor" column="CB_FISIMPORTCUSTOR" />
+		<result property="isAcceptMarket" column="CB_FISACCEPTMARKET" />
+		<result property="brandWorth" column="CB_FBRANDWORTH" />
+		<result property="channelSource" column="CB_FCHANNELSOURCE" />
+		<result property="channel" column="CB_FCHANNEL" />
+		<result property="preferenceService" column="CB_FPREFERENCESERVICE" />
+		<result property="companyScop" column="CB_FCOMPANYSCOP" />
+		<result property="lastYearProfit" column="CB_FLASTYEARPROFIT" />
+		<result property="lastYearIncome" column="CB_FLASTYEARINCOME" />
+		<result property="isFocusPay" column="CB_FISFOCUSPAY" />
+		<result property="focusDeptId" column="CB_FFOCUSDEPTID" />
+		<result property="billTitle" column="CB_FBILLTITLE" />
+		<result property="isParentCompany" column="CB_FISPARENTCOMPANY" />
+		<result property="parentNumber" column="CB_FPARENTNUMBER" />
+		<result property="parentCompanyId" column="CB_FPARENTCOMPANYID" />
+		<result property="parentNumber" column="CB_fparentNumber" />
+		<result property="registerFund" column="CB_FREGISTERFUND" />
+		<result property="procRedit" column="CB_FPROCREDIT" />
+		<result property="recommendCust" column="CB_FRECOMMENDCUST" />
+		<result property="remark" column="CB_FREMARK" />
+		<result property="simpleName" column="CB_FSIMPLENAME" />
+		<result property="isTranGoods" column="CB_FISTRANGOODS" />
+		<result property="areaId" column="CB_FAREAID" />
+		<result property="deptId" column="CB_FDEPTID" />
+		<result property="deptName" column="DP_FDEPTNAME" />
+		<result property="contactId" column="CB_FCONTACTID" />
+		<result property="custStatus" column="CB_FCUSTSTATUS" />
+		<result property="responsibillity" column="CB_FRESPONSIBILLITY" />
+		<result property="versionNumber" column="CB_FVERSIONNUMBER" />
+		<result property="id" column="CB_FID" />
+		<result property="potenSource" column="CB_FPOTENSOURCE" />
+		<result property="createDate" column="CB_FCREATETIME" />
+		<result property="createUser" column="CB_FCREATEUSERID" />
+		<result property="modifyDate" column="CB_FLASTUPDATETIME" />
+		<result property="modifyUser" column="CB_FLASTMODIFYUSERID" />
+		<result property="focusDeptName" column="CB_ffocusDeptName" />
+		<result property="registAddress" column="CB_FCOMPADDR" />
+		<result property="finOver" column="CB_FISFINOVER" />
+		<result property="secondTrade" column="CB_FSECONDTRADE"/>
+		<result property="custCategory" column="CB_FCUSTCATEGORY"/>
+		<result property="custGroup" column="CB_FCUSTGROUP"/>
+		<result property="erpId" column="CB_FERPID"/>
+		<result property="isKeyCustomer" column="CB_FISKEYCUSTOMER"/>
+		<association property="memberExtend" column="CB_FID" select="queryMemberExtendByCustId"/>
+		<association property="mainContact" column="CB_FCONTACTID"
+		select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactNoMemberById" />
+	</resultMap>
+	
+	<!-- 根据会员ID查询会员所有信息 -->
+	<resultMap id="MemberRM_ForDetail"
+		type="com.deppon.crm.module.customer.shared.domain.Member" extends="MemberBaseRM">
+		<association property="mainContact" column="CB_FCONTACTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactNoMemberById" />
+		<association property="bussinessDept" column="CB_FDEPTID"
+			select="com.deppon.crm.module.common.shared.domain.BussinessDept.getBusDeptByDeptId" />
+		<collection property="contactList" select="queryContactForDetial"
+			column="CB_FID" />
+		<collection property="shuttleAddressList" select="queryShuttleAddressForDetial"
+			column="CB_FID" />
+		<collection property="accountList" select="queryAccountForDetial"
+			column="CB_FID" />
+		<collection property="logs" select="queryMemberOperationLogForDetial"
+			column="CB_FID" />
+		<collection property="custLabels" column="CB_FID" select="com.deppon.crm.module.customer.shared.domain.CustLabel.searchMemberCustLabel"/>
+	</resultMap>
+
+	<select id="queryContactForDetial" parameterType="string"
+		resultMap="ContactRM">
+		SELECT
+		<include refid="Contact_column" />
+		,
+		<include refid="PreferenceAddress_column" />
+		<![CDATA[
+		FROM T_CUST_CUSTLINKMAN CT
+		LEFT JOIN
+		T_CUST_PREFERENCEADDRESS PA
+		ON
+		PA.FLINKMANID = CT.FID 	
+		AND PA.FSTATUS <> 2
+		WHERE CT.FSTATUS <> 2  AND
+			  CT.FCUSTID =#{custId,jdbcType=VARCHAR}
+			  ]]>
+	</select>
+
+	<select id="queryAccountForDetial" parameterType="string"
+		resultMap="AccountRM">
+		SELECT
+		<include refid="Account_column" />
+		FROM T_CUST_ACCOUNT AC
+		<![CDATA[
+		WHERE AC.FSTATUS <> 2 AND 
+			  AC.FBELONGCUSTOM =#{custId,jdbcType=VARCHAR}
+			  ]]>
+	</select>
+	<select id="queryShuttleAddressForDetial" parameterType="string"
+		resultMap="ShuttleAddressRM">
+		SELECT
+		<include refid="ShuttleAddress_column" />
+		FROM T_CUST_SHUTTLEADDRESS SA 
+		<![CDATA[
+		WHERE SA.FSTATUS <> 2 AND 
+			  SA.FMEMBERID =#{custId,jdbcType=VARCHAR}
+			  ]]>
+	</select>
+	
+	<!--根据会员ID查询会员变更信息-->
+	<select id="queryMemberOperationLogForDetial" parameterType="string"
+		resultMap="MemberOperationLogRM">
+		SELECT
+		<include refid="MemberOperationLog_column" />
+		FROM T_CUST_MEMBEROPERATIONLOG MO
+		<![CDATA[
+		WHERE MO.FISEFFECT = 1
+			  AND MO.FMEMBERID =#{custId,jdbcType=VARCHAR} ORDER BY MO.FMODIFYDATE DESC
+			  ]]>
+	</select>
+
+	<!-- 根据会员ID查询会员所有信息剔除了作废的客户 -->
+	<select id="queryAllMemberById" resultMap="MemberRM_ForDetail">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />,
+		DP.FDEPTNAME DP_FDEPTNAME
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+         		LEFT JOIN	
+         			T_ORG_DEPARTMENT DP
+         		ON 
+         		   DP.FID = CB.FDEPTID	
+				WHERE 
+				 	CB.FCUSTSTATUS <> 2 AND
+					CB.FID = #{id}
+		]]>
+	</select>
+	<!-- 根据会员ID查询会员所有信息包括作废的客户 -->
+	<select id="queryAllMemberByIdNEW" resultMap="MemberRM_ForDetail">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />,
+		DP.FDEPTNAME DP_FDEPTNAME
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+         		LEFT JOIN	
+         			T_ORG_DEPARTMENT DP
+         		ON 
+         		   DP.FID = CB.FDEPTID	
+				WHERE 
+					CB.FID = #{id}
+		]]>
+	</select>
+	<!-- 根据会员ID查询会员所有信息 -->
+	<select id="queryMemberByUserName" resultMap="MemberRM_ForDetail">
+		<![CDATA[
+				SELECT 
+		]]>
+	<include refid="Member_column" />,
+	DP.FDEPTNAME DP_FDEPTNAME
+		<![CDATA[
+		  FROM T_CUST_CUSTBASEDATA CB
+			 LEFT JOIN T_ORG_DEPARTMENT DP 
+			 	ON DP.FID = CB.FDEPTID
+			 LEFT JOIN T_CUST_CUSTLINKMAN M 
+			 	ON CB.FID = M.FCUSTID
+ 			 LEFT JOIN T_USER_CONTACTBIND C 
+ 			 	ON M.FID = C.FCONTACTID
+ 		WHERE CB.FCUSTSTATUS <> 2 
+ 					AND C.FORDERSOURCE='ONLINE'
+ 					AND C.FUSERNAME = #{custName,jdbcType=VARCHAR}
+		]]>
+	</select>
+
+	<select id="queryMember4WorkflowById" resultMap="MemberRM_ForDetail">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		DP.FDEPTNAME DP_FDEPTNAME
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+         		LEFT JOIN	
+         			T_ORG_DEPARTMENT DP
+         		ON 
+         		   DP.FID = CB.FDEPTID	
+				WHERE CB.FID = #{id}
+		]]>
+	</select>
+		<!-- 根据会员ID查询会员所有信息 -->
+	<select id="queryAllInvalidMemberById" resultMap="MemberRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		<include refid="ShuttleAddress_column" />
+		,
+		<include refid="Account_column" />
+		,
+		<include refid="Contact_column" />
+		,
+		<include refid="PreferenceAddress_column" />
+		,
+		<include refid="MemberOperationLog_column" />
+		,
+		DP.FDEPTNAME DP_FDEPTNAME
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+         		LEFT JOIN	
+         			T_ORG_DEPARTMENT DP
+         		ON 
+         		   DP.FID = CB.FDEPTID	
+       			LEFT JOIN 
+          			T_CUST_CUSTLINKMAN CT
+        		ON 
+          			CT.FCUSTID = CB.FID 
+        		LEFT JOIN 
+            		T_CUST_ACCOUNT AC 
+        		ON 
+           	 		AC.FBELONGCUSTOM = CB.FID AND
+           	 		AC.FSTATUS <> 2
+        		LEFT JOIN 
+             		T_CUST_SHUTTLEADDRESS SA 
+        		ON 
+             		SA.FMEMBERID = CB.FID 
+        		LEFT JOIN 
+             		T_CUST_PREFERENCEADDRESS PA
+        		ON 
+             		PA.FLINKMANID = CT.FID 
+        		LEFT JOIN
+        		    t_cust_memberoperationlog MO
+        		ON MO.FMEMBERID = CB.FID AND
+        		 	MO.FISEFFECT = 1
+				WHERE 
+					CB.FID = #{id}
+		]]>
+	</select>
+	<!-- 根据会员ID查询会员信息包括合同和变更信息 -->
+	<select id="queryMember4AllByIdNEW" resultMap="Member4AllRM_NEW">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		<include refid="com.deppon.crm.module.customer.shared.domain.Contract.Contract_column" />
+		,
+		<include refid="com.deppon.crm.module.customer.shared.domain.integral.ContactVary.ContactVary_column" />
+		
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+  				LEFT JOIN 
+  					T_CUST_CONTRACT CT 
+  				ON 
+  					CB.FID = CT.FCUSTID AND 
+  					CT.FCONTRACTSTATUS <> 2
+				LEFT JOIN 
+					T_CUST_MEMBERPOINT CP 
+				ON 
+					CP.FMEMBERID = CB.FID
+				LEFT JOIN 
+					T_CUST_CONTACTVARY V 
+				ON 
+					CP.FID = V.FTOMEMBERINTEGRALID
+				LEFT JOIN 
+					T_CRM_TODOWORKFLOW CW 
+				ON 
+					V.FWORKFLOWID = CW.FWORKFLOWID 
+					AND 
+					CW.FTODOFLAG = 'TODO'
+				WHERE 
+					CB.FID = #{id}
+		]]>
+	</select>
+	<!-- 会员信息 作废查询 -->
+	<resultMap id="Member4AllRM_NEW"
+		type="com.deppon.crm.module.customer.shared.domain.Member4All" extends="MemberBaseRM">
+		<association property="contactVary" column="CB_FID"
+			select="com.deppon.crm.module.customer.shared.domain.integral.ContactVary.queryContactVaryByMemberId" />
+		<collection property="contractList" resultMap="com.deppon.crm.module.customer.shared.domain.Contract.ContractRM_360" />
+	</resultMap>
+	<!-- 根据会员ID查询会员所有信息包括合同和变更信息 -->
+	<select id="queryMember4AllById" resultMap="Member4AllRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		<include refid="ShuttleAddress_column" />
+		,
+		<include refid="Account_column" />
+		,
+		<include refid="LinkMan_column" />
+		,
+		<include refid="PreferenceAddress_column" />
+		,
+		<include refid="MemberOperationLog_column" />
+		,
+		<include refid="com.deppon.crm.module.customer.shared.domain.Contract.Contract_column" />
+		,
+		<include refid="com.deppon.crm.module.customer.shared.domain.integral.ContactVary.ContactVary_column" />
+		,
+		DP.FDEPTNAME DP_FDEPTNAME
+		<![CDATA[
+				FROM 
+         			T_CUST_CUSTBASEDATA CB 
+         		LEFT JOIN	
+         			T_ORG_DEPARTMENT DP
+         		ON 
+         		   DP.FID = CB.FDEPTID	
+       			LEFT JOIN 
+          			T_CUST_CUSTLINKMAN CL
+        		ON 
+          			CL.FCUSTID = CB.FID 
+        		LEFT JOIN 
+            		T_CUST_ACCOUNT AC 
+        		ON 
+           	 		AC.FBELONGCUSTOM = CB.FID AND
+           	 		AC.FSTATUS <> 2
+        		LEFT JOIN 
+             		T_CUST_SHUTTLEADDRESS SA 
+        		ON 
+             		SA.FMEMBERID = CB.FID 
+        		LEFT JOIN 
+             		T_CUST_PREFERENCEADDRESS PA
+        		ON 
+             		PA.FLINKMANID = CL.FID 
+        		LEFT JOIN
+        		    t_cust_memberoperationlog MO
+        		ON MO.FMEMBERID = CB.FID AND
+        		 	MO.FISEFFECT = 1
+  				LEFT JOIN 
+  					T_CUST_CONTRACT CT 
+  				ON 
+  					CB.FID = CT.FCUSTID AND 
+  					CT.FCONTRACTSTATUS <> 2
+				LEFT JOIN 
+					T_CUST_MEMBERPOINT CP 
+				ON 
+					CP.FMEMBERID = CB.FID
+				LEFT JOIN 
+					T_CUST_CONTACTVARY V 
+				ON 
+					CP.FID = V.FTOMEMBERINTEGRALID
+				LEFT JOIN 
+					T_CRM_TODOWORKFLOW CW 
+				ON 
+					V.FWORKFLOWID = CW.FWORKFLOWID AND 
+					CW.FTODOFLAG = 'TODO'
+				WHERE 
+					CB.FID = #{id}
+		]]>
+	</select>
+	
+	<!-- 会员信息 作废查询 -->
+	<resultMap id="Member4AllRM"
+		type="com.deppon.crm.module.customer.shared.domain.Member4All" extends="MemberBaseRM">
+<!-- 		<association property="mainContact" column="CB_FCONTACTID" -->
+<!-- 			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactNoMemberById" /> -->
+		<association property="contactVary" column="CB_FID"
+			select="com.deppon.crm.module.customer.shared.domain.integral.ContactVary.queryContactVaryByMemberId" />
+		<collection property="contactList" resultMap="LinkManRM" />
+		<collection property="shuttleAddressList" resultMap="ShuttleAddressRM" />
+		<collection property="accountList" resultMap="AccountRM" />
+		<collection property="logs" resultMap="MemberOperationLogRM"/>
+		<collection property="contractList" resultMap="com.deppon.crm.module.customer.shared.domain.Contract.ContractRM_360" />
+		<collection property="custLabels" column="CB_FID" select="com.deppon.crm.module.customer.shared.domain.CustLabel.searchMemberCustLabel"></collection>
+	</resultMap>
+	<!-- 会员信息 -->
+	<resultMap id="MemberRM"
+		type="com.deppon.crm.module.customer.shared.domain.Member"  extends="MemberBaseRM">
+<!-- 		<association property="mainContact" column="CB_FCONTACTID" -->
+<!-- 			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactNoMemberById" /> -->
+		<collection property="contactList" resultMap="ContactRM" />
+		<collection property="shuttleAddressList" resultMap="ShuttleAddressRM" />
+		<collection property="accountList" resultMap="AccountRM" />
+		<collection property="logs" resultMap="MemberOperationLogRM"/>
+		<collection property="custLabels" column="CB_FID" select="com.deppon.crm.module.customer.shared.domain.CustLabel.searchMemberCustLabel"></collection>
+	</resultMap>
+
+	<resultMap id="MemberRM_ForHongKong"
+		type="com.deppon.crm.module.customer.shared.domain.Member"  extends="MemberBaseRM">
+		<association property="mainContact" column="CB_FCONTACTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactNoMemberById" />
+		<association property="bussinessDept" column="CB_FDEPTID"
+			select="com.deppon.crm.module.common.shared.domain.BussinessDept.getBusDeptByDeptId" />
+		<collection property="contactList" resultMap="ContactRM" />
+		<collection property="shuttleAddressList" resultMap="ShuttleAddressRM" />
+		<collection property="accountList" resultMap="AccountRM" />
+		<collection property="logs" resultMap="MemberOperationLogRM"/>
+		<collection property="custLabels" column="CB_FID" select="com.deppon.crm.module.customer.shared.domain.CustLabel.searchMemberCustLabel"></collection>
+	</resultMap>
+	<sql id="Member_column">
+		<![CDATA[
+			CB.FCUSTNUMBER CB_FCUSTNUMBER,
+			CB.FDEGREE CB_FDEGREE,
+			CB.FCUSTNAME CB_FCUSTNAME,
+			CB.FTRADEID CB_FTRADEID,
+			CB.FCUSTTYPE CB_FCUSTTYPE,
+			CB.FTAXREGNUMBER CB_FTAXREGNUMBER,
+			CB.FCOMPANYPROPERTY CB_FCOMPANYPROPERTY,
+			CB.FCUSTNATURE CB_FCUSTNATURE,
+			CB.FPROVINCE CB_FPROVINCE,
+			CB.FPROVINCEID CB_FPROVINCEID,
+			CB.FCITY CB_FCITY,
+			CB.FPOTENSOURCE CB_FPOTENSOURCE,
+			CB.FCITYID CB_FCITYID,
+			CB.FISSPECIAL CB_FISSPECIAL,
+			CB.FISREDEEMPOINTS CB_FISREDEEMPOINTS,
+			CB.FISIMPORTCUSTOR CB_FISIMPORTCUSTOR,
+			CB.FISACCEPTMARKET CB_FISACCEPTMARKET,
+			CB.FBRANDWORTH CB_FBRANDWORTH,
+			CB.FCHANNELSOURCE CB_FCHANNELSOURCE,
+			CB.FCHANNEL CB_FCHANNEL,
+			CB.FPREFERENCESERVICE CB_FPREFERENCESERVICE,
+			CB.FCOMPANYSCOP CB_FCOMPANYSCOP,
+			CB.FLASTYEARPROFIT CB_FLASTYEARPROFIT,
+			CB.FLASTYEARINCOME CB_FLASTYEARINCOME,
+			CB.FISFOCUSPAY CB_FISFOCUSPAY,
+			CB.FFOCUSDEPTID CB_FFOCUSDEPTID,
+			CB.FBILLTITLE CB_FBILLTITLE,
+			CB.FISPARENTCOMPANY CB_FISPARENTCOMPANY,
+			CB.FPARENTCOMPANYID CB_FPARENTCOMPANYID,
+			CB.fparentNumber CB_fparentNumber,
+			CB.FREGISTERFUND CB_FREGISTERFUND,
+			CB.FPROCREDIT CB_FPROCREDIT,
+			CB.FRECOMMENDCUST CB_FRECOMMENDCUST,
+			CB.FREMARK CB_FREMARK,
+			CB.FSIMPLENAME CB_FSIMPLENAME,
+			CB.FISTRANGOODS CB_FISTRANGOODS,
+			CB.FAREAID CB_FAREAID,
+			CB.FSECONDTRADE CB_SECONDTRADE,
+			CB.FDEPTID CB_FDEPTID,
+			CB.FCONTACTID CB_FCONTACTID,
+			CB.FCUSTSTATUS CB_FCUSTSTATUS,
+			CB.FRESPONSIBILLITY CB_FRESPONSIBILLITY,
+			CB.FVERSIONNUMBER CB_FVERSIONNUMBER,
+			CB.FID CB_FID,
+			CB.FCREATETIME CB_FCREATETIME,
+			CB.FCREATEUSERID CB_FCREATEUSERID,
+			CB.FLASTUPDATETIME CB_FLASTUPDATETIME,
+			CB.FLASTMODIFYUSERID CB_FLASTMODIFYUSERID,
+			CB.FFOCUSDEPTNAME CB_FFOCUSDEPTNAME,
+			CB.FCOMPADDR CB_FCOMPADDR,
+			CB.FISFINOVER CB_FISFINOVER,
+			CB.FSECONDTRADE CB_FSECONDTRADE,
+			CB.FCUSTCATEGORY CB_FCUSTCATEGORY,
+			CB.FISKEYCUSTOMER CB_FISKEYCUSTOMER,
+			CB.fCUSTGROUP   CB_FCUSTGROUP,
+			CB.FERPID CB_FERPID
+		]]>
+	</sql>
+	<!-- 根据ID查询联系人信息 没有会员信息 -->
+	<select id="queryContactNoMemberById" resultMap="ContactNoMemberRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CT 
+				WHERE FID = #{id}
+		]]>
+	</select>
+	<!-- 根据ID查询联系人信息 -->
+	<select id="queryContactById" resultMap="ContactRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CT 
+				WHERE CT.FID = #{id,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<!-- 根据客户ID查询联系人详细信息，包括偏好地址 -->
+	<select id="getNEWContactDetailInfoById" resultMap="ContactRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Contact_column" />
+		,
+		<include refid="PreferenceAddress_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CT LEFT JOIN  T_CUST_PREFERENCEADDRESS  PA ON  CT.FID = PA.FLINKMANID
+				WHERE CT.FCUSTID = #{memberId}
+				AND CT.fstatus <> 2
+		]]>
+	</select>
+	<!-- 根据联系人ID查询联系人详细信息，包括偏好地址 -->
+	<select id="getContactDetailInfoById" resultMap="ContactRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Contact_column" />
+		,
+		<include refid="PreferenceAddress_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CT LEFT JOIN  T_CUST_PREFERENCEADDRESS  PA ON  CT.FID = PA.FLINKMANID
+				WHERE CT.FID = #{id}
+				AND CT.fstatus <> 2
+		]]>
+	</select>
+	<!-- 根据会员ID查询联系人信息 -->
+	<select id="queryContactByMemberId" resultMap="ContactRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CT 
+				WHERE FCUSTID = #{id}
+				AND CT.fstatus <> 2
+				ORDER BY FISMAINLINKMAN
+		]]>
+	</select>
+	<!-- 根据ID修改联系人状态 -->
+	<update id="updateContactStatus">
+		<![CDATA[
+			UPDATE T_CUST_CUSTLINKMAN 
+			SET FSTATUS = #{status},FLASTUPDATETIME = sysdate 
+			]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[,FVERSIONNUMBER = (FVERSIONNUMBER+1) ]]>
+		</if>
+		<![CDATA[ WHERE FID = #{id} ]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[AND FVERSIONNUMBER = #{versionNumber,jdbcType=NUMERIC} ]]>
+		</if>
+	</update>
+	<resultMap id="ContactNoMemberRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contact">
+		<result property="number" column="CT_FNUMBER" />
+		<result property="name" column="CT_FNAME" />
+		<result property="idCard" column="CT_FIDCARD" />
+		<result property="linkmanType" column="CT_FLINKMANTYPE" />
+		<result property="isMainLinkMan" column="CT_FISMAINLINKMAN" />
+		<result property="sex" column="CT_FSEX" />
+		<result property="telPhone" column="CT_FOFFERTEL" />
+		<result property="mobilePhone" column="CT_FMOBILETEL" />
+		<result property="duty" column="CT_FDUTY" />
+		<result property="dutyDept" column="CT_FDUTYDEPT" />
+		<result property="bornDate" column="CT_FBORNDATE" />
+		<result property="gainave" column="CT_FGAINAVE" />
+		<result property="decisionRight" column="CT_FDECISIONRIGHT" />
+		<result property="nativePlace" column="CT_FNATIVEPLACE" />
+		<result property="personLove" column="CT_FPERSONLOVE" />
+		<result property="folk" column="CT_FFOLK" />
+		<result property="email" column="CT_FEMAIL" />
+		<result property="qqNumber" column="CT_FQQNUMBER" />
+		<result property="msn" column="CT_FMSN" />
+		<result property="ww" column="CT_FWW" />
+		<result property="ffax" column="CT_FFAX" />
+		<result property="acceptDeptid" column="CT_FACCEPTDEPTID" />
+		<result property="status" column="CT_FSTATUS" />
+		<result property="defaultId" column="CT_FDEFAULTID" />
+		<result property="versionId" column="CT_FVERSIONID" />
+		<result property="custId" column="CT_FCUSTID" />
+		<result property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="createUser" column="CT_FCREATEUSERID" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="CT_FLASTUPDATEUSERID" />
+	</resultMap>
+	<resultMap id="ContactRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contact">
+		<result property="number" column="CT_FNUMBER" />
+		<result property="name" column="CT_FNAME" />
+		<result property="idCard" column="CT_FIDCARD" />
+		<result property="linkmanType" column="CT_FLINKMANTYPE" />
+		<result property="isMainLinkMan" column="CT_FISMAINLINKMAN" />
+		<result property="sex" column="CT_FSEX" />
+		<result property="telPhone" column="CT_FOFFERTEL" />
+		<result property="mobilePhone" column="CT_FMOBILETEL" />
+		<result property="duty" column="CT_FDUTY" />
+		<result property="dutyDept" column="CT_FDUTYDEPT" />
+		<result property="bornDate" column="CT_FBORNDATE" />
+		<result property="gainave" column="CT_FGAINAVE" />
+		<result property="decisionRight" column="CT_FDECISIONRIGHT" />
+		<result property="nativePlace" column="CT_FNATIVEPLACE" />
+		<result property="personLove" column="CT_FPERSONLOVE" />
+		<result property="folk" column="CT_FFOLK" />
+		<result property="email" column="CT_FEMAIL" />
+		<result property="qqNumber" column="CT_FQQNUMBER" />
+		<result property="msn" column="CT_FMSN" />
+		<result property="ww" column="CT_FWW" />
+		<result property="acceptDeptid" column="CT_FACCEPTDEPTID" />
+		<result property="status" column="CT_FSTATUS" />
+		<result property="defaultId" column="CT_FDEFAULTID" />
+		<result property="versionId" column="CT_FVERSIONID" />
+		<result property="custId" column="CT_FCUSTID" />
+		<result property="id" column="CT_FID" />
+		<result property="createDate" column="CT_FCREATETIME" />
+		<result property="createUser" column="CT_FCREATEUSERID" />
+		<result property="modifyDate" column="CT_FLASTUPDATETIME" />
+		<result property="modifyUser" column="CT_FLASTUPDATEUSERID" />
+		<result property="cardTypeCon" column="CT_FIDTYPE"/>
+		<result property="ffax" column="CT_FFAX"/>
+		<association property="member" column="CT_FCUSTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById"></association>
+		<collection property="preferenceAddressList" resultMap="PreferenceAddressRM" />
+	</resultMap>
+	
+	<resultMap id="LinkManRM"
+		type="com.deppon.crm.module.customer.shared.domain.Contact">
+		<result property="number" column="CL_FNUMBER" />
+		<result property="name" column="CL_FNAME" />
+		<result property="idCard" column="CL_FIDCARD" />
+		<result property="linkmanType" column="CL_FLINKMANTYPE" />
+		<result property="isMainLinkMan" column="CL_FISMAINLINKMAN" />
+		<result property="sex" column="CL_FSEX" />
+		<result property="telPhone" column="CL_FOFFERTEL" />
+		<result property="mobilePhone" column="CL_FMOBILETEL" />
+		<result property="duty" column="CL_FDUTY" />
+		<result property="dutyDept" column="CL_FDUTYDEPT" />
+		<result property="bornDate" column="CL_FBORNDATE" />
+		<result property="gainave" column="CL_FGAINAVE" />
+		<result property="decisionRight" column="CL_FDECISIONRIGHT" />
+		<result property="nativePlace" column="CL_FNATIVEPLACE" />
+		<result property="personLove" column="CL_FPERSONLOVE" />
+		<result property="folk" column="CL_FFOLK" />
+		<result property="email" column="CL_FEMAIL" />
+		<result property="qqNumber" column="CL_FQQNUMBER" />
+		<result property="msn" column="CL_FMSN" />
+		<result property="ww" column="CL_FWW" />
+		<result property="ffax" column="CL_FFAX" />
+		<result property="acceptDeptid" column="CL_FACCEPTDEPTID" />
+		<result property="status" column="CL_FSTATUS" />
+		<result property="defaultId" column="CL_FDEFAULTID" />
+		<result property="versionId" column="CL_FVERSIONID" />
+		<result property="custId" column="CL_FCUSTID" />
+		<result property="id" column="CL_FID" />
+		<result property="createDate" column="CL_FCREATETIME" />
+		<result property="createUser" column="CL_FCREATEUSERID" />
+		<result property="modifyDate" column="CL_FLASTUPDATETIME" />
+		<result property="modifyUser" column="CL_FLASTUPDATEUSERID" />
+		<result property="cardTypeCon" column="CL_FIDTYPE"/>
+		<association property="member" column="CL_FCUSTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById"></association>
+		<collection property="preferenceAddressList" resultMap="PreferenceAddressRM" />
+	</resultMap>
+	<sql id="LinkMan_column">
+		<![CDATA[
+			CL.FNUMBER CL_FNUMBER,
+			CL.FNAME CL_FNAME,
+			CL.FIDCARD CL_FIDCARD,
+			CL.FLINKMANTYPE CL_FLINKMANTYPE,
+			CL.FISMAINLINKMAN CL_FISMAINLINKMAN,
+			CL.FSEX CL_FSEX,
+			CL.FOFFERTEL CL_FOFFERTEL,
+			CL.FMOBILETEL CL_FMOBILETEL,
+			CL.FDUTY CL_FDUTY,
+			CL.FDUTYDEPT CL_FDUTYDEPT,
+			CL.FBORNDATE CL_FBORNDATE,
+			CL.FGAINAVE CL_FGAINAVE,
+			CL.FDECISIONRIGHT CL_FDECISIONRIGHT,
+			CL.FNATIVEPLACE CL_FNATIVEPLACE,
+			CL.FPERSONLOVE CL_FPERSONLOVE,
+			CL.FFOLK CL_FFOLK,
+			CL.FEMAIL CL_FEMAIL,
+			CL.FQQNUMBER CL_FQQNUMBER,
+			CL.FMSN CL_FMSN,
+			CL.FWW CL_FWW,
+			CL.FACCEPTDEPTID CL_FACCEPTDEPTID,
+			CL.FSTATUS CL_FSTATUS,
+			CL.FDEFAULTID CL_FDEFAULTID,
+			CL.FVERSIONID CL_FVERSIONID,
+			CL.FCUSTID CL_FCUSTID,
+			CL.FID CL_FID,
+			CL.FCREATETIME CL_FCREATETIME,
+			CL.FCREATEUSERID CL_FCREATEUSERID,
+			CL.FLASTUPDATETIME CL_FLASTUPDATETIME,
+			CL.FLASTUPDATEUSERID CL_FLASTUPDATEUSERID,
+			CL.FIDTYPE CL_FIDTYPE,
+			CL.FFAX CL_FFAX
+		]]>
+	</sql>
+	<sql id="Contact_column">
+		<![CDATA[
+			CT.FNUMBER CT_FNUMBER,
+			CT.FNAME CT_FNAME,
+			CT.FIDCARD CT_FIDCARD,
+			CT.FLINKMANTYPE CT_FLINKMANTYPE,
+			CT.FISMAINLINKMAN CT_FISMAINLINKMAN,
+			CT.FSEX CT_FSEX,
+			CT.FOFFERTEL CT_FOFFERTEL,
+			CT.FMOBILETEL CT_FMOBILETEL,
+			CT.FDUTY CT_FDUTY,
+			CT.FDUTYDEPT CT_FDUTYDEPT,
+			CT.FBORNDATE CT_FBORNDATE,
+			CT.FGAINAVE CT_FGAINAVE,
+			CT.FDECISIONRIGHT CT_FDECISIONRIGHT,
+			CT.FNATIVEPLACE CT_FNATIVEPLACE,
+			CT.FPERSONLOVE CT_FPERSONLOVE,
+			CT.FFOLK CT_FFOLK,
+			CT.FEMAIL CT_FEMAIL,
+			CT.FQQNUMBER CT_FQQNUMBER,
+			CT.FMSN CT_FMSN,
+			CT.FWW CT_FWW,
+			CT.FACCEPTDEPTID CT_FACCEPTDEPTID,
+			CT.FSTATUS CT_FSTATUS,
+			CT.FDEFAULTID CT_FDEFAULTID,
+			CT.FVERSIONID CT_FVERSIONID,
+			CT.FCUSTID CT_FCUSTID,
+			CT.FID CT_FID,
+			CT.FCREATETIME CT_FCREATETIME,
+			CT.FCREATEUSERID CT_FCREATEUSERID,
+			CT.FLASTUPDATETIME CT_FLASTUPDATETIME,
+			CT.FLASTUPDATEUSERID CT_FLASTUPDATEUSERID,
+			CT.FIDTYPE CT_FIDTYPE,
+			CT.FFAX CT_FFAX
+		]]>
+	</sql>
+	<!-- 根据账号ID查询账号信息 -->
+	<select id="queryAccountById" resultMap="AccountRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Account_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_ACCOUNT AC 
+				WHERE FID = #{id}
+		]]>
+	</select>
+	<!-- 根据ID修改账号状态 -->
+	<update id="updateAccountStatus">
+		<![CDATA[
+			UPDATE T_CUST_ACCOUNT SET FSTATUS = #{status},FLASTUPDATETIME = sysdate 
+			]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[,FVERSIONNUMBER = (FVERSIONNUMBER+1) ]]>
+		</if>
+		<![CDATA[ WHERE FID = #{id} ]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[AND FVERSIONNUMBER = #{versionNumber,jdbcType=NUMERIC} ]]>
+		</if>
+	</update>
+	<!-- 账号信息 -->
+	<resultMap id="AccountRM"
+		type="com.deppon.crm.module.customer.shared.domain.Account">
+		<result property="bank" column="AC_FBANK" />
+		<result property="bankId" column="AC_FBANKID" />
+		<result property="subBankname" column="AC_FSUBBANKNAME" />
+		<result property="subBanknameId" column="AC_FSUBBANKNAMEID" />
+		<result property="isdefaultaccount" column="AC_FISDEFAULTACCOUNT" />
+		<result property="bankAccount" column="AC_FBANKACCOUNT" />
+		<result property="countName" column="AC_FCOUNTNAME" />
+		<result property="relation" column="AC_FRELATION" />
+		<result property="bankProvinceId" column="AC_FBANKPROVINCEID" />
+		<result property="accountNature" column="AC_FACCOUNTNATURE" />
+		<result property="accountUse" column="AC_FACCOUNTUSE" />
+		<result property="bankCityId" column="AC_FBANKCITYID" />
+		<result property="financeLinkman" column="AC_FFINANCELINKMAN" />
+		<result property="financeLinkmanId" column="AC_FFINANCELINKMANID" />
+		<result property="linkManMobile" column="AC_FLINKMANMOBILE" />
+		<result property="linkManPhone" column="AC_FLINKMANPHONE" />
+		<result property="bankArea" column="AC_FBANKAREA" />
+		<result property="lastUpdateDeptId" column="AC_FLASTUPDATEDEPTID" />
+		<result property="createDeptId" column="AC_FCREATEDEPTID" />
+		<result property="belongcustom" column="AC_FBELONGCUSTOM" />
+		<result property="status" column="AC_FSTATUS" />
+		<result property="id" column="AC_FID" />
+		<result property="bankProvinceName" column="AC_fbankProvinceName" />
+		<result property="bankCityName" column="AC_fbankCityName" />
+		<result property="createDate" column="AC_FCREATETIME" />
+		<result property="createUser" column="AC_FCREATEUSERID" />
+		<result property="modifyDate" column="AC_FLASTUPDATETIME" />
+		<result property="modifyUser" column="AC_FLASTUPDATEUSERID" />
+	</resultMap>
+	<sql id="Account_column">
+		<![CDATA[
+			AC.FBANK AC_FBANK,
+			AC.FBANKID AC_FBANKID,
+			AC.FSUBBANKNAME AC_FSUBBANKNAME,
+			AC.FSUBBANKNAMEID AC_FSUBBANKNAMEID,
+			AC.FISDEFAULTACCOUNT AC_FISDEFAULTACCOUNT,
+			AC.FBANKACCOUNT AC_FBANKACCOUNT,
+			AC.FCOUNTNAME AC_FCOUNTNAME,
+			AC.FRELATION AC_FRELATION,
+			AC.FBANKPROVINCEID AC_FBANKPROVINCEID,
+			AC.FACCOUNTNATURE AC_FACCOUNTNATURE,
+			AC.FACCOUNTUSE AC_FACCOUNTUSE,
+			AC.FBANKCITYID AC_FBANKCITYID,
+			AC.FFINANCELINKMAN AC_FFINANCELINKMAN,
+			AC.FFINANCELINKMANID AC_FFINANCELINKMANID,
+			AC.FLINKMANMOBILE AC_FLINKMANMOBILE,
+			AC.FLINKMANPHONE AC_FLINKMANPHONE,
+			AC.FBANKAREA AC_FBANKAREA,
+			AC.FLASTUPDATEDEPTID AC_FLASTUPDATEDEPTID,
+			AC.FCREATEDEPTID AC_FCREATEDEPTID,
+			AC.FBELONGCUSTOM AC_FBELONGCUSTOM,
+			AC.FSTATUS AC_FSTATUS,
+			AC.FID AC_FID,
+			AC.FCREATETIME AC_FCREATETIME,
+			AC.FCREATEUSERID AC_FCREATEUSERID,
+			AC.FLASTUPDATETIME AC_FLASTUPDATETIME,
+			AC.FLASTUPDATEUSERID AC_FLASTUPDATEUSERID,
+			AC.fbankCityName AC_fbankCityName,
+			AC.fbankProvinceName AC_fbankProvinceName
+		]]>
+	</sql>
+	<!-- 根据ID查询接送货地址信息 -->
+	<select id="queryShuttleAddressById" resultMap="ShuttleAddressRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="ShuttleAddress_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_SHUTTLEADDRESS SA 
+				WHERE FID = #{id}
+		]]>
+	</select>
+	<!-- 根据ID修改联系人状态 -->
+	<update id="updateShuttleAddressStatus">
+		<![CDATA[
+			UPDATE T_CUST_SHUTTLEADDRESS SET FSTATUS = #{status},FLASTUPDATETIME = sysdate
+			]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[,FVERSIONNUMBER = (FVERSIONNUMBER+1) ]]>
+		</if>
+		<![CDATA[ WHERE FID = #{id} ]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[AND FVERSIONNUMBER = #{versionNumber,jdbcType=NUMERIC} ]]>
+		</if>
+	</update>
+	<!-- 根据会员ID查询接送货地址信息 -->
+	<select id="queryShuttleAddressByMemberId" resultMap="ShuttleAddressRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="ShuttleAddress_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_SHUTTLEADDRESS SA 
+				WHERE 
+					SA.FMEMBERID = #{id}
+		]]>
+	</select>
+	<resultMap id="ShuttleAddressRM"
+		type="com.deppon.crm.module.customer.shared.domain.ShuttleAddress">
+		<result property="addressType" column="SA_FADDRESSTYPE" />
+		<result property="address" column="SA_FADDRESS" />
+		<result property="province" column="SA_FPROVINCE" />
+		<result property="city" column="SA_FCITY" />
+		<result property="area" column="SA_FAREA" />
+		<result property="postcode" column="SA_FPOSTCODE" />
+		<result property="memberId" column="SA_FMEMBERID" />
+		<result property="id" column="SA_FID" />
+		<result property="createDate" column="SA_FCREATETIME" />
+		<result property="createUser" column="SA_FCREATEUSERID" />
+		<result property="modifyDate" column="SA_FLASTUPDATETIME" />
+		<result property="modifyUser" column="SA_FLASTMODIFYUSERID" />
+	</resultMap>
+	<sql id="ShuttleAddress_column">
+		<![CDATA[
+			SA.FADDRESSTYPE SA_FADDRESSTYPE,
+			SA.FADDRESS SA_FADDRESS,
+			SA.FPROVINCE SA_FPROVINCE,
+			SA.FCITY SA_FCITY,
+			SA.FAREA SA_FAREA,
+			SA.FPOSTCODE SA_FPOSTCODE,
+			SA.FMEMBERID SA_FMEMBERID,
+			SA.FID SA_FID,
+			SA.FCREATETIME SA_FCREATETIME,
+			SA.FCREATEUSERID SA_FCREATEUSERID,
+			SA.FLASTUPDATETIME SA_FLASTUPDATETIME,
+			SA.FLASTMODIFYUSERID SA_FLASTMODIFYUSERID
+		]]>
+	</sql>
+	<!-- 根据ID查询联系人偏好地址信息 -->
+	<select id="queryPreferenceAddressById" resultMap="PreferenceAddressRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="PreferenceAddress_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_PREFERENCEADDRESS PA 
+				WHERE FID = #{id}
+		]]>
+	</select>
+	<!-- 根据ID修改联系人状态 -->
+	<update id="updatePreferenceAddressStatus">
+		<![CDATA[
+			UPDATE T_CUST_PREFERENCEADDRESS SET FSTATUS = #{status},FLASTUPDATETIME = sysdate 
+			]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[,FVERSIONNUMBER = (VERSIONNUMBER+1) ]]>
+		</if>
+		<![CDATA[ WHERE FID = #{id} ]]>
+		<if test="versionNumber != null and versionNumber != ''">
+			<![CDATA[AND FVERSIONNUMBER = #{versionNumber,jdbcType=NUMERIC} ]]>
+		</if>
+	</update>
+
+	<select id="searchMemberByCondition" resultMap="MemberRM"
+		parameterType="com.deppon.crm.module.customer.shared.domain.MemberCondition">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Member_column" />
+		,
+		DP.FDEPTNAME DP_FDEPTNAME
+		,
+		<include refid="ShuttleAddress_column" />
+		,
+		<include refid="Account_column" />
+		,
+		<include refid="Contact_column" />
+		,
+		<include refid="PreferenceAddress_column" />
+		,
+		<include refid="MemberOperationLog_column"/>
+		<![CDATA[
+			FROM 
+         		T_CUST_CUSTBASEDATA CB 
+         	LEFT JOIN
+			T_ORG_DEPARTMENT DP
+			ON
+			DP.FID = CB.FDEPTID
+       		LEFT JOIN 
+          		T_CUST_CUSTLINKMAN CT
+        	ON 
+          		CT.FCUSTID = CB.FID AND 
+        		CT.FSTATUS <> 2
+        	LEFT JOIN 
+            	T_CUST_ACCOUNT AC 
+        	ON 
+           	 	AC.FBELONGCUSTOM = CB.FID AND
+           	 	AC.FSTATUS <> 2
+        	LEFT JOIN 
+             	T_CUST_SHUTTLEADDRESS SA 
+        	ON 
+             	SA.FMEMBERID = CB.FID  AND
+        		SA.FSTATUS <> 2
+        	LEFT JOIN 
+             	T_CUST_PREFERENCEADDRESS PA
+        	ON 
+             	PA.FLINKMANID = CT.FID AND
+        		PA.FSTATUS <> 2 
+        	LEFT JOIN
+        		t_cust_memberoperationlog MO
+        	ON MO.FMEMBERID = CB.FID AND
+        		MO.FISEFFECT = 1
+			WHERE 
+				CB.FCUSTSTATUS <> 2 
+		]]>
+		<if test="custNumber != null and custNumber != '' ">
+			<![CDATA[ 
+				AND CB.FCUSTNUMBER = #{custNumber}
+			]]>
+		</if>
+		<if test="linkManNumber != null and linkManNumber != '' ">
+			<![CDATA[
+				AND CT.FNUMBER = #{linkManNumber} 
+			]]>
+		</if>
+		<if test="idCard != null and idCard != '' ">
+			<![CDATA[ 
+				AND CT.FIDCARD = #{idCard}
+			]]>
+		</if>
+		<if test="mobile != null and mobile != '' ">
+			<![CDATA[
+				AND CT.FMOBILETEL = #{mobile} 
+				]]>
+		</if>
+		<if test="telePhone != null and telePhone != '' ">
+			<![CDATA[
+				AND CT.FOFFERTEL = #{telePhone}
+				]]>
+		</if>
+		<if test="deptId != null and deptId != '' ">
+			<![CDATA[
+				AND CB.FDEPTID = #{deptId}
+				]]>
+		</if>
+		<if test="custName != null and custName != '' ">
+			<![CDATA[
+				AND CB.FCUSTNAME = #{custName}
+				]]>
+		</if>
+		<if test="custGrad != null and custGrad != '' ">
+			<![CDATA[
+				AND CB.FDEGREE = #{custGrad}
+				]]>
+		</if>
+		<if test="linkManName != null and linkManName != '' ">
+			<![CDATA[
+				AND CT.FNAME = #{linkManName}
+				]]>
+		</if>
+		<if test="fisKeyCustomer != null and fisKeyCustomer != '' ">
+			<![CDATA[
+				AND CB.FISKEYCUSTOMER = #{fisKeyCustomer}
+				]]>
+		</if>
+		<if test="memberId != null and memberId != '' ">
+			<![CDATA[
+				AND CB.FID = #{memberId}
+				]]>
+		</if>
+	</select>
+
+	<!-- 根据 会员Id查询账户信息 -->
+	<select id="getAccountsByMemberId" parameterType="String"
+		resultMap="AccountRM">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="Account_column" />
+		<![CDATA[
+			FROM T_CUST_ACCOUNT AC WHERE AC.FBELONGCUSTOM = #{memberId} 
+			AND AC.FSTATUS <> 2
+		]]>
+	</select>
+	<resultMap id="PreferenceAddressRM"
+		type="com.deppon.crm.module.customer.shared.domain.PreferenceAddress">
+		<result property="addressType" column="PA_FADDRESSTYPE" />
+		<result property="address" column="PA_FADDRESS" />
+		<result property="startTime" column="PA_FSTARTTIME" />
+		<result property="endTime" column="PA_FENDTIME" />
+		<result property="billRequest" column="PA_FBILLREQUEST" />
+		<result property="hasStopCost" column="PA_FHASSTOPCOST" />
+		<result property="payType" column="PA_FPAYTYPE" />
+		<result property="isSendToFloor" column="PA_FISSENDTOFLOOR" />
+		<result property="otherNeed" column="PA_FOTHERNEED" />
+		<result property="shuttleAddressId" column="PA_FSHUTTLEADDRESSID" />
+		<result property="linkManId" column="PA_FLINKMANID" />
+		<result property="id" column="PA_FID" />
+		<result property="isMainAddress" column="PA_fisMainAddress" />
+		<result property="createDate" column="PA_FCREATETIME" />
+		<result property="createUser" column="PA_FCREATEUSERID" />
+		<result property="modifyDate" column="PA_FLASTUPDATETIME" />
+		<result property="modifyUser" column="PA_FLASTUPDATEUSERID" />
+	</resultMap>
+	<sql id="PreferenceAddress_column">
+		<![CDATA[
+			PA.FADDRESSTYPE PA_FADDRESSTYPE,
+			PA.FADDRESS PA_FADDRESS,
+			PA.FSTARTTIME PA_FSTARTTIME,
+			PA.FENDTIME PA_FENDTIME,
+			PA.FBILLREQUEST PA_FBILLREQUEST,
+			PA.FHASSTOPCOST PA_FHASSTOPCOST,
+			PA.FPAYTYPE PA_FPAYTYPE,
+			PA.FISSENDTOFLOOR PA_FISSENDTOFLOOR,
+			PA.FOTHERNEED PA_FOTHERNEED,
+			PA.FSHUTTLEADDRESSID PA_FSHUTTLEADDRESSID,
+			PA.FLINKMANID PA_FLINKMANID,
+			PA.FID PA_FID,
+			PA.FCREATETIME PA_FCREATETIME,
+			PA.FCREATEUSERID PA_FCREATEUSERID,
+			PA.FCREATETIME PA_FCREATETIME,
+			PA.FLASTUPDATEUSERID PA_FLASTUPDATEUSERID,
+			PA.fisMainAddress PA_fisMainAddress
+		]]>
+	</sql>
+	<resultMap id="TodoWorkflowRM"
+		type="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		<result property="workflowId" column="TW_FWORKFLOWID" />
+		<result property="workflowName" column="TW_FWORKFLOWNAME" />
+		<result property="applicationId" column="TW_FAPPLICATIONID" />
+		<result property="applicationStatus" column="TW_FAPPLICATIONSTATUS" />
+		<result property="roleId" column="TW_FROLEID" />
+		<result property="deptId" column="TW_FDEPTID" />
+		<result property="todoFlag" column="TW_FTODOFLAG" />
+		<result property="id" column="TW_FID" />
+		<result property="createDate" column="TW_FCREATEDATE" />
+		<result property="createUser" column="TW_FCREATEUSER" />
+		<result property="modifyDate" column="TW_FMODIFYDATE" />
+		<result property="modifyUser" column="TW_FMODIFYUSER" />
+	</resultMap>
+	<resultMap id="MyTodoWorkflowRM" extends="TodoWorkflowRM"
+		type="com.deppon.crm.module.customer.shared.domain.MyToDoWorkFlow">
+		<id property="id" column="WF_FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="WF_FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="WF_FCREATEUSERID"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="WF_FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="WF_FLASTUPDATEUSERID"
+			jdbcType="VARCHAR" />
+		<result property="userId" column="WF_FUSERID" jdbcType="VARCHAR" />
+		<result property="userName" column="WF_FUSERNAME" jdbcType="VARCHAR" />
+		<result property="status" column="WF_FSTATUS" jdbcType="VARCHAR" />
+		<result property="workFlowId" column="WF_FWORKFLOWID" jdbcType="NUMERIC" />
+		<result property="workFLowName" column="WF_FWORKFLOWNAME"
+			jdbcType="VARCHAR" />
+		<result property="deptId" column="WF_FDEPTID" jdbcType="VARCHAR" />
+		<result property="deptName" column="WF_FDEPTNAME" jdbcType="VARCHAR" />
+		<result property="appId" column="WF_FAPPID" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="TodoWorkflow_column">
+		<![CDATA[
+			TW.FWORKFLOWID TW_FWORKFLOWID,
+			TW.FWORKFLOWNAME TW_FWORKFLOWNAME,
+			TW.FAPPLICATIONID TW_FAPPLICATIONID,
+			TW.FAPPLICATIONSTATUS TW_FAPPLICATIONSTATUS,
+			TW.FROLEID TW_FROLEID,
+			TW.FDEPTID TW_FDEPTID,
+			TW.FTODOFLAG TW_FTODOFLAG,
+			TW.FID TW_FID,
+			TW.FCREATETIME TW_FCREATEDATE,
+      		TW.FCREATEUSERID TW_FCREATEUSER,
+      		TW.FLASTUPDATETIME TW_FMODIFYDATE,
+      		TW.FLASTMODIFYUSERID TW_FMODIFYUSER
+		]]>
+	</sql>
+	<sql id="WorkFlow_column">
+		WF.FID WF_FID,
+		WF.FCREATETIME WF_FCREATETIME,
+		WF.FCREATEUSERID WF_FCREATEUSERID,
+		WF.FLASTUPDATETIME
+		WF_FLASTUPDATETIME,
+		WF.FLASTMODIFYUSERID WF_FLASTMODIFYUSERID,
+		WF.FUSERID WF_FUSERID,
+		WF.FUSERNAME WF_FUSERNAME,
+		WF.FSTATUS WF_FSTATUS,
+		WF.FWORKFLOWID WF_FWORKFLOWID,
+		WF.FWORKFLOWNAME WF_FWORKFLOWNAME,
+		WF.FDEPTID WF_FDEPTID,
+		WF.FDEPTNAME WF_FDEPTNAME,
+		WF.FAPPID WF_FAPPID
+	</sql>
+	
+	<insert id="insertMemberOperationLog" parameterType="com.deppon.crm.module.customer.shared.domain.MemberOperationLog" >
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+		select SEQ_ID_memberoperationlog.nextval as id from dual
+		</selectKey>
+		insert into t_cust_memberoperationlog(
+		FID,FCREATETIME,FCREATEUSERID,
+		FMODIFYUSERNAME,FMODIFYUSERID,FDEPTID,FDEPTNAME,
+		FWORKFLOWID,FMEMBERID,FISEFFECT,FMODIFYDATE,FOPERATETYPE)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{modifyUserName,jdbcType=VARCHAR},#{modifyUserId,jdbcType=VARCHAR},
+		#{department.id,jdbcType=VARCHAR},#{department.deptName ,jdbcType=VARCHAR},
+		#{workflowId,jdbcType=VARCHAR},#{member.id,jdbcType=VARCHAR},
+		#{isEffect,jdbcType=NUMERIC},#{modifyDate,jdbcType=DATE},#{operateType,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<resultMap id="MemberOperationLogRM"
+	 type="com.deppon.crm.module.customer.shared.domain.MemberOperationLog">
+		<id property="id" column="MO_FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="MO_FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="MO_FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyUser" column="MO_FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyUserName" column="MO_FMODIFYUSERNAME" jdbcType = "VARCHAR" />
+		<result property="modifyUserId" column="MO_FMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="MO_FMODIFYDATE" jdbcType = "DATE" />
+		<result property="workflowId" column="MO_FWORKFLOWID" jdbcType = "VARCHAR" />
+		<result property="operateType" column="MO_FOPERATETYPE" jdbcType = "VARCHAR" />
+		<result property="isEffect" column="MO_FISEFFECT" jdbcType = "NUMERIC" />
+		<association property="member" javaType="com.deppon.crm.module.customer.shared.domain.Member">
+			<result property="id" column="MO_FMEMBERID" jdbcType = "VARCHAR" />
+		</association>
+		<association property="department" javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<result property="id" column="MO_FDEPTID" jdbcType = "VARCHAR" />
+			<result property="deptName" column="MO_FDEPTNAME" jdbcType = "VARCHAR" />
+		</association>
+	</resultMap>
+	
+	
+	<update id="updateMemberOperationLog" parameterType="com.deppon.crm.module.customer.shared.domain.MemberOperationLog">
+		UPDATE
+		    T_CUST_MEMBEROPERATIONLOG
+		SET FLASTUPDATETIME = sysdate 
+		,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		<if test=" id != null  ">
+		<![CDATA[,FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyUserName != null   ">
+		<![CDATA[,FMODIFYUSERNAME=#{modifyUserName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyUserId != null ">
+		<![CDATA[,FMODIFYUSERID=#{modifyUserId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" department != null  ">
+		<![CDATA[,FDEPTID=#{department.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" department  != null  ">
+		<![CDATA[,FDEPTNAME=#{department.name ,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workflowId != null  ">
+		<![CDATA[,FWORKFLOWID=#{workflowId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" member != null ">
+		<![CDATA[,FMEMBERID=#{member.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isEffect != null  ">
+		<![CDATA[,FISEFFECT=#{isEffect,jdbcType=NUMERIC}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+	
+	<sql id="MemberOperationLog_column">
+		MO.FID MO_FID,
+		MO.FCREATETIME MO_FCREATETIME,
+		MO.FCREATEUSERID MO_FCREATEUSERID,
+		MO.FLASTUPDATETIME MO_FLASTUPDATETIME,
+		MO.FLASTMODIFYUSERID MO_FLASTMODIFYUSERID,
+		MO.FMODIFYUSERNAME MO_FMODIFYUSERNAME,
+		MO.FMODIFYUSERID MO_FMODIFYUSERID,
+		MO.FDEPTID MO_FDEPTID,
+		MO.FDEPTNAME MO_FDEPTNAME,
+		MO.FMODIFYDATE MO_FMODIFYDATE,
+		MO.FWORKFLOWID MO_FWORKFLOWID,
+		MO.FMEMBERID MO_FMEMBERID,
+		MO.FISEFFECT MO_FISEFFECT,
+		MO.FOPERATETYPE MO_FOPERATETYPE
+	</sql>
+	<insert id="insertCW" parameterType="map">
+      <![CDATA[  
+         INSERT INTO T_CUST_TO_WORKFLOW
+         (CUSTID,WORKFLOWID)
+         VALUES
+         (#{custId,jdbcType=NUMERIC},#{workflowId,jdbcType=VARCHAR})
+      ]]>
+   </insert>
+   <update id="updateCW" parameterType="map">
+        UPDATE  T_CUST_TO_WORKFLOW
+        SET WORKFLOWID=#{workflowId}
+        WHERE CUSTID=#{custId}
+   </update>
+   <select id="getCW" parameterType="string" resultType="string">
+      <![CDATA[	
+        SELECT WORKFLOWID FROM T_CUST_TO_WORKFLOW 
+        WHERE CUSTID=#{custId}
+       ]]>
+   </select>
+	
+   <select id="getCust" parameterType="string" resultType="string">
+      <![CDATA[	
+        SELECT CUSTID FROM T_CUST_TO_WORKFLOW 
+        WHERE WORKFLOWID=#{workFlow}
+       ]]>
+   </select>
+   
+   	   <select id="getInvalidCustNumber" resultType="string">
+      <![CDATA[	
+        SELECT FCUSTNUMBER FROM T_CUST_CUSTBASEDATA
+        WHERE FCUSTSTATUS=2 AND FISFINOVER=0
+        AND NOT EXISTS (
+        	 SELECT 1 FROM T_REC_SERVICERECOVERY  S 
+        	 WHERE S.FAPPLYSTATUS 
+        	 NOT  IN('APPLY_AGREED') AND S.FCUSTOMERNUM=FCUSTNUMBER
+        )
+        AND NOT EXISTS (
+        	 SELECT 1 FROM T_REC_BACKFREIGHT  B 
+        	 WHERE B.FAPPLYSTATUS NOT  IN('APPLY_AGREED') 
+        	 AND B.FCUSTOMERNUM=FCUSTNUMBER
+        )
+        AND NOT EXISTS (
+        	 SELECT 1  FROM T_REC_RECOMPENSE R
+  			 WHERE R.FSTATUS NOT IN ('INERP', 'PAID')
+		     AND R.FLEAVECUSTOMERID = FCUSTNUMBER
+        )
+         AND NOT EXISTS (
+        	 SELECT 1  FROM T_REC_RECOMPENSE R
+  			 WHERE R.FSTATUS NOT IN ('INERP', 'PAID')
+		     AND R.FARRIVECUSTOMERID = FCUSTNUMBER
+        )
+       ]]>
+   </select>
+
+	<select id="queryCustIdByNumber" resultType="string">
+		SELECT FID FROM T_CUST_CUSTBASEDATA
+		<where>
+		FCUSTNUMBER IN
+			<foreach collection="list" item="item" separator="," open="("
+				close=")">
+				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</where>
+	</select>
+   
+     <update id="invalidCustNumber" parameterType="map">
+      <![CDATA[	
+        UPDATE T_CUST_CUSTBASEDATA
+        SET FISFINOVER=#{status,jdbcType=VARCHAR},
+        FLASTUPDATETIME=SYSDATE
+       ]]>
+       <where>
+       FCUSTNUMBER IN
+       	<foreach collection="updateCustStatus" item="item" separator="," open="(" close=")">
+       		#{item,jdbcType=VARCHAR}
+       	</foreach>
+       </where>
+   </update>
+  <!--查询客户基本信息-->
+   <select id="queryMemberByCustomer" resultMap="MemberResultRM" parameterType="string">
+			SELECT 
+		<include refid="MemberResult_column" />
+			FROM 
+			 	T_CUST_CUSTBASEDATA CB 
+			 	LEFT JOIN 
+  				T_CUST_CUSTLINKMAN CT
+  			ON 
+  				CT.FCUSTID = CB.FID   
+        	LEFT JOIN 
+  				T_ORG_DEPARTMENT DEPT 
+  			ON 
+  				 DEPT.FID = CB.FDEPTID
+  			LEFT JOIN
+  			  	T_CRM_CITY CITY 
+  			ON 
+  			 CITY.FID = CB.FCITYID
+			 WHERE CB.FCUSTNUMBER=#{custNum}
+   </select>
+   
+   		<!-- 获得一年没有开发日程的散客列表 -->
+	<select id="getScatterCustomerLoseYear"  resultMap="MemberRM" parameterType="map">
+	SELECT
+	<include refid="Member_column" />
+		    <![CDATA[
+		FROM T_CUST_CUSTBASEDATA T
+           LEFT JOIN (SELECT MAX(S.FCREATETIME) CREATETIME, S.FCUSTID
+                        FROM T_CUST_SCHEDULE S
+                       WHERE S.FCONTACTID IS NULL
+                       GROUP BY S.FCUSTID) T0 ON T0.FCUSTID =T.FID 
+          WHERE (T0.CREATETIME IS NULL
+             OR T0.CREATETIME < ADD_MONTHS(SYSDATE, -12))
+             AND T.FCUSTSTATUS = 1 AND T.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+             AND T.FDEPTID = #{deptId,jdbcType=VARCHAR}
+             ]]>
+	</select>
+	<!-- 根据联系方式查询客户基本信息（有效和审批中） -->
+	<select id="queryMemberByContactWay" resultMap="MemberBaseRM" parameterType="map">
+		<![CDATA[
+			SELECT
+		 ]]>
+		<include refid="Member_column" />
+		<![CDATA[
+			  FROM T_CUST_CUSTBASEDATA CB
+			  LEFT JOIN T_CUST_CUSTLINKMAN CL 
+			  ON CB.FID = CL.FCUSTID
+				 WHERE CL.FSTATUS <> 2
+				   AND CB.FCUSTSTATUS <> 2
+			]]>
+				   <if test="mobilePhone != null and mobilePhone != ''">
+						<![CDATA[
+						  	AND CL.FMOBILETEL = #{mobilePhone,jdbcType=VARCHAR}
+						]]>
+					</if>
+				  <if test="telPhone != null and telPhone != ''">
+						<![CDATA[
+						   AND CL.FOFFERTEL = #{telPhone,jdbcType=VARCHAR}
+						]]>
+					</if>
+					<if test="name != null and name != ''">
+						<![CDATA[
+						  	AND CL.FNAME = #{name,jdbcType=VARCHAR} 
+						]]>
+					</if>
+	</select>
+   	<select id="queryPSCustLoseYear" resultMap="MemberRM" parameterType="map">
+			SELECT
+		<include refid="Member_column" />
+	  		FROM 
+	  		   T_CUST_CUSTBASEDATA PS 
+	  		WHERE
+          		PS.FCUSTSTATUS = 2  AND PS.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+       			AND PS.FISFINOVER = 1 
+          	AND 
+          		PS.FDEPTID = #{deptId,jdbcType=VARCHAR}
+          	AND 
+          		ADD_MONTHS(sysdate,-12) > PS.FLASTUPDATETIME 
+	</select>
+	
+	<delete id="deleteMemberExtend" parameterType="string">
+		DELETE T_CUST_CUSTBASEDATA_EXTEND WHERE FCUSTID=#{custId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deletePreferenceAddress" parameterType="string">
+		DELETE T_CUST_PREFERENCEADDRESS WHERE FLINKMANID=#{contactId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteContact" parameterType="string">
+		DELETE T_CUST_CUSTLINKMAN WHERE FCUSTID=#{custId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteAccount" parameterType="string">
+		DELETE T_CUST_ACCOUNT WHERE FBELONGCUSTOM=#{custId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteShuttleAddress" parameterType="string">
+		DELETE T_CUST_SHUTTLEADDRESS WHERE FMEMBERID=#{custId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteMember" parameterType="string">
+		DELETE T_CUST_CUSTBASEDATA WHERE FID=#{custId,jdbcType=VARCHAR}
+	</delete>
+	
+	<update id="upadteScatterMarktingDeptByDay" parameterType="map">
+	    <![CDATA[
+		UPDATE T_CUST_MARKETDEPT M
+ 		  SET M.FDEPTID = #{deptId,jdbcType=VARCHAR},
+       M.FLASTUPDATETIME   = SYSDATE,
+       M.FLASTMODIFYUSERID = #{modifyUser,jdbcType = VARCHAR}
+       WHERE EXISTS (SELECT 1 FROM T_CUST_CUSTBASEDATA C 
+       		WHERE C.FLASTUPDATETIME<SYSDATE-#{day,jdbcType=NUMERIC} AND M.FCUSTID=C.FID)
+       		AND NOT  EXISTS (SELECT 1 FROM T_CUST_RETURNVISIT R 
+       		WHERE R.FCUSTID=M.FCUSTID AND R.FCREATETIME>SYSDATE-#{day,jdbcType=NUMERIC})
+       		AND NOT EXISTS (SELECT 1 FROM T_CUST_SCHEDULE S
+			WHERE   S.FCUSTID=M.FCUSTID AND S.FCREATETIME>SYSDATE-#{day,jdbcType=NUMERIC})
+       ]]>
+	</update>
+	<!-- 根据客户ID查询未关闭的商机状态 -->
+	<select id="queryUnCloseBusiness" resultType="string" parameterType="string">
+		 <![CDATA[
+		SELECT MB.FCUSTID
+  			FROM T_MARK_BUSINESSOPPORTUNITY MB
+ 			WHERE MB.FCUSTID = #{memberId,jdbcType=VARCHAR}
+   			AND MB.FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT')
+   		]]>
+	</select>
+	
+	<!-- 根据客户ID查询未关闭的商机状态 -->
+	<update id="upadteUnCloseBustiness" parameterType="map">
+	    <![CDATA[
+		UPDATE T_MARK_BUSINESSOPPORTUNITY MB
+  		 SET MB.FLASTMODIFYTIME = SYSDATE,
+  		  	 MB.FLASTMODIFYUSERID =#{modifyUser,jdbcType = VARCHAR}, 
+  		  	 MB.FCUSTID = #{newMemberId,jdbcType=VARCHAR}
+ 		WHERE MB.FCUSTID = #{beforeMemberId,jdbcType=VARCHAR}
+       ]]>
+	</update>
+	
+	<!--根据会员ID查询会员变更信息-->
+	<select id="queryMemberOperationLogByNum" parameterType="string"
+		resultMap="MemberOperationLogRM">
+		SELECT
+		<include refid="MemberOperationLog_column" />
+		FROM T_CUST_MEMBEROPERATIONLOG MO
+		<![CDATA[
+		WHERE MO.FISEFFECT = 1
+			  AND MO.FWORKFLOWID =#{num,jdbcType=VARCHAR} ORDER BY MO.FMODIFYDATE DESC
+			  ]]>
+	</select>
+</mapper>

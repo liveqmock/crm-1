@@ -1,0 +1,2 @@
+delete from T_ORD_ACCEPTCONFIG;
+insert into T_ORD_ACCEPTCONFIG(FWARNTIME,FLOCKTIME) values(5,30);

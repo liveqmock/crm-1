@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="stylesheet" type="text/css" href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+<link rel="stylesheet" type="text/css" href="../styles/common/deppon.css?2012081110.0.1" />
+<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+<script type="text/javascript" charset="utf-8" src="../scripts/common/common/common.js?2012081110.0.1"></script>
+<script type="text/javascript" charset="utf-8" src="../scripts/common/util/MessageUtil.js?2012081110.0.1"></script>
+<script type="text/javascript" charset="utf-8" src="../scripts/common/util/DpUtil.js?2012081110.0.1"></script>
+<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+
+<!-- 国际化i18n文件 -->
+<script language="javascript" src="../i18n_permission_acess/common/common.js?2012081110.0.1"></script>
+<!-- 数据字典 -->
+<script type="text/javascript" charset="utf-8" src="../scripts/common/common/DataDictionary.js?2012081110.0.1"></script>
+<!-- 自定义js文件 -->
+<script type="text/javascript" src="../scripts/common/common/ladingStatDepartData.js?2012081110.0.1"></script>
+<script type="text/javascript" src="../scripts/common/common/ladingStatDepartView.js?2012081110.0.1"></script>
+
+</head>
+<body class="tabcontentpadding">
+
+<script type="text/javascript">
+	Ext.onReady(function(){
+		
+		//页面需要加载的数据字典数组
+		var keys=[
+		     'CONFIG_ORDER_SOURCE' /*订单来源*/
+			,'CONFIG_ORDER_RECEIVE_GOODS' /*是否接货*/
+			,'CONFIG_ORDER_RECEIVE_GOODS' /*始发部门与受理部门中是否接货*/
+			,'CONFIG_ORDER_SOURCE'  /*始发部门与受理部门中订单来源*/
+	  	];
+		//初始数据字典
+		initDataDictionary(keys);		
+		
+		
+		//初始化页面控件	
+		Ext.create('Ext.container.Viewport', {
+			layout : 'border',
+			items : [
+			         {
+						xtype:'basicpanel',
+						layout:'fit',
+						region:'center',
+						items:[Ext.create('LadingStatDepartPanel')]
+					 }
+					]
+	});			
+		
+
+	});
+	
+	
+	
+</script>
+</body>
+</html>

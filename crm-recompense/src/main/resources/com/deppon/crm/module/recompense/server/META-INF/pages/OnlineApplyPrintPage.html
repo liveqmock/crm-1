@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<style type="text/css">
+body,span,ol,li,div,h2,h3,p{	margin:0;padding:0;}
+#wrapper{	width:680px;margin:10px auto 10px 0;overflow:auto;}
+.left{	float:left;display:inline;width:49%;}
+.righ{	float:right;display:inline;width:49%;}
+.dashedBdBtm{	padding-bottom:8px;border-bottom:1px #333 dotted;margin-bottom:12px;}
+span{	padding:0 6px;	border-bottom:1px #333 solid;}
+h3{	line-height:32px;font-size:18px;font-weight:600;text-indent:0.2em;}
+p{	text-indent:2em;line-height:2}
+ol li{	line-height:2;margin-left:2.5em;font-size:0.8999em;}
+</style>
+<script type="text/javascript">
+Date.prototype.format = function(format){
+	if( typeof(this) =='undefined'||this.getTime()==0||this.toString().indexOf('GMT')==-1){
+		return null;
+	};
+	var o = {
+		"M+" : this.getMonth()+1, //month
+		"d+" : this.getDate(), //day
+		"h+" : this.getHours(), //hour
+		"m+" : this.getMinutes(), //minute
+		"s+" : this.getSeconds(), //second
+		"q+" : Math.floor((this.getMonth()+3)/3), //quarter
+		"S" : this.getMilliseconds() //millisecond
+	};
+
+	if(/(y+)/.test(format)) {
+		format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+	};
+
+	for(var k in o) {
+		if(new RegExp("("+ k +")").test(format)) {
+			format = format.replace(RegExp.$1, RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+		};
+	};
+	return format;
+};
+</script>
+<script type="text/javascript" src="../i18n_permission_acess/recompense/recompense.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+var str 		= '<div id="wrapper">'+
+				'<h2 style="text-align:center;font-size:24px;width:100%;padding:15px 0;">'+ 
+				i18n('i18n.recompense.OnlineApplyAgreement')+'</h2>'+ '<h3>'+
+				i18n('i18n.recompense.OnlineApplyP1') +'<span id="partA"></span></h3><h3 style="margin-bottom:12px;">'+ 
+				i18n('i18n.recompense.OnlineApplyP2') +'<span id="partB"></span></h3><p>'+ 
+				i18n('i18n.recompense.OnlineApplyP3') +'<span id="sendDate"></span>'+ 
+				i18n('i18n.recompense.OnlineApplyP4') +'<span id="startStation"></span>'+ 
+				i18n('i18n.recompense.OnlineApplyP5') +'<span id="endStation"></span>'+ 
+				i18n('i18n.recompense.OnlineApplyP6') +'<span id="waybillNumber" style="background:#eee"></span>'+ 
+				i18n('i18n.recompense.OnlineApplyP7') +'</p><p>'+i18n('i18n.recompense.OnlineApplyP8')+
+				'<span id="recompenseAmount"></span>'+ i18n('i18n.recompense.OnlineApplyP9') +
+				'</p><p class="dashedBdBtm">'+ i18n('i18n.recompense.OnlineApplyPa') +
+				'<span id="chineseAmount"></span>'+
+				'。</p><h3>'+ i18n('i18n.recompense.OnlineApplyPb') +'</h3><ol><li>'+ 
+				i18n('i18n.recompense.OnlineApplyPc')+'</li><li>'+
+				i18n('i18n.recompense.OnlineApplyPd')+'</li><li>'+i18n('i18n.recompense.OnlineApplyPe')+'</li><li>'+ 
+				i18n('i18n.recompense.OnlineApplyPf') +'</li><li>'+ i18n('i18n.recompense.OnlineApplyPh')+
+				'</li><li style="list-style:none;">'+i18n('i18n.recompense.OnlineApplyPj')+'</li></ol><h3>'+ 
+				i18n('i18n.recompense.OnlineApplyPi')+'</h3><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPk') +'<span id="account"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPl') +'<span id="openName"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPm')+'<span id="bankName"></span></p><p class="dashedBdBtm">'+ 
+				i18n('i18n.recompense.OnlineApplyPn') +
+				'<span id="province" style="display:none;"></span><span id="city" style="display:none;">'+
+				'</span><span id="county"></span><span id="branchName"></span></p><div class="left"><p>' +
+				'<span id="partA2" style="text-indent:4em;width:300px;visibility:hidden;"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPs') +'<span id="partAsign" style="width:300px;"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPt') +
+				'<span id="partAsignDate" style="text-indent:4em;width:300px"></span></p></div><div class="righ"><p>'+ 
+				i18n('i18n.recompense.OnlineApplyP2') +'<span id="partB2"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPs') +'<span id="partBAsign"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPu') +'<span id="idCard"></span></p><p>'+ 
+				i18n('i18n.recompense.OnlineApplyPt') +'<span id="partBAsignDate"></span></p></div></div>' ,
+
+	//var str 		= '<div id="wrapper"><h2 style="text-align:center;font-size:24px;width:100%;padding:15px 0;">'+ i18n('i18n.recompense.OnlineApplyAgreement')+'</h2>'+ '<h3>'+i18n('i18n.recompense.OnlineApplyP1') +'<span /* id="partA" */></span></h3><h3 style="margin-bottom:12px;">'+ i18n('i18n.recompense.OnlineApplyP2') +'<span id="partB"></span></h3><p>'+ i18n('i18n.recompense.OnlineApplyP3') +'<span id="sendDate"></span>'+ i18n('i18n.recompense.OnlineApplyP4') +'<span id="startStation"></span>'+ i18n('i18n.recompense.OnlineApplyP5') +'<span id="endStation"></span>'+ i18n('i18n.recompense.OnlineApplyP6') +'<span id="waybillNumber" style="background:#eee"></span>'+ i18n('i18n.recompense.OnlineApplyP7') +'</p><p>'+i18n('i18n.recompense.OnlineApplyP8')+'<span id="recompenseAmount"></span>'+ i18n('i18n.recompense.OnlineApplyP9') +'</p><p class="dashedBdBtm">'+ i18n('i18n.recompense.OnlineApplyPa') +'<span id="chineseAmount"></span>'+ i18n('i18n.recompense.OnlineApplyP9') +'</p><h3>'+ i18n('i18n.recompense.OnlineApplyPb') +'</h3><ol class="dashedBdBtm"><li>'+ i18n('i18n.recompense.OnlineApplyPc')+'</li><li>'+i18n('i18n.recompense.OnlineApplyPd')+'</li><li>'+i18n('i18n.recompense.OnlineApplyPe')+'</li><li>'+ i18n('i18n.recompense.OnlineApplyPf') +'</li><li>'+i18n('i18n.recompense.OnlineApplyPg') +'</li><li>'+ i18n('i18n.recompense.OnlineApplyPh')+'</li></ol><h3>'+ i18n('i18n.recompense.OnlineApplyPi')+'</h3><p>'+ i18n('i18n.recompense.OnlineApplyPj')+'</p><p>'+ i18n('i18n.recompense.OnlineApplyPk') +'<span id="account"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPl') +'<span id="openName"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPm')+'<span id="bankName"></span></p><p class="dashedBdBtm">'+ i18n('i18n.recompense.OnlineApplyPn') +'<span id="province"></span>'+ i18n('i18n.recompense.OnlineApplyPo') +'<span id="city"></span>'+ i18n('i18n.recompense.OnlineApplyPp') +'<span id="county"></span>'+i18n('i18n.recompense.OnlineApplyPq') +'<span id="branchName"></span>'+ i18n('i18n.recompense.OnlineApplyPr') +'</p><div class="left"><p>'+ i18n('i18n.recompense.OnlineApplyP1') +'<span id="partA2" style="text-indent:4em;width:300px;"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPs') +'<span id="partAsign" style="width:300px;"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPt') +'<span id="partAsignDate" style="text-indent:4em;width:300px"></span></p></div><div class="righ"><p>'+ i18n('i18n.recompense.OnlineApplyP2') +'<span id="partB2"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPs') +'<span id="partBAsign"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPu') +'<span id="idCard"></span></p><p>'+ i18n('i18n.recompense.OnlineApplyPt') +'<span id="partBAsignDate"></span></p></div></div>' ,
+	sonData 	= window.opener.parentData,
+	arr 		= [  'partA', 'partB', 'sendDate', 'startStation', 'endStation', 'waybillNumber', 'recompenseAmount', 'chineseAmount', 'account', 'openName', 'bankName', 'province', 'city', 'county', 'branchName', 'partAsign', 'partAsignDate', 'partBAsign', 'idCard', 'partBAsignDate' ];
+	document.body.innerHTML = str;	
+	formatData 	= function(dt){
+		if( typeof dt =='undefined'){
+			return ;
+		}else{
+			return new Date(dt).format('yyyy-MM-dd');
+		}
+	};
+//	typeof sonData =='undefined'?alert('数据未装载，请刷新页面'):'';
+	sonData.sendDate  		= (sonData.sendDate?(formatData(sonData.sendDate)):'');
+	sonData.partAsignDate 	= (sonData.partAsignDate?(formatData(sonData.partAsignDate)):'');
+	sonData.partBAsignDate	= (sonData.partBAsignDate?(formatData(sonData.partBAsignDate)):'');
+var loadData = function(){
+	for(var i in arr ){
+		document.getElementById(arr[i]).innerHTML = sonData[arr[i]];
+	};
+	document.getElementById('partA2').innerHTML = sonData['partA'];
+	document.getElementById('partB2').innerHTML = sonData['partB'];	
+};
+loadData();
+
+/*
+setTimeout(function(){
+//	window.location.reload();
+	window.print();
+},500);
+*/
+
+
+</script>
+</body>
+</html>
+<!--
+<div id="wrapper">
+	<h2 style="text-align:center;font-size:24px;width:100%;padding:15px 0;">理赔协议书</h2>
+	<h3>甲方：<span id="partA">partA</span></h3>
+	<h3 style="margin-bottom:12px;">乙方：<span id="partB">partB</span></h3>
+	<p>乙方于<span id="sendDate">sendDate.toLocalString( 年 月 日)</span>委托甲方从<span id="startStation">startStation（出发站）</span>承运一批货物至<span id="endStation">endStation（目的站）</span>，货物运单号为<span id="waybillNumber" style="background:#eee">waybillNumber</span>。在承运过程中，甲方不慎将该批货物丢失/受损，现经双方友好协商，达成以下和解协议，以便双方以后更好的合作。</p>
+	<p>甲方同意在本协议签订时，一次性向乙方赔款货损人民币<span id="recompenseAmount">recompenseAmount</span>元。</p>
+	<p class="dashedBdBtm">赔款金额大写：人民币<span id="chineseAmount">chineseAmount</span>。</p>
+	<h3>注意事项</h3>
+	<ol class="dashedBdBtm">
+	<li>甲方向乙方支付上述赔偿金后，双方关于该批货物赔偿事宜结束</li>
+	<li>甲方按本协议履行后，乙方不得就此事再向甲方主张任何权利。</li>
+	<li>甲方按全部保价声明价值，即认定货物全损向乙方赔付的，甲方取得该批货物的追偿权和所有权。</li>
+	<li>如因甲方丢失货物赔款，在甲方支付赔款日期起一个月内甲方找到丢失货物的，甲方将货物返还乙方，乙方应将上述赔偿金退还甲方。</li>
+	<li>本协议理赔金额填写处，需加盖甲方公章方得视为甲方对理赔金额认可。</li>
+	<li>本理赔协议自甲乙双方传真签字盖章后生效，盖章的传真理赔协议书具有与原件同等的法律效力，甲乙双方对此均无异议。</li>
+	</ol>
+	<h3>领款信息</h3>
+	<p>领款方式：汇款</p>
+	<p>汇款信息：帐号：<span id="account">account</span></p>
+	<p>开户名：<span id="openName">openName</span></p>
+	<p>开户银行：<span id="bankName">bankName</span></p>
+	<p class="dashedBdBtm">开户支行名字：<span id="province">province</span>省<span id="city">city</span>市<span id="county">county</span>区/县<span id="branchName">branchName</span>支行</p>
+	<div class="left">
+		<p>甲方：<span id="partA2" style="text-indent:4em;width:300px;">partA</span></p>
+		<p>代表人签字：<span id="partAsign" style="width:300px;">partAsign</span></p>
+		<p>日期：<span id="partAsignDate" style="text-indent:4em;width:300px">partAsignDate （年 月 日）</span></p>
+	</div>
+	<div class="righ">
+		<p>乙方：<span id="partB2">partB</span></p>
+		<p>代表人签字：<span id="partBAsign">partBAsign</span></p>
+		<p>身份证号码：<span id="idCard">idCard</span></p>
+		<p>日期：<span id="partBAsignDate">partBAsignDate（年 月 日）</span></p>
+	</div>
+</div>
+-->

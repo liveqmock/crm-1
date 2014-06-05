@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.AbCity">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="abCityMap" type="com.deppon.crm.module.common.shared.domain.AbCity">
+		<id property="fId" column="FID" javaType="int" jdbcType="INTEGER"/>
+		<result property="name" column="FNAME" jdbcType="VARCHAR" javaType="String"/>
+		<result property="createTime" column="FCREATETIME"
+			jdbcType="TIMESTAMP" javaType="Date"/>
+		<result property="lastUpdateTime" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="lastModifyUserId" column="FLASTMODIFYUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="createUserId" column="FCREATEUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+			
+		<result property="lastModifyUserName" column="LASTMODIFYUSERNAME"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createUserName" column="CREATEUSERNAME"
+			javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+ 	<select id="getAbCity" parameterType="com.deppon.crm.module.common.shared.domain.AbCitySearchCondition" resultMap="abCityMap">
+		SELECT T.FID FID,T.FCREATETIME FCREATETIME,T.FCREATEUSERID FCREATEUSERID,
+				T.FLASTUPDATETIME FLASTUPDATETIME,T.FLASTMODIFYUSERID FLASTMODIFYUSERID,
+				T.FNAME FNAME,C.FEMPNAME CREATEUSERNAME,
+				U.FEMPNAME LASTMODIFYUSERNAME
+		  FROM T_CRM_ABCITY T
+		  LEFT JOIN T_ORG_EMPLOYEE C
+		    ON T.FCREATEUSERID = C.FID
+		  LEFT JOIN T_ORG_EMPLOYEE U
+		    ON T.FLASTMODIFYUSERID=U.FID	
+    </select>
+    
+    <select id="getAbCityCount" parameterType="com.deppon.crm.module.common.shared.domain.AbCitySearchCondition" resultType="Long">
+		SELECT count(*)
+		  FROM T_CRM_ABCITY T
+		  LEFT JOIN T_ORG_EMPLOYEE C
+		    ON T.FCREATEUSERID = C.FID
+		  LEFT JOIN T_ORG_EMPLOYEE U
+		    ON T.FLASTMODIFYUSERID=U.FID	
+    </select>
+</mapper>

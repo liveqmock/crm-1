@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.MonitorPlan">
+    <select id="searchMonitorPlan" 
+    	resultType="com.deppon.crm.module.marketing.shared.domain.MonitorPlan" 
+    	parameterType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanQueryCondition">
+		<![CDATA[
+			SELECT TDEPT.FID DEPARTID,
+				TDEPT.FDEPTNAME   DEPARTNAME,
+               	NVL((TMP.A + TMP.B + TMP.C + TMP.D), 0) TOTAL,
+               	NVL(TMP.A, 0) NOEXECUTE,
+               	NVL(TMP.B, 0) EXECUTE,
+               	NVL(TMP.C, 0) FINISHED,
+               	NVL(TMP.D, 0) OVERDUE
+			FROM 			
+				T_ORG_DEPARTMENT TDEPT
+				LEFT JOIN ( SELECT 
+				         TPLAN.FEXECDEPTID,
+				         SUM (DECODE(FSTATUS, 10, 1, 0)) A ,
+				         SUM (DECODE(FSTATUS, 20, 1, 0)) B ,
+				         SUM (DECODE(FSTATUS, 30, 1, 0)) C ,
+				         SUM (DECODE(FSTATUS, 40, 1, 0)) D 
+				    FROM
+				         T_CUST_DEVELOPMAINTAINLIST TPLAN		
+		            WHERE 1=1
+		]]>
+		 <if test="projectType!=null and projectType!=''">
+		 	<![CDATA[ AND TPLAN.FPROJECTTYPE = #{projectType, jdbcType=VARCHAR} ]]>
+		 </if>
+         <if test="planStatus != null and planStatus !='' ">
+         	<![CDATA[ AND TPLAN.FSTATUS = #{planStatus, jdbcType=NUMERIC} ]]>
+         </if>
+         <if test="topic != null and topic !='' ">
+         	<![CDATA[ AND TPLAN.FTOPIC LIKE #{topic, jdbcType=VARCHAR} ]]>
+         </if>         
+         <if test="execuserId != null and execuserId !='' ">
+         	<![CDATA[ AND TPLAN.FEXECUSERID = #{execuserId, jdbcType=VARCHAR} ]]>
+         </if>    
+<!--          <if test="planType != null and planType !='' and planType == 'mat'"> -->
+<!--          	<![CDATA[ AND TPLAN.FPLANTYPE != 'dev' ]]> -->
+<!--          </if> -->
+<!--          <if test="planType != null and planType !='' and planType == 'dev'"> -->
+<!--          	<![CDATA[ AND TPLAN.FPLANTYPE = #{planType, jdbcType=VARCHAR} ]]> -->
+<!--          </if> -->
+  		 <if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(TPLAN.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(TPLAN.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		 </if>
+		<![CDATA[				    
+				    GROUP BY FEXECDEPTID    
+				    ) TMP ON TDEPT.FID = TMP.FEXECDEPTID
+			WHERE 1 =1 			 
+		]]>
+		<if test="execdeptIds != null and execdeptIds != ''">
+			<![CDATA[ AND TDEPT.FID IN ]]>
+			<foreach collection="execdeptIds" open="(" close=")" separator=","
+				item="execdeptId">
+			<![CDATA[	${execdeptId}  ]]>
+			</foreach>
+		</if>
+	</select>
+	<!--李春雨 20140109 增加查询结果 计划类别-->
+	<select id="searchDevMonitorPlanDetail"
+    	resultType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanDetail" 
+    	parameterType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanQueryCondition">
+		<![CDATA[
+			SELECT 
+               TDEPT.FDEPTNAME DEPARTNAME,
+               TPLAN.FTOPIC TOPIC,
+               T2.FEMPNAME CREATORNAME,
+               TO_CHAR(TPLAN.FBEGINTIME, 'YYYY-MM-DD') || '~' || TO_CHAR(TPLAN.FENDTIME, 'YYYY-MM-DD') PLANETIMELIMIT,
+               TPC.FCUSTNAME CUSTOMERNAME,
+               TPC.FLINKMANNAME LINKMANNAME,
+               TPC.FCUSTTYPE CUSTOMERTYPE,
+               TPC.FCUSTNATURE CUSTOMERPROPERTY,
+               T1.FEMPNAME EXECUSERNAME,               
+               TSCHE.FSTATUS SCHESTATUS,
+               TPLAN.FSTATUS PLANSTATUS,
+               TPLAN.FACTIVEDESC PLANDESC,
+               TPLAN.FPROJECTTYPE PROJECTTYPE
+			FROM 
+			   T_CUST_DEVELOPMAINTAINLIST TPLAN
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T1  
+			             ON (TPLAN.FEXECUSERID =  T1.FID )
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T2  
+			             ON (TPLAN.FCREATEUSERID =  T2.FID ),
+			   T_ORG_DEPARTMENT TDEPT, 
+			   T_CUST_SCHEDULE TSCHE, 
+			   T_CUST_POTENTIALSCATTER TPC
+			   LEFT JOIN T_CUST_CUSTLINKMAN MAN ON MAN.FCUSTID = TPC.FID     
+			WHERE TPLAN.FID = TSCHE.FPLANID
+				AND TPLAN.FEXECDEPTID = TDEPT.FID
+				AND TSCHE.FCUSTID = TPC.FID	 
+		]]>
+		<if test="execdeptId != null and execdeptId != ''">
+			<![CDATA[ AND TDEPT.FID = ${execdeptId} ]]>
+		</if>
+         <if test="topic != null and topic !='' ">
+         	<![CDATA[ AND TPLAN.FTOPIC LIKE #{topic, jdbcType=VARCHAR} ]]>
+         </if>    
+         <if test="planStatus != null and planStatus !='' ">
+         	<![CDATA[ AND TPLAN.FSTATUS = #{planStatus, jdbcType=NUMERIC} ]]>
+         </if>         
+         <if test="execuserId != null and execuserId !='' ">
+         	<![CDATA[ AND TPLAN.FEXECUSERID = #{execuserId, jdbcType=VARCHAR} ]]>
+         </if>     
+         <if test="planType != null and planType !='' and planType == 'mat'">
+         	<![CDATA[ AND TPLAN.FPLANTYPE != 'dev' ]]>
+         </if>
+         <if test="planType != null and planType !='' and planType == 'dev'">
+         	<![CDATA[ AND TPLAN.FPLANTYPE = #{planType, jdbcType=VARCHAR} ]]>
+         </if>
+  		 <if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(TPLAN.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(TPLAN.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		 </if>	
+		 <![CDATA[
+				ORDER BY TPLAN.FTOPIC,  TPC.FID
+	       ]]>	
+	</select>
+	
+	<select id="getDevMonitorPlanDetailCount"
+    	resultType="int" 
+    	parameterType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanQueryCondition">
+    	<![CDATA[
+			SELECT 
+               COUNT(1)
+			FROM 
+			   T_CUST_DEVELOPMAINTAINLIST TPLAN
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T1  
+			             ON (TPLAN.FEXECUSERID =  T1.FID )
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T2  
+			             ON (TPLAN.FCREATEUSERID =  T2.FID ),
+			   T_ORG_DEPARTMENT TDEPT, 
+			   T_CUST_SCHEDULE TSCHE, 
+			   T_CUST_POTENTIALSCATTER TPC
+			   LEFT JOIN T_CUST_CUSTLINKMAN MAN ON MAN.FCUSTID = TPC.FID 	     
+			WHERE TPLAN.FID = TSCHE.FPLANID
+				AND TPLAN.FEXECDEPTID = TDEPT.FID
+				AND TSCHE.FCUSTID = TPC.FID	 
+				
+		]]>
+		<if test="execdeptIds != null and execdeptIds != ''">
+			<![CDATA[ AND TDEPT.FID IN ]]>
+			<foreach collection="execdeptIds" open="(" close=")" separator=","
+				item="execdeptId">
+			<![CDATA[	${execdeptId}  ]]>
+			</foreach>
+		</if>
+         <if test="topic != null and topic !='' ">
+         	<![CDATA[ AND TPLAN.FTOPIC LIKE #{topic, jdbcType=VARCHAR} ]]>
+         </if>    
+         <if test="planStatus != null and planStatus !='' ">
+         	<![CDATA[ AND TPLAN.FSTATUS = #{planStatus, jdbcType=NUMERIC} ]]>
+         </if>         
+         <if test="execuserId != null and execuserId !='' ">
+         	<![CDATA[ AND TPLAN.FEXECUSERID = #{execuserId, jdbcType=VARCHAR} ]]>
+         </if>        
+         <if test="planType != null and planType !='' and planType == 'mat'">
+         	<![CDATA[ AND TPLAN.FPLANTYPE != 'dev' ]]>
+         </if>
+         <if test="planType != null and planType !='' and planType == 'dev'">
+         	<![CDATA[ AND TPLAN.FPLANTYPE = #{planType, jdbcType=VARCHAR} ]]>
+         </if>
+  		 <if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(TPLAN.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(TPLAN.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		 </if>	
+   	</select>
+	
+	
+	<select id="searchMatMonitorPlanDetail"
+    	resultType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanDetail" 
+    	parameterType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanQueryCondition">
+		<![CDATA[
+			SELECT 
+		       TDEPT.FDEPTNAME DEPARTNAME,
+		       TPLAN.FTOPIC TOPIC,
+		       TPLAN.FPROJECTTYPE PROJECTTYPE,
+		       T2.FEMPNAME CREATORNAME,
+		        TO_CHAR(TPLAN.FBEGINTIME, 'YYYY-MM-DD') || '~' || TO_CHAR(TPLAN.FENDTIME, 'YYYY-MM-DD') PLANETIMELIMIT,
+		       CUST.FCUSTNAME CUSTOMERNAME,
+		       'MEMBER' CUSTOMERTYPE,
+		       CUST.FCUSTNATURE CUSTOMERPROPERTY,
+		       T1.FEMPNAME EXECUSERNAME,
+		       TSCHE.FSTATUS SCHESTATUS,
+               TPLAN.FSTATUS PLANSTATUS,
+               TPLAN.FACTIVEDESC PLANDESC,
+               TLK.FNAME LINKMANNAME,
+               CUST.FDEGREE MEMBERLEVEL
+			FROM 
+			   T_CUST_DEVELOPMAINTAINLIST TPLAN
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T1  
+			             ON (TPLAN.FEXECUSERID =  T1.FID )
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T2  
+			             ON (TPLAN.FCREATEUSERID =  T2.FID ),
+				 T_ORG_DEPARTMENT TDEPT,
+				 T_CUST_SCHEDULE TSCHE,
+				 T_CUST_CUSTLINKMAN TLK,
+				 T_CUST_CUSTBASEDATA CUST				   
+			WHERE TPLAN.FID = TSCHE.FPLANID
+				AND TPLAN.FEXECDEPTID = TDEPT.FID
+				AND TSCHE.FCUSTID = CUST.FID
+				AND TSCHE.FCONTACTID = TLK.FID
+				AND TLK.FCUSTID = CUST.FID
+		]]>
+		<if test="execdeptId != null and execdeptId != ''">
+			<![CDATA[ AND TDEPT.FID = ${execdeptId} ]]>
+		</if>
+         <if test="topic != null and topic !='' ">
+         	<![CDATA[ AND TPLAN.FTOPIC LIKE #{topic, jdbcType=VARCHAR} ]]>
+         </if>    
+         <if test="planStatus != null and planStatus !='' ">
+         	<![CDATA[ AND TPLAN.FSTATUS = #{planStatus, jdbcType=NUMERIC} ]]>
+         </if>
+         <if test="projectType != null and projectType !='' ">
+         	<![CDATA[ AND TPLAN.FPROJECTTYPE = #{projectType, jdbcType=NUMERIC} ]]>
+         </if>           
+         <if test="execuserId != null and execuserId !='' ">
+         	<![CDATA[ AND TPLAN.FEXECUSERID = #{execuserId, jdbcType=VARCHAR} ]]>
+         </if>       
+<!--          <if test="planType != null and planType !='' and planType == 'mat'"> -->
+<!--          	<![CDATA[ AND TPLAN.FPLANTYPE != 'dev' ]]> -->
+<!--          </if> -->
+<!--          <if test="planType != null and planType !='' and planType == 'dev'"> -->
+<!--          	<![CDATA[ AND TPLAN.FPLANTYPE = #{planType, jdbcType=VARCHAR} ]]> -->
+<!--          </if> -->
+  		 <if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(TPLAN.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(TPLAN.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		 </if>	
+		 <![CDATA[
+				ORDER BY TPLAN.FTOPIC,  CUST.FID
+	       ]]>		
+	</select>
+	
+	<select id="getMatMonitorPlanDetailCount"
+    	resultType="int" 
+    	parameterType="com.deppon.crm.module.marketing.shared.domain.MonitorPlanQueryCondition">
+    	<![CDATA[
+			SELECT 
+               COUNT(1)
+			FROM 
+			   T_CUST_DEVELOPMAINTAINLIST TPLAN
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T1  
+			             ON (TPLAN.FEXECUSERID =  T1.FID )
+			         LEFT OUTER JOIN 
+			             T_ORG_EMPLOYEE T2  
+			             ON (TPLAN.FCREATEUSERID =  T2.FID ),
+				 T_ORG_DEPARTMENT TDEPT,
+				 T_CUST_SCHEDULE TSCHE,
+				 T_CUST_CUSTLINKMAN TLK,
+				 T_CUST_CUSTBASEDATA CUST				   
+			WHERE TPLAN.FID = TSCHE.FPLANID
+				AND TPLAN.FEXECDEPTID = TDEPT.FID
+				AND TSCHE.FCUSTID = CUST.FID
+				AND TSCHE.FCONTACTID = TLK.FID
+				AND TLK.FCUSTID = CUST.FID
+		]]>
+		<if test="execdeptIds != null and execdeptIds != ''">
+			<![CDATA[ AND TDEPT.FID IN ]]>
+			<foreach collection="execdeptIds" open="(" close=")" separator=","
+				item="execdeptId">
+			<![CDATA[	${execdeptId}  ]]>
+			</foreach>
+		</if>
+         <if test="topic != null and topic !='' ">
+         	<![CDATA[ AND TPLAN.FTOPIC LIKE #{topic, jdbcType=VARCHAR} ]]>
+         </if>    
+          <if test="projectType != null and projectType !='' ">
+         	<![CDATA[ AND TPLAN.FPROJECTTYPE = #{projectType, jdbcType=NUMERIC} ]]>
+         </if>   
+         <if test="planStatus != null and planStatus !='' ">
+         	<![CDATA[ AND TPLAN.FSTATUS = #{planStatus, jdbcType=NUMERIC} ]]>
+         </if>         
+         <if test="execuserId != null and execuserId !='' ">
+         	<![CDATA[ AND TPLAN.FEXECUSERID = #{execuserId, jdbcType=VARCHAR} ]]>
+         </if>      
+<!--          <if test="planType != null and planType !='' and planType == 'mat'"> -->
+<!--          	<![CDATA[ AND TPLAN.FPLANTYPE != 'dev' ]]> -->
+<!--          </if> -->
+<!--          <if test="planType != null and planType !='' and planType == 'dev'"> -->
+<!--          	<![CDATA[ AND TPLAN.FPLANTYPE = #{planType, jdbcType=VARCHAR} ]]> -->
+<!--          </if> -->
+  		 <if test="planStartDate != null and planOverDate != null">
+			<![CDATA[
+				AND (TRUNC(TPLAN.FBEGINTIME) >= #{planStartDate, jdbcType=DATE} AND
+					TRUNC(TPLAN.FENDTIME) <= #{planOverDate, jdbcType=DATE}
+		       )
+	       ]]>
+		 </if>	
+   	</select>
+	
+</mapper>

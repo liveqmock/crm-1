@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+<!-- 	<bean id="dataSource" -->
+<!-- 		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> -->
+<!-- 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" /> -->
+<!-- 		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" /> -->
+<!-- 		<property name="username" value="develop" /> -->
+<!-- 		<property name="password" value="develop" /> -->
+<!-- 	</bean> -->
+	<import resource="./service-client.xml"/>
+	
+	<!-- 工作流 -->
+	<bean id="contractApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.ContractApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="giftApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.GiftApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+
+	<bean id="recompenseApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.RecompenseApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	
+	<bean id="contractApplyOperate" factory-bean="contractApplyOperateProxy" factory-method="create">
+		<property name="esbService" ref="esb2oaWorkFlow"></property>
+		<property name="stateService" ref="oaQueryWorkFlowStateServiceWs"></property>
+	</bean>
+	<bean id="giftApplyOperate" factory-bean="giftApplyOperateProxy" factory-method="create">
+		<property name="giftService" ref="lmsApplyGiftService"></property>
+	</bean>
+	<!-- 费控付款工作流暂时不提供服务，需求更改 -->
+	<bean id="paymentApplyOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.workflow.impl.PaymentApplyOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="paymentApplyOperate" factory-bean="paymentApplyOperateProxy" factory-method="create">
+		<property name="depClaimsBillService" ref="depClaimsBillService"></property>
+	</bean>
+	<bean id="recompenseApplyOperate" factory-bean="recompenseApplyOperateProxy" factory-method="create">
+		<property name="esbService" ref="esb2oaWorkFlow"></property>
+	</bean>
+	<!-- 此接口是OA工作流直接调用，没有走ESB，备用的，所以不做日志 -->
+	<!-- <bean id="oaWorkFlowService" class="com.deppon.crm.module.client.workflow.impl.OaWorkFlowServiceImpl">
+		<property name="workFlowService" ref="oaWorkFlowServiceWs"></property>
+	</bean> -->
+	
+	<!-- 订单 -->
+	<bean id="waybillOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.WaybillOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="waybillOperate" factory-bean="waybillOperateProxy" factory-method="create">
+		<property name="erp2CrmService" ref="erp2CrmService"></property>
+	</bean>
+	
+	<bean id="orderOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.OrderOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="orderOperate" factory-bean="orderOperateProxy" factory-method="create">
+		<property name="esb2ebmStatus" ref="esb2ebmStatus"></property>
+		<property name="esb2erpAppointCar" ref="esb2erpAppointCar"></property>
+		<property name="ebmOrderStatusService" ref="ebmQueryOrderStatusServiceWs"></property>
+		<property name="orderAndCustService" ref="erp2CrmCustAndOrderService"></property>
+	</bean>
+
+	<!-- <bean id="orderOperateProxy2" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.OrderOperateImpl2"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="orderOperate2" factory-bean="orderOperateProxy2" factory-method="create">
+		<property name="erp2EsbService" ref="esb2erpAppointCar2"></property>
+		<property name="updateOrderStatusWebService" ref="esb2ebmStatus2"></property>
+	</bean> -->
+	
+	<bean id="oaAccidentOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.order.impl.OaAccidentOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="oaAccidentOperate" factory-bean="oaAccidentOperateProxy" factory-method="create">
+		<property name="errorService" ref="oaErrorService" ></property>
+		<property name="taskService" ref="oaTaskService"></property>
+	</bean>
+	
+	<!-- 短信网关 -->
+	<bean id="smsSenderProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.sms.impl.SmsSenderImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<!-- http://192.168.17.152:8085 http://192.168.14.246:8086-->
+	<bean id="smsSender" factory-bean="smsSenderProxy" factory-method="create">
+		<!-- <property name="postAddress" value="http://192.168.17.152:8085/dpVoiceSms/ws/sms/batch"></property> -->
+		<property name="postAddress" value="http://192.168.2.105:8080/dpVoiceSms/ws/sms/batch"></property>
+		<property name="userName" value="crmsms"></property>
+		<property name="password" value="20120504"></property>
+	</bean>
+	
+	<!-- 客户 -->
+	<bean id="customerOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.customer.impl.CustomerOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="customerOperate" factory-bean="customerOperateProxy" factory-method="create">
+		<property name="userWebServices" ref="bhoUserWebService"></property>
+		<property name="crmCusArrStaByNum" ref="biCrmCusArrStaByNum"></property>
+		<property name="crmCusStaByNum" ref="biCrmCusStaByNum"></property>
+		<property name="orderAndCustService" ref="erp2CrmCustAndOrderService"></property>
+	</bean>
+	<!--电子地图 -->
+	<bean id="mapOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.map.impl.MapOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="mapOperate" factory-bean="mapOperateProxy" factory-method="create">
+		<property name="map2CrmService" ref="map2CrmServiceWs"></property>
+	</bean>
+	<!-- 呼叫中心 -->
+	<bean id="complaintOperateProxy" class="com.deppon.crm.module.client.common.ServiceProxyFactoryBean">
+		<property name="className" value="com.deppon.crm.module.client.complaint.impl.ComplaintOperateImpl"></property>
+		<property name="serviceAccessProxyFactory" ref="serviceAccessProxyFactory"></property>
+	</bean>
+	<bean id="complaintOperate" factory-bean="complaintOperateProxy" factory-method="create">
+		<property name="complaintService" ref="ccComplaintServiceWs"></property>
+	</bean>
+	
+	
+	<!-- log -->
+	<bean id="interfaceLogBuffer" class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="queueSize" value="5"></property>
+		<property name="listSize" value="5"></property>
+		<property name="logSender" ref="interfaceLogSender"></property>
+	</bean>
+	<bean id="interfaceLogSender" class="com.deppon.crm.module.client.log.InterfaceInvokeLogSender">
+		<property name="jdbcTemplate" ref="interfaceLogSenderJdbcTemplate"></property>
+	</bean>
+	<bean id="interfaceLogSenderJdbcTemplate"  class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<bean id="serviceAccessProxyFactory" class="com.deppon.crm.module.client.common.ServiceAccessProxyFactory" factory-method="createInstance">
+		<property name="logBuffer" ref="interfaceLogBuffer"></property>
+		<property name="interfaceProvider" ref="interfaceProvider"></property>
+	</bean>
+	<bean id="interfaceProvider" class="com.deppon.crm.module.client.common.DbInterfaceProvider">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 客戶主数据同步 -->
+	<bean id="WaitCustomerLogDao" class="com.deppon.crm.module.client.sync.dao.impl.WaitCustomerLogDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="SearchMemberInfosDao" class="com.deppon.crm.module.client.sync.dao.impl.SearchMemberInfosDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="CustomerInfoLog" class="com.deppon.crm.module.client.sync.impl.CustomerInfoLog">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+		<property name="searchMemberInfosDao">
+			<ref bean="SearchMemberInfosDao" />
+		</property>
+	</bean>
+	<bean id="CustomerInfoSend" class="com.deppon.crm.module.client.sync.impl.CustomerInfoSendImpl">
+		<property name="esbService">
+			<ref bean="syncDataServiceWs" />
+		</property>
+	</bean>
+	
+	<!-- 客户日志修改 -->
+	<bean id="syncCallbackDao" class="com.deppon.crm.module.client.customer.dao.impl.SyncCallbackDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.165:1521:crmtest" />
+		<property name="username" value="develop" />
+		<property name="password" value="crmtestdb" />
+	</bean>
+
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="mybatis.xml" />
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+
+	<!-- 日志队列配置开始 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.deppon" />
+
+</beans>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.logmoniting.shared.domain.SynchronizeLogInfo">
+	<!--查询同步日志信息 -->
+	<select id="queryDataSynchro" parameterType="com.deppon.crm.module.logmoniting.shared.domain.SynchronizeLogInfo"
+		resultMap="SynchronizeLogInfoRM">
+		SELECT DISTINCT
+			<include refid="querylog_sql"/>
+		FROM 
+			T_CRM_CMDTBS BS
+		JOIN 
+			T_CRM_CMDTBSD BSD
+		ON 
+			BS.TRANSACTION_NO = BSD.TRANSACTION_NO
+		WHERE 
+			BSD.TABLE_NAME = #{tableName,jdbcType=VARCHAR}
+		AND 
+			BSD.TABLE_KEYWORD = #{keyWord,jdbcType=VARCHAR}
+		<![CDATA[AND BS.FLASTUPDATETIME >= #{synStartTime,jdbcType=TIMESTAMP}]]>
+		<![CDATA[AND BS.FLASTUPDATETIME <= #{synFinishTime,jdbcType=TIMESTAMP}]]>
+		<if test="handleType != null and handleType != ''">
+			and BS.HANDLE_TYPE = #{handleType,jdbcType=VARCHAR}
+		</if>
+		<if test="synStatus != null and synStatus != ''">
+			and BS.STATUS = #{synStatus,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<!-- 同步日志查询colum -->
+	<sql id="querylog_sql">
+		BS.FID BS_FID,
+		BSD.TABLE_NAME BSD_TABLENAME,
+		BSD.TABLE_KEYWORD BSD_TABLEKEYWORD,
+		BS.HANDLE_TYPE BS_HANDLETYPE,
+		BS.STATUS BS_STATUS,
+		BS.CRATE_TIME BS_CRATE_TIME,
+		BS.FINISH_TIME BS_FINISH_TIME,
+		BS.FLASTUPDATETIME BS_FLASTUPDATETIME
+	</sql>
+	<!-- 同步日志查询结果返回map -->	
+	<resultMap type="com.deppon.crm.module.logmoniting.shared.domain.SynchronizeLogInfo" 
+		id="SynchronizeLogInfoRM">
+		<result property="id" column="BS_FID"/>
+		<result property="tableName" column="BSD_TABLENAME"/>
+		<result property="keyWord" column="BSD_TABLEKEYWORD"/>
+		<result property="handleType" column="BS_HANDLETYPE"/>
+		<result property="synStatus" column="BS_STATUS"/>
+		<result property="synFinishTime" column="BS_FINISH_TIME"/>
+		<result property="synStartTime" column="BS_CRATE_TIME"/>
+		<result property="synTime" column="BS_FLASTUPDATETIME"/>
+	</resultMap>
+	<!-- 修改客户同步数据 -->
+	<update id="updateDataSynchro" parameterType="com.deppon.crm.module.logmoniting.shared.domain.SynchronizeLogInfo">
+		UPDATE 
+			T_CRM_CMDTBS 
+		SET 
+			HANDLE_TYPE = #{handleType,jdbcType=VARCHAR},
+			STATUS=#{synStatus,jdbcType=VARCHAR},
+			FLASTUPDATETIME = #{modifyDate,jdbcType=TIMESTAMP},
+			FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR}
+		WHERE
+			FID = #{id,jdbcType=VARCHAR}
+	</update>
+	<!-- 客户同步数据条数统计 -->
+	<select id="countDataSynchro" parameterType="com.deppon.crm.module.logmoniting.shared.domain.SynchronizeLogInfo"
+		resultType="int">
+		SELECT
+			COUNT(DISTINCT BS.FID)
+		FROM 
+			T_CRM_CMDTBS BS
+		JOIN 
+			T_CRM_CMDTBSD BSD
+		ON 
+			BS.TRANSACTION_NO = BSD.TRANSACTION_NO
+		WHERE
+			BSD.TABLE_NAME = #{tableName,jdbcType=VARCHAR}
+		AND 
+			BSD.TABLE_KEYWORD = #{keyWord,jdbcType=VARCHAR}
+		<![CDATA[AND BS.FLASTUPDATETIME >= #{synStartTime,jdbcType=TIMESTAMP}]]>
+		<![CDATA[AND BS.FLASTUPDATETIME <= #{synFinishTime,jdbcType=TIMESTAMP}]]>
+		<if test="handleType != null and handleType != ''">
+			and BS.HANDLE_TYPE = #{handleType,jdbcType=VARCHAR}
+		</if>
+		<if test="synStatus != null and synStatus != ''">
+			and BS.STATUS = #{synStatus,jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

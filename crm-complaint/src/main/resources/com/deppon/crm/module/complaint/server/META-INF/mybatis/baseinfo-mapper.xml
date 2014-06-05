@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+
+	<resultMap id="baseInfoResultMap"
+			type="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+			<id column="FID" property="id" jdbcType="DECIMAL" />
+			<result column="FPARENTID" property="parentId" jdbcType="INTEGER" />
+			<result column="FLEVEL" property="level"
+				jdbcType="INTEGER" />
+			<result column="FBASEINFO" property="baseInfo"
+				jdbcType="VARCHAR" />
+			<result column="FCLASSCODE" property="classCode" 
+				jdbcType="VARCHAR" />
+			<result column="FISLEAF" property="isLeaf" 
+				jdbcType="INTEGER" />
+			<result column="FTYPECODE" property="typeCode" 
+				jdbcType="VARCHAR" />
+			<result column="FCREATETIME" property="createDate"
+				jdbcType="TIMESTAMP" />
+			<result column="FCREATEUSERID" property="createUser"
+				jdbcType="VARCHAR" />
+			<result column="FUPDATETIME" property="modifyDate"
+				jdbcType="TIMESTAMP" />
+			<result column="FUPDATEUSERID" property="modifyUser"
+				jdbcType="VARCHAR" />			
+			<result column="FDEALLAN" property="deallan"
+				jdbcType="VARCHAR" />	
+			<result column="FFEEDBACKLIMIT" property="feedbackLimit"
+				jdbcType="VARCHAR" />	
+			<result column="FPROCLIMIT" property="procLimit"
+				jdbcType="VARCHAR" />	
+			<result column="FPROCSTANDARD" property="procStandard"
+				jdbcType="VARCHAR" />	
+	</resultMap>
+	<sql id="BaseInfo_Column_List">
+		BI.FID,FPARENTID,FLEVEL,FBASEINFO,FCLASSCODE,
+		       FTYPECODE,BI.FUPDATEUSERID,BI.FUPDATETIME,BI.FCREATEUSERID,BI.FCREATETIME,BI.FISLEAF,
+		       FDEALLAN,FFEEDBACKLIMIT,FPROCLIMIT,FPROCSTANDARD
+		FROM t_cust_comp_baseinfo BI
+		LEFT JOIN t_cust_comp_businessType BT ON BI.FID=BT.FBUSTYPE
+		LEFT JOIN t_cust_comp_scenereason SR ON BI.FID=SR.FSCENERESSON
+	</sql>
+	
+	<select id="selectBaseInfo" resultMap="baseInfoResultMap"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfoSearchCondition">
+		
+		SELECT <include refid="BaseInfo_Column_List"/>
+		WHERE BI.FID = #{id}
+		AND BI.FCLASSCODE = #{classCode}
+		AND BI.FTYPECODE = #{typeCode}
+	</select>
+	
+	<!--查询父id为fid的所有数据-->
+	<select id="selectChildsBaseInfo" resultMap="baseInfoResultMap"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfoSearchCondition">
+		
+		SELECT <include refid="BaseInfo_Column_List"/>
+		WHERE 1=1
+		<if test="parentId  != null and parentId !='' ">
+			AND BI.FPARENTID=#{parentId,jdbcType=INTEGER}
+		</if>
+		<if test="classCode != null and classCode!='' ">
+			AND BI.FCLASSCODE = #{classCode,jdbcType=VARCHAR}
+		</if>
+		<if test="typeCode != null and typeCode!='' ">
+			AND BI.FTYPECODE = #{typeCode,jdbcType=VARCHAR}
+		</if>
+		<if test="level !=null and level !='' " >
+			AND BI.FLEVEL = #{level,jdbcType=INTEGER}
+		</if>
+		<if test="baseInfo != null and baseInfo !=''">
+			AND BI.FBASEINFO like '%'||#{baseInfo, jdbcType=VARCHAR}||'%'
+		</if>
+		ORDER BY BI.FCREATETIME 
+	</select>
+	<!-- 添加基础资料信息 -->
+	<insert id="insertBaseInfo" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT SEQ_t_cust_comp_baseinfo.nextval AS
+				 id FROM DUAL
+		</selectKey>
+		INSERT INTO  t_cust_comp_baseinfo 
+			(FID,FPARENTID,FLEVEL,FBASEINFO,FCLASSCODE,FTYPECODE,
+			FUPDATEUSERID,FUPDATETIME,FCREATEUSERID,FCREATETIME,FISLEAF  )
+		VALUES (
+			#{id},
+			#{parentId},
+			#{level},
+			#{baseInfo},
+			#{classCode},
+			#{typeCode},
+			#{createUser},
+			sysdate,
+			#{createUser},
+			sysdate,
+			1
+		)
+	</insert>
+	<!-- 添加业务类型，插入值中有两个id,第一个为此表主键,第二个为fbustype作为与基础资料表关联使用 -->
+	<insert id="insertBaseType" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+			INSERT INTO t_cust_comp_businessType(FID,FBUSTYPE,FDEALLAN,FFEEDBACKLIMIT,
+				FPROCLIMIT,FUPDATEUSERID,FUPDATETIME,FCREATEUSERID,FCREATETIME)
+			VALUES (
+				#{id},
+				#{id},
+				#{deallan},
+				#{feedbackLimit},
+				#{procLimit},
+				#{createUser},
+				sysdate,
+				#{createUser},
+				sysdate
+			)
+	</insert>
+	<!-- 添加场景原因 -->
+	<insert id="insertBaseScene" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		INSERT INTO t_cust_comp_scenereason (FID,FSCENERESSON,FPROCSTANDARD,FUPDATEUSERID,
+			FCREATEUSERID,FUPDATETIME,FCREATETIME)
+		VALUES (
+			#{id},
+			#{id},
+			#{procStandard},
+			#{createUser},
+			#{createUser},
+			sysdate,
+			sysdate
+		)
+	</insert>
+	
+	<!-- 当新增为非业务项时，需要改变父节点的叶子节点值为0 -->
+	<update id="updateBaseInfoForInsert" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		UPDATE t_cust_comp_baseinfo SET 
+		FISLEAF = 0 
+		WHERE FID = #{parentId}
+	</update>
+	
+	
+	<!-- 修改业务基础资料信息 -->
+	<update id="updateBaseInfo" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		UPDATE t_cust_comp_baseinfo SET 
+		<if test="baseInfo != null and baseInfo!=''">
+			FBASEINFO = #{baseInfo, jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null and modifyUser!=''">
+			FUPDATEUSERID=#{modifyUser, jdbcType=VARCHAR},
+		</if>
+			FUPDATETIME = sysdate
+			WHERE FID =#{id}
+	</update>
+	<!-- 修改业务类型信息 -->
+	<update id="updateBaseType" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		UPDATE t_cust_comp_businessType SET 
+		<if test="deallan != null and deallan!=''">
+			FDEALLAN = #{deallan, jdbcType=VARCHAR},
+		</if>
+		<if test="feedbackLimit != null and feedbackLimit!=''">
+			FFEEDBACKLIMIT = #{feedbackLimit, jdbcType=VARCHAR},
+		</if>
+		<if test="procLimit != null and procLimit!=''">
+			FPROCLIMIT = #{procLimit, jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null and modifyUser!=''">
+			FUPDATEUSERID=#{modifyUser, jdbcType=VARCHAR},
+		</if>
+			FUPDATETIME = sysdate
+			WHERE FID =#{id}
+	</update>
+	<!-- 修改场景原因信息 -->
+	<update id="updateBaseScene" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		UPDATE t_cust_comp_scenereason SET 
+		<if test="procStandard != null and procStandard!=''">
+			FPROCSTANDARD = #{procStandard, jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null and modifyUser!=''">
+			FUPDATEUSERID=#{modifyUser, jdbcType=VARCHAR},
+		</if>
+			FUPDATETIME = sysdate
+			WHERE FID =#{id}
+	</update>
+	<!-- 删除业务资料 -->
+	<delete id="deleteBaseInfo" parameterType="list">
+		DELETE FROM t_cust_comp_baseinfo 
+		WHERE FID IN
+		<foreach collection="list" open="(" close=")" separator="," item="baseInfo">
+			#{baseInfo.id}
+		</foreach>
+	</delete>
+	<!-- 删除业务类型 -->
+	<delete id="deleteBaseType" parameterType="list">
+		DELETE FROM t_cust_comp_businessType 
+		WHERE FID IN
+		<foreach collection="list" open="(" close=")" separator="," item="baseInfo">
+			#{baseInfo.id}
+		</foreach>
+	</delete>
+	<!-- 删除场景原因 -->
+	<delete id="deleteBaseScene" parameterType="list">
+		DELETE FROM t_cust_comp_scenereason 
+		WHERE FID IN
+		<foreach collection="list" open="(" close=")" separator="," item="baseInfo">
+			#{baseInfo.id}
+		</foreach>
+	</delete>
+	<!-- 删除业务资料时判断删除父节点是否还存在子集，如果不存在则将父节点修改为叶子节点 -->
+	<update id="deleteBaseInfoForCheck" parameterType="com.deppon.crm.module.complaint.shared.domain.BaseInfo">
+		UPDATE t_cust_comp_baseinfo t SET 
+		t.FISLEAF=1 where 
+		(SELECT count(*) FROM t_cust_comp_baseinfo p WHERE p.fparentid=#{parentId}) = 0 
+		AND t.fid=#{parentId}
+	</update>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="messageSendDao" class="com.deppon.crm.module.marketing.server.dao.impl.MessageSendDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="messageSendService" class="com.deppon.crm.module.marketing.server.service.impl.MessageSendService">
+		<property name="messageSendDao" ref="messageSendDao"/>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="messageSendManager" class="com.deppon.crm.module.marketing.server.manager.impl.MessageSendManager">
+		<property name="messageSendService" ref="messageSendService"></property>
+		<property name="smsSender" ref="smsInfoSender"></property>
+	</bean>
+</beans>

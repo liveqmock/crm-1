@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.ContactIntegral">
+	
+	<delete id="deleteContactIntegralByMemberId" parameterType="string">
+    	delete from t_cust_linkmanpoint lk where  exists  
+    	(select 1  from t_cust_custlinkman cl where cl.fid = lk.FLINKMANID and cl.fcustid = #{memberId})
+	</delete>	
+	
+	<insert id="insertContactIntegral" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactIntegral">
+		<selectKey  keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_ContactIntegral.nextval as id FROM DUAL
+		</selectKey>
+		
+		<![CDATA[
+		insert into t_cust_linkmanpoint
+		(
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FLINKMANID,
+		FCURRENTUSABLESCORE,
+		FCURRENTTOUSESSCORE,
+		FCURRENTTOTALSCORE,
+		FTOTALSCORE,
+		FTOTALTOUSESSCORE,
+		FLASTDATESCORE
+		)
+		 values
+		(
+		#{id,jdbcType=VARCHAR},
+		sysdate,
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=DATE},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{contact.id,jdbcType=VARCHAR},
+		#{currentUsableScore,jdbcType=NUMERIC},
+		#{currentToUsesScore,jdbcType=NUMERIC},
+		#{currentTotalScore,jdbcType=NUMERIC},
+		#{totalScore,jdbcType=NUMERIC},
+		#{totalToUsesScore,jdbcType=NUMERIC},
+		#{lastDateScore,jdbcType=DATE}
+		)
+		]]>
+	</insert>
+
+	<update id="updateContactIntegral" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactIntegral">
+		<![CDATA[
+		UPDATE
+		    T_CUST_LINKMANPOINT
+		SET 
+			FLASTUPDATETIME = sysdate 
+		]]>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contact != null and contact.id != null and contact.id != ''  ">
+		<![CDATA[,FLINKMANID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" currentUsableScore != null  ">
+		<![CDATA[,FCURRENTUSABLESCORE=#{currentUsableScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" currentToUsesScore != null  and currentToUsesScore != ''  ">
+		<![CDATA[,FCURRENTTOUSESSCORE=#{currentToUsesScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" currentTotalScore != null  and currentTotalScore != ''  ">
+		<![CDATA[,FCURRENTTOTALSCORE=#{currentTotalScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" totalScore != null  and totalScore != ''  ">
+		<![CDATA[,FTOTALSCORE=#{totalScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" totalToUsesScore != null  and totalToUsesScore != ''  ">
+		<![CDATA[,FTOTALTOUSESSCORE=#{totalToUsesScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" lastDateScore != null  and lastDateScore != ''  ">
+		<![CDATA[,FLASTDATESCORE=#{lastDateScore,jdbcType=DATE}]]>
+		</if>
+		<![CDATA[
+			WHERE FID = #{id}
+		]]>
+	</update>
+	
+	 <!-- 根据联系人id批量查询联系人积分 分页总数 -->
+	<select id="countSearchContactIntegralsBycontactIdList" parameterType="map" resultType="long">
+		<![CDATA[
+				SELECT count(*)
+		]]>
+		<include refid="searchContactIntegralsBycontactIdCondition"/>
+	</select>
+    <!-- 根据联系人id批量查询联系人积分 -->
+	<select id="searchContactIntegralsBycontactIdList" parameterType="map" resultMap="ContactIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="ContactIntegral_column" />
+		,
+		<include refid="Contact_column" />
+		<include refid="searchContactIntegralsBycontactIdCondition"/>
+		ORDER BY CL.FISMAINLINKMAN DESC
+	</select>
+	
+	<sql id="searchContactIntegralsBycontactIdCondition">
+		<![CDATA[
+				FROM 
+					T_CUST_LINKMANPOINT  LP
+				LEFT JOIN 
+					T_CUST_CUSTLINKMAN CL 
+				ON 
+					CL.FID = LP.FLINKMANID
+				AND CL.fstatus = 0
+		]]>
+		<where>
+			<if test="contactIdList != null and contactIdList != ''">
+				<![CDATA[ AND LP.FLINKMANID in (${contactIdList})]]>
+			</if>
+		</where>
+	</sql>
+	
+	
+	<select id="searchContactIntegralsByMemberId" parameterType="string" resultMap="ContactIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="ContactIntegral_column" />
+		,
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_LINKMANPOINT  LP
+				LEFT JOIN 
+					T_CUST_CUSTLINKMAN CL 
+				ON 
+					CL.FID = LP.FLINKMANID
+				AND CL.fstatus = 0
+		]]>
+		where CL.FCUSTID = #{memeberId}
+	</select>
+	
+	
+	<!-- 联系人积分组合查询 -->
+	<select id="searchContactIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.ContactIntegral" resultMap="ContactIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="ContactIntegral_column" />
+		,
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_LINKMANPOINT  LP
+				LEFT JOIN 
+					T_CUST_CUSTLINKMAN CL 
+				ON 
+					CL.FID = LP.FLINKMANID
+				AND CL.fstatus = 0
+		]]>
+		<where>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and LP.FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and LP.FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and LP.FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and LP.FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and LP.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contact != null  and contact != ''  ">
+		<![CDATA[and LP.FLINKMANID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" currentUsableScore != null  and currentUsableScore != ''  ">
+		<![CDATA[and LP.FCURRENTUSABLESCORE=#{currentUsableScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" currentToUsesScore != null  and currentToUsesScore != ''  ">
+		<![CDATA[and LP.FCURRENTTOUSESSCORE=#{currentToUsesScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" currentTotalScore != null  and currentTotalScore != ''  ">
+		<![CDATA[and LP.FCURRENTTOTALSCORE=#{currentTotalScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" totalScore != null  and totalScore != ''  ">
+		<![CDATA[and LP.FTOTALSCORE=#{totalScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" totalToUsesScore != null  and totalToUsesScore != ''  ">
+		<![CDATA[and LP.FTOTALTOUSESSCORE=#{totalToUsesScore,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" lastDateScore != null  and lastDateScore != ''  ">
+		<![CDATA[and LP.FLASTDATESCORE=#{lastDateScore,jdbcType=DATE}]]>
+		</if>
+		</where>
+	</select>
+	
+	<!-- 根据合同ID查询合同基本信息 -->
+	<select id="queryContactIntegralById" resultMap="ContactIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="ContactIntegral_column" />
+		,
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_LINKMANPOINT LP
+				LEFT JOIN 
+					T_CUST_CUSTLINKMAN CL 
+				ON 
+					CL.FID = LP.FLINKMANID
+				WHERE LP.FID = #{id}
+				AND CL.fstatus = 0
+		]]>
+	</select>
+
+	<sql id="ContactIntegral_column">
+		LP.FID LP_FID,
+		LP.FCREATETIME LP_FCREATETIME,
+		LP.FCREATEUSERID LP_FCREATEUSERID,
+		LP.FLASTUPDATETIME LP_FLASTUPDATETIME,
+		LP.FLASTMODIFYUSERID LP_FLASTMODIFYUSERID,
+		LP.FLINKMANID LP_FLINKMANID,
+		LP.FCURRENTUSABLESCORE LP_FCURRENTUSABLESCORE,
+		LP.FCURRENTTOUSESSCORE LP_FCURRENTTOUSESSCORE,
+		LP.FCURRENTTOTALSCORE LP_FCURRENTTOTALSCORE,
+		LP.FTOTALSCORE LP_FTOTALSCORE,
+		LP.FTOTALTOUSESSCORE LP_FTOTALTOUSESSCORE,
+		LP.FLASTDATESCORE LP_FLASTDATESCORE
+	</sql>
+	
+	<sql id="Contact_column">
+		CL.FID CL_FID,
+		CL.FCREATETIME CL_FCREATETIME,
+		CL.FCREATEUSERID CL_FCREATEUSERID,
+		CL.FLASTUPDATETIME CL_FLASTUPDATETIME,
+		CL.FLASTUPDATEUSERID CL_FLASTUPDATEUSERID,
+		CL.FNUMBER CL_FNUMBER,
+		CL.FNAME CL_FNAME,
+		CL.FIDCARD CL_FIDCARD,
+		CL.FLINKMANTYPE CL_FLINKMANTYPE,
+		CL.FISMAINLINKMAN CL_FISMAINLINKMAN,
+		CL.FSEX CL_FSEX,
+		CL.FOFFERTEL CL_FOFFERTEL,
+		CL.FMOBILETEL CL_FMOBILETEL,
+		CL.FDUTY CL_FDUTY,
+		CL.FDUTYDEPT CL_FDUTYDEPT,
+		CL.FBORNDATE CL_FBORNDATE,
+		CL.FGAINAVE CL_FGAINAVE,
+		CL.FDECISIONRIGHT CL_FDECISIONRIGHT,
+		CL.FNATIVEPLACE CL_FNATIVEPLACE,
+		CL.FPERSONLOVE CL_FPERSONLOVE,
+		CL.FFOLK CL_FFOLK,
+		CL.FEMAIL CL_FEMAIL,
+		CL.FQQNUMBER CL_FQQNUMBER,
+		CL.FMSN CL_FMSN,
+		CL.FWW CL_FWW,
+		CL.FACCEPTDEPTID CL_FACCEPTDEPTID,
+		CL.FSTATUS CL_FSTATUS,
+		CL.FDEFAULTID CL_FDEFAULTID,
+		CL.FVERSIONID CL_FVERSIONID,
+		CL.FCUSTID  CL_FCUSTID
+	</sql>
+	
+	<resultMap id="ContactIntegralRM"
+	 	type="com.deppon.crm.module.customer.shared.domain.integral.ContactIntegral">
+		<result property="id" column="LP_FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="LP_FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="LP_FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="LP_FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="LP_FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="currentUsableScore" column="LP_FCURRENTUSABLESCORE" jdbcType = "NUMERIC" />
+		<result property="currentToUsesScore" column="LP_FCURRENTTOUSESSCORE" jdbcType = "NUMERIC" />
+		<result property="currentTotalScore" column="LP_FCURRENTTOTALSCORE" jdbcType = "NUMERIC" />
+		<result property="totalScore" column="LP_FTOTALSCORE" jdbcType = "NUMERIC" />
+		<result property="totalToUsesScore" column="LP_FTOTALTOUSESSCORE" jdbcType = "NUMERIC" />
+		<result property="lastDateScore" column="LP_FLASTDATESCORE" jdbcType = "DATE" />
+		<association property="contact" resultMap="ContactRM"></association>
+	</resultMap>
+		
+	<resultMap id="ContactRM"
+		 type="com.deppon.crm.module.customer.shared.domain.Contact">
+		<result property="id" column="CL_FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="CL_FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="CL_FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="CL_FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="CL_FLASTUPDATEUSERID" jdbcType = "VARCHAR" />
+		<result property="number" column="CL_FNUMBER" jdbcType = "VARCHAR" />
+		<result property="name" column="CL_FNAME" jdbcType = "VARCHAR" />
+		<result property="idCard" column="CL_FIDCARD" jdbcType = "VARCHAR" />
+		<result property="linkmanType" column="CL_FLINKMANTYPE" jdbcType = "VARCHAR" />
+		<result property="isMainLinkMan" column="CL_FISMAINLINKMAN" jdbcType = "NUMERIC" />
+		<result property="sex" column="CL_FSEX" jdbcType = "VARCHAR" />
+		<result property="telPhone" column="CL_FOFFERTEL" jdbcType = "VARCHAR" />
+		<result property="mobilePhone" column="CL_FMOBILETEL" jdbcType = "VARCHAR" />
+		<result property="duty" column="CL_FDUTY" jdbcType = "VARCHAR" />
+		<result property="dutyDept" column="CL_FDUTYDEPT" jdbcType = "VARCHAR" />
+		<result property="bornDate" column="CL_FBORNDATE" jdbcType = "DATE" />
+		<result property="gainave" column="CL_FGAINAVE" jdbcType = "VARCHAR" />
+		<result property="decisionRight" column="CL_FDECISIONRIGHT" jdbcType = "VARCHAR" />
+		<result property="nativePlace" column="CL_FNATIVEPLACE" jdbcType = "VARCHAR" />
+		<result property="personLove" column="CL_FPERSONLOVE" jdbcType = "VARCHAR" />
+		<result property="folk" column="CL_FFOLK" jdbcType = "VARCHAR" />
+		<result property="email" column="CL_FEMAIL" jdbcType = "VARCHAR" />
+		<result property="qqNumber" column="CL_FQQNUMBER" jdbcType = "VARCHAR" />
+		<result property="msn" column="CL_FMSN" jdbcType = "VARCHAR" />
+		<result property="ww" column="CL_FWW" jdbcType = "VARCHAR" />
+		<result property="acceptDeptid" column="CL_FACCEPTDEPTID" jdbcType = "VARCHAR" />
+		<result property="status" column="CL_FSTATUS" jdbcType = "VARCHAR" />
+		<result property="defaultId" column="CL_FDEFAULTID" jdbcType = "VARCHAR" />
+		<result property="versionId" column="CL_FVERSIONID" jdbcType = "VARCHAR" />
+		<result property="custId" column="CL_FCUSTID" jdbcType = "VARCHAR" />
+	</resultMap>
+	
+
+</mapper>

@@ -1,0 +1,12 @@
+id,fid,VARCHAR
+createDate,FCREATETIME,DATE
+createUser,FCREATEUSERID,VARCHAR
+modifyDate,FLASTUPDATETIME,DATE
+modifyUser,FLASTMODIFYUSERID,VARCHAR
+userId,fuserId,VARCHAR
+userName,fuserName,VARCHAR
+status,fstatus,VARCHAR
+workFlowId,fworkFlowId,NUMERIC
+workFLowName,fworkFLowName,VARCHAR
+deptId,fdeptId,VARCHAR
+deptName,fdeptName,VARCHAR

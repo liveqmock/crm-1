@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.deppon.com/crm/crmService" 
+	xmlns:xsd2="http://www.deppon.com/crm/inteface/domain/companymanagement"
+	xmlns:tns_header="http://www.deppon.com/esb/header" 
+	xmlns:xsd3="http://www.deppon.com/esb/exception"
+	targetNamespace="http://www.deppon.com/crm/crmService">
+	<wsdl:types>
+		<xsd:schema
+			targetNamespace="http://www.deppon.com/crm/inteface/domain/companymanagement">
+			<xsd:include schemaLocation="CRM_SEND_COMPANYINFO.xsd" />
+		</xsd:schema>
+		<xsd:schema targetNamespace="http://www.deppon.com/esb/header">
+			<xsd:include schemaLocation="ESBHeader.xsd" />
+		</xsd:schema>
+		<xsd:schema targetNamespace="http://www.deppon.com/esb/exception">
+			<xsd:include schemaLocation="CommonException.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="syncCompanyInfosRequest">
+		<wsdl:part element="xsd2:SendCompanyInfoRequest" name="syncCompanyInfosRequest" />
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="syncCompanyInfosResponse">
+		<wsdl:part element="xsd2:SendCompanyInfoResponse" name="syncCompanyInfosResponse" />
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="syncCompanyInfosFault">
+		<wsdl:part name="CommException" element="xsd3:commonExceptionInfo">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="UumsToCrmService">
+		<wsdl:operation name="syncCompanyInfos">
+			<wsdl:input message="tns:syncCompanyInfosRequest" name="syncCompanyInfosRequest"/>
+			<wsdl:output message="tns:syncCompanyInfosResponse" name="syncCompanyInfosResponse"/>
+			<wsdl:fault name="CommException" message="tns:syncCompanyInfosFault"></wsdl:fault>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="NewWSDLFileSOAP" type="tns:UumsToCrmService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="syncCompanyInfos">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/crmService/NewOperation" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader" message="tns:syncCompanyInfosRequest"/>
+				<soap:body use="literal" parts="syncCompanyInfosRequest"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader" message="tns:syncCompanyInfosResponse"/>
+				<soap:body use="literal" parts="syncCompanyInfosResponse"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="crmService">
+		<wsdl:port binding="tns:NewWSDLFileSOAP" name="newWSDLFileSOAP">
+			<soap:address location="http://www.deppon.com/crm/interface/CRMService" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="workflow" namespace="/workflow" extends="crm-default">
+		
+		<!--(理赔)我的工作流-->
+	   	<action name="myWorkflow" >
+	    	<result name="success">myWorkflow.html</result>
+	    </action>
+	    
+	    <!--(理赔)我要处理的工作流-->
+	   	<action name="toHandleWorkflow" >
+	    	<result name="success">toHandleWorkflow.html</result>
+	    </action>
+	    
+	      <!--(理赔)已处理的工作流-->
+	   	<action name="handledWorkflow" > 
+	    	<result name="success">handledWorkflow.html</result>
+	    </action>
+	    
+	    
+	    
+	    <!--(理赔)工作流详情页面-->
+	   	<action name="showDetailWorkflow" >
+	    	<result name="success">detailWorkflow.html</result>
+	    </action>
+	    
+	     <!--(理赔)工作流审批页面-->
+	   	<action name="doApproveWorkflow" >
+	    	<result name="success">approveWorkflow.html</result>
+	    </action>
+	    
+	    
+	    <!--(理赔)工作流详情页面-->
+	  <!--  	<action name="detailWorkflow" class="casLoginAction" method="detailWorkflow">
+	    	<result name="success" type="redirect">showDetailWorkflow.action?processInstId=${processInstId}</result>
+	    </action> -->
+	    
+	 <!--     (理赔)工作流审批页面 -->
+	<!--    	<action name="approveWorkflow" class="casLoginAction" method="approveWorkflow">
+	    	<result name="success">approveWorkflow.html</result>
+	    </action> -->
+	    
+	    
+	     <!--工作流查询列表-->
+	   	<action name="findWorkflow"  class="normalClaimAction" method="findWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action> 
+	       
+	     <!--未处理的工作流列表-->
+	   	<action name="findToHandleWorkflow"  class="normalClaimAction" method="findToHandleWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action>    
+	    
+	     <!--已处理的工作流列表-->
+	   	<action name="findHandledWorkflow"  class="normalClaimAction" method="findHandledWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action>    
+	    
+	     <!--工作流审批记录列表-->
+	   	<action name="queryApprovalInfo"  class="normalClaimAction" method="queryApprovalInfo">
+	    	<result name="success" type="json"></result>
+	    </action>  
+	    
+	     
+	     <!--工作流审批-->
+	   	<action name="workflowApprove"  class="normalClaimAction" method="workflowApprove">
+	    	<result name="success" type="json"></result>
+	    </action>   
+	    
+	     <!--获得当前审批人-->
+	   	<action name="findCurrentApproval"  class="normalClaimAction" method="findCurrentApproval">
+	    	<result name="success" type="json"></result>
+	    </action>   
+	    
+	    
+	     <!--工作流程图-->
+	   	<action name="generateWorkflowImage"  class="normalClaimAction" method="generateWorkflowImage">
+	    	<result name="success">workflowImage.jsp</result>
+	    </action>
+	    
+	      <!--(理赔)工作流详情--> 
+	    <action name="findNormalClaimByProNum" class="normalClaimAction" method="findNormalClaimByProNum">
+	    	<result name="success" type="json"></result>
+	      </action>
+	      
+	      	<!--是否为印章管理员 -->
+	   	<action name="findApprovePermission" class="normalClaimAction"  method="findApprovePermission" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	      
+	     
+	      
+		
+		 <!--印章管理员设置-->
+	   	<action name="signetManager" >
+	    	<result name="success">signetManager.html</result>
+	    </action>
+	    
+		<!--印章管理员列表显示 -->
+	   	<action name="findSignetManager" class="signetManagerAction"  method="findSignetManager" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+		<!--添加印章管理员 -->
+	   	<action name="addSignetManager" class="signetManagerAction"  method="addSignetManager" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+		<!--删除印章管理员 -->
+	   	<action name="deleteSignetManager" class="signetManagerAction"  method="deleteSignetManager" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+		<!--查询所有事业部与枢纽中心 -->
+	   	<action name="queryBizAndHubCenterDept" class="signetManagerAction"  method="queryBizAndHubCenterDept" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	     <!--审批金额配置-->
+	   	<action name="amountConfig" >
+	    	<result name="success">amountConfig.html</result>
+	    </action>
+	    
+		<!--审批金额配置列表 -->
+	   	<action name="findAmountConfigPage" class="amountConfigAction"  method="findAmountConfigPage" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+		<!--添加审批金额配置列表 -->
+	   	<action name="addAmountConfig" class="amountConfigAction"  method="addAmountConfig" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+		<!--修改审批金额配置列表 -->
+	   	<action name="updateAmountConfig" class="amountConfigAction"  method="updateAmountConfig" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+		<!--删除审批金额配置列表 -->
+	   	<action name="deleteAmountConfig" class="amountConfigAction"  method="deleteAmountConfig" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+		<!--获得审批环节 -->
+	   	<action name="findActivity" class="amountConfigAction"  method="findActivity" >
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	
+	      <!--(服务补救)工作流详情--> 
+	    <action name="findServiceByProNum" class="normalClaimAction" method="findServiceByProNum">
+	    	<result name="success" type="json"></result>
+	      </action>
+	    
+	      <!--(多赔)工作流详情--> 
+	    <action name="findOverpayByProNum" class="normalClaimAction" method="findOverpayByProNum">
+	    	<result name="success" type="json"></result>
+	      </action>
+	    
+	    
+	    
+	</package>
+</struts>

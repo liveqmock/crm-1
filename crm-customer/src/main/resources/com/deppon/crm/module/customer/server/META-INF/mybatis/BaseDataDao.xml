@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.server.dao.impl.BaseData">
+
+	<select id="getBankProvince" resultType="map">
+		select t.fname
+		"name",t.fid "id" from t_crm_bankprovince t
+		where t.fcancel=0
+	</select>
+
+	<select id="getBankCityByBankProvinceId" resultType="map"
+		parameterType="string">
+		select t.fname "name",t.fid "id" from t_crm_bankcity t
+		where t.fprovinceId =#{provinceId}
+		and t.fcancel=0
+	</select>
+
+	<select id="getAccountBank" resultType="map">
+		select t.fid
+		"id",t.fname "name" from t_crm_accountbank t
+		where t.fcancel=0
+	</select>
+	
+	<select id="queryAuthorityBusinessDept" 
+		resultMap="com.deppon.crm.module.organization.shared.domain.Department.ExecuteDeptResultMap">
+		SELECT D.FID,D.FDEPTCODE,D.FDEPTNAME,D.FPRINCIPAL,D.FPHONE,
+		D.FFAX,D.FCOMPANYNAME,D.FZIPCODE,D.FADDRESS,D.FSTATUS,D.FVALIDDATE,
+		D.FINVALIDDATE,D.FDISPLAYORDER,D.FDEPTLEVEL,D.FDEPTDESC,D.FDEPTSEQ,
+		D.FLEAF,D.FCREATEUSERID,D.FCREATETIME,D.FLASTMODIFYUSERID,D.FLASTUPDATETIME,
+		D.FSTANDARDCODE
+		FROM T_CRM_EXPRESSPOINTBUSINESSDEPT E
+		LEFT JOIN
+		T_ORG_DEPARTMENT D ON E.FBUSINESSDEPTCODE = D.FSTANDARDCODE
+		<where>
+			<if test="standardCode != null">
+				AND E.FEXPRESSPOINTCODE = #{standardCode,jdbcType=VARCHAR}
+			</if>		
+			<if test="deptName != null">
+				AND D.FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+			</if>		
+		</where>
+		ORDER BY D.FID
+	</select>
+
+	<select id="queryPointDepartment" 
+		resultMap="com.deppon.crm.module.organization.shared.domain.Department.ExecuteDeptResultMap">
+		SELECT D.FID,D.FDEPTCODE,D.FDEPTNAME,D.FPRINCIPAL,D.FPHONE,
+		D.FFAX,D.FCOMPANYNAME,D.FZIPCODE,D.FADDRESS,D.FSTATUS,D.FVALIDDATE,
+		D.FINVALIDDATE,D.FDISPLAYORDER,D.FDEPTLEVEL,D.FDEPTDESC,D.FDEPTSEQ,
+		D.FLEAF,D.FCREATEUSERID,D.FCREATETIME,D.FLASTMODIFYUSERID,D.FLASTUPDATETIME,
+		D.FSTANDARDCODE
+		FROM T_CRM_EXPRESSPOINTBUSINESSDEPT E
+		LEFT JOIN
+		T_ORG_DEPARTMENT D ON E.FEXPRESSPOINTCODE = D.FSTANDARDCODE
+		<where>
+			<if test="standardCode != null">
+				AND E.FBUSINESSDEPTCODE = #{standardCode,jdbcType=VARCHAR}
+			</if>		
+			<if test="deptName != null">
+				AND D.FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+			</if>		
+		</where>
+		ORDER BY D.FID
+	</select>
+	
+	
+	<select id="countAuthorityBusinessDept" 
+		resultType="int">
+		SELECT COUNT(1)
+		FROM T_CRM_EXPRESSPOINTBUSINESSDEPT E
+		LEFT JOIN
+		T_ORG_DEPARTMENT D ON E.FBUSINESSDEPTCODE = D.FSTANDARDCODE
+		<where>
+			<if test="standardCode != null">
+				AND E.FEXPRESSPOINTCODE = #{standardCode,jdbcType=VARCHAR}
+			</if>	
+			<if test="deptName != null">
+				AND D.FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+			</if>		
+		</where>
+	</select>
+</mapper>

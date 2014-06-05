@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/fssc/remote/crm/domain/entity"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.deppon.com/fssc/remote/crm/domain/entity">
+	<element name="notify_claims_stateRequest" type="tns:Notify_claims_stateRequest"></element>
+	<element name="notify_claims_stateResponse" type="tns:Notify_claims_stateResponse"></element>
+	<complexType name="Notify_claims_stateRequest">
+		<annotation>
+			<documentation>通知理赔支付状态接口,请求参数</documentation>
+		</annotation>
+		<sequence>
+			<element name="departmentCode" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>部门标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="paymentMoney" type="decimal" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>
+						支付金额，单位：元。可能是理赔的付款金额或者冲账金额
+					</documentation>
+				</annotation>
+			</element>
+			<element name="voucherNumber" type="string" minOccurs="1" maxOccurs="1"> 
+				<annotation>
+					<documentation>凭证号</documentation>
+				</annotation>
+			</element>
+			<element name="paymentResults" type="string" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>支付结果，付款成功:1、付款失败:0</documentation>
+				</annotation>
+			</element>
+			<element name="failedReason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因 如果付款失败就有失败原因</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="Notify_claims_stateResponse">
+		<sequence>
+			<element name="isSuccess" type="boolean" minOccurs="1"
+				maxOccurs="1">
+				<annotation>
+					<documentation>
+						处理结果 处理成功返回true,处理失败返回false
+					</documentation>
+				</annotation>
+			</element>
+			<element name="failedReason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因 如果处理失败就有失败原因</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+</schema>

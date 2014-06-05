@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<bean id="remotingServiceInterceptor" 
+ 		class="com.deppon.foss.framework.server.aop.ServiceInterceptor">
+ 		<!-- <property name="performanceLog" ref="performanceLog"></property> -->
+ 	</bean>
+ 	
+<!--  	<bean id="performanceLog" -->
+<!-- 		class="com.deppon.foss.framework.server.components.logger.LogBuffer"> -->
+<!-- 	</bean> -->
+	
+ 	<!--   
+ 	<bean id="webServiceInterceptor" class="com.deppon.foss.framework.server.aop.WebServiceInterceptor">
+ 		<property name="performanceLog" ref="performanceLog"></property>
+ 		<property name="exceptionLog" ref="exceptionLog"></property>
+ 	</bean> -->
+	
+	<!-- server配置开始 -->
+	<bean id="complaintServer" class="com.deppon.crm.module.complaint.server.service.impl.ComplaintServiceImpl" >
+		<property name="complaintDao" ref="complaintDao"></property>
+		<property name="waybillOperate" ref="waybillOperate" />
+	</bean>
+	
+	<!-- 通报对象 -->
+	<bean id="bulletinService" class="com.deppon.crm.module.complaint.server.service.impl.BulletinServiceImpl" >
+		<property name="bulletinDao" ref="bulletinDao"></property>
+	</bean>
+	
+	<!-- 基础层级 -->
+	<bean id="basciLevelService" class="com.deppon.crm.module.complaint.server.service.impl.BasciLevelServiceImpl" >
+		<property name="bascileveDao" ref="basciLevelDao"></property>
+	</bean>
+	
+	<!-- 基础层级 -->
+	<bean id="resultService" class="com.deppon.crm.module.complaint.server.service.impl.ResultServiceImpl" >
+		<property name="resultDao" ref="resultDao"></property>
+	</bean>
+	
+	<!-- 退回原因 -->
+	<bean id="feedBackReasionService" class="com.deppon.crm.module.complaint.server.service.impl.FeedBackReasionServiceImpl" >
+		<property name="feedBackReasionDao" ref="feedBackReasionDao"></property>
+	</bean>
+	
+	<!-- 工单操作记录 -->
+	<bean id="workOrderService" class="com.deppon.crm.module.complaint.server.service.impl.WorkOrderServiceImpl" >
+		<property name="workOrderDao" ref="workOrderDao"></property>
+	</bean>
+	
+	<!-- 组织-部门 -->
+	<bean id="departmentService" class="com.deppon.crm.module.organization.server.service.impl.DepartmentService" >
+		<property name="departmentDao" ref="departmentDao"></property>
+	</bean>
+	
+	<!-- 组织-部门员工 -->
+	<bean id="employeeService" class="com.deppon.crm.module.organization.server.service.impl.EmployeeService" >
+		<property name="employeeDao" ref="employeeDao"></property>
+	</bean>
+	
+	<!-- 基础资料处理结果-->
+	<bean id="procResultService" class="com.deppon.crm.module.complaint.server.service.impl.ProcResultServiceImpl" >
+		<property name="procResultDao" ref="procResultDao"></property>
+	</bean>
+	
+	<!-- 投诉通知信息Service-->
+	<bean id="complaintInfoService" class="com.deppon.crm.module.complaint.server.service.impl.ComplaintInfoServiceImpl" >
+		<property name="complaintInfoDao" ref="complaintInfoDao"></property>
+	</bean>	
+	
+	<!-- 工单基础资料Service-->
+	<bean id="baseInfoService" class="com.deppon.crm.module.complaint.server.service.impl.BaseInfoServiceImpl" >
+		<property name="baseInfoDao" ref="baseInfoDao"></property>
+	</bean>	
+
+	<!-- 投诉短信通知信息Service-->
+	<bean id="cellphoneMessageInfoService" class="com.deppon.crm.module.complaint.server.service.impl.CellphoneMessageInfoServiceImpl" >
+		<property name="cellphoneMessageInfoDao" ref="cellphoneMessageInfoDao"></property>
+	</bean>	
+
+<!-- server配置结束-->
+	
+<!-- dao配置开始 -->
+	
+	<bean id="complaintDao" class="com.deppon.crm.module.complaint.server.dao.impl.ComplaintDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 通报对象dao -->
+	<bean id="bulletinDao" class="com.deppon.crm.module.complaint.server.dao.impl.BulletinDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 处理结果 -->
+	<bean id="resultDao" class="com.deppon.crm.module.complaint.server.dao.impl.ResultDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 基础层级 -->
+	<bean id="basciLevelDao" class="com.deppon.crm.module.complaint.server.dao.impl.BasciLevelDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 退回原因 -->
+	<bean id="feedBackReasionDao" class="com.deppon.crm.module.complaint.server.dao.impl.FeedBackReasionDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 操作记录 -->
+	<bean id="workOrderDao" class="com.deppon.crm.module.complaint.server.dao.impl.WorkOrderDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 组织部门 -->
+	<bean id="departmentDao" class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>	
+	
+	<!-- 组织部门员工 -->
+	<bean id="employeeDao" class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 基础资料处理结果表 -->
+	<bean id="procResultDao" class="com.deppon.crm.module.complaint.server.dao.impl.ProcResultDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 投诉通知信息Dao -->
+	<bean id="complaintInfoDao" class="com.deppon.crm.module.complaint.server.dao.impl.ComplaintInfoDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 投诉短信通知临时存放表Dao -->
+	<bean id="cellphoneMessageInfoDao" class="com.deppon.crm.module.complaint.server.dao.impl.CellphoneMessageInfoDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 工单基础资料Dao -->
+	<bean id="baseInfoDao" class="com.deppon.crm.module.complaint.server.dao.impl.BaseInfoDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+<!-- dao配置结束-->
+	
+<!-- manager配置开始 -->
+	
+	<bean id="complaintManager" class="com.deppon.crm.module.complaint.server.manager.impl.ComplaintManager" >
+		<property name="complaintService" ref="complaintServer"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="orderManager" ref="orderManager"></property>
+		<property name="bulletinService" ref="bulletinService"></property>
+		<property name="basciLevelService" ref="basciLevelService"></property>
+		<property name="resultService" ref="resultService"></property>
+		<property name="feedBackReasionService" ref="feedBackReasionService"></property>
+		<property name="workOrderService" ref="workOrderService"/>
+		<property name="procResultService" ref="procResultService"/>
+		<property name="employeeService" ref="employeeService"/>
+		<property name="departmentService" ref="departmentService"/>
+		<property name="waybillOperate" ref="waybillOperate"/>
+	   	<property name="complaintOperate" ref="complaintOperate"/>   
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="oaAccidentOperate" ref="oaAccidentOperate" />
+		<property name="userService" ref="userService" />
+		<property name="complaintInfoService" ref="complaintInfoService"></property>
+		<property name="cellphoneMessageInfoService" ref="cellphoneMessageInfoService"></property>
+		<property name="smsInfoSender" ref="smsInfoSender"></property>
+		<property name="dutyService" ref="dutyService"></property><!-- 责任service -->		
+	</bean>
+	<!-- 工单基础资料-manager -->
+	<bean id="baseInfoManager" class="com.deppon.crm.module.complaint.server.manager.impl.BaseInfoManagerImpl" >
+		<property name="baseInfoService" ref="baseInfoService"></property>	
+	</bean>
+<!-- manager配置结束-->
+<!-- 
+		<bean id="memberManager"
+			class="com.deppon.crm.module.complaint.server.util.MemberVirtualDataProducer"></bean>
+	    <bean id="orderManager"
+			class="com.deppon.crm.module.complaint.server.util.OrderVirtualDataProducer"></bean> 
+-->	
+<!-- Action配置 -->
+	<bean id="listComplaintAction" scope="prototype"
+		class="com.deppon.crm.module.complaint.server.action.ListComplaintAction">
+		<property name="complaintManager" ref="complaintManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>		
+	</bean>
+	
+	<bean id="complaintAction" scope="prototype"
+		class="com.deppon.crm.module.complaint.server.action.ComplaintAction">
+		<property name="complaintManager" ref="complaintManager"></property>
+	</bean>
+	
+	<!-- 工单基础资料-Action -->
+	<bean id="baseInfoAction" scope="prototype"
+		class="com.deppon.crm.module.complaint.server.action.BaseInfoAction">
+		<property name="baseInfoManager" ref="baseInfoManager"></property>
+	</bean>
+	
+<!--Action配置结束 -->
+</beans>
+

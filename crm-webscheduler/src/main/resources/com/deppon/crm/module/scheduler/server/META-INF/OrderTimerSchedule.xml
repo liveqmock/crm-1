@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+	<!-- 服务类 -->
+	<bean id="orderTimer" class="com.deppon.crm.module.scheduler.server.manager.TimerOrder">
+		<property name="orderManager" ref="orderManager"></property>
+		<property name="orderService" ref="orderService"></property>
+		<property name="schedulingControlService" ref="schedulingControlService"></property>
+		<property name="mailSenderService" ref="mailSenderService"></property>
+		<property name="orderOperate" ref="orderOperate"></property>
+	</bean>
+	<!-- 任务定义 -->
+	<bean id="orderTimerJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="orderTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="remindOrderTimer"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="orderTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="orderTimerJob" />
+		<property name="cronExpression">
+			<value> 0 0/3 * * * ? </value>
+		</property>
+	</bean>
+	
+	<!-- 订单状态定义 -->
+	<bean id="orderStatusTimerJob" class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass" value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+			<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="orderTimer"></entry>
+			<!--任务中需要调用的服务方法 -->
+				<entry key="methodName" value="orderStatusMonitoring"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="orderStatusTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="orderStatusTimerJob" />
+		<property name="cronExpression">
+			<value> 0 0 1 * * ? </value>
+			<!-- <value>0 0/10 * * * ?</value> -->
+		</property>
+	</bean>
+
+</beans>

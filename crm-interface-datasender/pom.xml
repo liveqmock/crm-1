@@ -1,0 +1,188 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+   <profiles>
+	  <profile>
+	    <id>dev</id>
+	    <properties>
+	      <mongodb.host1>192.168.17.105</mongodb.host1>
+          <mongodb.port1>47017</mongodb.port1>
+          <mongodb.host2>192.168.17.105</mongodb.host2>
+          <mongodb.port2>57017</mongodb.port2>
+          <mongodb.database>crm</mongodb.database>
+          
+          <mongodb.username>deppon_crm</mongodb.username>
+	      <mongodb.password>test_deppon_crm</mongodb.password>
+	      <redis.host1>192.168.17.105</redis.host1>
+	      <redis.port1>6379</redis.port1>
+	      <redis.password1>deppon_crm</redis.password1>
+          <redis.host2>192.168.17.31</redis.host2>
+	      <redis.port2>6379</redis.port2>
+	      <redis.password2>deppon_crm</redis.password2>
+	    </properties>
+	  </profile>
+	  	<profile>
+			<id>test</id>
+			<properties>
+				<mongodb.host1>192.168.17.199</mongodb.host1>
+				<mongodb.port1>47017</mongodb.port1>
+				<mongodb.host2>192.168.17.199</mongodb.host2>
+				<mongodb.port2>57017</mongodb.port2>
+				<mongodb.database>admin</mongodb.database>
+
+				<mongodb.username>sysdba</mongodb.username>
+				<mongodb.password>deppon_crm_test</mongodb.password>
+				<redis.host1>192.168.17.199</redis.host1>
+				<redis.port1>4555</redis.port1>
+				<redis.password1>test_deppon_crm</redis.password1>
+				<redis.host2>192.168.17.199</redis.host2>
+				<redis.port2>4556</redis.port2>
+				<redis.password2>test_deppon_crm</redis.password2>
+			</properties>
+		</profile>
+		<profile>
+			<id>online</id>
+			<properties>
+				<mongodb.host1>192.168.2.95</mongodb.host1>
+				<mongodb.port1>27017</mongodb.port1>
+				<mongodb.host2>192.168.17.199</mongodb.host2>
+				<mongodb.port2>57017</mongodb.port2>
+				<mongodb.database>crm</mongodb.database>
+
+				<mongodb.username>dpcrm</mongodb.username>
+				<mongodb.password>dpcrm</mongodb.password>
+				<redis.host1>192.168.2.154</redis.host1>
+				<redis.port1>6379</redis.port1>
+				<redis.password1>deppon_crm</redis.password1>
+				<redis.host2>192.168.17.199</redis.host2>
+				<redis.port2>4556</redis.port2>
+				<redis.password2>test_deppon_crm</redis.password2>
+				
+				<!-- bpms 地址修改 -->
+				<!-- hessian.properties -->
+				<ip>192.168.2.160</ip>
+				<port>8180</port>
+				<!-- uddi-address.xml -->
+				<uddiHost>192.168.2.160</uddiHost>
+				<uddiPort>80</uddiPort>
+			</properties>
+		</profile>
+	</profiles>
+  
+
+  <parent>
+		<groupId>com.deppon.crm</groupId>
+		<artifactId>crm-parent</artifactId>
+		<version>3.1.1-SNAPSHOT</version>
+		<relativePath>../crm-parent</relativePath>
+	</parent>
+	<artifactId>crm-interface-datasender</artifactId>
+	<version>0.2.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cxf.version>2.4.2</cxf.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.deppon.dpap</groupId>
+			<artifactId>framework-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-common</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.deppon.dpap</groupId>
+					<artifactId>framework-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<!-- JBOSS报错: 问题：You have not defined a jta-data-source for a JTA enabled 
+					persistence context named: propertyset 此包由osworkflow和osuser引入，没有配置JTA -->
+				<!-- <exclusion> <groupId>opensymphony</groupId> <artifactId>propertyset</artifactId> 
+					</exclusion> <exclusion> <groupId>opensymphony</groupId> <artifactId>osuser</artifactId> 
+					</exclusion> -->
+				<!-- JBOSS：配置spring发布endpoint之后不报错，但是程序停留在Spring初始化完成之前 cxf-api 会引入org.codehaus.woodstox:stax2-api:jar:3.0.2 
+					与由 org.apache.poi:poi-ooxml引入的stax:stax-api:jar:1.0.1冲突 -->
+				<!-- <exclusion> <groupId>stax</groupId> <artifactId>stax-api</artifactId> 
+					</exclusion> -->
+				<!-- JBOSS报错： com.sun.xml.bind.DatatypeConverterImpl.parseQName(Ljava/lang/String;Ljavax/xml/namespace/NamespaceContext;)Ljavax/xml/namespace/QName;" 
+					the class loader (instance of org/jboss/classloader/spi/base/BaseClassLoader) 
+					of the current class, com/sun/xml/bind/DatatypeConverterImpl, and the class 
+					loader (instance of <bootloader>) for interface javax/xml/bind/DatatypeConverterInterface 
+					have different Class objects for the type javax/xml/namespace/NamespaceContext 
+					used in the signature javax/xml/namespace/NamespaceContext，在JDK中有已经被jboss的bootloader加载， 
+					但是应用中的BaseClassLoader再次去加载就会得到两个不同类 -->
+				<!-- <exclusion> <groupId>org.apache.geronimo.specs</groupId> <artifactId>geronimo-stax-api_1.0_spec</artifactId> 
+					</exclusion> -->
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-interface-client</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>job</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<!-- or if you want to use tomcat 6.x <artifactId>tomcat6-maven-plugin</artifactId> -->
+				<version>2.0-beta-1</version>
+				<configuration>
+					<!-- http port -->
+					<port>8088</port>
+					<!-- application path always starts with / -->
+					<path>/job</path>
+					<!-- optionnal path to a context file -->
+					<contextFile>${basedir}/context.xml</contextFile>
+					<!-- optionnal system propoerties you want to add -->
+					<!-- <systemProperties> <appserver.base>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target/appserver-base</appserver.base> 
+						<appserver.home>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target/appserver-home</appserver.home> 
+						<derby.system.home>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target/appserver-base/logs</derby.system.home> 
+						<java.io.tmpdir>/Users/olamy/dev/sources/tomcat/maven-plugin-svn/target/checkout/target</java.io.tmpdir> 
+						</systemProperties> -->
+					<!-- if you want to use test dependencies rather than only runtime -->
+					<useTestClasspath>false</useTestClasspath>
+					<!-- optionnal if you want to add some extra directories in the class 
+						loader -->
+					<!-- <additionalClasspathDirs>
+						<additionalClasspathDir></additionalClasspathDir>
+					</additionalClasspathDirs> -->
+				</configuration>
+				
+			</plugin>
+		</plugins>
+				<resources>
+		  <resource>
+		     <directory>src/main/resources</directory>
+		     <includes>
+		      <include>foss.properties</include>
+		     </includes>
+		     <filtering>true</filtering>
+		  </resource>
+		  
+		  <resource>
+		     <directory>src/main/resources</directory>
+		     <includes>
+		      <include>com/deppon/crm/module/client/server/META-INF/*.xml</include>
+		     </includes>
+		     <filtering>false</filtering>
+		  </resource>
+		</resources>
+	</build>
+</project>

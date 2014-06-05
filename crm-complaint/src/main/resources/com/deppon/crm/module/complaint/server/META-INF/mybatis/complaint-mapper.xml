@@ -1,0 +1,1861 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.Complaint" >
+  <resultMap id="CellphoneMessageInfoMap" type="com.deppon.crm.module.complaint.shared.domain.CellphoneMessageInfo">
+    <result property="phoneNumber" column="EL_PHONENUMBER" />
+    <result property="sendStandardDeptCode" column="DP_SENDSTANDARDDEPTCODE" />
+  </resultMap>
+  <resultMap id="baseResultMap" type="com.deppon.crm.module.complaint.shared.domain.Complaint" >
+    <id column="fid" property="fid" jdbcType="DECIMAL" /> 
+      
+    <result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+    <result column="FCREATEUSERID" property="createuserid" jdbcType="DECIMAL" />
+    <result column="FLASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+    <result column="FLASTMODIFYUSERID" property="lastmodifyuserid" jdbcType="DECIMAL" />
+    <result column="FBILL" property="bill" jdbcType="VARCHAR" />
+    <result column="DEALBILL" property="dealbill" jdbcType="VARCHAR" />
+    <result column="REBINDNO" property="rebindno" jdbcType="VARCHAR" />
+    <result column="FRECOMCODE" property="recomcode" jdbcType="VARCHAR" />
+    <result column="FREPORTTYPE" property="reporttype" jdbcType="VARCHAR" />
+    <result column="FCOMPLAINID" property="complainid" jdbcType="DECIMAL" />
+    <result column="FCOMPLAINCUST" property="complaincust" jdbcType="VARCHAR" />
+    <result column="FCOMPMANID" property="compmanid" jdbcType="DECIMAL" />
+    <result column="FCOMPMAN" property="compman" jdbcType="VARCHAR" />
+    <result column="FCUSTLEVEL" property="custlevel" jdbcType="VARCHAR" />
+    <result column="FCUSTTYPE" property="custtype" jdbcType="VARCHAR" />
+    <result column="FRELATCUSID" property="relatcusid" jdbcType="DECIMAL" />
+    <result column="FRELATCUS" property="relatcus" jdbcType="VARCHAR" />
+    <result column="FTIMELIMIT" property="timelimit" jdbcType="DECIMAL" />
+    <result column="FTILIMITCYCLE" property="tilimitcycle" jdbcType="VARCHAR" />
+    <result column="FFEEDBACK" property="feedback" jdbcType="CHAR" />
+    <result column="FREPORTERID" property="reporterid" jdbcType="DECIMAL" />
+    <result column="FREPORTER" property="reporter" jdbcType="VARCHAR" />
+    <result column="FREPORTTIME" property="reporttime" jdbcType="TIMESTAMP" />
+    <result column="FREPORTCONTENT" property="reportcontent" jdbcType="VARCHAR" />
+    <result column="FCUSTREQUIRE" property="custrequire" jdbcType="VARCHAR" />
+    <result column="FREQUIREWAY" property="requireway" jdbcType="VARCHAR" />
+    <result column="FPRIRITY" property="pririty" jdbcType="VARCHAR" />
+    <result column="FTEL" property="tel" jdbcType="VARCHAR" />
+    <result column="FPROSTATUS" property="prostatus" jdbcType="VARCHAR" />
+    <result column="FDEALSTATUS" property="dealstatus" jdbcType="VARCHAR" />
+    <result column="FRETURNID" property="returnid" jdbcType="DECIMAL" />
+    <result column="FRETURNMAN" property="returnman" jdbcType="VARCHAR" />
+    <result column="FRETURNTIME" property="returntime" jdbcType="TIMESTAMP" />
+    <!--<result column="FRECOMMENDATION" property="recommendation" jdbcType="VARCHAR" />-->
+    <result column="FEEDBACKRECODE" property="feedbackrecode" jdbcType="VARCHAR" />
+    <result column="FEEDBACKREASON" property="feedbackreason" jdbcType="VARCHAR" />
+    <result column="FCOMPABNORMALID" property="compabnormalid" jdbcType="DECIMAL" />
+    <result column="FCOMPTYPEID" property="comptypeid" jdbcType="DECIMAL" />
+    <result column="FCOMPLEVEL" property="complevel" jdbcType="VARCHAR" />
+    <result column="FCOMAPPROVERID" property="comapproverid" jdbcType="DECIMAL" />
+    <result column="FCOMAPPROVER" property="comapprover" jdbcType="VARCHAR" />
+    <result column="FCOMAPPROVERTIME" property="comapprovertime" jdbcType="TIMESTAMP" />
+    <result column="FAPPRODELAY" property="approdelay" jdbcType="DECIMAL" />
+    <result column="FCUSSATISFACTION" property="cussatisfaction" jdbcType="VARCHAR" />
+    <result column="FOPERATOERID" property="operatoerid" jdbcType="DECIMAL" />
+    <result column="FOPERATOERNAME" property="operatoername" jdbcType="VARCHAR" />
+    <result column="FPARABASCILEVELID" property="parabasilevelid" jdbcType="VARCHAR" />
+    <result column="FBASCILEVELID" property="basiclevelid" jdbcType="VARCHAR" />
+    
+		<result column="FRECORDPARTMENTNAME" property="recordpartmentname" jdbcType="DECIMAL" />
+		<result column="FRECORDTIME" property="recordTime" jdbcType="DECIMAL" />
+		<!-- 新加字段 -->
+		<result column="FIFOVERTIME" property="ifovertime" jdbcType="VARCHAR" />
+		<result column="FIFMATURITY" property="iflimittime" jdbcType="VARCHAR" />
+		<result column="FDEALMAN" property="dealman" jdbcType="VARCHAR" />
+		<result column="FDEALTIME" property="dealtime" jdbcType="TIMESTAMP" />
+		<result column="FCOMPLAINTSOURCE" property="complaintsource" jdbcType="TIMESTAMP" />
+		<result column="FRELATCUSLEVEL" property="relatcuslevel" jdbcType="VARCHAR" />
+		<result column="FRELATCUSTYPE" property="relatcustype" jdbcType="VARCHAR" />
+		<!--客户工单查询 联查少的字段 -->
+		<result column="PROCESSLTIMEIMIT" property="processltimeimit" jdbcType="DECIMAL" />
+		<result column="RESULTS" property="results" jdbcType="VARCHAR" />
+		<result column="DEPTNAME" property="deptname" jdbcType="VARCHAR" />
+		<!--新加锁定字段 -->
+		<result column="LOCKINGTIME" property="lockingTime" jdbcType="TIMESTAMP" />
+		<result column="LOCKINGUSERID" property="lockingUserId" jdbcType="DECIMAL" />
+		<result column="NUMBEROFLOCK" property="numberOfLock" jdbcType="INTEGER" />
+		<!-- 新基础资料 新增字段 -->	
+		<result column="FBUSITEMNAME" property="busItemName" jdbcType="VARCHAR" />
+		<result column="FBUSSCOPENAME" property="busScopeName" jdbcType="VARCHAR" />    
+		<result column="FCOMPLAINLINK" property="complainLink" jdbcType="VARCHAR" />  
+		<result column="FBUSTYPENAME" property="busTypeName" jdbcType="VARCHAR" /> 
+		<result column="FBUSINESSMODEL" property="businessModel" jdbcType="VARCHAR" /> 
+
+       
+		<!-- 新加处理人id（回访查询） -->
+		<result column="DEALMANID" property="dealmanid" jdbcType="DECIMAL" /> 
+		<result column="SENDORRECEIVE" property="sendorreceive" jdbcType="VARCHAR" />   
+
+	<!-- 新增业务场景 和 场景原因 -->
+	<result column="FBUSSCENEID" property="busSceneId" jdbcType="VARCHAR" /> 
+	<result column="FBUSSCENENAME" property="busSceneName" jdbcType="VARCHAR" /> 
+	<result column="FSCENERESSONID" property="sceneRessonId" jdbcType="VARCHAR" /> 
+	<result column="FSCENERESSONNAME" property="sceneRessonName" jdbcType="VARCHAR" /> 
+		<collection property="resultList" column="fid"
+			select="com.deppon.crm.module.complaint.shared.domain.Result.queryResultByComplaintId" /> 
+		<!-- 
+			<collection property="workOrderlist" column="fid"
+					select="com.deppon.crm.module.complaint.shared.domain.WorkOrder.getWorkOrderRecordByComplaintId" />
+					--> 
+					
+
+	</resultMap>
+  
+  <!-- 基础数据，配合Base_Column_List一起使用 -->
+  <resultMap id="baseMap" type="com.deppon.crm.module.complaint.shared.domain.Complaint" >
+    <id column="fid" property="fid" jdbcType="DECIMAL" /> 
+    <result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+    <result column="FCREATEUSERID" property="createuserid" jdbcType="DECIMAL" />
+    <result column="FLASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+    <result column="FLASTMODIFYUSERID" property="lastmodifyuserid" jdbcType="DECIMAL" />
+    <result column="FBILL" property="bill" jdbcType="VARCHAR" />
+    <result column="DEALBILL" property="dealbill" jdbcType="VARCHAR" />
+    <result column="REBINDNO" property="rebindno" jdbcType="VARCHAR" />
+    <result column="FRECOMCODE" property="recomcode" jdbcType="VARCHAR" />
+    <result column="FREPORTTYPE" property="reporttype" jdbcType="VARCHAR" />
+    <result column="FCOMPLAINID" property="complainid" jdbcType="DECIMAL" />
+    <result column="FCOMPLAINCUST" property="complaincust" jdbcType="VARCHAR" />
+    <result column="FCOMPMANID" property="compmanid" jdbcType="DECIMAL" />
+    <result column="FCOMPMAN" property="compman" jdbcType="VARCHAR" />
+    <result column="FCUSTLEVEL" property="custlevel" jdbcType="VARCHAR" />
+    <result column="FCUSTTYPE" property="custtype" jdbcType="VARCHAR" />
+    <result column="FRELATCUSID" property="relatcusid" jdbcType="DECIMAL" />
+    <result column="FRELATCUS" property="relatcus" jdbcType="VARCHAR" />
+    <result column="FTIMELIMIT" property="timelimit" jdbcType="DECIMAL" />
+    <result column="FTILIMITCYCLE" property="tilimitcycle" jdbcType="VARCHAR" />
+    <result column="FFEEDBACK" property="feedback" jdbcType="CHAR" />
+    <result column="FREPORTERID" property="reporterid" jdbcType="DECIMAL" />
+    <result column="FREPORTER" property="reporter" jdbcType="VARCHAR" />
+    <result column="FREPORTTIME" property="reporttime" jdbcType="TIMESTAMP" />
+    <result column="FREPORTCONTENT" property="reportcontent" jdbcType="VARCHAR" />
+    <result column="FCUSTREQUIRE" property="custrequire" jdbcType="VARCHAR" />
+    <result column="FREQUIREWAY" property="requireway" jdbcType="VARCHAR" />
+    <result column="FPRIRITY" property="pririty" jdbcType="VARCHAR" />
+    <result column="FTEL" property="tel" jdbcType="VARCHAR" />
+    <result column="FPROSTATUS" property="prostatus" jdbcType="VARCHAR" />
+    <result column="FDEALSTATUS" property="dealstatus" jdbcType="VARCHAR" />
+    <result column="FRETURNID" property="returnid" jdbcType="DECIMAL" />
+    <result column="FRETURNMAN" property="returnman" jdbcType="VARCHAR" />
+    <result column="FRETURNTIME" property="returntime" jdbcType="TIMESTAMP" />
+    <result column="FEEDBACKRECODE" property="feedbackrecode" jdbcType="VARCHAR" />
+    <result column="FEEDBACKREASON" property="feedbackreason" jdbcType="VARCHAR" />
+    <result column="FCOMPABNORMALID" property="compabnormalid" jdbcType="DECIMAL" />
+    <result column="FCOMPTYPEID" property="comptypeid" jdbcType="DECIMAL" />
+    <result column="FCOMPLEVEL" property="complevel" jdbcType="VARCHAR" />
+    <result column="FCOMAPPROVERID" property="comapproverid" jdbcType="DECIMAL" />
+    <result column="FCOMAPPROVER" property="comapprover" jdbcType="VARCHAR" />
+    <result column="FCOMAPPROVERTIME" property="comapprovertime" jdbcType="TIMESTAMP" />
+    <result column="FAPPRODELAY" property="approdelay" jdbcType="DECIMAL" />
+    <result column="FCUSSATISFACTION" property="cussatisfaction" jdbcType="VARCHAR" />
+    <result column="FOPERATOERID" property="operatoerid" jdbcType="DECIMAL" />
+    <result column="FOPERATOERNAME" property="operatoername" jdbcType="VARCHAR" />
+    <result column="FPARABASCILEVELID" property="parabasilevelid" jdbcType="VARCHAR" />
+    <result column="FBASCILEVELID" property="basiclevelid" jdbcType="VARCHAR" />
+    <result column="FCOMPLAINTSOURCE" property="complaintsource" jdbcType="TIMESTAMP" />
+    <result column="FRELATCUSLEVEL" property="relatcuslevel" jdbcType="VARCHAR" />
+    <result column="FRELATCUSTYPE" property="relatcustype" jdbcType="VARCHAR" />
+    <result column="LOCKINGTIME" property="lockingTime" jdbcType="TIMESTAMP" />
+    <result column="LOCKINGUSERID" property="lockingUserId" jdbcType="DECIMAL" />
+    <result column="NUMBEROFLOCK" property="numberOfLock" jdbcType="INTEGER" />
+    <result column="DEALMANID" property="dealmanid" jdbcType="DECIMAL" /> 
+    <result column="SENDORRECEIVE" property="sendorreceive" jdbcType="VARCHAR" /> 
+    <!-- 新基础资料 新增字段 -->	
+     <result column="FBUSITEMNAME" property="busItemName" jdbcType="VARCHAR" />
+	 <result column="FBUSSCOPENAME" property="busScopeName" jdbcType="VARCHAR" />    
+     <result column="FCOMPLAINLINK" property="complainLink" jdbcType="VARCHAR" />
+     <result column="FBUSTYPENAME" property="busTypeName" jdbcType="VARCHAR" /> 
+     <!--新增出发部门字段-->  
+     <result column="FLEAVEDEPT" property="leaveDept" jdbcType="VARCHAR" />
+      <result column="FLEAVEDEPTNAME" property="leaveDeptName" jdbcType="VARCHAR" />   
+      
+     <result column="FBUSINESSMODEL" property="businessModel" jdbcType="VARCHAR" /> 
+     
+      <!-- 新增业务场景 和 场景原因 -->
+	<result column="FBUSSCENEID" property="busSceneId" jdbcType="VARCHAR" /> 
+	<result column="FBUSSCENENAME" property="busSceneName" jdbcType="VARCHAR" /> 
+	<result column="FSCENERESSONID" property="sceneRessonId" jdbcType="VARCHAR" /> 
+	<result column="FSCENERESSONNAME" property="sceneRessonName" jdbcType="VARCHAR" /> 
+	</resultMap>
+  
+  <resultMap id="custResultMap" type="com.deppon.crm.module.complaint.shared.domain.Complaint" >
+	    <id column="fid" property="fid" jdbcType="DECIMAL" /> 
+	      
+	    <result column="FCREATETIME" property="createtime" jdbcType="DATE" />
+	    <result column="FCREATEUSERID" property="createuserid" jdbcType="DECIMAL" />
+	    <result column="FLASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+	    <result column="FLASTMODIFYUSERID" property="lastmodifyuserid" jdbcType="DECIMAL" />
+	    <result column="FBILL" property="bill" jdbcType="VARCHAR" />
+	    <result column="DEALBILL" property="dealbill" jdbcType="VARCHAR" />
+	    <result column="REBINDNO" property="rebindno" jdbcType="VARCHAR" />
+	    <result column="FRECOMCODE" property="recomcode" jdbcType="VARCHAR" />
+	    <result column="FREPORTTYPE" property="reporttype" jdbcType="VARCHAR" />
+	    <result column="FCOMPLAINID" property="complainid" jdbcType="DECIMAL" />
+	    <result column="FCOMPLAINCUST" property="complaincust" jdbcType="VARCHAR" />
+	    <result column="FCOMPMANID" property="compmanid" jdbcType="DECIMAL" />
+	    <result column="FCOMPMAN" property="compman" jdbcType="VARCHAR" />
+	    <result column="FCUSTLEVEL" property="custlevel" jdbcType="VARCHAR" />
+	    <result column="FCUSTTYPE" property="custtype" jdbcType="VARCHAR" />
+	    <result column="FRELATCUSID" property="relatcusid" jdbcType="DECIMAL" />
+	    <result column="FRELATCUS" property="relatcus" jdbcType="VARCHAR" />
+	    <result column="FTIMELIMIT" property="timelimit" jdbcType="DECIMAL" />
+	    <result column="FTILIMITCYCLE" property="tilimitcycle" jdbcType="VARCHAR" />
+	    <result column="FFEEDBACK" property="feedback" jdbcType="CHAR" />
+	    <result column="FREPORTERID" property="reporterid" jdbcType="DECIMAL" />
+	    <result column="FREPORTER" property="reporter" jdbcType="VARCHAR" />
+	    <result column="FREPORTTIME" property="reporttime" jdbcType="TIMESTAMP" />
+	    <result column="FREPORTCONTENT" property="reportcontent" jdbcType="VARCHAR" />
+	    <result column="FCUSTREQUIRE" property="custrequire" jdbcType="VARCHAR" />
+	    <result column="FREQUIREWAY" property="requireway" jdbcType="VARCHAR" />
+	    <result column="FPRIRITY" property="pririty" jdbcType="VARCHAR" />
+	    <result column="FTEL" property="tel" jdbcType="VARCHAR" />
+	    <result column="FPROSTATUS" property="prostatus" jdbcType="VARCHAR" />
+	    <result column="FDEALSTATUS" property="dealstatus" jdbcType="VARCHAR" />
+	    <result column="FRETURNID" property="returnid" jdbcType="DECIMAL" />
+	    <result column="FRETURNMAN" property="returnman" jdbcType="VARCHAR" />
+	    <result column="FRETURNTIME" property="returntime" jdbcType="TIMESTAMP" />
+	    <!--<result column="FRECOMMENDATION" property="recommendation" jdbcType="VARCHAR" />-->
+	    <result column="FEEDBACKRECODE" property="feedbackrecode" jdbcType="VARCHAR" />
+	    <result column="FEEDBACKREASON" property="feedbackreason" jdbcType="VARCHAR" />
+	    <result column="FCOMPABNORMALID" property="compabnormalid" jdbcType="DECIMAL" />
+	    <result column="FCOMPTYPEID" property="comptypeid" jdbcType="DECIMAL" />
+	    <result column="FCOMPLEVEL" property="complevel" jdbcType="VARCHAR" />
+	    <result column="FCOMAPPROVERID" property="comapproverid" jdbcType="DECIMAL" />
+	    <result column="FCOMAPPROVER" property="comapprover" jdbcType="VARCHAR" />
+	    <result column="FCOMAPPROVERTIME" property="comapprovertime" jdbcType="TIMESTAMP" />
+	    <result column="FAPPRODELAY" property="approdelay" jdbcType="DECIMAL" />
+	    <result column="FCUSSATISFACTION" property="cussatisfaction" jdbcType="VARCHAR" />
+	    <result column="FOPERATOERID" property="operatoerid" jdbcType="DECIMAL" />
+	    <result column="FOPERATOERNAME" property="operatoername" jdbcType="VARCHAR" />
+	    <result column="FPARABASCILEVELID" property="parabasilevelid" jdbcType="VARCHAR" />
+	    <result column="FBASCILEVELID" property="basiclevelid" jdbcType="VARCHAR" />
+	    
+		<result column="FRECORDPARTMENTNAME" property="recordpartmentname" jdbcType="DECIMAL" />
+		<result column="FRECORDTIME" property="recordTime" jdbcType="DECIMAL" />
+		<!-- 新加字段 -->
+		<result column="FIFOVERTIME" property="ifovertime" jdbcType="VARCHAR" />
+		<result column="FIFMATURITY" property="iflimittime" jdbcType="VARCHAR" />
+		<result column="FDEALMAN" property="dealman" jdbcType="VARCHAR" />
+		<result column="FDEALTIME" property="dealtime" jdbcType="TIMESTAMP" />
+		<result column="FCOMPLAINTSOURCE" property="complaintsource" jdbcType="TIMESTAMP" />
+		<result column="FRELATCUSLEVEL" property="relatcuslevel" jdbcType="VARCHAR" />
+		<result column="FRELATCUSTYPE" property="relatcustype" jdbcType="VARCHAR" />
+		<!--客户工单查询 联查少的字段 -->
+		<result column="PROCESSLTIMEIMIT" property="processltimeimit" jdbcType="DECIMAL" />
+		<result column="RESULTS" property="results" jdbcType="VARCHAR" />
+		<result column="DEPTNAME" property="deptname" jdbcType="VARCHAR" />
+		  
+		<!-- 新增锁定次数、锁定人字段 -->
+		<result column="LOCKINGTIME" property="lockingTime" jdbcType="TIMESTAMP" />
+		<result column="NUMBEROFLOCK" property="numberOfLock" jdbcType="INTEGER" />    
+		<result column="LOCKINGUSERID" property="lockingUserId" jdbcType="DECIMAL" />
+		<!-- 新基础资料 新增字段 -->	
+		<result column="FBUSITEMNAME" property="busItemName" jdbcType="VARCHAR" />
+		<result column="FBUSSCOPENAME" property="busScopeName" jdbcType="VARCHAR" />    
+		<result column="FCOMPLAINLINK" property="complainLink" jdbcType="VARCHAR" /> 
+		<result column="FBUSTYPENAME" property="busTypeName" jdbcType="VARCHAR" />  
+		<!--新增出发部门字段-->  
+		<result column="FLEAVEDEPT" property="leaveDept" jdbcType="VARCHAR" />
+		<result column="FLEAVEDEPTNAME" property="leaveDeptName" jdbcType="VARCHAR" />  
+		<result column="FBUSINESSMODEL" property="businessModel" jdbcType="VARCHAR" /> 
+       	    
+       <!-- 新增业务场景 和 场景原因 -->
+	<result column="FBUSSCENEID" property="busSceneId" jdbcType="VARCHAR" /> 
+	<result column="FBUSSCENENAME" property="busSceneName" jdbcType="VARCHAR" /> 
+	<result column="FSCENERESSONID" property="sceneRessonId" jdbcType="VARCHAR" /> 
+	<result column="FSCENERESSONNAME" property="sceneRessonName" jdbcType="VARCHAR" /> 
+		<association property="basicLevel" column="FRELATCUSTYPE"
+			select="com.deppon.crm.module.complaint.shared.domain.BasciLevel.getBasicLevelById" /> 
+		<!--  
+			<collection property="workOrderlist" column="fid"
+					select="com.deppon.crm.module.complaint.shared.domain.WorkOrder.getWorkOrderRecordByComplaintId" />
+					--> 
+
+	</resultMap>
+  
+	<resultMap id="taskResultMap" type="com.deppon.crm.module.complaint.shared.domain.TaskResult" >
+		<result column="FID" property="complaintId" jdbcType="VARCHAR" />
+		<result column="FBILL" property="bill" jdbcType="VARCHAR" />
+		<result column="DEALBILL" property="dealbill" jdbcType="VARCHAR" />
+		<result column="REBINDNO" property="rebindno" jdbcType="VARCHAR" />
+		<result column="FREPORTTYPE" property="reporttype" jdbcType="VARCHAR" />
+		<result column="FCOMPMAN" property="compman" jdbcType="VARCHAR" />
+		<result column="FPROSTATUS" property="prostatus" jdbcType="VARCHAR" />
+		<result column="FCOMPLEVEL" property="complevel" jdbcType="VARCHAR" />
+		<result column="FREPORTTIME" property="reporttime" jdbcType="TIMESTAMP" />
+		<result column="RESULTID" property="resultId" jdbcType="VARCHAR" />
+		<result column="FTASKDEPTNAME" property="taskpartment" jdbcType="VARCHAR" />
+		<result column="FTASKPROPERTIES" property="taskproperties" jdbcType="VARCHAR" />
+		<result column="FFEEDTIMELIMIT" property="feedtimelimit" jdbcType="DECIMAL" />
+		<result column="FPROCESSLTIMEIMIT" property="processtimelimit" jdbcType="DECIMAL" />
+		<result column="FRECOMCODE" property="recomcode" jdbcType="VARCHAR" />
+		<result column="FDELAY" property="delay" jdbcType="VARCHAR" />
+		<result column="FDEPTTYPE" property="deptType" jdbcType="VARCHAR" />
+		<result column="FISBACK" property="isBack" jdbcType="VARCHAR" />
+		<result column="FSTAT" property="stat" jdbcType="VARCHAR" />
+		<!-- 新增锁定次数、锁定人字段 -->
+		<result column="LOCKINGTIME" property="lockingTime" jdbcType="TIMESTAMP" />
+		<result column="NUMBEROFLOCK" property="numberOfLock" jdbcType="INTEGER" />    
+		<result column="LOCKINGUSERID" property="lockingUserId" jdbcType="DECIMAL" />
+		<result column="FBUSINESSMODEL" property="businessModel" jdbcType="VARCHAR" /> 
+	  
+	</resultMap>
+  
+	<resultMap id="workOrderMap" type="com.deppon.crm.module.complaint.shared.domain.WorkOrder" >
+		<id column="fid" property="fid" jdbcType="DECIMAL" />
+		<result column="FCREATETIME" property="createDate" jdbcType="DATE" />
+		<result column="FCREATEUSERID" property="createUser" jdbcType="DECIMAL" />
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="DATE" />
+		<result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="DECIMAL" />
+		<result column="FCOMPLAINTID" property="complaintId" jdbcType="DECIMAL" />    
+		<result column="FOPERATORID" property="operatorId" jdbcType="DECIMAL" />
+		<result column="FOPERATORNAME" property="operatorName" jdbcType="VARCHAR" />
+		<result column="FOPERATORTIME" property="operatorTime" jdbcType="DATE" />
+		<result column="FOPERATORTYPE" property="operatorType" jdbcType="VARCHAR" />
+		<result column="FOPERATORRECORD" property="operatorRecord" jdbcType="VARCHAR" />    
+		<result column="FCURRENTSTAT" property="currentState" jdbcType="VARCHAR" />
+		<result column="FPREVIOUSSTAT" property="previousState" jdbcType="VARCHAR" />
+		<result column="OPERATORROLEID" property="operatorRoleId" jdbcType="DECIMAL" />   
+		<!-- 新增锁定次数、锁定人字段 -->
+		<result column="LOCKINGTIME" property="lockingTime" jdbcType="TIMESTAMP" />
+		<result column="NUMBEROFLOCK" property="numberOfLock" jdbcType="INTEGER" />    
+		<result column="LOCKINGUSERID" property="lockingUserId" jdbcType="DECIMAL" />  
+     
+	</resultMap>
+  
+	<sql id="Base_Column_List" >
+	FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID, FBILL, 
+	DEALBILL, REBINDNO, FRECOMCODE, FREPORTTYPE, FCOMPLAINID, FCOMPLAINCUST,
+	FCOMPMANID, FCOMPMAN, FCUSTLEVEL, FCUSTTYPE, FRELATCUSID, FRELATCUS, FTIMELIMIT, 
+	FTILIMITCYCLE, FFEEDBACK, FREPORTERID, FREPORTER, FREPORTTIME, FREPORTCONTENT, 
+	FCUSTREQUIRE, FREQUIREWAY, FPRIRITY, FTEL, FPROSTATUS, FDEALSTATUS, FRETURNID, 
+	FRETURNMAN, FRETURNTIME, FEEDBACKRECODE, FEEDBACKREASON, FCOMPABNORMALID, 
+	FCOMPTYPEID, FCOMPLEVEL, FCOMAPPROVERID, FCOMAPPROVER, FCOMAPPROVERTIME, FAPPRODELAY,
+	FCUSSATISFACTION, FOPERATOERID, FOPERATOERNAME, FPARABASCILEVELID, FBASCILEVELID,
+	FCOMPLAINTSOURCE, FSTANDARDCODE, FRELATCUSLEVEL, FRELATCUSTYPE, LOCKINGTIME, LOCKINGUSERID,DEALMANID,SENDORRECEIVE,NUMBEROFLOCK,
+	FBUSITEMNAME,FBUSSCOPENAME,FCOMPLAINLINK,FBUSTYPENAME,FLEAVEDEPT,FLEAVEDEPTNAME,FBUSINESSMODEL
+	,FBUSSCENEID,FBUSSCENENAME,FSCENERESSONID,FSCENERESSONNAME
+  </sql>
+  
+  <select id="selectComplaints" resultMap="baseMap" 
+  			parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+  SELECT TC.FID, TC.FCREATETIME, TC.FCREATEUSERID, TC.FLASTUPDATETIME, TC.FLASTMODIFYUSERID, FBILL, 
+	DEALBILL, REBINDNO, FRECOMCODE, FREPORTTYPE, TC.FCOMPLAINID, FCOMPLAINCUST,
+	FCOMPMANID, FCOMPMAN, FCUSTLEVEL, FCUSTTYPE, FRELATCUSID, FRELATCUS, FTIMELIMIT, 
+	FTILIMITCYCLE, FFEEDBACK, FREPORTERID, FREPORTER, FREPORTTIME, FREPORTCONTENT, 
+	FCUSTREQUIRE, FREQUIREWAY, FPRIRITY, FTEL, FPROSTATUS, FDEALSTATUS, FRETURNID, 
+	FRETURNMAN, FRETURNTIME, FEEDBACKRECODE, FEEDBACKREASON, FCOMPABNORMALID, 
+	FCOMPTYPEID, FCOMPLEVEL, FCOMAPPROVERID, FCOMAPPROVER, FCOMAPPROVERTIME, FAPPRODELAY,
+	FCUSSATISFACTION, FOPERATOERID, FOPERATOERNAME, FPARABASCILEVELID, FBASCILEVELID,
+	FCOMPLAINTSOURCE, FSTANDARDCODE, FRELATCUSLEVEL, FRELATCUSTYPE, LOCKINGTIME, LOCKINGUSERID,DEALMANID,SENDORRECEIVE,NUMBEROFLOCK,
+	TC.FBUSITEMNAME,TC.FBUSSCOPENAME,TC.FCOMPLAINLINK,TC.FBUSTYPENAME,TC.FLEAVEDEPT,TC.FLEAVEDEPTNAME,TC.FBUSINESSMODEL
+	
+	,TC.FBUSSCENEID,TC.FBUSSCENENAME,TC.FSCENERESSONID,TC.FSCENERESSONNAME
+   FROM T_CUST_COMPLAINT TC
+   
+		<if test="deptId != null and deptId !='' ">
+    	inner JOIN  (
+    		select t.fcomplainid,count(*) from T_CUST_RESULT T
+            where t.fdepttype = 0 and T.ftaskpartmentid = trim(#{deptId}) group by t.fcomplainid
+      	) TR ON TC.FID = TR.FCOMPLAINID
+		</if>
+    
+		<if test="(visitorTimeStart!=null and visitorTimeEnd!=null)
+			or (custsatisfy != null and custsatisfy !='')
+			or (visitor != null and visitor !='')">
+    	INNER JOIN (
+			SELECT FRECORDTYPE,
+			       FCUSTSATISFY,
+			       FCOMPLAINTID,
+			       FRECORDMAN, 
+			       FRECORDTIME,
+			       MAX(FID)
+			  FROM T_CRM_FEEDBACK_REASION
+			 GROUP BY FRECORDTYPE, FCUSTSATISFY, FCOMPLAINTID, FRECORDMAN, FRECORDTIME
+			) FR ON FR.FCOMPLAINTID = TC.FID
+    	LEFT JOIN T_ORG_EMPLOYEE E ON FR.FRECORDMAN = E.FEMPCODE
+		</if>
+         WHERE 1 = 1
+		<if test="(processBeginTime != null and processBeginTime !='') or (dealman!=null and dealman!='') ">
+			<if test="(processEndTime != null and processEndTime !='') or (dealman!=null and dealman!='')">
+   			and exists 
+				(
+				    select 1 from T_CRM_WORKORDER w
+				    where 1=1
+				    and (w.fcurrentstat='UPGRADED' or w.fcurrentstat='WAIT_APPROVAL' or w.fcurrentstat='WAITE_RESPONSE' or w.fcurrentstat='BACKGROUND')
+				<if test="processBeginTime != null and processBeginTime !='' ">
+					<if test="processEndTime != null and processEndTime !='' ">
+				  		  and w.fcreatetime between #{processBeginTime} and #{processEndTime}
+					</if>
+				</if>
+				<if test="dealman!=null and dealman!='' "> 
+   						and w.foperatorname=trim(#{dealman})
+				</if>
+				    and w.fcomplaintid=TC.fid
+				)
+			</if>
+		</if>
+		<if test="reporter!=null and reporter!=''">
+   		and TC.freporter like '%' || #{reporter,jdbcType=VARCHAR} || '%'
+		</if>
+		<if test="visitor != null and visitor !='' ">
+   		AND REGEXP_LIKE(FEMPNAME,  #{visitor})  
+		</if>
+		<if test="dealbill != null and dealbill !='' ">
+   		and dealbill=trim(#{dealbill})
+		</if>
+		<if test="fid != null and fid !='' ">
+			<if test="toBeBanging!=null and toBeBanging=='YES' ">
+   			and tc.fid != trim(#{fid})
+			</if>
+			<if test="toBeBanging==null or toBeBanging=='' or toBeBanging!='YES'">
+   			and tc.fid = trim(#{fid})
+			</if>
+		</if>
+		<if test="phone != null and phone !='' ">
+   		and ftel like '%'||trim(#{phone})||'%'
+		</if>
+		<if test="bill != null and bill !='' ">
+   		and trim(fbill)=trim(#{bill})
+		</if>
+		<if test="recomcode != null and recomcode !='' ">
+   		and frecomcode=trim(#{recomcode})
+		</if>
+		<if test="rebindno != null and rebindno !='' ">
+   		and rebindno=trim(#{rebindno})
+		</if>
+   	
+		<if test="reportTimeStart != null and reportTimeStart !='' ">
+   		and freporttime>=#{reportTimeStart}
+		</if>
+		<if test="reportTimeEnd != null and reportTimeEnd !='' ">
+		<![CDATA[	and freporttime < #{reportTimeEnd}]]>
+		</if>
+		<if test="(visitorTimeStart!=null and visitorTimeEnd!=null)
+			or (custsatisfy != null and custsatisfy !='')">
+		   AND FR.FRECORDTYPE = 'FEED_BACK_REASION_TYPE_RETURN'
+			<if test="visitorTimeEnd != null and visitorTimeEnd !='' ">
+   			AND FR.FRECORDTIME  between #{visitorTimeStart} and #{visitorTimeEnd}
+			</if>
+			<if test="custsatisfy != null and custsatisfy !='' ">
+		   AND FR.FCUSTSATISFY = #{custsatisfy}
+			</if>         
+         
+		</if>
+		<if test="reportType != null and reportType !='' ">
+   		and freporttype=trim(#{reportType})
+		</if>
+		<if test="compman != null and compman !='' ">
+   		and fcompman like '%'||trim(#{compman})||'%'
+		</if>
+   	
+		<!--  
+			   <if test="dealman != null and dealman !='' ">
+				   and tr.fdealman=trim(#{dealman})
+			   </if>
+			   -->
+		<if test="prostatus != null and prostatus !='' ">
+   		and tc.fprostatus=trim(#{prostatus})
+		</if>
+		<if test="ifInsert !=null and 1==ifInsert">
+			<if test="dealstatus != null and dealstatus !='' ">
+	   		and (tc.fdealstatus != trim(#{dealstatus}) or tc.fdealstatus is null) 
+			</if>
+		</if>
+		<if test="null == ifInsert or 0== ifInsert">
+			<if test="dealstatus != null and dealstatus !='' ">
+	   		and tc.fdealstatus=trim(#{dealstatus})
+			</if>
+		</if>
+		<if test="null != prostatusList and  prostatusList.size>0 ">
+				and tc.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+					#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="businessModel != null and businessModel !='' ">
+   			and tc.fbusinessModel = #{businessModel} 
+		</if>
+	ORDER BY TC.FREPORTTIME DESC
+	</select>
+  
+	<select id="selectCustComplaints" resultType="java.lang.String"  parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+    select FCOMPLAINID
+    from T_CUST_COMPLAINT 
+    where 1=1
+		<if test="maintainDateFrom != null and maintainDateFrom !='' ">
+		<![CDATA[
+			   and freporttime >=to_date(
+		]]>
+   	trim(#{maintainDateFrom})
+		<![CDATA[
+			   ,'yyyy-MM') and freporttime<=last_day(to_date(
+		]]>
+   	trim(#{maintainDateTo})
+		<![CDATA[
+			 ,'yyyy-MM hh24:mi:ss'))
+				AND FCOMPLAINID IS NOT NULL AND FCOMPLAINID <> 0
+			GROUP BY FCOMPLAINID
+		]]>
+		</if>
+	</select>
+  
+	<select id="getAllComplaintByCustCode" resultMap="baseMap" 
+		parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+		select <include refid="Base_Column_List"/>
+    from T_CUST_COMPLAINT 
+    where 1=1
+		<if test="complainid != null and complainid !='' ">
+   		and FCOMPLAINID=trim(#{complainid})
+		</if>
+   	order by FCREATETIME desc
+	</select>
+  
+  
+	<select id="selectTaskComplaints" resultMap="taskResultMap" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+    select 
+    C.FID,C.DEALBILL,C.FBILL,C.REBINDNO,C.FREPORTTYPE,C.FCOMPMAN,C.FPROSTATUS,C.FCOMPLEVEL,C.FREPORTTIME,C.FRECOMCODE,
+    R.FID RESULTID,R.FTASKDEPTNAME,R.FFEEDTIMELIMIT,R.FPROCESSLTIMEIMIT,R.FTASKPROPERTIES,R.FDELAY,R.FISBACK,R.FSTAT,
+    C.FBUSITEMNAME,C.FBUSSCOPENAME,C.FCOMPLAINLINK,C.FBUSTYPENAME,R.FDEPTTYPE,C.FBUSINESSMODEL
+    from T_CUST_COMPLAINT C INNER JOIN T_CUST_RESULT R ON C.FID=R.FCOMPLAINID
+    where 1=1 
+		<if test="null != prostatusList and  prostatusList.size>0 ">
+				and C.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+					#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	and(
+		(R.FPROCESSTYPE='employee' and R.FTASKPARTMENTID=#{userid,jdbcType=VARCHAR})
+		or (R.FPROCESSTYPE='department' and R.FTASKPARTMENTID=#{deptId,jdbcType=VARCHAR})
+	)
+   	AND R.FSTAT IS NULL
+   	order by c.FREPORTTIME desc
+  
+	</select>
+  
+	<select id="selectTaskComplaintsCount" resultType="java.lang.Integer"  parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+    select 
+ 	COUNT(*)
+    from T_CUST_COMPLAINT C INNER JOIN T_CUST_RESULT R ON C.FID=R.FCOMPLAINID
+    where 1=1 
+		<if test="null != prostatusList and  prostatusList">
+				and C.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+					#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	and(
+		(R.FPROCESSTYPE='employee' and R.FTASKPARTMENTID=#{userid,jdbcType=VARCHAR})
+		or (R.FPROCESSTYPE='department' and R.FTASKPARTMENTID=#{deptId,jdbcType=VARCHAR})
+	)	
+   	AND R.FSTAT IS NULL
+  
+	</select>
+  
+	<select id="inquireUserIdByEmployeeId" resultType="java.lang.Integer">
+   SELECT U.FID 
+   FROM T_ORG_EMPLOYEE E, T_AUTH_USER U
+   where 1=1
+   and E.FEMPCODE = U.FEMPCODE	
+   and E.FID=#{employeeId}
+   	
+  	/* Quartz : com.deppon.crm.module.complaint.shared.domain.Complaint.inquireAllTaskComplaintsCount (justin.xu) */
+	</select>
+  
+	<select id="inquireAllTaskComplaintsCount" resultType="com.deppon.crm.module.complaint.shared.domain.TaskComplaintCount"  parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+		    SELECT 
+		    	 	COUNT(C.fid)  				AS taskcount,	
+				 	R.FTASKPARTMENTID			AS processId			 	
+		    from T_CUST_COMPLAINT C INNER JOIN T_CUST_RESULT R ON C.FID=R.FCOMPLAINID
+		    where 1=1 and R.fdepttype = 0 
+		<if test="null != prostatusList and  prostatusList">
+						and C.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+							#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		   	AND R.FSTAT IS NULL
+		 	and R.FPROCESSTYPE='department'
+		    group by R.FPROCESSTYPE,R.FTASKPARTMENTID
+   	
+  	/* Quartz : com.deppon.crm.module.complaint.shared.domain.Complaint.inquireAllTaskComplaintsCount (justin.xu) */
+	</select>
+  
+	<select id="inquireAllUserTaskComplaintsCount" resultType="com.deppon.crm.module.complaint.shared.domain.TaskComplaintCount"  parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+   SELECT U.FID                  AS processId,
+          S.taskcount            AS taskcount
+   FROM T_ORG_EMPLOYEE E, T_AUTH_USER U,	
+	    (		
+		    SELECT 
+		    	 	COUNT(C.fid)  				AS taskcount,
+				 	R.FPROCESSTYPE				AS processType,	
+				 	R.FTASKPARTMENTID			AS processId			 	
+		    from T_CUST_COMPLAINT C INNER JOIN T_CUST_RESULT R ON C.FID=R.FCOMPLAINID
+		    where 1=1 and R.fdepttype = 0 
+		<if test="null != prostatusList and  prostatusList">
+						and C.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+							#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		   	AND R.FSTAT IS NULL
+		 	and R.FPROCESSTYPE='employee'
+		    group by R.FPROCESSTYPE,R.FTASKPARTMENTID
+	  )S
+	  where 1=1
+	  and S.processId   = E.FID
+	  and E.FEMPCODE = U.FEMPCODE		    
+   	
+  	/* Quartz : com.deppon.crm.module.complaint.shared.domain.Complaint.inquireAllUserTaskComplaintsCount (justin.xu) */
+	</select>
+  
+	<select id="selectComplaintsCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+    SELECT COUNT(*)
+  	FROM T_CUST_COMPLAINT TC
+  	
+		<if test="deptId != null and deptId !='' ">
+    	inner JOIN  (
+    		select t.fcomplainid,count(*) from T_CUST_RESULT T
+            where t.fdepttype = 0 and T.ftaskpartmentid = trim(#{deptId}) group by t.fcomplainid
+      	) TR ON TC.FID = TR.FCOMPLAINID
+		</if>
+          
+		<if test="(visitorTimeStart!=null and visitorTimeEnd!=null)
+			or (custsatisfy != null and custsatisfy !='')
+			or (visitor != null and visitor !='')">
+    	INNER JOIN (
+			SELECT FRECORDTYPE,
+			       FCUSTSATISFY,
+			       FCOMPLAINTID,
+			       FRECORDMAN, 
+			       FRECORDTIME,
+			       MAX(FID)
+			  FROM T_CRM_FEEDBACK_REASION
+			 GROUP BY FRECORDTYPE, FCUSTSATISFY, FCOMPLAINTID, FRECORDMAN, FRECORDTIME
+			) FR ON FR.FCOMPLAINTID = TC.FID
+    	LEFT JOIN T_ORG_EMPLOYEE E ON FR.FRECORDMAN = E.FEMPCODE
+		</if>
+         WHERE 1 = 1
+		<if test="(processBeginTime != null and processBeginTime !='') or (dealman!=null and dealman!='') ">
+			<if test="(processEndTime != null and processEndTime !='') or (dealman!=null and dealman!='')">
+   			and exists 
+				(
+				    select 1 from T_CRM_WORKORDER w
+				    where 1=1
+				    and (w.fcurrentstat='UPGRADED' or w.fcurrentstat='WAIT_APPROVAL' or w.fcurrentstat='WAITE_RESPONSE' or w.fcurrentstat='BACKGROUND')
+				<if test="processBeginTime != null and processBeginTime !='' ">
+					<if test="processEndTime != null and processEndTime !='' ">
+				  		  and w.fcreatetime between #{processBeginTime} and #{processEndTime}
+					</if>
+				</if>
+				<if test="dealman!=null and dealman!='' "> 
+   						and w.foperatorname=trim(#{dealman})
+				</if>
+				    and w.fcomplaintid=TC.fid
+				)
+			</if>
+		</if>        
+		<if test="reporter!=null and reporter!=''">
+   		and TC.freporter like '%' || #{reporter,jdbcType=VARCHAR} || '%'
+		</if>
+		<if test="businessModel!=null and businessModel!=''">
+   		and TC.fbusinessModel =#{businessModel}
+		</if>
+		<if test="visitor != null and visitor !='' ">
+   		AND REGEXP_LIKE(FEMPNAME,  #{visitor})  
+		</if>     
+		<if test="dealbill != null and dealbill !='' ">
+   		and dealbill=trim(#{dealbill})
+		</if>
+		<if test="fid != null and fid !='' ">
+			<if test="toBeBanging != null and toBeBanging == 'YES' ">
+   			and tc.fid != trim(#{fid})
+			</if>
+			<if test="toBeBanging == null or toBeBanging=='' or toBeBanging != 'YES'">
+   			and tc.fid = trim(#{fid})
+			</if>
+		</if>
+		<if test="phone != null and phone !='' ">
+   		and ftel like '%'||trim(#{phone})||'%'
+		</if>
+		<if test="bill != null and bill !='' ">
+   		and trim(fbill)=trim(#{bill})
+		</if>
+		<if test="recomcode != null and recomcode !='' ">
+   		and frecomcode=trim(#{recomcode})
+		</if>
+		<if test="rebindno != null and rebindno !='' ">
+   		and rebindno=trim(#{rebindno})
+		</if>
+   	
+		<if test="reportTimeStart != null and reportTimeStart !='' ">
+   		and freporttime>=#{reportTimeStart}
+		</if>
+		<if test="reportTimeEnd != null and reportTimeEnd !='' ">
+		<![CDATA[	and freporttime < #{reportTimeEnd} ]]>
+		</if>
+		<if test="(visitorTimeStart!=null and visitorTimeEnd!=null)
+			or (custsatisfy != null and custsatisfy !='')">
+		   AND FR.FRECORDTYPE = 'FEED_BACK_REASION_TYPE_RETURN'
+			<if test="visitorTimeEnd != null and visitorTimeEnd !='' ">
+   			AND FR.FRECORDTIME  between #{visitorTimeStart} and #{visitorTimeEnd}
+			</if>
+			<if test="custsatisfy != null and custsatisfy !='' ">
+		   AND FR.FCUSTSATISFY = #{custsatisfy}
+			</if>         
+         
+		</if>	
+		<if test="reportType != null and reportType !='' ">
+   		and freporttype=trim(#{reportType})
+		</if>
+		<if test="compman != null and compman !='' ">
+   		and fcompman like '%'||trim(#{compman})||'%'
+		</if>
+   	
+		<if test="prostatus != null and prostatus !='' ">
+   		and tc.fprostatus=trim(#{prostatus})
+		</if>
+		<if test="ifInsert !=null and 1==ifInsert">
+			<if test="dealstatus != null and dealstatus !='' ">
+	   		and (tc.fdealstatus != trim(#{dealstatus}) or tc.fdealstatus is null) 
+			</if>
+		</if>
+		<if test="null == ifInsert or 0== ifInsert">
+			<if test="dealstatus != null and dealstatus !='' ">
+	   		and tc.fdealstatus=trim(#{dealstatus})
+			</if>
+		</if>
+		<if test="null != prostatusList and  prostatusList.size>0 ">
+				and tc.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+					#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</select>
+  
+	<select id="searchWaitProccesComplaint" resultMap="baseResultMap" parameterType="map">
+  SELECT 
+    C.fid as fid, C.fcreatetime as fcreatetime, C.fcreateuserid as fcreateuserid, C.flastupdatetime as flastupdatetime, C.flastmodifyuserid, fbill, 
+    dealbill, rebindno, frecomcode, freporttype, fcomplainid, fcomplaincust,
+    fcompmanid, fcompman, fcustlevel, fcusttype, frelatcusid, frelatcus, ftimelimit, 
+    ftilimitcycle, ffeedback, freporterid, freporter, freporttime, freportcontent, 
+    fcustrequire, frequireway, fpririty, ftel, fprostatus, fdealstatus, freturnid, 
+    freturnman, freturntime, feedbackrecode, feedbackreason, fcompabnormalid, 
+    fcomptypeid, fcomplevel, fcomapproverid, fcomapprover, fcomapprovertime, fapprodelay,
+    fcussatisfaction, foperatoerid, foperatoername, fparabascilevelid, fbascilevelid,
+    fcomplaintsource, fstandardcode, frelatcuslevel, frelatcustype, lockingtime, lockinguserid,dealmanid,
+	C.FBUSITEMNAME,C.FBUSSCOPENAME,C.FCOMPLAINLINK,C.FBUSTYPENAME,c.FBUSINESSMODEL
+	,C.FBUSSCENEID,C.FBUSSCENENAME,C.FSCENERESSONID,C.FSCENERESSONNAME
+  <![CDATA[  
+  FROM T_CUST_COMPLAINT C 
+  WHERE C.FPROSTATUS  <> 'VERIFIED'
+  ]]>
+    AND (
+		<!--普通状态 -->
+  		  ( C.dealmanid = #{userId,jdbcType=VARCHAR}
+  		 		AND C.FPROSTATUS IN
+		<foreach collection="commonStatus" item="item" open="(" close=")" separator=",">
+  					#{item,jdbcType=VARCHAR}
+		</foreach>
+  		   )
+ 	
+		<!--升级退回-->
+          OR (C.FPROSTATUS='UPGRADED_RETURNED' 
+                 AND exists(
+                             select * 
+                             from t_crm_workorder workorder 
+                             where  workorder.fcomplaintid= C.FID
+                             and workorder.foperatorid=#{userId,jdbcType=VARCHAR}
+                             and workorder.fcurrentstat='UPGRADED'
+                            )
+              ) 	
+ 
+		<!--反馈已解决和反馈未解决-->   
+            OR ( 
+                C.FPROSTATUS in
+		<foreach collection="feedbackStatus" item="item" open="(" close=")" separator=",">
+  					#{item,jdbcType=VARCHAR}
+		</foreach>                
+                   AND exists(
+                                select *
+                                        from t_cust_result results
+                                where results.fcomplainid=C.Fid and results.fdepttype = 0                                
+                                             and (
+                                               results.fstat='TASK_RETURNED' 
+                                                or results.fdelay='0'
+                                               )                   
+                              ) 
+                   AND C.dealmanid = #{userId,jdbcType=VARCHAR}  
+                 ) 
+              
+		<!-- 只有特殊权限的人才能搜寻的状态 -->
+		<if test="specialStatus != null and specialStatus.size > 0  ">
+  		   OR  C.FPROSTATUS IN
+			<foreach collection="specialStatus" item="item" open="(" close=")" separator=",">
+  				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+ 		
+  		)
+		order by C.flastupdatetime DESC 
+  
+	</select>
+  
+	<select id="searchWaitProccesComplaintCount" resultType="java.lang.Integer" parameterType="map">
+  SELECT 
+    count (C.fid) as fid
+	<![CDATA[  
+		  FROM T_CUST_COMPLAINT C 
+		  WHERE C.FPROSTATUS  <> 'VERIFIED'
+	]]>
+    AND (
+		<!--普通状态 -->
+  		  ( C.dealmanid = #{userId,jdbcType=VARCHAR}
+  		 		AND C.FPROSTATUS IN
+		<foreach collection="commonStatus" item="item" open="(" close=")" separator=",">
+  					#{item,jdbcType=VARCHAR}
+		</foreach>
+  		   )
+ 	
+		<!--升级退回-->
+          OR (C.FPROSTATUS='UPGRADED_RETURNED' 
+                 AND exists(
+                             select * 
+                             from t_crm_workorder workorder 
+                             where  workorder.fcomplaintid= C.FID
+                             and workorder.foperatorid=#{userId,jdbcType=VARCHAR}
+                             and workorder.fcurrentstat='UPGRADED'
+                            )
+              ) 	
+ 
+		<!--反馈已解决和反馈未解决-->   
+            OR ( 
+                C.FPROSTATUS in
+		<foreach collection="feedbackStatus" item="item" open="(" close=")" separator=",">
+  					#{item,jdbcType=VARCHAR}
+		</foreach>                
+                   AND exists(
+                                select *
+                                        from t_cust_result results
+                                where results.fcomplainid=C.Fid and results.fdepttype = 0                              
+                                             and (
+                                               results.fstat='TASK_RETURNED' 
+                                                or results.fdelay='0'
+                                               )                   
+                              ) 
+					AND C.dealmanid = #{userId,jdbcType=VARCHAR}                              
+                 ) 
+              
+		<!-- 只有特殊权限的人才能搜寻的状态 -->
+		<if test="specialStatus != null and specialStatus.size > 0  ">
+  		   OR  C.FPROSTATUS IN
+			<foreach collection="specialStatus" item="item" open="(" close=")" separator=",">
+  				#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+ 		
+  		)
+		
+  
+	</select>
+  
+	<!--查询待办工单各用户的待办统计信息-->
+	<select id="inquireAllUserWaitProcessCount" resultType="com.deppon.crm.module.common.shared.domain.Message" parameterType="map">
+   SELECT U.FID                  AS userid,
+          S.taskcount            AS taskcount
+   FROM T_ORG_EMPLOYEE E, T_AUTH_USER U,	
+	    (  
+		  	SELECT SUM(taskcount)	AS taskcount,
+		  		   userid			AS userid
+		    FROM (
+				SELECT count(taskcount) AS taskcount,
+					   userid
+				FROM (  
+					  SELECT 
+					    C.fid 		 as taskcount,
+					    C.dealmanid	 as userid
+	<![CDATA[  
+		  FROM T_CUST_COMPLAINT C 
+		  WHERE C.FPROSTATUS  <> 'VERIFIED'
+	]]>
+					  AND (
+		<!--普通状态 -->
+					  		  ( 	 C.FPROSTATUS IN
+		<foreach collection="commonStatus" item="item" open="(" close=")" separator=",">
+					  					#{item,jdbcType=VARCHAR}
+		</foreach>
+					  		   )
+					 
+		<!--反馈已解决和反馈未解决-->   
+					            OR ( 
+					                C.FPROSTATUS in
+		<foreach collection="feedbackStatus" item="item" open="(" close=")" separator=",">
+					  					#{item,jdbcType=VARCHAR}
+		</foreach>                
+					                   AND exists(
+					                                select *
+					                                        from t_cust_result results
+					                                where results.fcomplainid=C.Fid and results.fdepttype = 0                              
+					                                             and (
+					                                               results.fstat='TASK_RETURNED' 
+					                                                or results.fdelay='0'
+					                                               )                   
+					                              ) 
+					                 ) 
+					    )
+					union all
+		<!--升级退回-->
+					  select distinct c.fid      AS taskCount,
+				         workorder.foperatorid   AS userId
+					  FROM T_CUST_COMPLAINT C,
+					       t_crm_workorder workorder
+					  where  1=1
+					  and workorder.fcomplaintid = C.FID
+					  and workorder.fcurrentstat = 'UPGRADED'
+					  and  C.FPROSTATUS = 'UPGRADED_RETURNED'
+	AND  C.FPROSTATUS <![CDATA[<>]]> 'VERIFIED'
+				) A 
+				group by userid
+				union all
+		<!-- 只有特殊权限的人才能搜寻的状态 -->
+					select count(c.fid)		AS taskCount,
+						   u.fid			AS userId
+					  FROM T_CUST_COMPLAINT C,
+					  (
+					      select distinct e.fid
+					      from t_auth_functionrole fr, 
+					           t_auth_userrole ur, 
+					           t_auth_user u, 
+					           t_org_employee e
+					      where u.fempcode = e.fempcode
+					      and ur.fuserid = u.fid
+					      and ur.froleid = fr.froleid
+					      and (fr.ffuncid = 56 or fr.ffuncid = 55)
+					  ) u
+	WHERE C.FPROSTATUS <![CDATA[<>]]> 'VERIFIED'
+					  AND (
+					      C.FPROSTATUS IN
+		<foreach collection="specialStatus" item="item" open="(" close=")" separator=",">
+				  				#{item,jdbcType=VARCHAR}
+		</foreach>
+					  )
+					  group by u.fid
+			) S
+			group by userid
+	  )S
+	  where 1=1
+	  and S.userid   = E.FID
+	  and E.FEMPCODE = U.FEMPCODE			
+	  	
+	</select>
+  
+  
+	<select id="getLockingComplaint" resultMap="baseMap" parameterType="java.util.HashMap">
+		select <include refid="Base_Column_List"/> from (
+		select <include refid="Base_Column_List"/> from (
+		select <include refid="Base_Column_List"/> from T_CUST_COMPLAINT t 
+	  			where t.freporttype=#{reportType} and t.fprostatus=#{prostatus} order by t.fpririty asc,t.freporttime asc, t.dealbill desc
+	  		) ft
+	 		where ft.fdealstatus ='COMPLAINT_ACCESS' and ft.lockinguserid is not null and ft.lockinguserid !='0' and ft.lockinguserid =#{userId}
+	) <![CDATA[ where rownum<=#{limitCount} order by rownum asc ]]>
+	</select>
+
+	<select id="getFreeExpiredComplaintForAccess" resultMap="baseMap" parameterType="java.util.HashMap">
+		  	select 
+		<include refid="Base_Column_List"/> 
+	<![CDATA[ 		
+		from T_CUST_COMPLAINT t
+		  where t.freporttype=#{reportType} 
+			  and t.fprostatus=#{prostatus}
+			  and t.fbusinessModel=#{businessModel}
+			  and (t.lockingtime<#{requiredDate} or t.lockingtime is null) 
+		order by t.fpririty asc,t.freporttime asc	
+	]]>
+	</select>
+
+	<select id="selectReportComplaints" resultMap="baseResultMap" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+	   	SELECT    TC.FID,  FBILL, DEALBILL, 
+	    REBINDNO, FRECOMCODE, FREPORTTYPE, FCOMPLAINID, FCOMPLAINCUST, FCOMPMANID, FCOMPMAN, 
+	    FCUSTLEVEL, FCUSTTYPE, FRELATCUSID, FRELATCUS, FTIMELIMIT, FTILIMITCYCLE, FFEEDBACK, 
+	    FREPORTERID, FREPORTER, FREPORTTIME, FREPORTCONTENT, FCUSTREQUIRE, FREQUIREWAY, FPRIRITY, 
+	    FTEL, FPROSTATUS, FDEALSTATUS, FRETURNID, FRETURNMAN, FRETURNTIME,
+	    FEEDBACKRECODE, FEEDBACKREASON, FCOMPABNORMALID, FCOMPTYPEID, FCOMPLEVEL, FCOMAPPROVERID, 
+	    FCOMAPPROVER, FCOMAPPROVERTIME, FAPPRODELAY, FCUSSATISFACTION, FOPERATOERID, FOPERATOERNAME,
+	    FRECORDPARTMENTNAME,FRECORDTIME,FCOMPLAINTSOURCE,FRELATCUSLEVEL,FRELATCUSTYPE,
+	    TC.FBUSITEMNAME,TC.FBUSSCOPENAME,TC.FCOMPLAINLINK,TC.FBUSTYPENAME
+	    ,TC.FBUSSCENEID,TC.FBUSSCENENAME,TC.FSCENERESSONID,TC.FSCENERESSONNAME
+	    from T_CUST_COMPLAINT TC , T_CRM_FEEDBACK_REASION TR 
+	     where TC.FID=TR.FCOMPLAINTID
+		<if test="dealbill != null and dealbill !='' ">
+	   		and TC.dealbill=trim(#{dealbill})
+		</if>
+		<if test="fid != null and fid !='' ">
+	   		and TC.fid=trim(#{fid})
+		</if>
+		<if test="phone != null and phone !='' ">
+	   		and TC.ftel=trim(#{phone})
+		</if>
+		<if test="bill != null and bill !='' ">
+	   		and trim(TC.fbill)=trim(#{bill})
+		</if>
+		<if test="prostatus != null and prostatus !='' ">
+	   		and TC.fprostatus=trim(#{prostatus})
+		</if>
+	   	order by TC.FCREATETIME,TC.FLASTUPDATETIME
+	</select>
+  
+	<select id="selectReportComplaintsCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+	    select count(*)
+	  	 from T_CUST_COMPLAINT TC , T_CRM_FEEDBACK_REASION TR 
+	     where TC.FID=TR.FCOMPLAINTID
+		<if test="dealbill != null and dealbill !='' ">
+	   		and TC.dealbill=trim(#{dealbill})
+		</if>
+		<if test="fid != null and fid !='' ">
+	   		and TC.fid=trim(#{fid})
+		</if>
+		<if test="phone != null and phone !='' ">
+	   		and TC.ftel=trim(#{phone})
+		</if>
+		<if test="bill != null and bill !='' ">
+	   		and trim(TC.fbill)=trim(#{bill})
+		</if>
+		<if test="prostatus != null and prostatus !='' ">
+	   		and TC.fprostatus=trim(#{prostatus})
+		</if>
+	</select>
+	<insert id="complaintsInsert"
+		parameterType="com.deppon.crm.module.complaint.shared.domain.Complaint">
+		<selectKey keyProperty="fid" order="BEFORE" resultType="DECIMAL">
+		select SEQ_CRM_COMPLAINT.nextval as fid from dual
+		</selectKey>
+	
+	<![CDATA[
+				insert into t_cust_complaint
+	  (fid, 
+	  fcreatetime, fcreateuserid, flastupdatetime, 
+	  flastmodifyuserid, fbill, dealbill, rebindno, 
+	  frecomcode, freporttype, fcomplainid, 
+	  fcomplaincust, fcompmanid, fcompman,
+	   fcustlevel, fcusttype, frelatcusid, frelatcus,
+	    ftimelimit, ftilimitcycle, ffeedback, freporterid,
+	     freporter, freporttime, freportcontent, 
+	     fcustrequire, frequireway, fpririty, ftel, 
+	     fprostatus, fdealstatus, freturnid, freturnman,
+	      freturntime, feedbackrecode, 
+	      feedbackreason, fcompabnormalid, fcomptypeid,
+	       fcomplevel, fcomapproverid, fcomapprover, 
+	       fcomapprovertime, fapprodelay, fcussatisfaction, 
+	       foperatoerid, foperatoername, fparabascilevelid, FCOMPLAINTSOURCE,fbascilevelid,FRELATCUSTYPE,SENDORRECEIVE,
+	       frelatcuslevel,
+	       FBUSITEMNAME,FBUSSCOPENAME,FCOMPLAINLINK,FBUSTYPENAME,FLEAVEDEPT,FLEAVEDEPTNAME,FBUSINESSMODEL)
+	values
+	  (    #{fid}, 
+	  	   #{createtime, jdbcType=TIMESTAMP}, 
+	  	   #{createuserid,jdbcType=DECIMAL},
+		   #{lastupdatetime, jdbcType=TIMESTAMP},
+		   #{lastmodifyuserid,jdbcType=DECIMAL},
+		   #{bill,jdbcType=VARCHAR},
+		   #{dealbill,jdbcType=VARCHAR},
+		   #{rebindno,jdbcType=VARCHAR},
+		   #{recomcode,jdbcType=VARCHAR},
+		   #{reporttype,jdbcType=VARCHAR},
+		   #{complainid,jdbcType=DECIMAL},
+		   #{complaincust,jdbcType=VARCHAR},
+		   #{compmanid,jdbcType=DECIMAL},
+		   #{compman,jdbcType=DECIMAL},
+		   #{custlevel,jdbcType=VARCHAR},
+		   #{custtype,jdbcType=VARCHAR},
+		   #{relatcusid,jdbcType=DECIMAL},
+		   #{relatcus,jdbcType=VARCHAR},
+		   #{timelimit,jdbcType=DECIMAL},
+		   #{tilimitcycle,jdbcType=DECIMAL},
+		   #{feedback,jdbcType=CHAR},
+		   #{reporterid,jdbcType=DECIMAL},
+		   #{reporter,jdbcType=VARCHAR},
+		   sysdate,
+		   #{reportcontent,jdbcType=VARCHAR},
+		   #{custrequire,jdbcType=VARCHAR},
+		   #{requireway,jdbcType=VARCHAR},
+		   #{pririty,jdbcType=VARCHAR},
+		   #{tel,jdbcType=VARCHAR},
+		   #{prostatus,jdbcType=VARCHAR},
+		   #{dealstatus,jdbcType=VARCHAR},
+		   #{returnid,jdbcType=DECIMAL},
+		   #{returnman,jdbcType=DECIMAL},
+		   #{returntime,jdbcType=DATE},
+		   #{feedbackrecode,jdbcType=VARCHAR},
+		   #{feedbackreason,jdbcType=VARCHAR},
+		   #{compabnormalid,jdbcType=DECIMAL},
+		   #{comptypeid,jdbcType=DECIMAL},
+		   #{complevel,jdbcType=VARCHAR},
+		   #{comapproverid,jdbcType=DECIMAL},
+		   #{comapprover,jdbcType=VARCHAR},
+		   #{comapprovertime,jdbcType=DATE},
+		   #{approdelay,jdbcType=DECIMAL},
+		   #{cussatisfaction,jdbcType=VARCHAR},
+		   #{operatoerid,jdbcType=DECIMAL},
+		   #{operatoername,jdbcType=VARCHAR},
+		   #{parabasilevelid,jdbcType=VARCHAR},
+		   #{complaintsource,jdbcType=VARCHAR},
+		   #{basiclevelid,jdbcType=VARCHAR},
+		  
+		   #{relatcustype,jdbcType=VARCHAR},
+		   #{sendorreceive,jdbcType=VARCHAR},
+		   #{relatcuslevel,jdbcType=VARCHAR},
+		   #{busItemName,jdbcType=VARCHAR},
+		   #{busScopeName,jdbcType=VARCHAR},
+		   #{complainLink,jdbcType=VARCHAR},
+		   #{busTypeName,jdbcType=VARCHAR},
+		   #{leaveDept,jdbcType=VARCHAR},
+			   #{leaveDeptName,jdbcType=VARCHAR},
+			   #{businessModel,jdbcType=VARCHAR}
+	]]>
+		   )
+	</insert>
+	<update id="updateComplaint" parameterType="com.deppon.crm.module.complaint.shared.domain.Complaint">
+		UPDATE T_CUST_COMPLAINT SET 
+		<if test="createuserid != null and createuserid != '' ">
+			FCREATEUSERID = #{createuserid,jdbcType=DECIMAL},
+		</if> 
+		
+		<if test="lastmodifyuserid != null and lastmodifyuserid != '' ">
+			FLASTMODIFYUSERID = #{lastmodifyuserid,jdbcType=DECIMAL},
+		</if>
+		<if test="bill != null and bill != '' ">
+			FBILL = #{bill,jdbcType=VARCHAR},
+		</if>
+		<if test="dealbill != null and dealbill != '' ">
+			DEALBILL = #{dealbill,jdbcType=VARCHAR},
+		</if>
+		
+		<if test="rebindno != null and rebindno != '' and rebindno != 'clear' ">
+			REBINDNO = #{rebindno,jdbcType=VARCHAR},
+		</if>
+		<if test="recomcode != null and recomcode != '' and recomcode != 'clear' ">
+			FRECOMCODE = #{recomcode,jdbcType=VARCHAR},
+		</if>
+		
+		<if test="rebindno == 'clear' ">
+			REBINDNO = null,
+		</if>
+		<if test="recomcode == 'clear' ">
+			FRECOMCODE = null,
+		</if>
+		
+		<if test="reporttype != null and reporttype != '' ">
+			FREPORTTYPE = #{reporttype,jdbcType=VARCHAR},
+		</if>
+		<if test="complainid != null and complainid != '' ">
+			FCOMPLAINID = #{complainid,jdbcType=DECIMAL},
+		</if>
+		<if test="complaincust != null and complaincust != '' ">
+			FCOMPLAINCUST = #{complaincust,jdbcType=VARCHAR},
+		</if>
+		<if test="compmanid != null and compmanid != '' ">
+			FCOMPMANID = #{compmanid,jdbcType=DECIMAL},
+		</if>
+		<if test="compman != null and compman != '' ">
+			FCOMPMAN = #{compman,jdbcType=DECIMAL},
+		</if>
+		<if test="custlevel != null and custlevel != '' ">
+			FCUSTLEVEL = #{custlevel,jdbcType=VARCHAR},
+		</if>
+		<if test="custtype != null and custtype != '' ">
+			FCUSTTYPE = #{custtype,jdbcType=VARCHAR},
+		</if>
+		<if test="relatcusid != null and relatcusid != '' ">
+			FRELATCUSID = #{relatcusid,jdbcType=DECIMAL},
+		</if>
+		
+		<if test="relatcus != null and relatcus != '' ">
+			FRELATCUS = #{relatcus,jdbcType=VARCHAR},
+		</if>
+		<if test="timelimit != null and timelimit != '' ">
+			FTIMELIMIT = #{timelimit,jdbcType=DECIMAL},
+		</if>
+		<if test="tilimitcycle != null and tilimitcycle != '' ">
+			FTILIMITCYCLE = #{tilimitcycle,jdbcType=DECIMAL},
+		</if>
+		<if test="feedback != null and feedback != '' ">
+			FFEEDBACK = #{feedback,jdbcType=CHAR},
+		</if>
+		<if test="reporterid != null and reporterid != '' ">
+			FREPORTERID = #{reporterid,jdbcType=DECIMAL},
+		</if>	
+		<if test="reporter != null and reporter != '' ">
+			FREPORTER = #{reporter,jdbcType=VARCHAR},
+		</if>
+		<if test="reportcontent != null and reportcontent != '' ">
+			FREPORTCONTENT = #{reportcontent,jdbcType=VARCHAR},
+		</if>		
+		<if test="custrequire != null and custrequire != '' ">
+			FCUSTREQUIRE = #{custrequire,jdbcType=VARCHAR},
+		</if>	
+		<if test="requireway != null and requireway != '' ">
+			FREQUIREWAY = #{requireway,jdbcType=VARCHAR},
+		</if>	
+		<if test="pririty != null and pririty != '' ">
+			FPRIRITY = #{pririty,jdbcType=VARCHAR},
+		</if>		
+		<if test="prostatus != null and prostatus != '' ">
+			FPROSTATUS = #{prostatus,jdbcType=VARCHAR},
+		</if>	
+		<if test="dealstatus != null and dealstatus != '' ">
+			FDEALSTATUS = #{dealstatus,jdbcType=VARCHAR},
+		</if>	
+		<if test="returnid != null and returnid != '' ">
+			FRETURNID = #{returnid,jdbcType=DECIMAL},
+		</if>	
+		<if test="returnman != null and returnman != '' ">
+			FRETURNMAN = #{returnman,jdbcType=DECIMAL},
+		</if>	
+		<if test="returntime != null and returntime != '' ">
+			FRETURNTIME = #{returntime,jdbcType=TIMESTAMP},
+		</if>					
+		<if test="feedbackrecode != null and feedbackrecode != '' ">
+			FEEDBACKRECODE = #{feedbackrecode,jdbcType=VARCHAR},
+		</if>	
+		<if test="feedbackreason != null and feedbackreason != '' ">
+			FEEDBACKREASON = #{feedbackreason,jdbcType=VARCHAR},
+		</if>	
+		<if test="compabnormalid != null and compabnormalid != '' ">
+			FCOMPABNORMALID = #{compabnormalid,jdbcType=DECIMAL},
+		</if>	
+		<if test="comptypeid != null and comptypeid != '' ">
+			FCOMPTYPEID = #{comptypeid,jdbcType=DECIMAL},
+		</if>
+		<if test="complevel != null and complevel != '' ">
+			FCOMPLEVEL = #{complevel,jdbcType=VARCHAR},
+		</if>
+		<if test="comapproverid != null and comapproverid != '' ">
+			FCOMAPPROVERID = #{comapproverid,jdbcType=DECIMAL},
+		</if>
+		<if test="comapprover != null and comapprover != '' ">
+			FCOMAPPROVER = #{comapprover,jdbcType=VARCHAR},
+		</if>
+		<if test="comapprovertime != null and comapprovertime != '' ">
+			FCOMAPPROVERTIME = #{comapprovertime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="approdelay != null and approdelay != '' ">
+			FAPPRODELAY = #{approdelay,jdbcType=DECIMAL},
+		</if>
+		<if test="cussatisfaction != null and cussatisfaction != '' ">
+			FCUSSATISFACTION = #{cussatisfaction,jdbcType=VARCHAR},
+		</if>
+		<if test="operatoerid != null and operatoerid != '' ">
+			FOPERATOERID = #{operatoerid,jdbcType=DECIMAL},
+		</if>
+		<if test="operatoername != null and operatoername != '' ">
+			FOPERATOERNAME = #{operatoername,jdbcType=VARCHAR},
+		</if>
+		<if test="parabasilevelid != null and parabasilevelid != '' ">
+			FPARABASCILEVELID = #{parabasilevelid,jdbcType=VARCHAR},
+		</if>
+		<if test="basiclevelid != null and basiclevelid != '' ">
+			FBASCILEVELID = #{basiclevelid,jdbcType=VARCHAR},
+		</if>
+		<!--   这个字段已经删除
+		<if test="recordpartmentname != null and recordpartmentname != '' ">
+			FRECORDPARTMENTNAME = #{recordpartmentname,jdbcType=DECIMAL},
+		</if>
+		
+		<if test="recordTime != null and recordTime != '' ">
+			FRECORDTIME = #{recordTime,jdbcType=TIMESTAMP},
+		</if>
+		-->
+		<if test="null !=lockingUserId and -1 !=lockingUserId">
+			LOCKINGUSERID = #{lockingUserId,jdbcType=DECIMAL},
+			LOCKINGTIME = #{lockingTime,jdbcType=TIMESTAMP},
+		</if>
+		
+		<!-- 清空锁定人和锁定时间 -->
+		<if test="lockingUserId==-1">
+			LOCKINGUSERID = null,
+			LOCKINGTIME = null,		
+		</if>
+		
+		<if test="dealmanid !=null and ''!= dealmanid ">
+	       	DEALMANID = #{dealmanid, jdbcType=DECIMAL},
+		</if>
+		<if test="sendorreceive != null and '' != sendorreceive ">
+	       	SENDORRECEIVE = #{sendorreceive, jdbcType=VARCHAR},
+		</if>
+		<if test="numberOfLock != null and ''!=numberOfLock">
+	    	NUMBEROFLOCK = #{numberOfLock,jdbcType=DECIMAL},
+		</if>
+		<if test="busItemName != null and busItemName!=''">
+			FBUSITEMNAME = #{busItemName, jdbcType=VARCHAR},
+		</if>	
+		<if test="busScopeName != null and busScopeName!=''">
+			FBUSSCOPENAME = #{busScopeName, jdbcType=VARCHAR},
+		</if>
+		<if test="complainLink != null and complainLink!=''">
+			FCOMPLAINLINK = #{complainLink, jdbcType=VARCHAR},
+		</if>
+		<if test="busTypeName != null and busTypeName!=''">
+			FBUSTYPENAME = #{busTypeName, jdbcType=VARCHAR},
+		</if>
+		<if test="businessModel != null and businessModel!=''">
+			FBUSINESSMODEL = #{businessModel, jdbcType=VARCHAR},
+		</if>
+		
+		<!-- 业务场景、场景原因 -->
+		<if test="busSceneId != null and busSceneId!=''">
+			FBUSSCENEID = #{busSceneId, jdbcType=VARCHAR},
+		</if>
+		<if test="busSceneName != null and busSceneName!=''">
+			FBUSSCENENAME = #{busSceneName, jdbcType=VARCHAR},
+		</if>
+		<if test="sceneRessonId != null and sceneRessonId!=''">
+			FSCENERESSONID = #{sceneRessonId, jdbcType=VARCHAR},
+		</if>
+		<if test="sceneRessonName != null and sceneRessonName!=''">
+			FSCENERESSONNAME = #{sceneRessonName, jdbcType=VARCHAR},
+		</if>
+		
+			FLASTUPDATETIME = SYSDATE
+		WHERE FID = #{fid}
+	</update>
+	<delete id="deleteComplaint">
+		DELETE T_CUST_COMPLAINT WHERE FID = #{id}
+	</delete>
+		
+	<select id="getComplaintById" resultMap="baseMap">
+			SELECT 
+		<include refid="Base_Column_List"/>
+				FROM T_CUST_COMPLAINT WHERE FID = #{id}
+	</select>
+	<!-- 查询回访,上报退回页面 -->
+	<select id="getComplaintResult" resultMap="baseMap" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		  SELECT 
+		<include refid="Base_Column_List"/>
+         FROM T_CUST_COMPLAINT TC Where 1=1
+		<if test="prostatus !=null and '' != prostatus">
+	       		and tc.fprostatus =#{prostatus}
+		</if>
+		<!--  
+			   <if test="ifmaturity !=null and '' != ifmaturity">
+					   and tr.fifmaturity =#{ifmaturity}
+			   </if>
+
+			   -->
+		<if test="userid !=null and '' != userid">
+	       		and fcreateuserid =#{userid}
+		</if>
+	       order by tc.freporttime desc
+	</select>
+		
+	<!-- 查询回访，上报退回页面 -->
+	<select id="getComplaintResultCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		  SELECT COUNT(*)
+	       FROM T_CUST_COMPLAINT TC Where 1=1
+		<if test="prostatus !=null and '' != prostatus">
+	       		and tc.fprostatus =#{prostatus}
+		</if>
+		<!--  
+			   <if test="ifmaturity !=null and '' != ifmaturity">
+					   and tr.fifmaturity =#{ifmaturity}
+			   </if>
+			   -->
+		<if test="userid !=null and '' != userid">
+	       		and fcreateuserid =#{userid}
+		</if>
+	</select>
+	<select id="inquireAllUserComplaintResultCount" resultType="com.deppon.crm.module.common.shared.domain.Message" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		 SELECT U.FID                  AS userid,
+                S.taskcount            AS taskcount
+	     FROM T_ORG_EMPLOYEE E, T_AUTH_USER U,	
+		  	  (
+			  	  	SELECT COUNT(fid)		AS taskcount,
+				  		 fcreateuserid 		AS userid 
+			       FROM T_CUST_COMPLAINT TC Where 1=1
+		<if test="prostatus !=null and '' != prostatus">
+			       		and tc.fprostatus =#{prostatus}
+		</if>
+			       group by fcreateuserid
+			   )S
+	       where 1=1
+	       and S.userid   = E.FID
+	       and E.FEMPCODE = U.FEMPCODE
+	       
+	       /* Quartz : com.deppon.crm.module.complaint.shared.domain.Complaint.inquireAllUserComplaintResultCount (justin.xu) */
+	</select>
+		
+	<!-- 查询回访页面 -->
+	<select id="getveryfiyComplaint" resultMap="baseResultMap" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+	     SELECT 
+               TC.FID,
+               TC.FCREATETIME,
+               TC.FCREATEUSERID,
+               TC.FLASTUPDATETIME,
+               TC.FLASTMODIFYUSERID,
+               FBILL,
+               DEALBILL,
+               REBINDNO,
+               FRECOMCODE,
+               FREPORTTYPE,
+               FCOMPLAINCUST,
+               FCOMPMANID,
+               FCOMPMAN,
+               FCUSTLEVEL,
+               FCUSTTYPE,
+               FRELATCUSID,
+               FRELATCUS,
+               FTIMELIMIT,
+               FTILIMITCYCLE,
+               FFEEDBACK,
+               FREPORTERID,
+               FREPORTER,
+               FREPORTTIME,
+               FREPORTCONTENT,
+               FCUSTREQUIRE,
+               FREQUIREWAY,
+               FPRIRITY,
+               FTEL,
+               FPROSTATUS,
+               FDEALSTATUS,
+               FRETURNID,
+               FRETURNMAN,
+               FRETURNTIME,
+               FEEDBACKRECODE,
+               FEEDBACKREASON,
+               FCOMPABNORMALID,
+               FCOMPTYPEID,
+               FCOMPLEVEL,
+               FCOMAPPROVERID,
+               FCOMAPPROVER,
+               FCOMAPPROVERTIME,
+               FAPPRODELAY,
+               FCUSSATISFACTION,
+               FOPERATOERID,
+               FOPERATOERNAME,
+               FPARABASCILEVELID,
+               FBASCILEVELID,
+               FCOMPLAINTSOURCE,
+               FSTANDARDCODE,
+               FRELATCUSLEVEL,
+               FRELATCUSTYPE,
+               LOCKINGTIME,
+               LOCKINGUSERID,
+               DEALMANID,
+               TR.FDEALTIME,
+               E.FEMPNAME AS FDEALMAN,
+               FBUSITEMNAME,
+               FBUSSCOPENAME,
+               FCOMPLAINLINK,
+               FBUSTYPENAME,
+	       FBUSINESSMODEL
+               FBUSSCENEID,FBUSSCENENAME,FSCENERESSONID,FSCENERESSONNAME
+          	FROM T_CUST_COMPLAINT TC
+	          LEFT JOIN (SELECT MIN(FCREATETIME) FDEALTIME, FCOMPLAINID
+	                      FROM T_CUST_RESULT where fdepttype = 0 
+	                     GROUP BY FCOMPLAINID) TR ON TC.FID = TR.FCOMPLAINID
+	          LEFT JOIN T_ORG_EMPLOYEE E ON E.FID = TC.DEALMANID
+	         WHERE 1 = 1
+		<if test="prostatus !=null and '' != prostatus">
+		and tc.fprostatus in <![CDATA[ ( ${prostatus}) ]]> 
+		</if>
+		<if test="userid !=null and '' != userid">
+	       		and tc.fcreateuserid =#{userid}
+		</if>
+		<if test="dealbill !=null and ''!= dealbill ">
+	       	 	and tc.dealbill =#{dealbill}
+		</if>
+		<if test="reportType !=null and ''!= reportType ">
+	       	 	and tc.freportType =#{reportType}
+		</if>
+		<if test="bill !=null and ''!= bill ">
+	       	 	and tc.fbill =#{bill}
+		</if>
+	       
+		<if test="dealmanid !=null and ''!= dealmanid ">
+	       	 	and tc.dealmanid =#{dealmanid}
+		</if>
+		
+		<if test="businessModel !=null and ''!= businessModel ">
+	       	 	and tc.fbusinessModel =#{businessModel}
+		</if>
+	</select>
+		
+	<!-- 查询回访页面 -->
+	<select id="getveryfiyComplaintCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		  SELECT COUNT(*)
+          	FROM T_CUST_COMPLAINT TC
+	          LEFT JOIN (SELECT MIN(FCREATETIME) FDEALTIME, FCOMPLAINID
+	                      FROM T_CUST_RESULT where fdepttype = 0 
+	                     GROUP BY FCOMPLAINID) TR ON TC.FID = TR.FCOMPLAINID
+	          LEFT JOIN T_ORG_EMPLOYEE E ON E.FID = TC.DEALMANID
+	         WHERE 1 = 1
+		<if test="prostatus !=null and '' != prostatus">
+		and tc.fprostatus in <![CDATA[ ( ${prostatus}) ]]> 
+		</if>
+		<if test="userid !=null and '' != userid">
+	       		and tc.fcreateuserid =#{userid}
+		</if>
+		<if test="businessModel !=null and '' != businessModel">
+	       		and tc.fbusinessModel =#{businessModel}
+		</if>
+		<if test="dealbill !=null and ''!= dealbill ">
+	       	 	and tc.dealbill =#{dealbill}
+		</if>
+		<if test="reportType !=null and ''!= reportType ">
+	       	 	and tc.freportType =#{reportType}
+		</if>
+		<if test="bill !=null and ''!= bill ">
+	       	 	and tc.fbill =#{bill}
+		</if>
+		<if test="dealmanid !=null and ''!= dealmanid ">
+	       	 	and tc.dealmanid =#{dealmanid}
+		</if>
+	</select>
+		
+	<!-- 查询各用户回访待办总数 -->
+	<select id="inquireAllUserVeryfiyComplaintsCount" resultType="com.deppon.crm.module.common.shared.domain.Message" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		 SELECT U.FID                  AS userid,
+                S.taskcount            AS taskcount
+	     FROM T_ORG_EMPLOYEE E, T_AUTH_USER U,	
+		  	  (			
+				  SELECT COUNT(tc.fid)		AS taskcount,
+				  		 tc.dealmanid 		AS userid
+			       from t_cust_complaint tc
+		          left join (select fcreatetime fdealtime, fcomplainid
+		                                from (select fcreatetime,
+		               fcomplainid,
+		               row_number() over(partition by fcomplainid order by fid) rn
+		             from t_cust_result where fdepttype = 0) 
+		            where rn = 1)  tr on tc.fid=tr.fcomplainid
+		 			where 1=1
+		<if test="prostatus !=null and '' != prostatus">
+		and tc.fprostatus in <![CDATA[ ( ${prostatus}) ]]> 
+		</if>
+			       group by tc.dealmanid
+			   )S
+	       where 1=1
+	       and S.userid   = E.FID
+	       and E.FEMPCODE = U.FEMPCODE			       
+	       
+	       /* Quartz : com.deppon.crm.module.complaint.shared.domain.Complaint.inquireAllUserVeryfiyComplaintsCount (justin.xu) */
+	</select>
+		
+		<!-- 工单退回页面查询 -->
+		<select id="getReturnComplaint" resultMap="baseResultMap" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		  SELECT TC.FID,  FBILL, DEALBILL, 
+	          REBINDNO, FRECOMCODE, FREPORTTYPE, TC.FCOMPLAINID, FCOMPLAINCUST, FCOMPMANID, FCOMPMAN, 
+	          FCUSTLEVEL, FCUSTTYPE, FRELATCUSID, FRELATCUS, FTIMELIMIT, FTILIMITCYCLE, FFEEDBACK, 
+	          FREPORTERID, FREPORTER, FREPORTTIME, FREPORTCONTENT, FCUSTREQUIRE, FREQUIREWAY, FPRIRITY, 
+	          FTEL, FPROSTATUS, FDEALSTATUS, FRETURNID, FRETURNMAN, FRETURNTIME, 
+	          FEEDBACKRECODE, FEEDBACKREASON, FCOMPABNORMALID, FCOMPTYPEID, FCOMPLEVEL, FCOMAPPROVERID, 
+	          FCOMAPPROVER, FCOMAPPROVERTIME, FAPPRODELAY, FCUSSATISFACTION, FOPERATOERID, FOPERATOERNAME
+	          FIFOVERTIME,FIFMATURITY,FDEALMAN,FDEALTIME,FCOMPLAINTSOURCE,FRELATCUSLEVEL,
+	          FBUSITEMNAME,FBUSSCOPENAME,FCOMPLAINLINK,FBUSTYPENAME
+	          ,TC.FBUSSCENEID,TC.FBUSSCENENAME,TC.FSCENERESSONID,TC.FSCENERESSONNAME
+	       FROM T_CUST_COMPLAINT TC left join T_CUST_RESULT TR on TC.FID=TR.FCOMPLAINID
+	       where 1=1 and TR.fdepttype = 0 
+		<if test="prostatus !=null and '' != prostatus">
+	       		and tc.fprostatus =#{prostatus}
+		</if>
+		<if test="userid !=null and '' != userid">
+	       		and tr.fcreateuserid =#{userid}
+		</if>
+	</select>
+		
+	<!-- 工单退回页面 -->
+	<select id="getReturnComplaintCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+		  SELECT COUNT(*)
+	       FROM T_CUST_COMPLAINT TC left join T_CUST_RESULT TR on TC.FID=TR.FCOMPLAINID
+	       where 1=1 and TR.fdepttype = 0 
+		<if test="prostatus !=null and '' != prostatus">
+	       		and tc.fprostatus =#{prostatus}
+		</if>
+		<if test="userid !=null and '' != userid">
+	       		and tr.fcreateuserid =#{userid}
+		</if>
+	</select>
+		
+	<select id="getMaxDealBill" resultType="java.lang.String" >
+		<!-- 		    SELECT DECODE( DEALBILL, -->
+		<!--                   null, -->
+		<!--                   TO_CHAR(SYSDATE, 'YYYYMMDD')|| '00001', -->
+		<!--                   DECODE(SIGN(TO_NUMBER(SUBSTR(DEALBILL, 9) - 99999)), -->
+		<!--                   0, -->
+		<!--                   TO_CHAR(SYSDATE, 'YYYYMMDD') || '000001' -->
+		<!--                   , -->
+		<!--                   TO_CHAR(SYSDATE, 'YYYYMMDD') || -->
+		<!--                  lpad(TO_NUMBER(SUBSTR(DEALBILL, 9)) + 1,5,'0') -->
+		<!--                   ) -->
+		<!--                 ) -->
+		<!--          FROM (SELECT MAX(TO_NUMBER(DEALBILL)) DEALBILL -->
+		<!-- 		 FROM T_CUST_COMPLAINT -->
+		<!--          WHERE DEALBILL  LIKE TO_CHAR(SYSDATE, 'YYYYMMDD') || '%') -->
+	<![CDATA[	
+		SELECT TO_CHAR(SYSDATE,'YYMMDD')||LPAD(SEQ_DEALBILL_COMPLAINT.NEXTVAL,7,'0') FROM DUAL
+	]]>
+	</select>
+		
+	<select id="getAccessComplaints" resultMap="baseMap" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+			    	select 
+		<include refid="Base_Column_List"/> 
+					    from T_CUST_COMPLAINT t
+					  	where t.freporttype=#{reportType} 
+					          and t.fprostatus=#{prostatus}
+		<if test="bill != null and bill !='' ">
+						   		and trim(fbill)=trim(#{bill})
+		</if> 
+		<if test="recomcode != null and recomcode !='' ">
+						   		and frecomcode=trim(#{recomcode})
+		</if>
+		<if test="dealbill != null and dealbill !='' ">
+						   		and dealbill=trim(#{dealbill})
+		</if>
+		<if test="!(bill != null and bill !='') and !(recomcode != null and recomcode !='') and !(dealbill != null and dealbill !='')">
+		<![CDATA[
+			   and  (
+					  (t.fdealstatus !=#{dealstatus} or t.fdealstatus is null)
+					or(t.fdealstatus=#{dealstatus} and  t.lockingtime<#{lockingtime})
+					or(t.lockinguserid=#{userid} and t.lockingtime>=#{lockingtime}) 
+			  )	
+		]]>
+		</if>
+		<if test="businessModel != null and businessModel !='' ">
+						   		and fbusinessModel=trim(#{businessModel})
+		</if>
+						order by t.fpririty asc,t.freporttime asc	
+	</select>
+	     
+	<select id="getAccessComplaintsCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+			    	select 
+		  				count(*)
+					    from T_CUST_COMPLAINT t
+					  	where t.freporttype=#{reportType} 
+					          and t.fprostatus=#{prostatus}
+		<if test="bill != null and bill !='' ">
+						   		and trim(fbill)=trim(#{bill})
+		</if> 
+		<if test="recomcode != null and recomcode !='' ">
+						   		and frecomcode=trim(#{recomcode})
+		</if>
+		<if test="dealbill != null and dealbill !='' ">
+						   		and dealbill=trim(#{dealbill})
+		</if>
+		<if test="!(bill != null and bill !='') and !(recomcode != null and recomcode !='') and !(dealbill != null and dealbill !='')">
+		<![CDATA[
+				 and (
+					  (t.fdealstatus !=#{dealstatus} or t.fdealstatus is null)
+					or(t.fdealstatus=#{dealstatus} and  t.lockingtime<#{lockingtime})
+					or(t.lockinguserid=#{userid} and t.lockingtime>=#{lockingtime}) 
+			  )	
+		]]>
+		</if>
+		<if test="businessModel != null and businessModel !='' ">
+						   		and fbusinessModel=trim(#{businessModel})
+		</if>
+							order by t.fpririty asc,t.freporttime asc	
+	</select>
+	     
+	     
+	<select id="getPendingComplaintsCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition" >
+		 	select count(*)
+			  from t_cust_complaint t
+			 where 
+			t.freporttype =#{reportType}  and t.fprostatus = 'PENDING' and
+			 ( t.fdealstatus != 'COMPLAINT_ACCESS'
+			 or ( t.fdealstatus='COMPLAINT_ACCESS' 
+	and t.lockingtime <![CDATA[ <=  ]]> #{lockingtime}
+			 		 ))
+			<if test="businessModel != null and businessModel !='' ">
+		   		and fbusinessModel=(#{businessModel})
+			</if>
+	</select>
+	
+	<select id="getComplaintIncludeSatisfy" resultMap="baseResultMap" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+	     	select tc.fid, fbill, 
+			  dealbill, rebindno, frecomcode, freporttype, fcomplainid, fcomplaincust,
+			  fcompmanid, fcompman, fcustlevel, fcusttype, frelatcusid, frelatcus, ftimelimit, 
+			  ftilimitcycle, ffeedback, freporterid, freporter, freporttime, freportcontent, 
+			  fcustrequire, frequireway, fpririty, ftel, fprostatus, fdealstatus, freturnid, 
+			  freturnman, freturntime, feedbackrecode, feedbackreason, fcompabnormalid, 
+			  fcomptypeid, fcomplevel, fcomapproverid, fcomapprover, fcomapprovertime, fapprodelay,
+			  fcussatisfaction, foperatoerid, foperatoername, fparabascilevelid, fbascilevelid,
+			  fcomplaintsource, fstandardcode, frelatcuslevel, frelatcustype, lockingtime, lockinguserid,
+			  dealmanid,SENDORRECEIVE,NUMBEROFLOCK,tr.fcustsatisfy cussatisfaction
+			  ,tc.FBUSSCENEID,tc.FBUSSCENENAME,tc.fbusinessmodel,tc.FSCENERESSONID,tc.FSCENERESSONNAME
+			  from t_cust_complaint tc
+			  left join t_crm_feedback_reasion tr
+			    on tc.fid=tr.fcomplaintid where 1=1
+		<if test="dealbill != null and dealbill !='' ">
+	   		and dealbill=trim(#{dealbill})
+		</if>
+		<if test="fid != null and fid !='' ">
+	   		and tc.fid = trim(#{fid})
+		</if>
+		<if test="phone != null and phone !='' ">
+	   		and ftel like '%'||trim(#{phone})||'%'
+		</if>
+		<if test="bill != null and bill !='' ">
+	   		and trim(fbill)=trim(#{bill})
+		</if>
+		<if test="recomcode != null and recomcode !='' ">
+	   		and frecomcode=trim(#{recomcode})
+		</if>
+		<if test="rebindno != null and rebindno !='' ">
+	   		and rebindno=trim(#{rebindno})
+		</if>
+	   	
+		<if test="reportTimeStart != null and reportTimeStart !='' ">
+	   		and freporttime>=#{reportTimeStart}
+		</if>
+		<if test="reportTimeEnd != null and reportTimeEnd !='' ">
+		<![CDATA[	and freporttime < #{reportTimeEnd} +1]]>
+		</if>
+		<if test="reportType != null and reportType !='' ">
+	   		and freporttype=trim(#{reportType})
+		</if>
+		<if test="compman != null and compman !='' ">
+	   		and fcompman like '%'||trim(#{compman})||'%'
+		</if>
+		<if test="prostatus != null and prostatus !='' ">
+	   		and tc.fprostatus=trim(#{prostatus})
+		</if>
+		<if test="null != prostatusList and  prostatusList.size>0 ">
+					and tc.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+						#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="null != dealman and ''!= dealman ">
+			and te.fempname like '%' || trim(#{dealman}) || '%'
+		</if>
+		<if test="complainid != null and complainid !='' ">
+	   		and FCOMPLAINID=trim(#{complainid})
+		</if>
+	   	order by tc.FCREATETIME,tc.FLASTUPDATETIME
+	</select>
+	
+	<select id="getComplaintIncludeSatisfyCount" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.complaint.shared.domain.ComplaintSearchCondition">
+	     	select count(*) from t_cust_complaint tc
+			  left join t_crm_feedback_reasion tr
+			    on tc.fid=tr.fcomplaintid where 1=1
+		<if test="dealbill != null and dealbill !='' ">
+	   		and dealbill=trim(#{dealbill})
+		</if>
+		<if test="fid != null and fid !='' ">
+	   		and tc.fid = trim(#{fid})
+		</if>
+		<if test="phone != null and phone !='' ">
+	   		and ftel like '%'||trim(#{phone})||'%'
+		</if>
+		<if test="bill != null and bill !='' ">
+	   		and trim(fbill)=trim(#{bill})
+		</if>
+		<if test="recomcode != null and recomcode !='' ">
+	   		and frecomcode=trim(#{recomcode})
+		</if>
+		<if test="rebindno != null and rebindno !='' ">
+	   		and rebindno=trim(#{rebindno})
+		</if>
+	   	
+		<if test="reportTimeStart != null and reportTimeStart !='' ">
+	   		and freporttime>=#{reportTimeStart}
+		</if>
+		<if test="reportTimeEnd != null and reportTimeEnd !='' ">
+		<![CDATA[	and freporttime < #{reportTimeEnd} +1]]>
+		</if>
+		<if test="reportType != null and reportType !='' ">
+	   		and freporttype=trim(#{reportType})
+		</if>
+		<if test="compman != null and compman !='' ">
+	   		and fcompman like '%'||trim(#{compman})||'%'
+		</if>
+		<if test="prostatus != null and prostatus !='' ">
+	   		and tc.fprostatus=trim(#{prostatus})
+		</if>
+		<if test="null != prostatusList and  prostatusList.size>0 ">
+					and tc.FPROSTATUS IN
+			<foreach collection="prostatusList" item="item" open="(" close=")"
+				separator=",">
+						#{item,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="null != dealman and ''!= dealman ">
+			and te.fempname like '%' || trim(#{dealman}) || '%'
+		</if>
+		<if test="complainid != null and complainid !='' ">
+	   		and FCOMPLAINID=trim(#{complainid})
+		</if>
+	   	order by tc.FCREATETIME,tc.FLASTUPDATETIME
+	</select>
+	<!-- baseResultMap -->
+	<select id="getUserLockedUnExpiredComplaints" 
+		resultMap="baseMap" 
+		parameterType="java.util.HashMap">
+	  	SELECT 
+		<include refid="Base_Column_List"/> 
+	<![CDATA[ 		
+		FROM T_CUST_COMPLAINT T
+		  WHERE T.FREPORTTYPE=#{reportType} 
+			  AND T.FPROSTATUS=#{prostatus}             
+			  AND (T.LOCKINGTIME>#{requiredDate} AND T.LOCKINGUSERID=#{userId}) 
+		ORDER BY T.FPRIRITY ASC,T.FREPORTTIME ASC	
+	]]>
+	</select>	
+	<!-- 工单id和serviceId  -->
+	<insert id="addNewRelation" parameterType="map">
+	<![CDATA[
+		INSERT INTO T_CUST_COMPLAINTRELATION(FCOMPLAINTID,FSERVICEID,FLOGINNAME,FCREATETIME) 
+		VALUES(#{compId,jdbcType=VARCHAR},#{serviceId,jdbcType=VARCHAR},#{loginName,jdbcType=VARCHAR},SYSDATE)
+	]]>
+	</insert>
+
+	<!-- 工单接入日志 -->
+	<insert id="insertCompAccessLog" parameterType="map">
+		<selectKey keyProperty="fid" order="BEFORE" resultType="DECIMAL">
+			select SEQ_ID_COMPACCESS.nextval as fid from dual
+		</selectKey>
+	<![CDATA[
+		INSERT INTO T_CUST_COMPLAINTACCLOG(FID,FCOMPLAINTID,FACCNAME,FACCCODE,FACCDATE) 
+		VALUES(#{fid,jdbcType=NUMERIC},#{complaintId,jdbcType=VARCHAR},#{accName,jdbcType=VARCHAR},#{accCode,jdbcType=VARCHAR},#{accDate,jdbcType=TIMESTAMP})
+	]]>
+	</insert>
+	
+	<!-- 更新处理编号 -->
+	<update id="updateNextDealBill" parameterType="String">
+	<![CDATA[
+		UPDATE T_CUST_COMPLAINTDEALBILL SET DEALBILL = #{string,jdbcType=VARCHAR}
+	]]>
+	</update>
+	
+	<select id="getComplaintManager" resultMap="CellphoneMessageInfoMap"
+		parameterType="string">
+		select EL.Fmobileno EL_PHONENUMBER, DP.Fstandardcode DP_SENDSTANDARDDEPTCODE from T_ORG_EMPLOYEE EL 
+		inner join t_Org_Department DP on DP.Fprincipal = EL.Fempcode 
+		where DP.Fid = #{startDeptId} AND DP.fstandardcode IS NOT NULL AND El.Fstatus = 1
+	</select>
+	
+	<select id="getComplaintAssistantManager" resultMap="CellphoneMessageInfoMap"
+		parameterType="string">
+		select EL.Fmobileno EL_PHONENUMBER, DP.Fstandardcode DP_SENDSTANDARDDEPTCODE from T_ORG_EMPLOYEE EL 
+		inner join t_Org_Department DP on DP.Fid = EL.Fdeptid 
+		where EL.Fposition like '%副经理' and DP.Fid = #{startDeptId} AND DP.fstandardcode IS NOT NULL AND El.Fstatus = 1
+	</select>
+	
+	<select id="findUserIdByDeptId" resultType="java.lang.String"
+		parameterType="string">
+		SELECT u.fid from t_auth_user u 
+		inner join T_ORG_EMPLOYEE el on u.fempcode = el.fempcode
+		inner join t_org_department dp on dp.fid = el.fdeptid
+		where dp.fid = #{deptId} AND el.fstatus = 1 AND dp.fstandardcode IS NOT NULL
+	</select>
+	
+	<select id="complaintTimeoutScheduler">
+	  {call sp_update_complaintTimeOut}  
+	</select>
+</mapper>

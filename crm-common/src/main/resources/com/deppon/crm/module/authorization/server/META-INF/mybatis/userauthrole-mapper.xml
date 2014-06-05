@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.authorization.shared.domain.UserAuthRole">
+
+	<!-- 插入用户授权角色 -->
+	<insert id="insert" parameterType="map">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT USER_AUTH_ROLE_SEQ.NEXTVAL AS
+			id FROM DUAL 
+			<!-- 
+			SELECT MAX(ID)+1 AS
+			id FROM T_AUTH_USERROLE
+			-->
+		</selectKey>
+		<![CDATA[
+			insert into T_AUTH_USERAUTHROLE(
+				FID,
+				FUSERID,
+				FROLEID
+			) values (
+				#{id},
+				#{userId},
+				#{roleId}
+			)
+		]]>
+	</insert>
+	<!-- 根据用户ID删除用户授权角色 -->
+	<delete id="deleteByUserId" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_USERAUTHROLE WHERE FUSERID = #{id}
+		]]>
+	</delete>
+	
+	<!-- 根据角色ID删除用户授权角色 -->
+	<delete id="deleteByRoleId" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_USERAUTHROLE WHERE FROLEID = #{id}
+		]]>
+	</delete>
+	<delete id="deleteUserRoleByEmpCode" parameterType="string">
+		DELETE FROM T_AUTH_USERAUTHROLE 
+			WHERE 
+			FUSERID=
+				(SELECT FID FROM T_AUTH_USER WHERE FEMPCODE=#{empCode,jdbcType=VARCHAR})
+		
+	</delete>
+
+</mapper>

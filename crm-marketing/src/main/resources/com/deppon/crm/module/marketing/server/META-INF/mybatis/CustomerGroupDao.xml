@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.CustomerGroup">
+	  <resultMap id="customerGroupDetailDay" type="com.deppon.crm.module.marketing.shared.domain.CustGroupDayDetail">
+	 	<id property="custNumber" column="custNumber"/>
+	 	<result property="custName" column="custName"/>
+	 	<result property="deptId" column="deptId"/>
+	 	<result property="deptName" column="deptName"/>
+	 	<result property="queryMonthCycle" column="queryMonthCycle"/>
+	 	<collection property="amountList" ofType="com.deppon.crm.module.marketing.shared.domain.CustGroupDayAmount">
+	 		<result property="dayValue" column="dayValue"/>
+	 		<result property="amount" column="amount"/>
+	 	</collection>
+	 </resultMap> 
+
+	<select id="getCustomerGroupNameList" parameterType="int" resultType="com.deppon.crm.module.marketing.shared.domain.CustomerGroup" >
+		SELECT FID ID, FGROUPNAME GROUPNAME, FDEPTID DEPTID FROM T_CUST_GROUP WHERE FDEPTID = #{deptId}
+	</select>
+
+	<select id="getCustomerGroupCountList" parameterType="int" resultType="com.deppon.crm.module.marketing.shared.domain.CustomerGroup" >
+	  <![CDATA[
+		SELECT D.FGROUPID AS ID, COUNT(1) AS COUNT
+        	FROM T_CUST_CUSTGROUPDETAIL D
+        	LEFT JOIN T_CUST_CUSTBASEDATA C ON C.FID=D.FCUSTID
+        WHERE C.FCUSTSTATUS <=1 AND D.FDEPTID = #{deptId} AND C.FDEPTID = #{deptId} GROUP BY FGROUPID
+      ]]>
+	</select>
+
+	<select id="getPrehumanByDeptId" parameterType="int"
+		resultType="com.deppon.crm.module.organization.shared.domain.Employee">
+		<![CDATA[
+		  SELECT E.FID ID ,E.FEMPNAME EMPNAME
+		    FROM T_CUST_GROUP G, T_CUST_CUSTGROUPDETAIL D, T_ORG_EMPLOYEE E
+		  WHERE G.FID = D.FGROUPID 
+		   	AND D.FPREHUMAN = E.FID
+		  	AND G.FDEPTID = #{deptId}
+		  GROUP BY E.FID, E.FEMPNAME
+		  ORDER BY ID
+	   ]]>
+	</select>
+
+	<select id="getCustomerGroupByPrehuman"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroup"
+		resultType="String">
+		<![CDATA[      
+	       SELECT G.FID ID
+	        FROM T_CUST_GROUP G, T_CUST_CUSTGROUPDETAIL D, T_ORG_EMPLOYEE E
+	       WHERE G.FID = D.FGROUPID
+	         AND D.FPREHUMAN = E.FID
+	         AND G.FDEPTID = #{deptId}
+	         AND E.FID = #{empId}
+	       GROUP BY G.FID
+	       ORDER BY ID
+	   ]]>
+	</select>
+	
+	<select id="getPrehumanByGroupId"
+		parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroup"
+		resultType="String">
+		<![CDATA[            
+	      SELECT E.Fid id
+	        FROM T_CUST_GROUP G, T_CUST_CUSTGROUPDETAIL D, T_ORG_EMPLOYEE E
+	       WHERE G.FID = D.FGROUPID
+	         AND D.FPREHUMAN = E.FID
+	         AND G.FDEPTID = #{deptId}
+	         AND G.FID = #{id}
+	       GROUP BY E.FID
+	       ORDER BY ID
+	   ]]>
+	</select>
+	
+	<insert id="createCustomerGroupName" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroup">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_GROUP.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CUST_GROUP (FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID, FGROUPNAME, FDEPTID) 
+			VALUES( #{id},#{createDate,jdbcType=DATE},#{createUser,jdbcType=NUMERIC},#{modifyDate,jdbcType=DATE},#{modifyUser,jdbcType=NUMERIC}, #{groupName, jdbcType=VARCHAR}, #{deptId, jdbcType=NUMERIC} )
+		]]>
+	</insert>
+	
+	<update id="updateCustomerGroupName" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroup">
+		<![CDATA[
+		UPDATE T_CUST_GROUP SET 
+		FGROUPNAME = #{groupName, jdbcType=VARCHAR}, 
+		FLASTUPDATETIME = #{modifyDate, jdbcType=DATE},
+		FLASTMODIFYUSERID = #{modifyUser, jdbcType=NUMERIC}
+		WHERE FDEPTID = #{deptId} AND FID = #{id}
+		]]>
+	</update>
+	
+	<delete id="deleteCustomerGroup" parameterType="map" >
+		<![CDATA[
+			DELETE FROM T_CUST_GROUP WHERE FID = #{id} AND FDEPTID = #{deptId}
+		]]>
+	</delete>
+	
+	<delete id="deleteCustomerGroupDetail" parameterType="map">
+		<![CDATA[
+			DELETE FROM T_CUST_CUSTGROUPDETAIL WHERE FGROUPID = #{groupId} AND FDEPTID = #{deptId}
+		]]>
+	</delete>
+
+	<delete id="deleteCustomerGroupCustomer" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail">
+		<![CDATA[
+			DELETE FROM T_CUST_CUSTGROUPDETAIL WHERE FCUSTID = #{custId}
+		]]>
+	</delete>
+
+	<update id="updateCustomerGroupCustomer" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail">
+		<![CDATA[
+			UPDATE T_CUST_CUSTGROUPDETAIL 
+			SET FPREHUMAN = #{userId, jdbcType=NUMERIC},
+			FLASTUPDATETIME = #{modifyDate, jdbcType=DATE},
+			FLASTMODIFYUSERID = #{modifyUser, jdbcType=NUMERIC}
+			WHERE  FGROUPID = #{groupId} AND FCUSTID = #{custId}
+		]]>
+	</update>
+
+	<insert id="createCustomerGroupCustomer" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_GROUPDETAIL.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CUST_CUSTGROUPDETAIL (FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID, FCUSTID, FGROUPID, FDEPTID, FPREHUMAN)
+			VALUES( #{id},#{createDate,jdbcType=DATE},#{createUser,jdbcType=NUMERIC},#{modifyDate,jdbcType=DATE},#{modifyUser,jdbcType=NUMERIC}, #{custId, jdbcType=VARCHAR}, #{groupId, jdbcType=VARCHAR}, #{deptId, jdbcType=NUMERIC}, #{userId, jdbcType=NUMERIC} )
+		]]>
+	</insert>
+
+	<sql id="getCustomerGroupDetailListColumn">
+		<![CDATA[
+		SELECT T.FID AS ID,
+		T.FDEPTID AS DEPTID,
+		D.FDEPTNAME AS DEPTNAME,
+	    C.FID AS CUSTID,
+		C.FCUSTNUMBER AS CUSTNUMBER,
+		C.FCUSTNAME AS CUSTNAME,
+		T.FPREHUMAN AS USERID,
+		E.FEMPNAME AS EMPNAME,
+		T.FGROUPID AS GROUPID
+		]]>
+	</sql>
+	
+	<sql id="getCustomerGroupDetailListFrom">
+		<![CDATA[
+		FROM T_CUST_CUSTBASEDATA C 
+		LEFT JOIN T_ORG_DEPARTMENT D ON C.FDEPTID = D.FID
+		LEFT JOIN T_CUST_CUSTGROUPDETAIL T ON C.FID = T.FCUSTID
+		LEFT JOIN T_ORG_EMPLOYEE U ON T.FPREHUMAN = U.FID
+		LEFT JOIN T_ORG_EMPLOYEE E ON U.FEMPCODE = E.FEMPCODE
+		/*FROM T_CUST_CUSTGROUPDETAIL T
+		LEFT JOIN T_CUST_CUSTBASEDATA C ON C.FID = T.FCUSTID
+		LEFT JOIN T_ORG_DEPARTMENT D ON C.FDEPTID = D.FID
+		LEFT JOIN T_ORG_EMPLOYEE U ON T.FPREHUMAN = U.FID
+		LEFT JOIN T_ORG_EMPLOYEE E ON U.FEMPCODE = E.FEMPCODE*/
+		]]>
+	</sql>
+
+	<sql id="getCustomerGroupDetailListByConditionWhere">
+		<where>		
+			<choose>
+	           <when test="deptIds != null and deptIds != '' and deptIds.size() > 0">
+					<![CDATA[ AND CUST.FDEPTID IN ]]>
+					<foreach collection="deptIds" open="(" close=")" separator="," item="dept">
+						<![CDATA[	#{dept}  ]]>
+					</foreach>
+				</when>
+				<when test="deptId != null and deptId != ''">
+	                <![CDATA[ AND CUST.FDEPTID = #{deptId} ]]>
+	            </when>
+			 </choose>
+			<choose>
+				<when test="custNumber != null and custNumber != ''">
+					<![CDATA[ AND C.FCUSTNUMBER = #{custNumber} ]]>
+				</when>				
+				<otherwise>	
+					<if test="(groupId == null or groupId == '') and cyclePage == false">
+						<![CDATA[ AND T.FGROUPID IS NULL ]]>
+					</if>
+					<if test="groupId != null and groupId != ''">
+						<![CDATA[ AND T.FGROUPID = #{groupId} ]]>
+					</if>
+					<if test="empName != null and empName != ''">
+						<![CDATA[ AND E.FEMPNAME = #{empName} ]]>
+					</if>
+					<if test="custName != null and custName != ''">
+						<![CDATA[ AND C.FCUSTNAME LIKE #{custName} ]]>
+					</if>
+					<if test="custNumber != null and custNumber != ''">
+						<![CDATA[ AND C.FCUSTNUMBER = #{custNumber} ]]>
+					</if>
+					<if test="userId!=null and userId!=''">
+						<![CDATA[AND T.FPREHUMAN = #{userId}]]>
+					</if>
+				</otherwise>
+			</choose>
+		</where>
+	</sql>
+	
+	<select id="getCustomerGroupDetailList" parameterType="int" resultType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail">
+<!-- 		<include refid="getCustomerGroupDetailListColumn"/> -->
+<!-- 		<include refid="getCustomerGroupDetailListFrom"/> -->
+<!-- 		<![CDATA[ -->
+<!-- 			WHERE T.FGROUPID = #{customerGroupId} -->
+<!-- 		]]> -->
+  		<![CDATA[
+  		SELECT DISTINCT
+              CUST.FCUSTNUMBER custNumber,
+              CUST.FCUSTNAME custName,
+              EMP.FEMPNAME empName,
+              DEPT.FDEPTNAME deptName,
+              DEPT.FID deptId,
+		      CUST.FID custId,
+              nvl(CAD.month2Amount,0) month2Amount,
+              nvl(CAD.month1Amount,0) month1Amount,
+              nvl(CAD.monthAmount,0) monthAmount,
+              nvl(CAD.sendGoodCount,0) sendGoodCount,
+              round(decode(nvl(CAD.sendGoodCount,0),0,0,to_char(last_day(add_months(#{queryDate,jdbcType=DATE},-1)),'dd')/CAD.sendGoodCount)) sendGoodCycle
+              FROM T_CUST_CUSTBASEDATA CUST
+              LEFT JOIN (
+              select FCUSTNUMBER,
+              sum(NVL(CASE WHEN FMONTH =TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-2),'MM')   THEN AMOUNT   END,0))  month2Amount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-1),'MM')  THEN AMOUNT   END,0))  month1Amount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(#{queryDate,jdbcType=DATE},'MM')   THEN AMOUNT   END,0))  monthAmount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-1),'MM')  THEN TIMES   END,0))  sendGoodCount,
+              MAX(LASENTIME) LASENTIME
+              from(
+              SELECT CAD.FCUSTNUMBER,CAD.FYEAR,CAD.FMONTH,
+              NVL(SUM(NVL(CAD.FFPREPAYAMOUNT,0)+NVL(CAD.FARRIVEDAOUNT,0)
+                           -NVL(CAD.FAGENTRECEIVEPAY,0)-NVL(CAD.FREFUNDRABATE,0)),0) AS AMOUNT,
+              NVL(COUNT(DISTINCT CAD.FDAY),0) AS TIMES ,
+              MAX(TO_DATE(CAD.FYEAR||'-'||CAD.FMONTH||'-'||CAD.FDAY,'YYYY-MM-DD')) LASENTIME
+              from T_CRM_CUSTANALYSEBYDAY CAD]]>
+              <choose>
+          		 <when test="customerGroupId != null and customerGroupId != ''">
+					<![CDATA[ ,T_CUST_CUSTGROUPDETAIL detail
+                               ,t_cust_custbasedata cust ]]>
+			    </when>
+			</choose>
+		           <![CDATA[
+		              where
+		                 1 =1]]>
+		                 <choose>
+		          		 <when test="customerGroupId != null and customerGroupId != ''">
+							<![CDATA[ AND CAD.Fcustnumber =CUST.FCUSTNUMBER AND DETAIL.FGROUPID= #{customerGroupId,jdbcType=NUMERIC} AND DETAIL.FCUSTID=CUST.FID
+		 					]]>
+						</when>
+					</choose>
+                 <![CDATA[
+               AND (
+                 (CAD.FMONTH,CAD.FYEAR) IN 
+                 (
+					SELECT TO_NUMBER(TO_CHAR(ADD_MONTHS(#{queryDate,jdbcType=DATE}, 1 - ROWNUM), 'mm')),
+     					  TO_NUMBER(TO_CHAR(ADD_MONTHS(#{queryDate,jdbcType=DATE}, 1 - ROWNUM), 'yyyy'))
+  						FROM T_CODE_HEAD
+ 						WHERE ROWNUM <= 3
+                 )  
+               ) AND   CAD.FCANALYSETYPE = #{fcAnalyseType} 
+              group by CAD.FYEAR,CAD.FMONTH,CAD.FCUSTNUMBER
+              )
+              group by FCUSTNUMBER
+              ) CAD ON CUST.FCUSTNUMBER = CAD.FCUSTNUMBER 
+                
+              LEFT JOIN T_ORG_DEPARTMENT DEPT ON CUST.FDEPTID = DEPT.FID
+              LEFT JOIN T_CUST_CUSTGROUPDETAIL GRO ON CUST.FID = GRO.FCUSTID
+              LEFT JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = GRO.FPREHUMAN
+              WHERE  CUST.FCUSTSTATUS < = 1              
+              AND GRO.FGROUPID = #{customerGroupId,jdbcType=NUMERIC}
+            ORDER BY nvl(CAD.MONTH1AMOUNT,0) DESC
+  		]]>
+		
+	</select>
+	
+	<select id="getCustomerGroupDetailListByConditionCount" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail" resultType="int">
+<!-- 		<include refid="getCustomerGroupDetailListFrom"/> -->
+<!-- 		<include refid="getCustomerGroupDetailListByConditionWhere"/>	 -->
+				<![CDATA[
+       	SELECT COUNT(DISTINCT CUST.FID)
+              FROM T_CUST_CUSTBASEDATA CUST
+              LEFT JOIN (
+              select FCUSTNUMBER,
+              sum(NVL(CASE WHEN FMONTH =TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-2),'MM')   THEN AMOUNT   END,0))  month2Amount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-1),'MM')  THEN AMOUNT   END,0))  month1Amount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(#{queryDate,jdbcType=DATE},'MM')   THEN AMOUNT   END,0))  monthAmount,
+              sum(NVL(TIMES, 0)) sendGoodCount,
+              MAX(LASENTIME) LASENTIME,
+              MAX(trunc(#{queryDate,jdbcType=DATE}) - trunc(add_months(#{queryDate,jdbcType=DATE},-2),'MM')) days
+              from(
+              SELECT FCUSTNUMBER,FYEAR,FMONTH, 
+              NVL(SUM(NVL(FFPREPAYAMOUNT,0)+NVL(FARRIVEDAOUNT,0)
+                           -NVL(FAGENTRECEIVEPAY,0)-NVL(FREFUNDRABATE,0)),0) AS AMOUNT,
+              NVL(COUNT(DISTINCT FDAY),0) AS TIMES,
+              MAX(TO_DATE(FYEAR||'-'||FMONTH||'-'||FDAY,'YYYY-MM-DD')) LASENTIME
+              from 
+              ]]>
+              <choose>
+              	<when test="sendGoodsType!=null and sendGoodsType!='' and sendGoodsType=='LESS_THAN_TRUCKLOAD'">
+	            	T_CRM_CUSTANALYSEBYDAY
+              	</when>
+              	<otherwise>
+              		T_CRM_CUSTANALYSEBYDAY_EXPRESS
+              	</otherwise>
+              </choose>
+              <![CDATA[
+              where
+                 1 =1
+               AND TO_DATE(FYEAR || '-' || FMONTH || '-' || FDAY, 'yyyy-mm-dd') >=
+       					TRUNC(ADD_MONTHS(#{queryDate,jdbcType=DATE}, -2),'MM')
+       		   AND TO_DATE(FYEAR || '-' || FMONTH || '-' || FDAY, 'yyyy-mm-dd') <  #{queryDate,jdbcType=DATE}
+                AND FCANALYSETYPE = #{fcAnalyseType}
+                ]]>
+              <choose>
+          		 <when test="deptIds != null and deptIds != '' and deptIds.size() > 0">
+					<![CDATA[ AND FDEPTID IN ]]>
+					<foreach collection="deptIds" open="(" close=")" separator="," item="dept">
+						<![CDATA[	#{dept}  ]]>
+					</foreach>
+				</when>
+				<when test="deptId != null and deptId != ''">
+               		 <![CDATA[ AND FDEPTID = #{deptId} ]]>
+           		 </when>
+		    </choose>  
+              <![CDATA[
+		      group by FCUSTNUMBER,FYEAR,FMONTH
+              )
+              group by FCUSTNUMBER
+              ) CAD ON CUST.FCUSTNUMBER = CAD.FCUSTNUMBER 
+                
+              LEFT JOIN T_ORG_DEPARTMENT DEPT ON CUST.FDEPTID = DEPT.FID
+              LEFT JOIN T_CUST_CUSTGROUPDETAIL GRO ON CUST.FID = GRO.FCUSTID
+              LEFT JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = GRO.FPREHUMAN
+              WHERE  CUST.FCUSTSTATUS < = 1  
+              ]]>
+          <choose>
+           <when test="deptIds != null and deptIds != '' and deptIds.size() > 0">
+				<![CDATA[ AND CUST.FDEPTID IN ]]>
+				<foreach collection="deptIds" open="(" close=")" separator="," item="dept">
+					<![CDATA[	#{dept}  ]]>
+				</foreach>
+			</when>
+			<when test="deptId != null and deptId != ''">
+                <![CDATA[ AND CUST.FDEPTID = #{deptId} ]]>
+            </when>
+		 </choose>         
+          <choose>
+            <when test="custNumber != null and custNumber != ''">
+              <![CDATA[ AND CUST.FCUSTNUMBER = #{custNumber} ]]>
+            </when>        
+            <otherwise>
+              <if test="sendGoodsType=='EXPRESS'">
+	            	AND CUST.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+              </if>  
+              <if test="(groupId == null or groupId == '') and cyclePage == false">
+                <![CDATA[ AND GRO.FGROUPID IS NULL ]]>
+              </if>
+              <if test="groupId != null and groupId != ''">
+                <![CDATA[ AND GRO.FGROUPID = #{groupId} ]]>
+              </if>
+              <if test="empName != null and empName != ''">
+                <![CDATA[ AND EMP.FEMPNAME = #{empName} ]]>
+              </if>
+              <if test="custName != null and custName != ''">
+                <![CDATA[ AND CUST.FCUSTNAME LIKE #{custName} ]]>
+              </if>
+              <if test="custNumber != null and custNumber != ''">
+                <![CDATA[ AND CUST.FCUSTNUMBER = #{custNumber} ]]>
+              </if>
+              <if test="userId!=null and userId!=''">
+                <![CDATA[AND GRO.FPREHUMAN = #{userId}]]>
+              </if>
+            </otherwise>
+          </choose>
+          <if test="sendGoodsType=='LESS_THAN_TRUCKLOAD'">
+	         AND CUST.FCUSTGROUP = 'RC_CUSTOMER'
+          </if>
+          <if test="sendGoodsType=='EXPRESS'">
+          	 AND CUST.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+          </if>  
+	</select>
+	
+	<select id="getCustomerGroupDetailListByCondition" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail" 
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDetail">
+<!-- 		<include refid="getCustomerGroupDetailListColumn"/> -->
+<!-- 		<include refid="getCustomerGroupDetailListFrom"/> -->
+<!-- 		<include refid="getCustomerGroupDetailListByConditionWhere"/>	 -->
+		<![CDATA[
+      	SELECT DISTINCT
+              CUST.FCUSTNUMBER custNumber,
+              CUST.FCUSTNAME custName,
+              EMP.FEMPNAME empName,
+              DEPT.FDEPTNAME deptName,
+              DEPT.FID deptId,
+	          CUST.FID custId,
+              nvl(CAD.month2Amount,0) month2Amount,
+              nvl(CAD.month1Amount,0) month1Amount,
+              nvl(CAD.monthAmount,0) monthAmount,
+              nvl(CAD.sendGoodCount,0) sendGoodCount,
+              case
+              	  when #{queryDate,jdbcType=DATE} - trunc(cust.fcreatetime) <=0 then
+              	    0 
+              	  when #{queryDate,jdbcType=DATE} - trunc(cust.fcreatetime) >= CAD.days then
+                   decode(CAD.sendGoodCount,
+                          0,
+                          0,
+                          ceil(CAD.days / CAD.sendGoodCount))
+                  else
+                   decode(CAD.sendGoodCount,0,0,ceil((#{queryDate,jdbcType=DATE} -
+                        trunc(cust.fcreatetime)) / CAD.sendGoodCount))
+                end sendGoodCycle,
+              CASE
+                  WHEN SYSDATE - CAD.LASENTIME - (
+                  case
+                	  when #{queryDate,jdbcType=DATE} - trunc(cust.fcreatetime) <=0 then
+              	  		  0 
+              	      when #{queryDate,jdbcType=DATE} - trunc(cust.fcreatetime) >= CAD.days then
+	                      decode(CAD.sendGoodCount,
+	                           0,
+	                           0,
+	                           ceil(CAD.days / CAD.sendGoodCount))
+                     else
+	                   decode(CAD.sendGoodCount,0,0,ceil((#{queryDate,jdbcType=DATE} -
+	                        trunc(cust.fcreatetime)) / CAD.sendGoodCount))
+	                end) > 0 then
+	                   1
+	                  ELSE
+	                   0
+                end isMarkColor
+              FROM T_CUST_CUSTBASEDATA CUST
+              LEFT JOIN (
+              select FCUSTNUMBER,
+              sum(NVL(CASE WHEN FMONTH =TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-2),'MM')   THEN AMOUNT   END,0))  month2Amount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(add_months(#{queryDate,jdbcType=DATE},-1),'MM')  THEN AMOUNT   END,0))  month1Amount,
+              sum(NVL(CASE WHEN FMONTH = TO_CHAR(#{queryDate,jdbcType=DATE},'MM')   THEN AMOUNT   END,0))  monthAmount,
+              sum(NVL(TIMES, 0)) sendGoodCount,
+              MAX(LASENTIME) LASENTIME,
+              MAX(trunc(#{queryDate,jdbcType=DATE}) - trunc(add_months(#{queryDate,jdbcType=DATE},-2),'MM')) days
+              from(
+              SELECT FCUSTNUMBER,FYEAR,FMONTH, 
+              NVL(SUM(NVL(FFPREPAYAMOUNT,0)+NVL(FARRIVEDAOUNT,0)
+                           -NVL(FAGENTRECEIVEPAY,0)-NVL(FREFUNDRABATE,0)),0) AS AMOUNT,
+              NVL(COUNT(DISTINCT FDAY),0) AS TIMES,
+              MAX(TO_DATE(FYEAR||'-'||FMONTH||'-'||FDAY,'YYYY-MM-DD')) LASENTIME
+              from 
+              ]]>
+              <choose>
+              	<when test="sendGoodsType!=null and sendGoodsType!='' and sendGoodsType=='LESS_THAN_TRUCKLOAD'">
+	            	T_CRM_CUSTANALYSEBYDAY
+              	</when>
+              	<otherwise>
+              		T_CRM_CUSTANALYSEBYDAY_EXPRESS
+              	</otherwise>
+              </choose>
+              <![CDATA[
+              where
+                 1 =1
+               AND TO_DATE(FYEAR || '-' || FMONTH || '-' || FDAY, 'yyyy-mm-dd') >=
+       					TRUNC(ADD_MONTHS(#{queryDate,jdbcType=DATE}, -2),'MM')
+       		   AND TO_DATE(FYEAR || '-' || FMONTH || '-' || FDAY, 'yyyy-mm-dd') <  #{queryDate,jdbcType=DATE}
+                AND FCANALYSETYPE = #{fcAnalyseType}
+                ]]>
+              <choose>
+          		 <when test="deptIds != null and deptIds != '' and deptIds.size() > 0">
+					<![CDATA[ AND FDEPTID IN ]]>
+					<foreach collection="deptIds" open="(" close=")" separator="," item="dept">
+						<![CDATA[	#{dept}  ]]>
+					</foreach>
+				</when>
+				<when test="deptId != null and deptId != ''">
+               		 <![CDATA[ AND FDEPTID = #{deptId} ]]>
+           		 </when>
+		    </choose>  
+              <![CDATA[
+		      group by FCUSTNUMBER,FYEAR,FMONTH
+              )
+              group by FCUSTNUMBER
+              ) CAD ON CUST.FCUSTNUMBER = CAD.FCUSTNUMBER 
+                
+              LEFT JOIN T_ORG_DEPARTMENT DEPT ON CUST.FDEPTID = DEPT.FID
+              LEFT JOIN T_CUST_CUSTGROUPDETAIL GRO ON CUST.FID = GRO.FCUSTID
+              LEFT JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = GRO.FPREHUMAN
+              WHERE  CUST.FCUSTSTATUS < = 1  
+              ]]>
+          <choose>
+           <when test="deptIds != null and deptIds != '' and deptIds.size() > 0">
+				<![CDATA[ AND CUST.FDEPTID IN ]]>
+				<foreach collection="deptIds" open="(" close=")" separator="," item="dept">
+					<![CDATA[	#{dept}  ]]>
+				</foreach>
+			</when>
+			<when test="deptId != null and deptId != ''">
+                <![CDATA[ AND CUST.FDEPTID = #{deptId} ]]>
+            </when>
+		 </choose>         
+          <choose>
+            <when test="custNumber != null and custNumber != ''">
+              <![CDATA[ AND CUST.FCUSTNUMBER = #{custNumber} ]]>
+            </when>        
+            <otherwise>
+              <if test="(groupId == null or groupId == '') and cyclePage == false">
+                <![CDATA[ AND GRO.FGROUPID IS NULL ]]>
+              </if>
+              <if test="groupId != null and groupId != ''">
+                <![CDATA[ AND GRO.FGROUPID = #{groupId} ]]>
+              </if>
+              <if test="empName != null and empName != ''">
+                <![CDATA[ AND EMP.FEMPNAME = #{empName} ]]>
+              </if>
+              <if test="custName != null and custName != ''">
+                <![CDATA[ AND CUST.FCUSTNAME LIKE #{custName} ]]>
+              </if>
+              <if test="custNumber != null and custNumber != ''">
+                <![CDATA[ AND CUST.FCUSTNUMBER = #{custNumber} ]]>
+              </if>
+              <if test="userId!=null and userId!=''">
+                <![CDATA[AND GRO.FPREHUMAN = #{userId}]]>
+              </if>
+            </otherwise>
+          </choose>
+          <if test="sendGoodsType=='LESS_THAN_TRUCKLOAD'">
+	         AND CUST.FCUSTGROUP = 'RC_CUSTOMER'
+          </if>
+          <if test="sendGoodsType=='EXPRESS'">
+          	 AND CUST.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+          </if>  
+          <![CDATA[
+            ORDER BY nvl(CAD.MONTH1AMOUNT,0) DESC
+	      ]]>
+	</select>
+	
+	
+
+	<select id="getCustomerGroupDetailMonthAmount" resultType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupMonth">
+		<![CDATA[ 
+		SELECT 
+		FCUSTNUMBER AS CUSTOMERNUMBER, 
+		FYEAR AS YEAR, 
+		FMONTH AS MONTH,  
+		NVL(SUM(NVL(FFPREPAYAMOUNT,0)+NVL(FARRIVEDAOUNT,0)-NVL(FAGENTRECEIVEPAY,0)-NVL(FREFUNDRABATE,0)),0) AS AMOUNT,
+		NVL(COUNT(DISTINCT FDAY),0) AS TIMES  
+		FROM T_CRM_CUSTANALYSEBYDAY 
+		WHERE ((FYEAR = #{year2} AND FMONTH = #{month2}) OR (FYEAR = #{year1} AND FMONTH = #{month1}) OR (FYEAR = #{year} AND FMONTH = #{month}  AND FDAY <= #{day}))
+ 		]]>
+		<if test="fcAnalyseType != null and fcAnalyseType != ''">
+			<![CDATA[ AND FCANALYSETYPE = #{fcAnalyseType} ]]>
+		</if>
+ 		<if test="customerNumbers != null and customerNumbers != '' and customerNumbers.size() > 0">
+			<![CDATA[ AND FCUSTNUMBER IN ]]>
+			<foreach collection="customerNumbers" open="(" close=")" separator="," item="customerNumber">
+				<![CDATA[	#{customerNumber}  ]]>
+			</foreach>
+		</if>
+		<![CDATA[ 
+		GROUP BY FCUSTNUMBER, FYEAR, FMONTH
+		ORDER BY FCUSTNUMBER, FYEAR, FMONTH
+ 		]]>
+	</select>
+
+	<select id="getCustomerGroupDetailDayAmount" resultType="com.deppon.crm.module.marketing.shared.domain.CustomerGroupDay">
+		<![CDATA[ 
+		SELECT 
+		FCUSTNUMBER AS CUSTOMERNUMBER, 
+		FDAY AS DAY,  
+		NVL(SUM(NVL(FFPREPAYAMOUNT,0)+NVL(FARRIVEDAOUNT,0)-NVL(FAGENTRECEIVEPAY,0)-NVL(FREFUNDRABATE,0)),0) AS AMOUNT
+		FROM T_CRM_CUSTANALYSEBYDAY 
+		WHERE FYEAR = #{year} AND FMONTH = #{month} AND FDAY <= #{day}
+ 		]]>
+		<if test="fcAnalyseType != null and fcAnalyseType != ''">
+			<![CDATA[ AND FCANALYSETYPE = #{fcAnalyseType} ]]>
+		</if>
+		<if test="customerNumbers != null and customerNumbers != '' and customerNumbers.size() > 0">
+			<![CDATA[ AND FCUSTNUMBER IN ]]>
+			<foreach collection="customerNumbers" open="(" close=")" separator="," item="customerNumber">
+				<![CDATA[	#{customerNumber}  ]]>
+			</foreach>
+		</if>
+		<![CDATA[ 
+		GROUP BY FCUSTNUMBER, FDAY
+		ORDER BY FCUSTNUMBER, FDAY 
+ 		]]>
+	</select>
+ 	<select id="searchCustomerGroupDetailDayAmount" parameterType="com.deppon.crm.module.marketing.shared.domain.CustGroupDayDetailCondition" resultMap="customerGroupDetailDay">
+		<![CDATA[ 
+		SELECT
+		  custNumber,
+		  max(custName) custName,
+		  max(deptId) deptId,
+		  max(deptName) deptName,
+		  NVL(SUM(DECODE(DAYVALUE - DAYNUM, 0, AMOUNT, 0)), 0) amount,
+		  DAYVALUE dayValue,
+		  ceil(decode(NVL(sum(amount),0),0,0,to_number(to_char(#{searchDate},'DD'))/sum(decode(amount,0,0,1)))) queryMonthCycle
+		FROM(
+			  SELECT 
+		      CUST.FCUSTNUMBER custNumber,
+		      CUST.FCUSTNAME custName,
+		      CUST.FDEPTID deptId,
+		      DEPT.FDEPTNAME deptName, 
+		      DAYS.DAYVALUE DAYVALUE,
+		      CAD.DAYNUM DAYNUM,
+		      CAD.AMOUNT AMOUNT
+		      FROM T_CUST_CUSTBASEDATA CUST
+		      LEFT JOIN (SELECT FDAY DAYNUM,
+		      				NVL(FFPREPAYAMOUNT, 0) + NVL(FARRIVEDAOUNT, 0) -
+              			    NVL(FAGENTRECEIVEPAY, 0) - NVL(FREFUNDRABATE, 0) AMOUNT,
+              			    FCUSTNUMBER
+              			    FROM]]>
+              <choose>
+              	<when test="sendGoodsType!=null and sendGoodsType!='' and sendGoodsType=='LESS_THAN_TRUCKLOAD'">
+	            	T_CRM_CUSTANALYSEBYDAY WHERE FCUSTNUMBER IN
+              	</when>
+              	<otherwise>
+              		T_CRM_CUSTANALYSEBYDAY_EXPRESS WHERE FCUSTNUMBER IN
+              	</otherwise>
+              </choose>
+              <foreach collection="custNumbers" open="(" close=")" separator="," item="custNumber">
+					<![CDATA[	#{custNumber}  ]]>
+			  </foreach> 				
+			  <![CDATA[ 
+			 				AND FCANALYSETYPE = #{fcAnalyseType}
+			   				AND FYEAR = to_char(#{searchDate}, 'YYYY')
+           					AND FMONTH = to_char(#{searchDate}, 'MM')
+           					AND FDAY <= to_char(#{searchDate}, 'DD')
+           					) CAD     
+		      ON CAD.FCUSTNUMBER=CUST.FCUSTNUMBER
+		      LEFT JOIN T_ORG_DEPARTMENT DEPT
+		      ON CUST.FDEPTID=DEPT.FID 
+		      CROSS JOIN(select level dayvalue
+	                     from dual
+	                     connect by level <= to_char(#{searchDate},'DD')) days
+			WHERE
+	 		]]>
+				<![CDATA[ CUST.FCUSTNUMBER IN ]]>
+				<foreach collection="custNumbers" open="(" close=")" separator="," item="custNumber">
+					<![CDATA[	#{custNumber}  ]]>
+				</foreach>
+			<![CDATA[ 
+		)
+		GROUP BY custNumber,DAYVALUE
+		ORDER BY custNumber,DAYVALUE
+ 		]]>
+	</select> 
+
+</mapper>
+

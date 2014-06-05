@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+    <!-- 邮件配置管理action配置 -->
+	<bean name="sysmailAction" class="com.deppon.crm.module.sysmail.server.action.SysmailAction" scope="prototype">
+		<property name="sysMailConfigManager" ref="sysMailConfigManager"></property>
+	</bean>
+	<!-- dao层配置 -->			
+	<bean id="sysMailConfigDao" class="com.deppon.crm.module.sysmail.server.dao.impl.SysMailConfigDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- service 层配置 -->
+	<bean id="sysMailConfigService" class="com.deppon.crm.module.sysmail.server.service.impl.SysMailConfigService">
+		<property name="sysMailConfigDao" ref="sysMailConfigDao"/>
+	</bean>
+	
+	<!-- manager 层配置 -->
+	<bean id="sysMailConfigManager" class="com.deppon.crm.module.sysmail.server.manager.impl.SysMailConfigManager">
+		<property name="sysMailConfigService" ref="sysMailConfigService"/>
+	</bean>
+	
+	
+	<bean id="sysMailSendDao" class="com.deppon.crm.module.sysmail.server.dao.impl.SysMailSendDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="sysMailSendService" class="com.deppon.crm.module.sysmail.server.service.impl.SysMailSendService">
+		<property name="sysMailSendDao" ref="sysMailSendDao"/>
+	</bean>
+	
+	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+		<property name="host" value="smtp.deppon.com"/>
+		<property name="userName" value="CRM@deppon.com"/>
+		<property name="password" value="dp31350606"/>
+	</bean>
+	
+	<bean id="sysMailSendManager" class="com.deppon.crm.module.sysmail.server.manager.impl.SysMailSendManager">
+		<property name="mailSenderService" ref="mailSenderService"/>
+		<property name="sysMailSendService" ref="sysMailSendService"/>
+	</bean>
+</beans>

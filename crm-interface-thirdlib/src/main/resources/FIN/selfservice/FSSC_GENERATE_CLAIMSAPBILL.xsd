@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+xmlns:tns="http://www.deppon.com/fssc/remote/crm/domain"
+targetNamespace="http://www.deppon.com/fssc/remote/crm/domain">
+    <element name="generate_claimsapbillRequest" type="tns:Generate_claimsapbillRequest"></element>
+	<element name="generate_claimsapbillResponse" type="tns:Generate_claimsapbillResponse"></element>
+	
+    <complexType name="Generate_claimsapbillRequest">
+        <annotation>
+        	<documentation>生成报账报销单接口，请求参数</documentation>
+        </annotation>
+        <sequence>
+        	<element name="recompenseAmount" type="decimal" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>付款总金额</documentation>
+        		</annotation>
+        	</element>
+        	<element name="accountNature" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>
+        				账户性质，整数类型，1.德邦子公司账户、2.收银员卡账户、3.内部员工账户、4.公司外部账户、5.外部对公账户、6.外部对私账户
+        				
+        			</documentation>
+        		</annotation>
+        	</element>
+        	<element name="bankAccount" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>银行帐号</documentation>
+        		</annotation>
+        	</element>
+        	<element name="bankCode" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>开户行编码</documentation>
+        		</annotation>
+        	</element>
+        	<element name="bankBranchCode" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>开户支行编码</documentation>
+        		</annotation>
+        	</element>
+        	<element name="bankCityCode" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>开户行所在城市编码</documentation>
+        		</annotation>
+        	</element>
+        	<element name="bankProvinceCode" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>开户行所在省份编码</documentation>
+        		</annotation>
+        	</element>
+        	<element name="mobilePhone" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>联系方式</documentation>
+        		</annotation>
+        	</element>
+        	<element name="applyUser" type="string" minOccurs="1"
+        		maxOccurs="1">
+                <annotation>
+                	<documentation>申请人工号</documentation></annotation>
+        	</element>
+        	<element name="costDetails" type="tns:costDetailsType"
+        		minOccurs="1" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>费用明细</documentation>
+        		</annotation>
+        	</element>
+        	<element name="voucherNumber" type="string" minOccurs="1"
+        		maxOccurs="1">
+        		<annotation>
+        			<documentation>凭证号(唯一标记该报账单)</documentation>
+        		</annotation>
+        	</element>
+        	<element name="receiverName" type="string" minOccurs="1" maxOccurs="1">
+        		<annotation>
+        			<documentation>开户人姓名,即收款方姓名</documentation>
+        		</annotation>
+            </element>
+            <element name="workflowtype" type="string" minOccurs="1" maxOccurs="1">
+        		<annotation>
+        			<documentation>工作流类型  FOSS日常付款：1  FOSS日常报销：2</documentation>
+        		</annotation>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Generate_claimsapbillResponse">
+        <annotation>
+        	<documentation>生成报账报销单接口，返回参数</documentation>
+        </annotation>
+        <sequence>
+    		<element name="voucherNumber" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>凭证号</documentation>
+    			</annotation>
+    		</element>
+    		
+    		<element name="workflowType" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>工作流类型</documentation>
+    			</annotation>
+    		</element>
+    		
+    		<element name="workflowNumber" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>工作流编号</documentation>
+    			</annotation>
+    		</element>
+    		<element name="isSuccess" type="boolean" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>处理结果	处理成功返回true,处理失败返回false</documentation>
+    			</annotation>
+    		</element>
+    		<element name="failedReason" type="string" minOccurs="0" maxOccurs="1">
+    			<annotation>
+    				<documentation>失败原因	如果处理失败就有失败原因</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="costDetailsType">
+        <annotation>
+        	<documentation>费用明细</documentation></annotation>
+        <sequence>
+    		<element name="costDate" type="dateTime" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>费用发生日期</documentation>
+    			</annotation>
+    		</element>
+    		<element name="reimbursementMoneyDetail" type="decimal"
+    			minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>
+    					报账金额，单位：元，理赔金额，包括了索赔金额加上多陪金额
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="billNum" type="string" minOccurs="1"
+    			maxOccurs="1">
+    			<annotation>
+    				<documentation>差错编号</documentation>
+    			</annotation>
+    		</element>
+    		<element name="responsibilityDeptInfo" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>费用承担部门（标杆编码）</documentation>
+    			</annotation>
+    		</element>
+	
+    		<element name="recompenseType" type="string" minOccurs="1" maxOccurs="1">
+    			<annotation>
+    				<documentation>理赔类型  在线理赔 30  其它不限制</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+</schema>

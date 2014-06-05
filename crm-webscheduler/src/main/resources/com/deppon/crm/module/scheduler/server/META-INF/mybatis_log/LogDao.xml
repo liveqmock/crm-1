@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.shared.domain.ActionLog">
+	<!--查询映射 -->
+	<resultMap id="actionLogResultMap"
+		type="com.deppon.crm.module.scheduler.shared.domain.ActionLog">
+		<id property="id" column="fid" />
+		<result property="moduleName" column="FMODULENAME" />
+		<result property="requestUri" column="FREQUESTURI" />
+		<result property="countRequest" column="FCOUNTREQUEST" />
+		<result property="reqdurationTimes" column="FREQDURATIONTIMES" />
+		<result property="reqdurationAvgTimes" column="FREQDURATIONAVGTIMES" />
+		<result property="maxreqdurationTime" column="FMAXREQDURATIONTIME" />
+	</resultMap>
+	<select id="findActionLogList" resultMap="actionLogResultMap">
+		  select req.fmodulename
+    FMODULENAME,
+    req.frequesturi FREQUESTURI,
+		count(*) FCOUNTREQUEST,
+		sum(req.freqduration) FREQDURATIONTIMES,
+		round(avg(req.freqduration),2) FREQDURATIONAVGTIMES,
+		MAX(req.freqduration) FMAXREQDURATIONTIME
+		from t_log_reqlog req
+		where req.freqstarttime >(trunc(sysdate) -1)
+		and req.freqstarttime &lt; trunc(sysdate)
+		group by req.frequesturi,req.fmodulename
+		order by
+		round(avg(req.freqduration), 2) desc, count(*)
+
+
+	</select>
+
+
+
+</mapper>

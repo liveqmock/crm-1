@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.servicerecovery.shared.domain.FinanceDept">
+	<resultMap id="financeDeptResultMap"
+		type="com.deppon.crm.module.servicerecovery.shared.domain.FinanceDept">
+		<id property="id" column="fid" />
+		<result property="deptName" column="orgname" />
+		<result property="standardCode" column="finasyscode" />
+	</resultMap>
+
+	<select id="searchFinanceDeptList" resultMap="financeDeptResultMap">
+		select dept.fid,
+		fin.finasyscode finasyscode, fin.orgname orgname
+		from t_crm_findept fin
+		inner join
+		t_org_department dept
+		on fin.finasyscode = dept.fstandardcode
+	</select>
+
+</mapper>

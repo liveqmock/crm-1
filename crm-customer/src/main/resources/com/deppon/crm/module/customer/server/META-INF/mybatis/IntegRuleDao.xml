@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.customer.shared.domain.integral.IntegRule">
+
+	<delete id="deleteIntegRule" parameterType="string">
+		delete from
+		t_cust_integrule where fid =#{id}
+	</delete>
+
+	<insert id="insertIntegRule" parameterType="map">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_integrule.nextval as id FROM DUAL
+		</selectKey>
+		insert into t_cust_integrule(
+		FID,FCREATETIME,FCREATEUSERID,
+		FFRACTION,FPOINTDESC,
+		FNUMBER,FPOINTBEGINTIME,FPOINTENDTIME,FPRODUCT,
+		FCHANNELTYPE,FTRANSPORTTYPE,FLEADEPTID,FARRDEPTID,fpointtype)
+		values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{fraction,jdbcType=NUMERIC},#{pointdesc,jdbcType=VARCHAR},
+		#{number,jdbcType=VARCHAR},#{pointbegintime,jdbcType=DATE},
+		#{pointendtime,jdbcType=DATE},#{product,jdbcType=VARCHAR},
+		#{channeltype,jdbcType=VARCHAR},#{transporttype,jdbcType=VARCHAR},
+		#{leadept,jdbcType=VARCHAR},#{arrdept,jdbcType=VARCHAR},
+		#{pointtype,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateIntegRule" parameterType="map">
+		UPDATE
+		T_CUST_INTEGRULE
+		<set>
+			FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR}
+			,FLASTUPDATETIME=sysdate
+			<if test=" fraction != null  and fraction != ''  ">
+		<![CDATA[ ,FFRACTION=#{fraction,jdbcType=NUMERIC}]]>
+			</if>
+			<if test=" pointdesc != null  and pointdesc != ''  ">
+		<![CDATA[ ,FPOINTDESC=#{pointdesc,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" number != null  and number != ''  ">
+		<![CDATA[ ,FNUMBER=#{number,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" pointbegintime != null  and pointbegintime != ''  ">
+		<![CDATA[ ,FPOINTBEGINTIME=#{pointbegintime,jdbcType=DATE}]]>
+			</if>
+			<if test=" pointendtime != null  and pointendtime != ''  ">
+		<![CDATA[ ,FPOINTENDTIME=#{pointendtime,jdbcType=DATE}]]>
+			</if>
+			<if test=" product != null  and product != ''  ">
+		<![CDATA[ ,FPRODUCT=#{product,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" channeltype != null  and channeltype != ''  ">
+		<![CDATA[ ,FCHANNELTYPE=#{channeltype,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" transporttype != null  and transporttype != ''  ">
+		<![CDATA[ ,FTRANSPORTTYPE=#{transporttype,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" leadept != null  and leadept != ''  ">
+		<![CDATA[ ,FLEADEPTID=#{leadept,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" arrdept != null  and arrdept != ''  ">
+		<![CDATA[,FARRDEPTID=#{arrdept,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" pointtype != null  and pointtype != ''  ">
+		<![CDATA[,FPOINTTYPE=#{pointtype,jdbcType=VARCHAR}]]>
+			</if>
+		</set>
+		<where>
+			FID=#{id}
+		</where>
+	</update>
+
+	<select id="getWiringIntegRuleById" parameterType="map"
+		resultMap="WiringIntegRuleRM">
+		<include refid="getIntegRuleByIdSql" />
+	</select>
+
+	<select id="getProductIntegRuleById" parameterType="map"
+		resultMap="ProductIntegRuleRM">
+		<include refid="getIntegRuleByIdSql" />
+		
+	</select>
+
+	<select id="getChannelIntegRuleById" parameterType="map"
+		resultMap="ChannelIntegRuleRM">
+		<include refid="getIntegRuleByIdSql" />
+	</select>
+
+	<select id="getWiringIntegRules" parameterType="map"
+		resultMap="WiringIntegRuleRM">
+		<include refid="getIntegRuleSql" />
+	</select>
+
+	<select id="getProductIntegRules" parameterType="map"
+		resultMap="ProductIntegRuleRM">
+		<include refid="getIntegRuleSql" />
+	</select>
+
+	<select id="getChannelIntegRules" parameterType="map"
+		resultMap="ChannelIntegRuleRM">
+		<include refid="getIntegRuleSql" />
+	</select>
+
+
+	<select id="countGetIntegRuleSql" parameterType="map"
+		resultType="long">
+		select count(*)
+		from T_CUST_INTEGRULE
+		where FPOINTTYPE =
+		#{pointtype}
+	</select>
+
+	<select id="searchIntegRule" parameterType="string" resultType="string">
+		select fnumber
+		from T_CUST_INTEGRULE
+		where FNUMBER = #{number}
+	</select>
+
+
+
+	<sql id="getIntegRuleSql">
+		<include refid="selctIntegRuleSql" />
+		where A.FPOINTTYPE = #{pointtype}
+	</sql>
+
+
+	<sql id="getIntegRuleByIdSql">
+		<include refid="selctIntegRuleSql" />
+		where A.fid = #{id}
+		and A.FPOINTTYPE = #{pointtype}
+	</sql>
+
+	<sql id="selctIntegRuleSql">
+		select
+		<include refid="ProductIntegRule_column" />
+		,
+		CT1.FNAME FLEADEPTNAME,
+		CT2.FNAME FARRDEPTNAME
+		from T_CUST_INTEGRULE A
+		LEFT JOIN T_ORG_EMPLOYEE B ON A.FCREATEUSERID = B.FID
+		LEFT JOIN
+		T_ORG_EMPLOYEE C ON A.FLASTMODIFYUSERID = C.FID
+		LEFT JOIN T_CRM_CITY
+		CT1 ON A.FLEADEPTID = CT1.FID
+		LEFT JOIN T_CRM_CITY CT2 ON A.FARRDEPTID
+		= CT2.FID
+	</sql>
+
+	<select id="queryRule" parameterType="map" resultMap="IntegRuleRM">
+		SELECT FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,
+		FLASTMODIFYUSERID,FFRACTION,FPOINTDESC,
+		FNUMBER,FPOINTBEGINTIME,FPOINTENDTIME
+		FROM T_CUST_INTEGRULE
+		WHERE
+		FPOINTTYPE=#{pointType,jdbcType=VARCHAR}
+		<if test="pointBegintime!=null  and pointBegintime!=''">
+			AND FPOINTBEGINTIME=#{pointBegintime,jdbcType=DATE}
+		</if>
+		<if test=" pointEndtime !=null  and pointEndtime!=''">
+			AND FPOINTENDTIME=#{pointEndtime,jdbcType=DATE}
+		</if>
+		<if test=" channelType!=null  and channelType!=''">
+			AND FCHANNELTYPE=#{channelType,jdbcType=VARCHAR}
+		</if>
+		<if test="product !=null  and  product!=''">
+			AND FPRODUCT=#{product,jdbcType=VARCHAR}
+		</if>
+		<if test=" leadept !=null  and  leadept!=''">
+			AND FLEADEPTID=#{leadept,jdbcType=VARCHAR}
+		</if>
+		<if test="arrdept!=null  and arrdept!=''">
+			AND FARRDEPTID=#{arrdept,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<sql id="ProductIntegRule_column">
+		A.FID,
+		A.FCREATETIME,
+		A.FCREATEUSERID,
+		A.FLASTUPDATETIME,
+		A.FLASTMODIFYUSERID,
+		A.FFRACTION,
+		A.FPOINTDESC,
+		A.FNUMBER,
+		A.FPOINTBEGINTIME,
+		A.FPOINTENDTIME,
+		A.FPRODUCT,
+		A.FCHANNELTYPE,
+		A.FTRANSPORTTYPE,
+		A.FLEADEPTID,
+		A.FARRDEPTID,
+		B.FEMPNAME CNAME,
+		C.FEMPNAME MNAME
+	</sql>
+	<resultMap id="ProductIntegRuleRM"
+		type="com.deppon.crm.module.customer.shared.domain.integral.ProductIntegRule">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="fraction" column="FFRACTION" jdbcType="NUMERIC" />
+		<result property="pointdesc" column="FPOINTDESC" jdbcType="VARCHAR" />
+		<result property="number" column="FNUMBER" jdbcType="VARCHAR" />
+		<result property="pointbegintime" column="FPOINTBEGINTIME"
+			jdbcType="DATE" />
+		<result property="pointendtime" column="FPOINTENDTIME"
+			jdbcType="DATE" />
+		<result property="createDate" column="FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="product" column="FPRODUCT" jdbcType="VARCHAR" />
+		<result property="cname" column="CNAME" jdbcType="VARCHAR" />
+		<result property="mname" column="MNAME" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="WiringIntegRuleRM"
+		type="com.deppon.crm.module.customer.shared.domain.integral.WiringIntegRule">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="fraction" column="FFRACTION" jdbcType="NUMERIC" />
+		<result property="pointdesc" column="FPOINTDESC" jdbcType="VARCHAR" />
+		<result property="number" column="FNUMBER" jdbcType="VARCHAR" />
+		<result property="pointbegintime" column="FPOINTBEGINTIME"
+			jdbcType="DATE" />
+		<result property="pointendtime" column="FPOINTENDTIME"
+			jdbcType="DATE" />
+		<result property="createDate" column="FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="leadept" column="FLEADEPTID" jdbcType="VARCHAR" />
+		<result property="leadeptName" column="FLEADEPTNAME" jdbcType="VARCHAR" />
+		<result property="arrdept" column="FARRDEPTID" jdbcType="VARCHAR" />
+		<result property="arrdeptName" column="FARRDEPTNAME" jdbcType="VARCHAR" />
+		<result property="cname" column="CNAME" jdbcType="VARCHAR" />
+		<result property="mname" column="MNAME" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ChannelIntegRuleRM"
+		type="com.deppon.crm.module.customer.shared.domain.integral.ChannelIntegRule">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="fraction" column="FFRACTION" jdbcType="NUMERIC" />
+		<result property="pointdesc" column="FPOINTDESC" jdbcType="VARCHAR" />
+		<result property="number" column="FNUMBER" jdbcType="VARCHAR" />
+		<result property="pointbegintime" column="FPOINTBEGINTIME"
+			jdbcType="DATE" />
+		<result property="pointendtime" column="FPOINTENDTIME"
+			jdbcType="DATE" />
+		<result property="createDate" column="FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="channeltype" column="FCHANNELTYPE" jdbcType="VARCHAR" />
+		<result property="cname" column="CNAME" jdbcType="VARCHAR" />
+		<result property="mname" column="MNAME" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="IntegRuleRM"
+		type="com.deppon.crm.module.customer.shared.domain.integral.IntegRule">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="fraction" column="FFRACTION" jdbcType="NUMERIC" />
+		<result property="pointdesc" column="FPOINTDESC" jdbcType="VARCHAR" />
+		<result property="number" column="FNUMBER" jdbcType="VARCHAR" />
+		<result property="pointbegintime" column="FPOINTBEGINTIME"
+			jdbcType="DATE" />
+		<result property="pointendtime" column="FPOINTENDTIME"
+			jdbcType="DATE" />
+		<result property="createDate" column="FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

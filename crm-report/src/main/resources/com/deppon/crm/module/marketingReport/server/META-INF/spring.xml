@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+		<!-- 开发日程 Action层配置 -->
+	<bean id="boReportAction"
+		class="com.deppon.crm.module.marketingReport.server.action.BoReportAction" scope="prototype">
+		<property name="businessOpportunityManager" ref="businessOpportunityManager" />
+		<property name="boReportExportManager" ref="boReportExportManager" />
+	</bean>
+	
+	<bean id="boReportExportManager"
+		class="com.deppon.crm.module.marketingReport.server.manager.impl.BoReportExportManager" >
+	</bean>
+	<!-- 流失预警报表 -->
+	<bean id="WarnLostCustReportDao" class="com.deppon.crm.module.marketingReport.server.dao.impl.WarnLostCustReportDaoImp">
+			<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="WarnLostCustReportService" class="com.deppon.crm.module.marketingReport.server.service.impl.WarnLostCustReportServiceImp">
+			<property name="warnReportDao" ref="WarnLostCustReportDao" />
+	</bean>
+	<bean id="WarnLostCustReportManager" class="com.deppon.crm.module.marketingReport.server.manager.impl.WarnLostCustReportManagerImp">
+			<property name="warnReportService" ref="WarnLostCustReportService" />
+	</bean>
+		<!-- 预警客户监控Action -->
+	<bean id="warnLostCustReportAction"
+		class="com.deppon.crm.module.marketingReport.server.action.WarnLostCustReportAction" scope="prototype">
+		<property name="warnLostCustManager" ref="warnLostCustManagerImp" />
+		<property name="warnLostCustReportManager" ref="WarnLostCustReportManager" />
+	</bean>
+</beans>

@@ -1,0 +1,1414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.Member">
+
+	<select id="countApproveDataByCondition" parameterType="com.deppon.crm.module.customer.shared.domain.ApproveData" resultType="int">
+		SELECT
+		count(*)
+		FROM T_CUST_APPROVEDATA
+		<where>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" className != null  and className != ''  ">
+		<![CDATA[and FCLASSNAME=#{className,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" classId != null  and classId != ''  ">
+		<![CDATA[and FCLASSID=#{classId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" fieldName != null  and fieldName != ''  ">
+		<![CDATA[and FFIELDNAME=#{fieldName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" newValue != null  and newValue != ''  ">
+		<![CDATA[and FNEWVALUE=#{newValue,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" oldValue != null  and oldValue != ''  ">
+		<![CDATA[and FOLDVALUE=#{oldValue,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workFlowId != null  and workFlowId != ''  ">
+		<![CDATA[and FWORKFLOWID=#{workFlowId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" handleType != null ">
+		<![CDATA[and FHANDLETYPE=#{handleType,jdbcType=NUMERIC}]]>
+		</if>
+		</where>
+	</select>
+
+	<update id="updatePreferenceAddressStatusByMemberId">
+		update t_cust_PreferenceAddress
+		set fstatus = #{status},
+		flastupdatetime = sysdate,
+		Flastupdateuserid = #{modifyUser}
+		where fid in (
+			select PA.fid
+			from t_cust_PreferenceAddress PA
+			join t_cust_custlinkman CL
+			on PA.flinkManId = CL.fid
+			where CL.FCUSTID = #{memberId}
+
+		)
+		and FSTATUS != #{notUpdateStatus}
+	</update>
+
+	<update id="updateShuttleAddressStatusByMemberId">
+		update t_cust_shuttleaddress
+		set fstatus = #{status},
+		flastupdatetime = sysdate,
+		flastmodifyuserid = #{modifyUser}
+		where FMEMBERID = #{memberId}
+		and FSTATUS != #{notUpdateStatus}
+	</update>
+
+	<select id="countContactByCondition" resultType="int" parameterType="map">
+		select count(*) from t_cust_custlinkman lm
+	    left join t_cust_custbasedata bd on bd.fid = lm.fcustid
+	    where lm.fidcard = #{idCard}
+	    and lm.fidType = #{cardTypeCon}
+	    and bd.fcusttype = #{custType}
+	    and lm.fismainlinkman = #{isMain}
+	    and lm.FSTATUS != 2
+	</select>
+
+	<select id="countContactByLinkManNumber" parameterType="string" resultType="int">
+		select count(*) from t_cust_custlinkman lm
+		where lm.fnumber = #{linkManNumber}
+		and lm.FSTATUS != 2
+	</select>
+
+	<select id="getMemberIdByMemberNumber" resultType="string" parameterType="string">
+		select t.fid from t_cust_custbasedata t where t.fcustnumber = #{memberNumber}
+	</select>
+
+	<select id="getMemberIdUseSeq" resultType="string">
+		SELECT
+		SEQ_ID_custbasedata.nextval as id FROM DUAL
+	</select>
+
+	<update id="updateMemberLevelByMemberNumber" parameterType="map">
+		update t_cust_custbasedata set
+		FDEGREE = #{targetLevel},
+		flastupdatetime = sysdate,
+		FLASTMODIFYUSERID = #{modifyUser}
+		where FCUSTNUMBER = #{memberNumber}
+	</update>
+
+	<update id="updateMemberStautsByMemberId" parameterType="map">
+		update
+		t_cust_custbasedata set
+		FCUSTSTATUS = #{status},
+		flastupdatetime = sysdate,
+		FLASTMODIFYUSERID = #{modifyUser}
+		where fid = #{memberId}
+	</update>
+
+	<update id="updateContactStatusByMemberId" parameterType="map">
+		update
+		t_cust_custlinkman set
+		FSTATUS = #{status},
+		flastupdatetime = sysdate,
+		flastupdateuserid = #{modifyUser}
+		where FCUSTID = #{memberId}
+		and FSTATUS != #{notUpdateStatus}
+	</update>
+
+	<update id="updateAccountStatusByMemberId" parameterType="map">
+		update
+		t_cust_account set
+		FSTATUS = #{status},
+		flastupdatetime = sysdate,
+		flastupdateuserid = #{modifyUser}
+		where fbelongcustom =#{memberId}
+		and FSTATUS != #{notUpdateStatus}
+	</update>
+
+	<select id="getPreferenceAddressIdByMemberId" parameterType="string" resultType="string">
+		select PA.fid
+		from t_cust_PreferenceAddress PA
+		join t_cust_custlinkman CL
+		on PA.flinkManId = CL.fid
+		where CL.FCUSTID =
+		#{memberId}
+	</select>
+
+	<delete id="deletePreferenceAddressByMemberId" parameterType="string">
+		delete from t_cust_PreferenceAddress PA
+		where fid in (
+			select PA.fid
+			from t_cust_PreferenceAddress PA
+			join t_cust_custlinkman CL
+			on PA.flinkManId = CL.fid
+			where CL.FCUSTID =
+			#{memberId}
+		)
+	</delete>
+
+	<delete id="deleteAccountByMemberId" parameterType="string">
+		delete from
+		t_cust_account where fbelongcustom = #{memberId}
+	</delete>
+
+	<select id="getAccountIdByMemberId" parameterType="string" resultType="string">
+		select fid from
+		t_cust_account where fbelongcustom = #{memberId}
+	</select>
+
+	<delete id="deleteMemberInfoById" parameterType="string">
+		delete from
+		t_cust_custbasedata where FID = #{memberId}
+	</delete>
+
+	<select id="getShuttleAddressIdByMemberId" parameterType="string" resultType="string">
+		select fid from t_cust_shuttleaddress where FMEMBERID = #{memberId}
+	</select>
+
+	<delete id="deleteShuttleAddressByMemberId" parameterType="string">
+		delete from t_cust_shuttleaddress where FMEMBERID = #{memberId}
+	</delete>
+
+	<insert id="insertMemberExtendInfo" parameterType="com.deppon.crm.module.customer.shared.domain.MemberExtend">
+		INSERT INTO T_CUST_CUSTBASEDATA_EXTEND(
+		FCUSTID,
+		FISSEASON,
+		FWARNSTATUS,
+		FVOLUMEPOTENTIAL,
+		FCREDITTIMES,
+		FISPOORCREDIT,
+		FLASTWARNTIME,
+		FPREDELIVERYTBEGINTIME,
+		FPREDELIVERYTENDTIME,
+		FLOSTCAUSE,
+		FOTHERLOSTCAUSE,
+		FSEASONTIMS,
+		FISCONTINUEMARK,
+		FDEVELOPMENTPHASE,
+		FRECENTCOOP,
+		FCOOPINTENTION,
+		FRECENTGOODS,
+		FCUSTNEED,
+		FISACCORD,
+		FACCORDMARK,
+		FOTHERRECENTCOOP) VALUES (
+		#{custId,jdbcType=VARCHAR},
+		#{isSeason,jdbcType=VARCHAR},
+		#{warnStatus,jdbcType=VARCHAR},
+		#{volumePotential,jdbcType=VARCHAR},
+		#{creditTimes,jdbcType=VARCHAR},
+		#{isPoorCredit,jdbcType=VARCHAR},
+		#{lastWarnTime,jdbcType=TIMESTAMP},
+		#{preDeliverytBeginTime,jdbcType=TIMESTAMP},
+		#{preDeliverytEndTime,jdbcType=TIMESTAMP},
+		#{lostCause,jdbcType=VARCHAR},
+		#{otherLostCause,jdbcType=VARCHAR},
+		#{seasonTims,jdbcType=NUMERIC},
+		#{isContinueMark,jdbcType=VARCHAR},
+		#{developmentPhase,jdbcType=VARCHAR},
+		#{recentCoop,jdbcType=VARCHAR},
+		#{coopIntention,jdbcType=VARCHAR},
+		#{recentGoods,jdbcType=VARCHAR},
+		#{custNeed,jdbcType=VARCHAR},
+		#{isAccord,jdbcType=VARCHAR},
+		#{accordMark,jdbcType=VARCHAR},
+		#{otherRecentCoop,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateMemberExtendInfo" parameterType="com.deppon.crm.module.customer.shared.domain.MemberExtend">
+			<![CDATA[
+			UPDATE
+				T_CUST_CUSTBASEDATA_EXTEND
+		]]>
+		<set>
+<!-- 		<if test=" isSeason != null and '' != isSeason"> -->
+			<![CDATA[FISSEASON=#{isSeason,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" warnStatus != null and '' != warnStatus"> -->
+			<![CDATA[FWARNSTATUS=#{warnStatus,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" volumePotential != null and '' != volumePotential"> -->
+			<![CDATA[FVOLUMEPOTENTIAL=#{volumePotential,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" creditTimes != null and '' != creditTimes"> -->
+			<![CDATA[FCREDITTIMES=#{creditTimes,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" isPoorCredit != null and '' != isPoorCredit"> -->
+			<![CDATA[FISPOORCREDIT=#{isPoorCredit,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" lastWarnTime != null and '' != lastWarnTime"> -->
+			<![CDATA[FLASTWARNTIME=#{lastWarnTime,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" preDeliverytBeginTime != null and '' != preDeliverytBeginTime"> -->
+			<![CDATA[FPREDELIVERYTBEGINTIME=#{preDeliverytBeginTime,jdbcType=TIMESTAMP},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" preDeliverytEndTime != null and '' != preDeliverytEndTime"> -->
+			<![CDATA[FPREDELIVERYTENDTIME=#{preDeliverytEndTime,jdbcType=TIMESTAMP},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" lostCause != null and '' != lostCause"> -->
+			<![CDATA[FLOSTCAUSE=#{lostCause,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" otherLostCause != null and '' != otherLostCause"> -->
+			<![CDATA[FOTHERLOSTCAUSE=#{otherLostCause,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" seasonTims != null and '' != seasonTims"> -->
+			<![CDATA[FSEASONTIMS=#{seasonTims,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" isContinueMark != null and '' != isContinueMark"> -->
+			<![CDATA[FISCONTINUEMARK=#{isContinueMark,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" developmentPhase != null and '' != developmentPhase"> -->
+			<![CDATA[FDEVELOPMENTPHASE=#{developmentPhase,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" recentCoop != null and '' != recentCoop"> -->
+			<![CDATA[FRECENTCOOP=#{recentCoop,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" coopIntention != null and '' != coopIntention"> -->
+			<![CDATA[FCOOPINTENTION=#{coopIntention,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" recentGoods != null and '' != recentGoods"> -->
+			<![CDATA[FRECENTGOODS=#{recentGoods,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" custNeed != null and '' != custNeed"> -->
+			<![CDATA[FCUSTNEED=#{custNeed,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" isAccord != null and '' != isAccord"> -->
+			<![CDATA[FISACCORD=#{isAccord,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" accordMark != null and '' != accordMark"> -->
+			<![CDATA[FACCORDMARK=#{accordMark,jdbcType=VARCHAR},]]>
+<!-- 		</if> -->
+<!-- 		<if test=" otherRecentCoop != null and '' != otherRecentCoop"> -->
+			<![CDATA[FOTHERRECENTCOOP=#{otherRecentCoop,jdbcType=VARCHAR}]]>
+<!-- 		</if> -->
+		</set>
+		WHERE FCUSTID=#{custId,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="insertMemberBaseInfo" parameterType="com.deppon.crm.module.customer.shared.domain.Member">
+	<![CDATA[
+		INSERT INTO T_CUST_CUSTBASEDATA(
+		FID,FCREATETIME,FCREATEUSERID,
+		FCUSTNUMBER,FDEGREE,
+		FCUSTNAME,FTRADEID,FCUSTTYPE,FTAXREGNUMBER,
+		FCOMPANYPROPERTY,FCUSTNATURE,FPROVINCE,FPROVINCEID,
+		FCITY,FCITYID,FISSPECIAL,
+		FISREDEEMPOINTS,FISIMPORTCUSTOR,FISACCEPTMARKET,
+		FBRANDWORTH,FCHANNELSOURCE,FCHANNEL,FPREFERENCESERVICE,
+		FCOMPANYSCOP,FLASTYEARPROFIT,FLASTYEARINCOME,FISFOCUSPAY,
+		FFOCUSDEPTID,FBILLTITLE,FISPARENTCOMPANY,FPARENTCOMPANYID,fparentNumber,
+		FREGISTERFUND,FPROCREDIT,FRECOMMENDCUST,FREMARK,
+		FSIMPLENAME,FISTRANGOODS,FAREAID,
+		FDEPTID,FCONTACTID,
+		FCUSTSTATUS,FRESPONSIBILLITY,FVERSIONNUMBER,
+		FFOCUSDEPTNAME,FCOMPADDR,FERPID,
+		FSECONDTRADE,FPOTENSOURCE,FCUSTCATEGORY,FCUSTGROUP)
+		 values(
+		#{id,jdbcType=VARCHAR},	sysdate,#{createUser,jdbcType=VARCHAR},
+		#{custNumber,jdbcType=VARCHAR},#{degree,jdbcType=VARCHAR},
+		#{custName,jdbcType=VARCHAR},#{tradeId,jdbcType=VARCHAR},
+		#{custType,jdbcType=VARCHAR},#{taxregNumber,jdbcType=VARCHAR},
+		#{companyProperty,jdbcType=VARCHAR},#{custNature,jdbcType=VARCHAR},
+		#{province,jdbcType=VARCHAR},#{provinceId,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR},
+		#{isSpecial,jdbcType=NUMERIC},#{isRedeempoints,jdbcType=NUMERIC},
+		#{isImportCustor,jdbcType=NUMERIC},	#{isAcceptMarket,jdbcType=NUMERIC},
+		#{brandWorth,jdbcType=VARCHAR},#{channelSource,jdbcType=VARCHAR},
+		#{channel,jdbcType=VARCHAR},#{preferenceService,jdbcType=VARCHAR},
+		#{companyScop,jdbcType=VARCHAR},#{lastYearProfit,jdbcType=NUMERIC},
+		#{lastYearIncome,jdbcType=NUMERIC},#{isFocusPay,jdbcType=NUMERIC},
+		#{focusDeptId,jdbcType=VARCHAR},#{billTitle,jdbcType=VARCHAR},
+		#{isParentCompany,jdbcType=NUMERIC},#{parentCompanyId,jdbcType=VARCHAR},
+		#{parentNumber,jdbcType=VARCHAR},#{registerFund,jdbcType=NUMERIC},
+		#{procRedit,jdbcType=NUMERIC},#{recommendCust,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},#{simpleName,jdbcType=VARCHAR},
+		#{isTranGoods,jdbcType=NUMERIC},#{areaId,jdbcType=VARCHAR},
+		#{deptId,jdbcType=VARCHAR},#{mainContact.id,jdbcType=VARCHAR},
+		#{custStatus,jdbcType=VARCHAR},#{responsibillity,jdbcType=VARCHAR},
+		#{versionNumber,jdbcType=NUMERIC},#{focusDeptName,jdbcType=VARCHAR},
+		#{registAddress,jdbcType=VARCHAR},#{erpId,jdbcType=VARCHAR},
+		#{secondTrade,jdbcType=VARCHAR},#{potenSource,jdbcType=VARCHAR},
+		#{custCategory,jdbcType=VARCHAR},#{custGroup,jdbcType=VARCHAR}
+		)
+	]]>
+	</insert>
+
+	<insert id="insertShuttleAddress"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ShuttleAddress">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_shuttleaddress.nextval as id FROM DUAL
+		</selectKey>
+	<![CDATA[
+		insert into t_cust_shuttleaddress(
+		FID,FCREATETIME,FCREATEUSERID,
+		FMEMBERID,FADDRESSTYPE,
+		FADDRESS,FPROVINCE,FCITY,FAREA,
+		FPOSTCODE,FSTATUS)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{memberId,jdbcType=VARCHAR},#{addressType,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR},
+		#{postcode,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR}
+		)
+	]]>
+	</insert>
+
+	<insert id="insertContact"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Contact">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_custlinkman.nextval as id FROM DUAL
+		</selectKey>
+	<![CDATA[
+		insert into t_cust_custlinkman(
+		FID,FCREATETIME,FCREATEUSERID,
+		FNUMBER,FNAME,
+		FIDCARD,FLINKMANTYPE,FISMAINLINKMAN,FSEX,
+		FOFFERTEL,FMOBILETEL,FDUTY,FDUTYDEPT,
+		FBORNDATE,FGAINAVE,FDECISIONRIGHT,FNATIVEPLACE,
+		FPERSONLOVE,FFOLK,FEMAIL,FQQNUMBER,
+		FMSN,FWW,FACCEPTDEPTID,
+		FSTATUS,FDEFAULTID,FVERSIONID,FCUSTID,FIDTYPE,FBELONGCUSTTYPE,
+		FFAX)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{number,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},
+		#{idCard,jdbcType=VARCHAR},#{linkmanType,jdbcType=VARCHAR},
+		#{isMainLinkMan,jdbcType=NUMERIC},#{sex,jdbcType=VARCHAR},
+		#{telPhone,jdbcType=VARCHAR},#{mobilePhone,jdbcType=VARCHAR},
+		#{duty,jdbcType=VARCHAR},#{dutyDept,jdbcType=VARCHAR},
+		#{bornDate,jdbcType=DATE},#{gainave,jdbcType=VARCHAR},
+		#{decisionRight,jdbcType=VARCHAR},#{nativePlace,jdbcType=VARCHAR},
+		#{personLove,jdbcType=VARCHAR},#{folk,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},#{qqNumber,jdbcType=VARCHAR},
+		#{msn,jdbcType=VARCHAR},#{ww,jdbcType=VARCHAR},
+		#{acceptDeptid,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},#{defaultId,jdbcType=VARCHAR},
+		#{versionId,jdbcType=VARCHAR},#{custId,jdbcType=VARCHAR},
+		#{cardTypeCon,jdbcType=VARCHAR},
+		#{belongCustType,jdbcType=VARCHAR},
+		#{ffax,jdbcType=VARCHAR}
+		)
+	]]>
+	</insert>
+
+	<insert id="insertAccount"
+		parameterType="com.deppon.crm.module.customer.shared.domain.Account">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_account.nextval as id FROM DUAL
+		</selectKey>
+	<![CDATA[
+		insert into t_cust_account(
+		FID,FCREATETIME,FCREATEUSERID,
+		FBANK,FBANKID,
+		FSUBBANKNAME,FSUBBANKNAMEID,FISDEFAULTACCOUNT,FBANKACCOUNT,
+		FCOUNTNAME,FRELATION,FBANKPROVINCEID,FACCOUNTNATURE,
+		FACCOUNTUSE,FBANKCITYID,FFINANCELINKMAN,FFINANCELINKMANID,
+		FLINKMANMOBILE,FLINKMANPHONE,FBANKAREA,FLASTUPDATEDEPTID,
+		FCREATEDEPTID,FBELONGCUSTOM,FSTATUS,fbankProvinceName,fbankCityName)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{bank,jdbcType=VARCHAR},#{bankId,jdbcType=VARCHAR},
+		#{subBankname,jdbcType=VARCHAR},#{subBanknameId,jdbcType=VARCHAR},
+		#{isdefaultaccount,jdbcType=NUMERIC},#{bankAccount,jdbcType=VARCHAR},
+		#{countName,jdbcType=VARCHAR},#{relation,jdbcType=VARCHAR},
+		#{bankProvinceId,jdbcType=VARCHAR},#{accountNature,jdbcType=VARCHAR},
+		#{accountUse,jdbcType=VARCHAR},#{bankCityId,jdbcType=VARCHAR},
+		#{financeLinkman,jdbcType=VARCHAR},#{financeLinkmanId,jdbcType=VARCHAR},
+		#{linkManMobile,jdbcType=VARCHAR},#{linkManPhone,jdbcType=VARCHAR},
+		#{bankArea,jdbcType=VARCHAR},#{lastUpdateDeptId,jdbcType=VARCHAR},
+		#{createDeptId,jdbcType=VARCHAR},#{belongcustom,jdbcType=NUMERIC},
+		#{status,jdbcType=VARCHAR},#{bankProvinceName,jdbcType=VARCHAR},
+		#{bankCityName,jdbcType=VARCHAR}
+		)
+	]]>
+	</insert>
+
+	<insert id="insertPreferenceAddress"
+		parameterType="com.deppon.crm.module.customer.shared.domain.PreferenceAddress">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_PreferenceAddress.nextval as id FROM DUAL
+		</selectKey>
+	<![CDATA[
+	insert into t_cust_PreferenceAddress(
+	FID,FCREATETIME,FCREATEUSERID,
+	FADDRESSTYPE,FADDRESS,
+	FSTARTTIME,FENDTIME,FBILLREQUEST,FHASSTOPCOST,
+	FPAYTYPE,FISSENDTOFLOOR,FOTHERNEED,FSHUTTLEADDRESSID,
+	FLINKMANID,Fstatus,fisMainAddress)
+	 values(
+	#{id,jdbcType=VARCHAR},
+	sysdate,#{createUser,jdbcType=VARCHAR},
+	#{addressType,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},
+	#{startTime,jdbcType=TIME},#{endTime,jdbcType=TIME},
+	#{billRequest,jdbcType=VARCHAR},#{hasStopCost,jdbcType=VARCHAR},
+	#{payType,jdbcType=VARCHAR},#{isSendToFloor,jdbcType=NUMERIC},
+	#{otherNeed,jdbcType=VARCHAR},#{shuttleAddressId,jdbcType=VARCHAR},
+	#{linkManId,jdbcType=VARCHAR },#{status,jdbcType=VARCHAR },
+	#{isMainAddress,jdbcType=VARCHAR}
+	)
+	]]>
+	</insert>
+
+	<select id="countMemberByCustNumber" resultType="int"
+		parameterType="string">
+		SELECT COUNT(*)
+		FROM
+			T_CUST_CUSTBASEDATA
+		WHERE
+		FCUSTNUMBER = #{custNumber,jdbcType=VARCHAR}
+		AND FLASTUPDATETIME IS NOT NULL
+	</select>
+
+	<select id="getMemberCountByTaxregNumber" resultType="int"
+		parameterType="string">
+		select count(*) from t_cust_custbasedata where
+		t_cust_custbasedata.ftaxregnumber = #{taxregNumber}
+		and t_cust_custbasedata.fcuststatus != 2
+	</select>
+
+	<select id="getMemberListByTaxregNumber" resultType="map" parameterType="string">
+	   select depart.fdeptname depart,fcustnumber cust
+	   from t_cust_custbasedata cust
+	   join t_org_department depart on cust.fdeptid=depart.fid
+	   where cust.fcuststatus in('0','1') and cust.ftaxregnumber=#{taxregnumber}
+	</select>
+
+	<select id="getMemberListByPersonalcardNumber" resultType="map" parameterType="map">
+	   select department.fdeptname depart,customer.fcustnumber cust from t_cust_custlinkman linkman
+       left join t_cust_custbasedata customer on linkman.fcustid=customer.fid
+       left join t_org_department department on customer.fdeptid=department.fid
+       where linkman.fidcard = #{idCard}
+	     and linkman.fidType = #{cardTypeCon}
+	     and customer.fcusttype = #{custType}
+	     and linkman.fismainlinkman = #{isMain}
+	     and linkman.FSTATUS != 2
+	</select>
+
+	<!-- 散客升级列表对应的sql语句 -->
+	<update id="updateUpGradeCustomerById" parameterType="map">
+		update
+		t_cust_upgradelist set
+		fremark = #{remark},
+		flastupdatetime = sysdate,
+		FLASTMODIFYUSERID = #{modifyUser}
+		where fid = #{id}
+	</update>
+
+	<!-- 散客升级列表删除散客信息 -->
+	<update id="deleteScatterUpgradeById" parameterType="map">
+		delete
+		from t_cust_upgradelist where fid in (${upGradeCustId})
+	</update>
+
+	<select id="getCountUpGradeCustomerByUpGradeCustomerCondition"
+		parameterType="com.deppon.crm.module.customer.shared.domain.UpGradeCustomer"
+		resultType="int">
+		select
+		count(*)
+		from t_cust_upgradelist
+		<where>
+			<if test=" statisticsTime != null  and statisticsTime != ''  ">
+				and FSTATISTICSTIME=#{statisticsTime,jdbcType=VARCHAR}
+			</if>
+			<if test=" depts != null and depts.size != 0 ">
+				AND FBELONGDEPTID in
+				<foreach collection="depts" open="(" close=")" separator=","
+					item="dept">
+					${dept}
+				</foreach>
+			</if>
+			<if test=" custName != null  and custName != ''  ">
+			<![CDATA[and FCUSTNAME like '%${custName}%']]>
+			</if>
+			<if test=" contactName != null  and contactName != ''  ">
+			<![CDATA[and FCONTACTNAME like '%${contactName}%']]>
+			</if>
+			<if test=" phone != null  and phone != ''  ">
+			<![CDATA[and FCONTACTPHONE=#{phone,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" tel != null  and tel != ''  ">
+			<![CDATA[and FTARGETLEVEL=#{tel,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" nowLevel != null  and nowLevel != ''  ">
+			<![CDATA[and FCURRENTLEVEL=#{nowLevel,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" targetLevel != null  and targetLevel != ''  ">
+			<![CDATA[and FTARGETLEVEL=#{targetLevel,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" custNumber != null  and custNumber != ''  ">
+			<![CDATA[and FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}]]>
+			</if>
+		</where>
+	</select>
+
+
+	<select id="getAllTargetLevelByPhone" parameterType="string"
+		resultType="string">
+		select FTARGETLEVEL from t_cust_upgradelist
+		where
+		FCONTACTPHONE=#{phone,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getAllTargetLevelByTelAndName" parameterType="map"
+		resultType="string">
+		select FTARGETLEVEL from t_cust_upgradelist
+		where
+		FCONTACTTEL=#{tel,jdbcType=VARCHAR}
+		and
+		FCONTACTNAME=#{contactName,jdbcType=VARCHAR}
+	</select>
+
+
+	<select id="searchUpGradeCustomerList"
+		parameterType="com.deppon.crm.module.customer.shared.domain.UpGradeCustomer"
+		resultMap="UpGradeCustomerRM">
+		select
+		<include refid="UpGradeCustomer_column" />
+		from t_cust_upgradelist
+		<where>
+		<if test=" statisticsTime != null  and statisticsTime != ''  ">
+			and FSTATISTICSTIME=#{statisticsTime,jdbcType=VARCHAR}
+		</if>
+		<if test=" depts != null and depts.size != 0 ">
+			AND FBELONGDEPTID in
+			<foreach collection="depts" open="(" close=")" separator=","
+				item="dept">
+				${dept}
+			</foreach>
+		</if>
+		<if test=" custName != null  and custName != ''  ">
+		<![CDATA[and FCUSTNAME like #{custName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactName != null  and contactName != ''  ">
+		<![CDATA[and FCONTACTNAME like #{contactName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" phone != null  and phone != ''  ">
+		<![CDATA[and FCONTACTPHONE=#{phone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" tel != null  and tel != ''  ">
+		<![CDATA[and FCONTACTTEL=#{tel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" nowLevel != null  and nowLevel != ''  ">
+		<![CDATA[and FCURRENTLEVEL=#{nowLevel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" targetLevel != null  and targetLevel != ''  ">
+		<![CDATA[and FTARGETLEVEL=#{targetLevel,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custNumber != null  and custNumber != ''  ">
+		<![CDATA[and FCUSTNUMBER=#{custNumber,jdbcType=VARCHAR}]]>
+		</if>
+		</where>
+		order by FCREATETIME DESC
+	</select>
+
+	<select id="getUpGradeCustomerById" parameterType="string"
+		resultMap="UpGradeCustomerRM">
+		select
+		<include refid="UpGradeCustomer_column" />
+		from t_cust_upgradelist
+		where fid = #{id}
+	</select>
+
+	<delete id="deleteUpGradeCustomerByNumber" parameterType="string">
+		delete
+		from t_cust_upgradelist where FCUSTNUMBER = #{custNumber}
+	</delete>
+
+	<delete id="deleteUpGradeCustomerByTelAndName" parameterType="map">
+		delete from t_cust_upgradelist where FCONTACTNAME = #{name} and
+		FCONTACTTEL = #{tel}
+	</delete>
+
+	<sql id="UpGradeCustomer_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID ,
+		FBELONGDEPTID,
+		FCURRENTLEVEL,
+		FREMARK,
+		FSTATUS,
+		FBELONGDEPTNAME,
+		FCUSTNAME,
+		FCONTACTNAME,
+		FCONTACTPHONE,
+		FCONTACTTEL,
+		FTARGETLEVEL,
+		FCUSTNUMBER,
+		FSTATISTICSTIME
+	</sql>
+
+	<resultMap id="UpGradeCustomerRM"
+		type="com.deppon.crm.module.customer.shared.domain.UpGradeCustomer">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID "
+			jdbcType="VARCHAR" />
+		<result property="belongDeptId" column="FBELONGDEPTID"
+			jdbcType="VARCHAR" />
+		<result property="currentlevel" column="FCURRENTLEVEL"
+			jdbcType="VARCHAR" />
+		<result property="remark" column="FREMARK" jdbcType="VARCHAR" />
+		<result property="status" column="FSTATUS" jdbcType="VARCHAR" />
+		<result property="belongdeptName" column="FBELONGDEPTNAME"
+			jdbcType="VARCHAR" />
+		<result property="custName" column="FCUSTNAME" jdbcType="VARCHAR" />
+		<result property="contactName" column="FCONTACTNAME" jdbcType="VARCHAR" />
+		<result property="contactPhone" column="FCONTACTPHONE"
+			jdbcType="VARCHAR" />
+		<result property="contactTel" column="FCONTACTTEL" jdbcType="VARCHAR" />
+		<result property="targetLevel" column="FTARGETLEVEL" jdbcType="VARCHAR" />
+		<result property="custNumber" column="FCUSTNUMBER" jdbcType="VARCHAR" />
+		<result property="statisticsTime" column="FSTATISTICSTIME"
+			jdbcType="VARCHAR" javaType="string" />
+	</resultMap>
+
+	<select id="getMemberUpgraeByStatisticsTime"
+			parameterType="string" resultMap="MemberUpgradeListRM">
+		select
+		<include refid="MemberUpgradeList_column" />
+		from t_cust_memberliftlist ML
+		where flifttype = 1
+		and FSTATISTICSTIME=#{statisticsTime,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getCountMemberListByCondition"
+		parameterType="com.deppon.crm.module.customer.shared.domain.UpGradeCustomerCondition"
+		resultType="int">
+		select
+			count(*)
+		<include refid="searchMemberListByCondition_condition"/>
+	</select>
+
+	<select id="searchMemberList"
+		parameterType="com.deppon.crm.module.customer.shared.domain.UpGradeCustomerCondition"
+		resultMap="MemberUpgradeListRM">
+		select
+		<include refid="MemberUpgradeList_column" />
+		<include refid="searchMemberListByCondition_condition"/>
+	</select>
+
+	<sql id = "searchMemberListByCondition_condition">
+		<![CDATA[from t_cust_memberliftlist ML
+		join t_cust_custlinkman LM
+		on ML.FmemberId = LM.FCUSTID
+		where LM.FSTATUS <>2 AND ML.flifttype = #{lifttype}]]>
+		AND LM.FISMAINLINKMAN ='1'
+		<if test="condition != null">
+			<if test="condition.statisticsTime != null  and condition.statisticsTime != ''  ">
+				and ML.FSTATISTICSTIME=#{condition.statisticsTime}
+			</if>
+			<if test=" condition.depts != null and condition.depts.size != 0 ">
+				AND ML.FBELONGDEPTID in
+				<foreach collection="condition.depts" open="(" close=")" separator=","
+					item="dept">
+					${dept}
+				</foreach>
+			</if>
+			<if test=" condition.custName != null  and condition.custName != ''  ">
+			<![CDATA[and ML.fcustName like #{condition.custName}]]>
+			</if>
+			<if test=" condition.contactName != null  and condition.contactName != ''  ">
+			<![CDATA[and LM.fname like #{condition.contactName}]]>
+			</if>
+			<if test=" condition.phone != null  and condition.phone != ''  ">
+			<![CDATA[and LM.fmobiletel=#{condition.phone}]]>
+			</if>
+			<if test=" condition.tel != null  and condition.tel != ''  ">
+			<![CDATA[and LM.foffertel=#{condition.tel}]]>
+			</if>
+			<if test=" condition.nowLevel != null  and condition.nowLevel != ''  ">
+			<![CDATA[and ML.FCURRENTLEVEL=#{condition.nowLevel}]]>
+			</if>
+			<if test=" condition.targetLevel != null  and condition.targetLevel != ''  ">
+			<![CDATA[and ML.FTARGETLEVEL=#{condition.targetLevel}]]>
+			</if>
+		</if>
+	</sql>
+
+	<sql id = "MemberUpgradeList_column">
+		ML.FID,
+		ML.FCREATETIME,
+		ML.FCREATEUSERID,
+		ML.FLASTUPDATETIME,
+		ML.FLASTMODIFYUSERID,
+		ML.FCUSTNUMBER,
+		ML.FCUSTNAME,
+		ML.FLINKNAME,
+		ML.FLINKPHONE,
+		ML.FLINKTEL,
+		ML.FCURRENTLEVEL,
+		ML.FTARGETLEVEL,
+		ML.FBELONGDEPTID,
+		ML.FBELONGDEPTNAME
+	</sql>
+
+	<resultMap id="MemberUpgradeListRM"
+	 type="com.deppon.crm.module.customer.shared.domain.MemberUpgradeList">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="custNumber" column="FCUSTNUMBER" jdbcType = "VARCHAR" />
+		<result property="custName" column="FCUSTNAME" jdbcType = "VARCHAR" />
+		<result property="linkName" column="FLINKNAME" jdbcType = "VARCHAR" />
+		<result property="linkPhone" column="FLINKPHONE" jdbcType = "VARCHAR" />
+		<result property="linkTel" column="FLINKTEL" jdbcType = "VARCHAR" />
+		<result property="currentLevel" column="FCURRENTLEVEL" jdbcType = "VARCHAR" />
+		<result property="targetLevel" column="FTARGETLEVEL" jdbcType = "VARCHAR" />
+		<result property="belongDeptId" column="FBELONGDEPTID" jdbcType = "VARCHAR" />
+		<result property="belongDeptName" column="FBELONGDEPTNAME" jdbcType = "VARCHAR" />
+	</resultMap>
+
+	<select id="getMemberDemotionByStatisticsTime" parameterType="string" resultMap="MemberDemotionListRM">
+		select
+		<include refid="MemberDemotionList_column" />
+		from t_cust_memberliftlist
+		where flifttype = 2
+		and FSTATISTICSTIME=#{statisticsTime,jdbcType=VARCHAR}
+	</select>
+
+	<sql id="MemberDemotionList_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCUSTNUMBER,
+		FCUSTNAME,
+		FLINKNAME,
+		FLINKPHONE,
+		FLINKTEL,
+		FCURRENTLEVEL,
+		FTARGETLEVEL,
+		FBELONGDEPTID,
+		FBELONGDEPTNAME
+	</sql>
+
+	<resultMap id="MemberDemotionListRM"
+	 type="com.deppon.crm.module.customer.shared.domain.MemberDemotionList">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="custNumber" column="FCUSTNUMBER" jdbcType = "VARCHAR" />
+		<result property="custName" column="FCUSTNAME" jdbcType = "VARCHAR" />
+		<result property="linkName" column="FLINKNAME" jdbcType = "VARCHAR" />
+		<result property="linkPhone" column="FLINKPHONE" jdbcType = "VARCHAR" />
+		<result property="linkTel" column="FLINKTEL" jdbcType = "VARCHAR" />
+		<result property="currentLevel" column="FCURRENTLEVEL" jdbcType = "VARCHAR" />
+		<result property="targetLevel" column="FTARGETLEVEL" jdbcType = "VARCHAR" />
+		<result property="belongDeptId" column="FBELONGDEPTID" jdbcType = "VARCHAR" />
+		<result property="belongDeptName" column="FBELONGDEPTNAME" jdbcType = "VARCHAR" />
+	</resultMap>
+
+	<insert id="insertMothlyStatement" parameterType="map" >
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_membermonthlyStatement.nextval as id FROM DUAL
+		</selectKey>
+		insert into t_cust_membermonthlyStatement(fid,fmemberId,fmonthlyStatement)
+			 values(
+			#{id,jdbcType=VARCHAR},
+			#{memberId,jdbcType=VARCHAR},
+			#{monthlyStatement,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateMothlyStatementByMemberId" parameterType="map">
+		UPDATE T_CUST_MEMBERMONTHLYSTATEMENT
+		SET FMONTHLYSTATEMENT = #{monthlyStatement},
+		FLASTUPDATETIME = SYSDATE,
+		FLASTMODIFYUSERID = #{modifyUser}
+		WHERE FMEMBERID = #{memberId}
+	</update>
+
+	<select id="getMothlyStatementBymemberId" parameterType="map"
+		resultType="double">
+		SELECT FMONTHLYSTATEMENT FROM T_CUST_MEMBERMONTHLYSTATEMENT
+		WHERE FMEMBERID = #{memberId}
+	</select>
+
+	<select id="getMemberListByLinkManNumber" parameterType="string"
+		resultType="map">
+		SELECT DEPARTMENT.FDEPTNAME DEPART,CUSTOMER.FCUSTNUMBER
+		CUST FROM T_CUST_CUSTLINKMAN LINKMAN
+		LEFT JOIN T_CUST_CUSTBASEDATA CUSTOMER ON LINKMAN.FCUSTID=CUSTOMER.FID
+		LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT ON
+		CUSTOMER.FDEPTID=DEPARTMENT.FID
+		WHERE LINKMAN.FNUMBER = #{linkManNumber}
+		AND LINKMAN.FSTATUS != 2
+	</select>
+
+	<select id="getMemberListByCustnameAndContact" parameterType="string"
+		resultType="map">
+		SELECT DEPARTMENT.FDEPTNAME DEPART,CUSTOMER.FCUSTNUMBER CUST FROM
+		T_CUST_CUSTLINKMAN LINKMAN
+		LEFT JOIN T_CUST_CUSTBASEDATA CUSTOMER ON LINKMAN.FCUSTID=CUSTOMER.FID
+		LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT ON
+		CUSTOMER.FDEPTID=DEPARTMENT.FID
+		WHERE LINKMAN.FNAME = #{custName}
+		AND LINKMAN.FOFFERTEL = #{telephone}
+		AND LINKMAN.FSTATUS != 2
+	</select>
+
+	<select id="getMemberListByCellphone" parameterType="string"
+		resultType="map">
+		SELECT DEPARTMENT.FDEPTNAME DEPART,CUSTOMER.FCUSTNUMBER CUST FROM
+		T_CUST_CUSTLINKMAN LINKMAN
+		LEFT JOIN T_CUST_CUSTBASEDATA CUSTOMER ON LINKMAN.FCUSTID=CUSTOMER.FID
+		LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT ON
+		CUSTOMER.FDEPTID=DEPARTMENT.FID
+		WHERE LINKMAN.FMOBILETEL=#{telephone}
+		AND LINKMAN.FSTATUS != 2
+	</select>
+
+		<resultMap id="ChannelCustomerRM"
+	 type="com.deppon.crm.module.customer.shared.domain.ChannelCustomer">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="custName" column="FCUSTNAME" jdbcType = "VARCHAR" />
+		<result property="mobilePhone" column="FMOBILE" jdbcType = "DATE" />
+		<result property="telPhone" column="FTELEPHONE" jdbcType = "VARCHAR" />
+		<result property="linkManName" column="FCONTACTNAME" jdbcType = "VARCHAR" />
+		<result property="channelSource" column="FCHANNELSOURCE" jdbcType = "VARCHAR" />
+		<result property="email" column="FEMAIL" jdbcType = "VARCHAR" />
+		<result property="province" column="FPROVINCEID" jdbcType = "VARCHAR" />
+		<result property="provinceName" column="FPROVINCENAME" jdbcType = "VARCHAR" />
+		<result property="city" column="FCITYID" jdbcType = "VARCHAR" />
+		<result property="cityName" column="FCITYNAME" jdbcType = "VARCHAR" />
+		<result property="area" column="FAREAID" jdbcType = "VARCHAR" />
+		<result property="areaName" column="FAREANAME" jdbcType = "VARCHAR" />
+		<result property="address" column="FADDRESS" jdbcType = "VARCHAR" />
+		<result property="beforeLinkManName" column="FBEFORENAME" jdbcType = "VARCHAR" />
+		<result property="beforeMobilePhone" column="FBEFOREMOBILE" jdbcType = "VARCHAR" />
+		<result property="beforeTelPhone" column="FBEFORETELEPHONE" jdbcType = "VARCHAR" />
+	</resultMap>
+
+	<insert id="insertCreateChannelCustomer" parameterType="com.deppon.crm.module.customer.shared.domain.ChannelCustomer">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CHANNELCUSTOMER.NEXTVAL AS id FROM DUAL
+		</selectKey>
+	<![CDATA[
+		INSERT INTO T_CUST_CHANNELCUSTOMER(
+		  FID,
+		  FCUSTNAME,
+		  FMOBILE,
+		  FTELEPHONE,
+		  FCONTACTNAME,
+		  FCHANNELSOURCE,
+		  FEMAIL,
+		  FPROVINCEID,
+		  FPROVINCENAME,
+		  FCITYID,
+		  FCITYNAME,
+		  FAREAID,
+		  FAREANAME,
+		  FADDRESS,
+		  FBEFORENAME,
+		  FBEFOREMOBILE,
+		  FBEFORETELEPHONE)
+		 VALUES(
+			#{id,jdbcType=VARCHAR},
+			#{custName,jdbcType=VARCHAR},
+			#{mobilePhone,jdbcType=VARCHAR},
+			#{telPhone,jdbcType=VARCHAR},
+			#{linkManName,jdbcType=VARCHAR},
+			#{channelSource,jdbcType=VARCHAR},
+			#{email,jdbcType=VARCHAR},
+			#{province,jdbcType=VARCHAR},
+			#{provinceName,jdbcType=VARCHAR},
+			#{city,jdbcType=VARCHAR},
+			#{cityName,jdbcType=VARCHAR},
+			#{area,jdbcType=VARCHAR},
+			#{areaName,jdbcType=VARCHAR},
+			#{address,jdbcType=VARCHAR},
+			#{beforeLinkManName,jdbcType=VARCHAR},
+			#{beforeMobilePhone,jdbcType=VARCHAR},
+			#{beforeTelPhone,jdbcType=VARCHAR}
+		)
+	]]>
+	</insert>
+	<update id="updateChannelCustomer" parameterType="com.deppon.crm.module.customer.shared.domain.ChannelCustomer">
+		UPDATE T_CUST_CHANNELCUSTOMER
+		SET
+		<if test=" custName != null  and custName != ''  ">
+				<![CDATA[FCUSTNAME=#{custName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" mobilePhone != null  and mobilePhone != '' ">
+			<![CDATA[,FMOBILE=#{mobilePhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" telPhone != null  and telPhone != '' ">
+			<![CDATA[,FTELEPHONE=#{telPhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkManName != null  and linkManName != '' ">
+			<![CDATA[,FCONTACTNAME=#{linkManName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" channelSource != null  and channelSource != '' ">
+			<![CDATA[,FCHANNELSOURCE=#{channelSource,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" email != null  and email != '' ">
+			<![CDATA[,FEMAIL=#{email,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" province != null  and province != '' ">
+			<![CDATA[,FPROVINCEID=#{province,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" provinceName != null  and provinceName != '' ">
+			<![CDATA[,FPROVINCENAME=#{provinceName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" city != null  and city != '' ">
+			<![CDATA[,FCITYID=#{city,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" cityName != null  and cityName != '' ">
+			<![CDATA[,FCITYNAME=#{cityName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" area != null  and area != '' ">
+			<![CDATA[,FAREAID=#{area,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" areaName != null  and areaName != '' ">
+			<![CDATA[,FAREANAME=#{areaName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" address != null  and address != '' ">
+			<![CDATA[,FADDRESS=#{address,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beforeLinkManName != null  and beforeLinkManName != '' ">
+			<![CDATA[,FBEFORENAME=#{beforeLinkManName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beforeMobilePhone != null  and beforeMobilePhone != '' ">
+			<![CDATA[,FBEFOREMOBILE=#{beforeMobilePhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" beforeTelPhone != null  and beforeTelPhone != '' ">
+			<![CDATA[,FBEFORETELEPHONE=#{beforeTelPhone,jdbcType=VARCHAR}]]>
+		</if>
+		WHERE FID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<select id="queryChannelCustomerByUserName" resultMap="ChannelCustomerRM" parameterType="string">
+		SELECT
+		FID,
+		  FCUSTNAME,
+		  FMOBILE,
+		  FTELEPHONE,
+		  FCONTACTNAME,
+		  FCHANNELSOURCE,
+		  FEMAIL,
+		  FPROVINCEID,
+		  FPROVINCENAME,
+		  FCITYID,
+		  FCITYNAME,
+		  FAREAID,
+		  FAREANAME,
+		  FADDRESS,
+		  FBEFORENAME,
+		  FBEFOREMOBILE,
+		  FBEFORETELEPHONE
+		  FROM T_CUST_CHANNELCUSTOMER
+		  WHERE FCUSTNAME=#{custName,jdbcType=VARCHAR}
+	</select>
+	<select id="queryNeedWorkflowCustomer" resultMap="ChannelCustomerRM">
+		SELECT
+		CH.FID,
+		CH.FCUSTNAME,
+		CH.FMOBILE,
+		CH.FTELEPHONE,
+		CH.FCONTACTNAME,
+		CH.FCHANNELSOURCE,
+		CH.FEMAIL,
+		CH.FPROVINCEID,
+		CH.FPROVINCENAME,
+		CH.FCITYID,
+		CH.FCITYNAME,
+		CH.FAREAID,
+		CH.FAREANAME,
+		CH.FADDRESS,
+		CH.FBEFORENAME,
+		CH.FBEFOREMOBILE,
+		CH.FBEFORETELEPHONE
+		FROM T_CUST_CHANNELCUSTOMER CH
+		LEFT JOIN T_USER_CONTACTBIND CO
+		ON
+		CH.FCUSTNAME=CO.FUSERNAME
+		AND CO.FORDERSOURCE = 'ONLINE'
+		LEFT JOIN T_CUST_CUSTLINKMAN CL
+		ON
+		CO.FCONTACTID=CL.FID
+		LEFT JOIN T_CUST_CUSTBASEDATA CU ON
+		CL.FCUSTID=CU.FID
+		WHERE CU.FCUSTSTATUS=0
+		AND NOT EXISTS (SELECT 1 FROM
+		T_CUST_APPROVINGWORKFLOWDATA AP
+		WHERE CH.FMOBILE = AP.FCONTACTMOBILE
+		AND AP.FSTATUS=1
+		)
+		AND NOT EXISTS (SELECT 1 FROM
+		T_CUST_APPROVINGWORKFLOWDATA AP
+		WHERE CH.FTELEPHONE = AP.FCONTACTTEL
+		AND CH.FCONTACTNAME=AP.FCONTACTNAME
+		AND AP.FSTATUS=1)
+	</select>
+	<delete id="deleteChannelCustomerByIds" parameterType="list">
+		DELETE T_CUST_CHANNELCUSTOMER
+		WHERE FID IN
+		<foreach collection="list" open="(" close=")" separator="," item="item">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+
+	<!-- 获得一年没有开发日程的散客所在部门 -->
+	<select id="getScatterCustomerDeptLoseYear"  resultType="string" parameterType="map">
+		SELECT
+		    DISTINCT
+		    T.FDEPTID
+		    <![CDATA[
+		FROM T_CUST_CUSTBASEDATA T
+           LEFT JOIN (SELECT MAX(S.FCREATETIME) CREATETIME, S.FCUSTID
+                        FROM T_CUST_SCHEDULE S
+                       WHERE S.FCONTACTID IS NULL
+                       GROUP BY S.FCUSTID) T0 ON T0.FCUSTID =T.FID
+          WHERE ( T0.CREATETIME IS NULL
+             OR T0.CREATETIME < ADD_MONTHS(SYSDATE, -12) )
+             AND T.FCUSTSTATUS = 0 AND T.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+             ]]>
+	</select>
+
+		<!-- 查询失效一年的潜散客信息 部门 -->
+	<select id="queryPSCustDeptLoseYear" resultType="string" parameterType="map">
+		<![CDATA[
+			SELECT
+        		DISTINCT FDEPTID
+      		FROM
+            	T_CUST_CUSTBASEDATA PS
+        	WHERE
+          		PS.FCUSTSTATUS = 2  AND PS.FCUSTGROUP = #{custType,jdbcType=VARCHAR}
+          	AND
+          		PS.FLASTUPDATETIME<ADD_MONTHS(SYSDATE,-12)
+		 ]]>
+	</select>
+
+	<resultMap
+		type="com.deppon.crm.module.customer.shared.domain.CustomerMarktingDept"
+		id="CustomerMarktingDeptRM">
+		<result column="FID" property="id" />
+		<result column="FCUSTID" property="custId" />
+		<result column="FMARKTINGDEPT" property="marktingDept" />
+		<result column="FBELONGDEPT" property="belongDept" />
+		<result column="FCREATETIME" property="createDate" />
+		<result column="FCREATEUSER" property="createUser" />
+		<result column="FLASTUPDATETIME" property="modifyDate" />
+		<result column="FMODIFYUSER" property="modifyUser" />
+	</resultMap>
+
+	<insert id="createMemberMarktingDept" parameterType="com.deppon.crm.module.customer.shared.domain.CustomerMarktingDept">
+	<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT seq_id_marketdept.nextval as id FROM DUAL
+		</selectKey>
+	INSERT INTO T_CUST_MARKETDEPT ( FID ,
+	FCUSTID,
+	FDEPTID,
+	FALLOTTIME,
+	FCREATETIME,
+	FCREATEUSERID
+	)VALUEs(
+	#{id,jdbcType=VARCHAR},
+	#{custId,jdbcType=VARCHAR},
+	#{marktingDept,jdbcType=VARCHAR},
+	sysdate,
+	sysdate,
+	#{createUser,jdbcType=VARCHAR}	)
+	</insert>
+
+	<update id="updateMemberMarktingDept" parameterType="com.deppon.crm.module.customer.shared.domain.CustomerMarktingDept">
+		UPDATE T_CUST_MARKETDEPT
+		SET FLASTUPDATETIME=SYSDATE
+		<if test=" modifyUser != null  and modifyUser != '' ">
+			<![CDATA[,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" marktingDept != null  and marktingDept != '' ">
+			<![CDATA[,FDEPTID=#{marktingDept,jdbcType=VARCHAR}]]>
+		</if>
+	</update>
+
+	<select id="queryCustomerMarktingDeptByCustId" parameterType="string" resultMap="CustomerMarktingDeptRM">
+		SELECT   M.FID FID,
+		  M.FCUSTID FCUSTID,
+		  M.FDEPTID FMARKTINGDEPT,
+		  M.FALLOTTIME  FALLOTTIME,
+		  M.FCREATETIME FCREATETIME,
+		  M. FCREATEUSERID FCREATEUSER ,
+		  M. FLASTUPDATETIME  FLASTUPDATETIME ,
+	  	  M.FLASTMODIFYUSERID  FMODIFYUSER,
+	  	  C.FDEPTID FBELONGDEPT
+	  	  FROM T_CUST_MARKETDEPT M
+	  	  INNER JOIN T_CUST_CUSTBASEDATA C
+	  	  ON M.FCUSTID=C.FID
+	  	  WHERE M.FCUSTID = #{deptId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryCustMarktingDeptByFirstShip" resultMap="CustomerMarktingDeptRM">
+		SELECT M.FID               FID,
+		       C.FID           FCUSTID,
+		       CU.FDEPTID          FMARKTINGDEPT,
+		       M.FALLOTTIME        FALLOTTIME,
+		       M.FCREATETIME       FCREATETIME,
+		       M.FCREATEUSERID     FCREATEUSER,
+		       M.FLASTUPDATETIME   FLASTUPDATETIME,
+		       M.FLASTMODIFYUSERID FMODIFYUSER,
+		       C.FDEPTID           FBELONGDEPT
+		  FROM T_CRM_CUSTANALYSEBYDAY CU
+		  LEFT JOIN T_CUST_CUSTBASEDATA C ON CU.FCUSTID = C.FID
+		  LEFT JOIN T_CUST_MARKETDEPT M ON C.FID = M.FCUSTID
+		 WHERE C.FCUSTNATURE = 'ARRIVE_CUSTOMER'
+		   AND C.FCUSTGROUP = 'SC_CUSTOMER'
+		   AND CU.FCANALYSETYPE = 1
+	</select>
+
+	<!-- 开发阶段日志保存 -->
+	<insert id="insertDevelopmentLog" parameterType="com.deppon.crm.module.customer.shared.domain.DevelopmentLog">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+				<![CDATA[
+					SELECT SEQ_ID_DEVELOPMEMTLOG.NEXTVAL FROM DUAL
+				]]>
+		</selectKey>
+		INSERT INTO
+			T_CUST_DEVELOPMENTLOG (FID,
+								   FCURRENTSTAGE,
+								   FNEXTSTAGE,
+								   FCUSTID,
+								   FCREATETIME,
+								   FCREATEUSERID
+								   )
+		VALUES(
+			#{id,jdbcType=NUMERIC},
+			#{currentStage,jdbcType=VARCHAR},
+			#{nextStage,jdbcType=VARCHAR},
+			#{custId,jdbcType=NUMERIC},
+			sysdate,
+			#{createUser,jdbcType=NUMERIC}
+		)
+	</insert>
+
+	<!-- 查询开发阶段日志 -->
+	<select id="queryDevelopmentLog" parameterType="string"
+		resultType="map">
+		select
+			*
+		from
+			t_cust_developmentlog
+		where
+			fcustid = #{custId}
+	</select>
+	
+	<!-- 查询进行中商机信息 -->
+	<select id="queryBusinessOpportunityByCustId" parameterType="string"
+		resultMap="BusinessOpportunity">
+		<![CDATA[ SELECT ]]>
+		<include refid="BusinessOpportunityColumns" />
+		<include refid="queryBusinessOpportunityFrom" />
+		<![CDATA[ WHERE FBUSINESSSTATUS IN ('ONGOING', 'EXTENDED', 'DORMANT') AND BO.FCUSTID = #{custId} ]]>
+	</select>
+		
+	<sql id="BusinessOpportunityColumns">
+		<![CDATA[
+			BO.FID,
+			BO.FBUSINESSCODE,
+			BO.FBUSINESSNAME,
+			BO.FBUSINESSDESC,
+			BO.FCUSTID,
+			BO.FOPERATOR,
+			BO.FFORECASTSUCCESSTIME,
+			BO.FBUSINESSSTEP,
+			BO.FBUSINESSSTATUS,
+			BO.FFORECASTAMOUNT,
+			BO.FFORECASTSUCCESSRATE,
+			BO.FISHASBUSINESS,
+			BO.FCUSTREQUIREMENT,
+			BO.FSOLUTIONS,
+			BO.FISBIDDINGPROJECT,
+			BO.FCOMPETITION,
+			BO.FFAILREASON,
+			BO.FFAILREASONCODE,
+			BO.FCREATETIME,
+			BO.FCREATEUSERID,
+			BO.FLASTMODIFYTIME,
+			BO.FLASTMODIFYUSERID,
+			BO.FDEPTID,
+			DEPT.FDEPTNAME,
+			CUS.FCUSTNAME           AS FCUSTNAME,
+			CUS.FCUSTNUMBER         AS FCUSTNUMBER,
+			CUS.FTRADEID            AS FFIRSTTRADE,
+			CUS.FSECONDTRADE        AS FSECONDTRADE,
+			MAN.FID                 AS FLINKMANID,
+			MAN.FNAME               AS FLINKMANNAME,
+			MAN.FOFFERTEL           AS FLINKMANPHONE,
+			MAN.FMOBILETEL          AS FLINKMANMOBILE,
+			EMC.FEMPCODE            AS FCREATORCODE,
+			EMC.FEMPNAME            AS FCREATORNAME,
+			EMO.FEMPCODE            AS FOPERATORCODE,
+			EMO.FEMPNAME            AS FOPERATORNAME,
+			EMM.FEMPCODE            AS FMODIFIERCODE,
+			EMM.FEMPNAME            AS FMODIFIERNAME
+			]]>
+	</sql>
+	
+	<sql id="queryBusinessOpportunityFrom">
+		<![CDATA[ FROM T_MARK_BUSINESSOPPORTUNITY BO
+					  LEFT JOIN T_CUST_CUSTBASEDATA CUS
+					    ON BO.FCUSTID = CUS.FID
+					  LEFT JOIN T_CUST_CUSTLINKMAN MAN
+					    ON CUS.FID = MAN.FCUSTID
+					   AND MAN.FISMAINLINKMAN = 1   
+					  LEFT JOIN T_ORG_DEPARTMENT DEPT
+					    ON BO.FDEPTID = DEPT.FID
+					  LEFT JOIN T_ORG_EMPLOYEE EMC
+					    ON BO.FCREATEUSERID = EMC.FID
+					  LEFT JOIN T_ORG_EMPLOYEE EMO
+					    ON BO.FOPERATOR = EMO.FID
+					  LEFT JOIN T_ORG_EMPLOYEE EMM
+					    ON BO.FLASTMODIFYUSERID = EMM.FID
+					   ]]>
+	</sql>
+	
+	<!-- 商机信息表修改 -->
+	<update id="updateBusinessOpportunityById"
+		parameterType="com.deppon.crm.module.customer.shared.domain.BusinessOpportunity">
+		<![CDATA[ UPDATE T_MARK_BUSINESSOPPORTUNITY SET ]]>
+		<if test="boStep != null and boStep != ''">
+				<![CDATA[ FBUSINESSSTEP = #{boStep,jdbcType=VARCHAR}, ]]>
+		</if>
+		<![CDATA[ 
+			FLASTMODIFYTIME = #{modifyTime,jdbcType=TIMESTAMP}, 
+			FLASTMODIFYUSERID = #{modifier.id,jdbcType=VARCHAR}
+		WHERE FID =	#{id}
+		]]>
+	</update>
+	
+	<!-- 往商机信息日志表中插入数据 -->
+	<insert id="insertOperationLog"
+		parameterType="com.deppon.crm.module.customer.shared.domain.BoOperationLog">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_BOOPERATIONLOG.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_MARK_BOOPERATIONLOG(FID, FBOID, FPREVSTEP, FCURRENTSTEP, FOPERATOR, FOPERATORTIME)
+		VALUES(
+			#{id},
+			#{boId,jdbcType=VARCHAR},
+			#{prevStep,jdbcType=VARCHAR},
+			#{currentStep,jdbcType=VARCHAR},
+			#{operator,jdbcType=VARCHAR},
+			#{operationTime,jdbcType=TIMESTAMP})]]>
+	</insert>
+	
+	<resultMap
+		type="com.deppon.crm.module.customer.shared.domain.BusinessOpportunity"
+		id="BusinessOpportunity">
+		<id column="FID" property="id" jdbcType="VARCHAR" />
+		<!-- 商机编码 -->
+		<result column="FBUSINESSCODE" property="boNumber" jdbcType="VARCHAR" />
+		<!-- 商机名称 -->
+		<result column="FBUSINESSNAME" property="boName" jdbcType="VARCHAR" />
+		<!-- 商机描述 -->
+		<result column="FBUSINESSDESC" property="boDesc" jdbcType="VARCHAR" />
+		<!-- 预计成功时间 -->
+		<result column="FFORECASTSUCCESSTIME" property="expectSuccessDate"
+			jdbcType="TIMESTAMP" />
+		<!-- 商机阶段 -->
+		<result column="FBUSINESSSTEP" property="boStep" jdbcType="VARCHAR" />
+		<!-- 商机状态 -->
+		<result column="FBUSINESSSTATUS" property="boStatus" jdbcType="VARCHAR" />
+		<!-- 预计发货金额 -->
+		<result column="FFORECASTAMOUNT" property="expectDeliveryAmount"
+			jdbcType="VARCHAR" />
+		<!-- 预计成功几率 -->
+		<result column="FFORECASTSUCCESSRATE" property="expectSuccessOdds"
+			jdbcType="VARCHAR" />
+		<!-- 关闭原因键值 -->
+		<result column="FFAILREASONCODE" property="closeReasonCode"
+			jdbcType="VARCHAR" />
+		<!-- 关闭原因描述 -->
+		<result column="FFAILREASON" property="closeReasonDesc"
+			jdbcType="VARCHAR" />
+		<!-- 商机确认 -->
+		<result column="FISHASBUSINESS" property="isBOConfirm"
+			jdbcType="VARCHAR" />
+		<!-- 客户需求简介 -->
+		<result column="FCUSTREQUIREMENT" property="customerDemandDesc"
+			jdbcType="VARCHAR" />
+		<!-- 解决方案简述 -->
+		<result column="FSOLUTIONS" property="solutionDesc" jdbcType="VARCHAR" />
+		<!-- 招投标项目 -->
+		<result column="FISBIDDINGPROJECT" property="isBidProject"
+			jdbcType="VARCHAR" />
+		<!-- 竞争情况信息 -->
+		<result column="FCOMPETITION" property="competitiveInfo"
+			jdbcType="VARCHAR" />
+		<!-- 商机创建时间 -->
+		<result column="FCREATETIME" property="createTime" jdbcType="TIMESTAMP" />
+		<!-- 最后修改时间 -->
+		<result column="FLASTMODIFYTIME" property="modifyTime"
+			jdbcType="TIMESTAMP" />
+		<!-- 所属部门 -->
+		<result column="FDEPTID" property="deptId" jdbcType="VARCHAR" />
+		<!-- 所属部门 -->
+		<result column="FDEPTNAME" property="deptName" jdbcType="VARCHAR" />
+		<!-- 商机创建人 -->
+		<association property="creator"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<!-- 商机创建人Id -->
+			<result property="id" column="FCREATEUSERID" />
+			<!-- 商机创建人名称 -->
+			<result property="empCode" column="FCREATORCODE" />
+			<!-- 商机创建人编码 -->
+			<result property="empName" column="FCREATORNAME" />
+		</association>
+		<!-- 商机执行人 -->
+		<association property="operator"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<!-- 商机执行人Id -->
+			<result property="id" column="FOPERATOR" />
+			<!-- 商机执行人名称 -->
+			<result property="empCode" column="FOPERATORCODE" />
+			<!-- 商机执行人编码 -->
+			<result property="empName" column="FOPERATORNAME" />
+		</association>
+		<!-- 最后修改人 -->
+		<association property="modifier"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<!-- 修改人Id -->
+			<result property="id" column="FLASTMODIFYUSERID" />
+			<!-- 修改人名称 -->
+			<result property="empCode" column="FMODIFIERCODE" />
+			<!-- 修改人编码 -->
+			<result property="empName" column="FMODIFIERNAME" />
+		</association>
+		<!-- 客户 -->
+		<association property="customer"
+			javaType="com.deppon.crm.module.customer.shared.domain.BusinessOpportunityCustomer">
+			<!-- 客户Id -->
+			<result property="custId" column="FCUSTID" />
+			<!-- 客户名称 -->
+			<result property="custName" column="FCUSTNAME" />
+			<!-- 客户编码 -->
+			<result property="custNumber" column="FCUSTNUMBER" />
+			<!-- 客户一级行业 -->
+			<result property="custFirstType" column="FFIRSTTRADE" />
+			<!-- 客户二级行业 -->
+			<result property="custSecondType" column="FSECONDTRADE" />
+			<!-- 联系人Id -->
+			<result property="mainLinkmanId" column="FLINKMANID" />
+			<!-- 联系人姓名 -->
+			<result property="mainLinkmanName" column="FLINKMANNAME" />
+			<!-- 联系人电话 -->
+			<result property="mainLinkmanPhone" column="FLINKMANPHONE" />
+			<!-- 联系人手机 -->
+			<result property="mainLinkmanMobile" column="FLINKMANMOBILE" />
+		</association>
+	</resultMap>
+	
+</mapper>

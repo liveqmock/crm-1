@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="authorization" namespace="/authorization"
+		extends="crm-default">
+
+		<!-- 功能管理主页面 -->
+		<action name="functionIndex"
+			class="com.deppon.crm.module.authorization.server.action.FunctionAction">
+			<result name="success">/WEB-INF/pages/authorization/index_function.html</result>
+		</action>
+
+        <!--加载部门树-->
+	   <action name="loadTree" class="com.deppon.crm.module.organization.server.action.DepartmentAction" method="loadDepartmentTree">
+          <result name="success" type="jsontree">
+          <param name="include">nodes</param>
+          </result>
+       </action>
+
+		<!-- 加载功能管理树 -->
+		<action name="loadManagerFunctionTree"
+			class="com.deppon.crm.module.authorization.server.action.FunctionTreeAction"
+			method="loadManagerFunctionTree">
+			<result name="success" type="jsontree">
+				<param name="include">nodes</param>
+			</result>
+		</action>
+		<!-- 当前登录用户所属部门集合 -->
+		<action name="acquireCurrentUserDeptList" class="com.deppon.crm.module.authorization.server.action.AuthorizeAction" method="acquireCurrentUserDeptList">
+			<result name="success" type="json">
+				<param name="includeProperties">currentUserDeptList</param>
+			</result>
+		</action>
+		<!-- 保存功能对象 -->
+		<action name="saveFunction"
+			class="com.deppon.crm.module.authorization.server.action.FunctionAction"
+			method="saveFunction">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 修改功能对象 -->
+		<action name="updateFunction"
+			class="com.deppon.crm.module.authorization.server.action.FunctionAction"
+			method="updateFunction">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 删除功能对象 -->
+		<action name="deleteFunction"
+			class="com.deppon.crm.module.authorization.server.action.FunctionAction"
+			method="deleteFunction">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 得到所有的功能对象 -->
+		<action name="findAllFunction"
+			class="com.deppon.crm.module.authorization.server.action.FunctionAction"
+			method="findAllFunction">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 查询模块功能下的所有页面元素权限功能对象 -->
+		<action name="findFunctionPageElementByParentCode"
+			class="com.deppon.crm.module.authorization.server.action.FunctionAction"
+			method="findFunctionPageElementByParentCode">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 角色管理主页面 -->
+		<action name="roleIndex"
+			class="com.deppon.crm.module.authorization.server.action.RoleAction">
+			<result name="success">/WEB-INF/pages/authorization/index_role.html
+			</result>
+		</action>
+
+		<!-- 加载功能选择树 -->
+		<action name="loadFunctionChooesTree"
+			class="com.deppon.crm.module.authorization.server.action.FunctionTreeAction"
+			method="loadFunctionChooesTree">
+			<result name="success" type="jsontree">
+				<param name="include">nodes</param>
+			</result>
+		</action>
+		
+		<!-- 仅仅显示其拥有的功能，构成的树形结构 -->
+		<action name="searchInfoFunctionChooesTree"
+			class="com.deppon.crm.module.authorization.server.action.FunctionTreeAction"
+			method="searchInfoFunctionChooesTree">
+			<result name="success" type="jsontree">
+				<param name="include">nodes</param>
+			</result>
+		</action>
+
+		<!-- 分页加载所有角色 -->
+		<action name="findAllRole"
+			class="com.deppon.crm.module.authorization.server.action.RoleAction"
+			method="findAllRole">
+			<result name="success" type="json" />
+		</action>
+
+		<!--根据角色名查找角色 -->
+		<action name="findRoleCodeByName"
+			class="com.deppon.crm.module.authorization.server.action.RoleAction"
+			method="findRoleCodeByName">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 删除角色 -->
+		<action name="deleteRole"
+			class="com.deppon.crm.module.authorization.server.action.RoleAction"
+			method="deleteRole">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 保存角色 -->
+		<action name="saveRole"
+			class="com.deppon.crm.module.authorization.server.action.RoleAction"
+			method="saveRole">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 更新角色 -->
+		<action name="updateRole"
+			class="com.deppon.crm.module.authorization.server.action.RoleAction"
+			method="updateRole">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 用户管理主页面 -->
+		<action name="userIndex"
+			class="com.deppon.crm.module.authorization.server.action.UserAction">
+			<result name="success">/WEB-INF/pages/authorization/index_user.html
+			</result>
+		</action>
+
+		<!-- 加载所有用户 -->
+		<action name="findAllUser"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findAllUser">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 保存用户 -->
+		<action name="saveUser"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="saveUser">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 更新用户 -->
+		<action name="updateUser"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="updateUser">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 更新用户密码 -->
+		<action name="updatePassword"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="updatePassword">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 加载所有职员信息 -->
+		<action name="findAllEmployee"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findAllEmployee">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 加载未分配角色 -->
+		<action name="findLeftRoles"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findLeftRoles">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 加载已分配角色 -->
+		<action name="findAuthedRoles"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findAuthedRoles">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 加载未分配部门 -->
+		<action name="findLeftDepts"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findLeftDepts">
+			<result name="success" type="json" />
+		</action>
+		<!-- 加载未分配部门 -->
+		<action name="findLeftDeptsByEmpCode"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findLeftDeptsByEmpCode">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 加载已分配部门 -->
+		<action name="findAuthedDepts"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="findAuthedDepts">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 加载分配部门树-->
+		<action name="loadDepartmentUserChooesTree"
+			class="com.deppon.crm.module.authorization.server.action.UserAction"
+			method="loadDepartmentUserChooesTree">
+			<result name="success" type="jsontree">
+				<param name="include">nodes</param>
+			</result>
+		</action>
+
+		<!-- 用户授权管理主页面 -->
+		<action name="authorizeIndex"
+			class="com.deppon.crm.module.authorization.server.action.AuthorizeAction">
+			<result name="success">/WEB-INF/pages/authorization/index_authorize.html
+			</result>
+		</action>
+
+		<!-- 查询用户待授权角色信息 -->
+		<action name="findAllChooesRole"
+			class="com.deppon.crm.module.authorization.server.action.AuthorizeAction"
+			method="findAllChooesRole">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 查询用户已授权角色信息 -->
+		<action name="findAllAuthorizeRole"
+			class="com.deppon.crm.module.authorization.server.action.AuthorizeAction"
+			method="findAllAuthorizeRole">
+			<result name="success" type="json" />
+		</action>
+
+		<!-- 查询部门数据授权信息 -->
+		<action name="loadDepartmentChooesTree"
+			class="com.deppon.crm.module.authorization.server.action.AuthorizeAction"
+			method="loadDepartmentChooesTree">
+			<result name="success" type="jsontree">
+				<param name="include">nodes</param>
+			</result>
+		</action>
+		
+		<!-- 保存授权信息 -->
+		<action name="saveAuthorize"
+			class="com.deppon.crm.module.authorization.server.action.AuthorizeAction"
+			method="saveAuthorize">
+			<result name="success" type="json" />
+		</action>
+				
+		<!-- 常用功能模块主页面 -->
+		<action name="usualFunctionIndex">
+			<result name="success">/WEB-INF/pages/authorization/index_usualFunction.html</result>
+		</action>
+		
+		<!-- 加载已分配菜单 -->
+		<action name="findAuthedUsualFunction"	class="usualFunctionAction"	method="findAuthedUsualFunction">
+			<result name="success" type="json" />
+		</action>
+		
+		<!-- 保存分配菜单  -->
+		<action name="saveUsualFunction" class="usualFunctionAction" method="saveUsualFunction">
+			<result name="success" type="json" />
+		</action>
+		<!--加载常用功能菜单树-->
+		<action name="loadUsualFunctionTree" class="usualFunctionAction" method="loadUsualFunctionTree">
+				<result name="success" type="jsontree" >
+				<param name="include">nodes</param>
+			</result>
+		</action>
+		
+		<!-- 帮组管理后台获取所属模块 -->
+		<action name="srchModu" class="functionAction" method="searchModuleFunction">
+			<result name="success" type="json" />
+		</action>
+		<!-- 帮组管理后台获取所属导航 -->
+		<action name="srchMenu" class="functionAction" method="searchMenuFunction">
+			<result name="success" type="json" />
+		</action>
+	</package>
+</struts>

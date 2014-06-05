@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.MapView">
+
+	<!-- 创建时间，更新时间 -->
+	<sql id="Creat_Update_columns">
+		<![CDATA[
+			#{id},#{createDate,jdbcType=DATE},#{createUser,jdbcType=NUMERIC},#{modifyDate,jdbcType=DATE},#{modifyUser,jdbcType=NUMERIC},
+		]]>	
+	</sql>
+
+	<sql id="SelectPSCustomerColumn">
+		SELECT 
+		T.FID CUSTOMERID,
+		T.FCUSTNAME CUSTOMERNAME,
+      	T.FCUSTTYPE CUSTOMERTYPE,
+      	T.FADDRESS LINKMANPREFERADDRESS,
+      	T.FTRADE INDUSTRY,
+      	T.FSECONDTRADE SECONDTRADE,
+      	T.FLINKMANNAME LINKMANNAME,
+      	T.FLINKMANMOBILE LINKMANMOBILE,
+      	T.FLINKMANPHONE LINKMANPHONE,
+      	C.FNAME CITY,
+      	G.FLAT LAT,
+      	G.FLNG LNG,
+      	NULL LINKMANID
+	</sql>
+	
+	<sql id="SelectPSCustomerFrom">
+	<![CDATA[
+      	FROM T_CUST_POTENTIALSCATTER T 
+      	LEFT JOIN T_CRM_CUSTLOCATION G ON T.FID = G.FCUSTID 
+      			/*AND (T.FCUSTTYPE = 'PC_SC' 
+      			OR G.FCUSTTYPE = 'SC_CUSTOMER' OR G.FCUSTTYPE = 'PC_CUSTOMER')*/ 
+      			AND G.FCONTACTID IS NULL
+      	LEFT JOIN T_CRM_CITY C ON T.FCITY = C.FID
+   	]]>
+   	<where>
+   		<![CDATA[T.FISCANCEL = 0]]>
+   		<if test="deptId != null and deptId != ''">
+			<![CDATA[ AND T.FDEPTID = #{deptId} ]]>
+		</if>
+		<if test="customerName != null and customerName != ''">
+			<![CDATA[ AND T.FCUSTNAME LIKE #{customerName} ]]>
+		</if>
+		<if test="customerIndustry != null and customerIndustry != ''">
+			<![CDATA[ AND T.FTRADE = #{customerIndustry} ]]>
+		</if>
+		<if test="secondTrade != null and secondTrade != ''">
+			<![CDATA[ AND T.FSECONDTRADE = #{secondTrade} ]]>
+		</if>
+		<if test="linkmanName != null and linkmanName != ''">
+			<![CDATA[ AND T.FLINKMANNAME LIKE #{linkmanName} ]]>
+		</if>
+		<if test="linkmanMobile != null and linkmanMobile != ''">
+			<![CDATA[ AND T.FLINKMANMOBILE = #{linkmanMobile} ]]>
+		</if>
+		<if test="linkmanPhone != null and linkmanPhone != ''">
+			<![CDATA[ AND T.FLINKMANPHONE = #{linkmanPhone} ]]>
+		</if>
+		<![CDATA[
+		AND T.FCUSTTYPE IN ('SC_CUSTOMER', 'PC_CUSTOMER')
+       	]]>
+   	</where>
+	
+	</sql>
+	
+	<!-- 查询潜散客 -->
+	<sql id="SelectPSCustomerData">
+		<include refid="SelectPSCustomerColumn"/>
+		<include refid="SelectPSCustomerFrom"/>
+		<![CDATA[ ORDER BY T.FID ]]>
+	</sql>
+
+	<sql id="SelectPSCustomerCount">
+		SELECT COUNT(1) 
+		<include refid="SelectPSCustomerFrom"/>
+	</sql>
+
+
+
+	<sql id="SelectMemberColumn">
+		SELECT 
+    	T.FID CUSTOMERID,
+    	T.FCUSTNAME CUSTOMERNAME,
+    	T.FDEGREE CUSTOMERTYPE,
+    	T1.FADDRESS LINKMANPREFERADDRESS,
+    	T.FTRADEID INDUSTRY,
+    	T.FSECONDTRADE SECONDTRADE,
+    	L.FNAME LINKMANNAME,
+    	L.FMOBILETEL LINKMANMOBILE,
+    	L.FOFFERTEL LINKMANPHONE,
+    	T1.FCITY CITY,
+    	G.FLAT LAT,
+    	G.FLNG LNG,
+		L.FID LINKMANID
+	</sql>
+
+	<sql id="SelectMemberFrom">
+	<![CDATA[
+          FROM T_CUST_CUSTBASEDATA T
+          LEFT JOIN T_CUST_CUSTLINKMAN L ON L.FCUSTID = T.FID
+          LEFT JOIN (SELECT R.FLINKMANID, Y.FNAME FCITY, A.FADDRESS
+                      FROM T_CUST_PREFERENCEADDRESS R,
+                           T_CUST_SHUTTLEADDRESS    A,
+                           T_CRM_CITY               Y
+                     WHERE R.FSHUTTLEADDRESSID = A.FID
+                       AND A.FCITY = Y.FID
+                       AND R.FISMAINADDRESS = 1) T1 ON T1.FLINKMANID = L.FID
+          LEFT JOIN T_CRM_CUSTLOCATION G ON (L.FCUSTID = G.FCUSTID AND
+                                                    G.FCUSTTYPE != 'PC_CUSTOMER' AND 
+                                                    G.FCUSTTYPE != 'SC_CUSTOMER' AND
+                                                    G.FCUSTTYPE != 'PC_SC' AND
+                                                    L.FID = G.FCONTACTID)
+          WHERE
+          1=1
+	]]>
+	<!-- 2013 1 10增加约束条件，不查询作废的固定客户、联系人 -->
+	<![CDATA[
+		AND T.FCUSTSTATUS = '0'
+		AND L.FSTATUS = '0'
+	]]>
+	<if test="deptId != null and deptId != ''">
+		<![CDATA[ AND T.FDEPTID = #{deptId} ]]>
+	</if>
+	<if test="customerName != null and customerName != ''">
+		<![CDATA[ AND T.FCUSTNAME LIKE #{customerName} ]]>
+	</if>
+	<if test="customerIndustry != null and customerIndustry != ''">
+		<![CDATA[ AND T.FTRADEID = #{customerIndustry} ]]>
+	</if>
+	<if test="secondTrade != null and secondTrade != ''">
+		<![CDATA[ AND T.FSECONDTRADE = #{secondTrade} ]]>
+	</if>
+	<if test="linkmanName != null and linkmanName != ''">
+		<![CDATA[ AND L.FNAME LIKE #{linkmanName} ]]>
+	</if>
+	<if test="linkmanMobile != null and linkmanMobile != ''">
+		<![CDATA[ AND L.FMOBILETEL = #{linkmanMobile} ]]>
+	</if>
+	<if test="linkmanPhone != null and linkmanPhone != ''">
+		<![CDATA[ AND L.FOFFERTEL = #{linkmanPhone} ]]>
+	</if>
+	<if test="degree != null and degree != ''">
+		<![CDATA[ AND T.FDEGREE = #{degree} ]]>
+	</if>
+	</sql>
+
+
+	<!-- 查询会员 -->
+	<sql id="SelectMemberData">
+		<include refid="SelectMemberColumn"/>
+		<include refid="SelectMemberFrom"/>
+		<![CDATA[ ORDER BY L.FID ]]>
+	</sql>
+	
+	<sql id="SelectMemberCount">
+		SELECT COUNT(1) 
+		<include refid="SelectMemberFrom"/>
+	</sql>
+
+
+	<!-- 五公里地图- 查询用户 -->
+	<select id="searchUsers" resultType="com.deppon.crm.module.marketing.shared.domain.MapView" 
+	parameterType="com.deppon.crm.module.marketing.shared.domain.MapQueryCondition">
+		<choose>
+			<when test="customerType == 'PC_SC'">
+				<include refid="SelectPSCustomerData"/>
+			</when>
+			<when test="customerType == 'MEMBER'">
+				<include refid="SelectMemberData"/>
+			</when>
+		</choose>
+	</select>
+
+	<select id="searchUsersCount" resultType="int" 
+	parameterType="com.deppon.crm.module.marketing.shared.domain.MapQueryCondition">
+		<choose>
+			<when test="customerType == 'PC_SC'">
+				<include refid="SelectPSCustomerCount"/>
+			</when>
+			<when test="customerType == 'MEMBER'">
+				<include refid="SelectMemberCount"/>
+			</when>
+		</choose>
+	</select>
+
+
+
+	<select id="isCustomerLocationExist" resultType="int" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerLocation">
+	<![CDATA[ 
+		SELECT COUNT(1) 
+		FROM T_CRM_CUSTLOCATION T 
+		WHERE T.FCUSTID = #{customerId} 
+		AND T.FCUSTTYPE = #{customerType}
+	 ]]>
+	 <choose>
+	 	<when test="linkmanId != null and linkmanId !=''">
+	 		<![CDATA[ AND T.FCONTACTID = #{linkmanId} ]]>
+	 	</when>
+	 	<otherwise>
+	 		<![CDATA[ AND T.FCONTACTID IS NULL ]]>
+	 	</otherwise>
+	 </choose>
+	</select>
+	
+	<insert id="insertCustomerLocation" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerLocation">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CUSTLOCATION.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CRM_CUSTLOCATION
+			VALUES(
+		]]>	
+		<include refid="Creat_Update_columns" />
+		<![CDATA[		
+				 #{lat, jdbcType=VARCHAR},  #{lng, jdbcType=VARCHAR}, #{customerId, jdbcType=NUMERIC}, #{customerType, jdbcType=VARCHAR}, #{linkmanId, jdbcType=NUMERIC}  )
+		]]>		
+	</insert>
+
+	<update id="updateCustomerLocation" parameterType="com.deppon.crm.module.marketing.shared.domain.CustomerLocation">
+	<![CDATA[
+		UPDATE T_CRM_CUSTLOCATION 
+		SET FLAT = #{lat, jdbcType=VARCHAR}, 
+		FLNG = #{lng, jdbcType=VARCHAR}, 
+		FLASTUPDATETIME = #{modifyDate, jdbcType=TIMESTAMP},
+		FLASTMODIFYUSERID = #{modifyUser, jdbcType=NUMERIC}
+		WHERE FCUSTID = #{customerId, jdbcType=NUMERIC}
+		AND FCUSTTYPE = #{customerType, jdbcType=VARCHAR}
+		]]>	
+	<choose>
+	 	<when test="linkmanId != null and linkmanId!=''">
+	 		<![CDATA[ AND FCONTACTID = #{linkmanId, jdbcType=NUMERIC} ]]>
+	 	</when>
+	 	<otherwise>
+	 		<![CDATA[ AND FCONTACTID IS NULL ]]>
+	 	</otherwise>
+	 </choose>
+
+	</update>
+		
+</mapper>
+

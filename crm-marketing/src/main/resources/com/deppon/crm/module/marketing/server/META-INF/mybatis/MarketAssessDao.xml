@@ -1,0 +1,1937 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.MarketAssess">
+	<sql id="devAssess">
+		<![CDATA[
+			MAX(DEV.FID) id,
+			MAX(DEV.FCREATETIME) createTime,
+			MAX(DEV.FQUERYTIME) queryTime,
+			MAX(DEV.FQUERYTIMESTR) queryTimeStr,
+			MAX(DEV.FDEPTNAME) salDeptName,
+			MAX(DEV.FDEPTID) salDeptId,
+			MAX(DEV.FSMADEPTNAME) smaDeptName,
+			MAX(DEV.FSMADEPTID) smaDeptId,
+			MAX(DEV.FBIGDEPTNAME) bigDeptName,
+			MAX(DEV.FBIGDEPTID) bigDeptId,
+			MAX(DEV.FORGDEPTNAME) orgDeptName,
+			MAX(DEV.FORGDEPTID) orgDeptId,
+			MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+			MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			sum(DEV.FNEWCREATENUM) newCreateNum,
+			sum(DEV.FTURNTOSCNUM) turnToScNum,
+			sum(DEV.FTURNTORCNUM) turnToRcNum,
+			sum(DEV.FPLANVISITNUM) planVisitNum,
+			sum(DEV.FACTUALVISITNUM) actualVisitNum,
+			to_char(round(decode(sum(DEV.FPLANVISITNUM),0,100,sum(DEV.FACTUALVISITNUM)/sum(DEV.FPLANVISITNUM)*100),2),'9990.99')||'%' planVisitRate,
+			sum(DEV.FIDENNEEDCUSTNUM) nowIdentifyNeedsCustNum,
+			sum(DEV.FIDENNEEDOUTNUM) identifyNeedsOutCustNum,
+			to_char(round(decode(sum(DEV.FIDENNEEDCUSTNUM)+sum(DEV.FIDENNEEDOUTNUM ),0,100,sum(DEV.FIDENNEEDOUTNUM)/(sum(DEV.FIDENNEEDCUSTNUM)+sum(DEV.FIDENNEEDOUTNUM ))*100),2),'9990.99')||'%' identifyNeedsCustRate,
+			sum(DEV.FIDENDISCUSTNUM) nowIntentionDiscussCustNum,
+			sum(DEV.FIDENDISOUTNUM) intentionDiscussOutCustNum,
+			to_char(round(decode(sum(DEV.FIDENDISCUSTNUM)+sum(DEV.FIDENDISOUTNUM ),0,100,sum(DEV.FIDENDISOUTNUM)/(sum(DEV.FIDENDISCUSTNUM)+sum(DEV.FIDENDISOUTNUM ))*100),2),'9990.99')||'%' intentionDiscussCustRate,
+			sum(DEV.FCONTTRAINCUSTNUM) nowIntentionDiscussCustNum,
+			sum(DEV.FCONTTRAINOUTNUM) continuingTrainingOutCustNum,
+			to_char(round(decode(sum(DEV.FCONTTRAINCUSTNUM)+sum(DEV.FCONTTRAINOUTNUM ),0,100,sum(DEV.FCONTTRAINOUTNUM)/(sum(DEV.FCONTTRAINCUSTNUM)+sum(DEV.FCONTTRAINOUTNUM ))*100),2),'9990.99')||'%' continuingTrainingCustRate,
+			sum(DEV.FBEFOREPOTENTIALNUM) beforePotentialNum,
+			sum(DEV.FNOWPOTENTIALDELEVIRYNUM) nowPotentialDeleviryNum,
+			to_char(round(decode(sum(DEV.FBEFOREPOTENTIALNUM),0,100,sum(DEV.FNOWPOTENTIALDELEVIRYNUM)/sum(DEV.FBEFOREPOTENTIALNUM)*100),2),'9990.99')||'%' potentialDevSuccessRate,
+			sum(DEV.FLTTDELEVIRYNUM) lttDelCustAmount,	
+			sum(FEXPRESSDELEVIRYNUM) expDelCustAmount	
+		]]>
+	</sql>
+
+	<sql id="countDevAssess">
+		<![CDATA[
+			max(DEV.FID) id,
+			max(DEV.FCREATETIME) createTime,
+			max(DEV.FQUERYTIME) queryTime,
+			max(DEV.FQUERYTIMESTR) queryTimeStr,
+			sum(DEV.FNEWCREATENUM) newCreateNum,
+			sum(DEV.FTURNTOSCNUM) turnToScNum,
+			sum(DEV.FTURNTORCNUM) turnToRcNum,
+			sum(DEV.FPLANVISITNUM) planVisitNum,
+			sum(DEV.FACTUALVISITNUM) actualVisitNum,
+			to_char(round(decode(sum(DEV.FPLANVISITNUM),0,100,sum(DEV.FACTUALVISITNUM)/sum(DEV.FPLANVISITNUM)*100),2),'9990.99')||'%' planVisitRate,
+			sum(DEV.FIDENNEEDCUSTNUM) nowIdentifyNeedsCustNum,
+			sum(DEV.FIDENNEEDOUTNUM) identifyNeedsOutCustNum,
+			to_char(round(decode(sum(DEV.FIDENNEEDCUSTNUM)+sum(DEV.FIDENNEEDOUTNUM ),0,100,sum(DEV.FIDENNEEDOUTNUM)/(sum(DEV.FIDENNEEDCUSTNUM)+sum(DEV.FIDENNEEDOUTNUM ))*100),2),'9990.99')||'%' identifyNeedsCustRate,
+			sum(DEV.FIDENDISCUSTNUM) nowIntentionDiscussCustNum,
+			sum(DEV.FIDENDISOUTNUM) intentionDiscussOutCustNum,
+			to_char(round(decode(sum(DEV.FIDENDISCUSTNUM)+sum(DEV.FIDENDISOUTNUM ),0,100,sum(DEV.FIDENDISOUTNUM)/(sum(DEV.FIDENDISCUSTNUM)+sum(DEV.FIDENDISOUTNUM ))*100),2),'9990.99')||'%' intentionDiscussCustRate,
+			sum(DEV.FCONTTRAINCUSTNUM) nowContinuingTrainingCustNum,
+			sum(DEV.FCONTTRAINOUTNUM) continuingTrainingOutCustNum,
+			to_char(round(decode(sum(DEV.FCONTTRAINCUSTNUM)+sum(DEV.FCONTTRAINOUTNUM ),0,100,sum(DEV.FCONTTRAINOUTNUM)/(sum(DEV.FCONTTRAINCUSTNUM)+sum(DEV.FCONTTRAINOUTNUM ))*100),2),'9990.99')||'%' continuingTrainingCustRate,
+			sum(DEV.FBEFOREPOTENTIALNUM) beforePotentialNum,
+			sum(DEV.FNOWPOTENTIALDELEVIRYNUM) nowPotentialDeleviryNum,
+			to_char(round(decode(sum(DEV.FBEFOREPOTENTIALNUM),0,100,sum(DEV.FNOWPOTENTIALDELEVIRYNUM)/sum(DEV.FBEFOREPOTENTIALNUM)*100),2),'9990.99')||'%' potentialDevSuccessRate,
+			sum(DEV.FLTTDELEVIRYNUM) lttDelCustAmount,	
+			sum(FEXPRESSDELEVIRYNUM) expDelCustAmount	
+		]]>
+	</sql>
+	<!-- 
+			
+			sum(DEV.FEXPOSEND) exposend,
+			sum(DEV.FYELLOWPAGES) yellowPages,
+			sum(DEV.FDISPATCHLIST) dispatchList,
+			sum(DEV.FALIBABA) alibaba,
+			sum(DEV.FSTRANGERCALLS) strangerCalls,
+			sum(DEV.FORDERCUST) orderCust,
+			sum(DEV.FARRIVECUST) arriveCust,
+			sum(DEV.FPLANVISITNUM) planVisitNum,
+			sum(DEV.FACTUALVISITNUM) actualVisitNum,
+			to_char(round(decode(sum(DEV.FPLANVISITNUM),0,100,sum(DEV.FACTUALVISITNUM)/sum(DEV.FPLANVISITNUM)*100),2),'9990.99')||'%' planVisitRate,
+			sum(DEV.FNOWPOTENTIALNUM) nowPotentialNum,
+			sum(DEV.FNOWPOTENTIALVISITNUM) nowPotentialVisitNum,
+			to_char(round(decode(sum(DEV.FNOWPOTENTIALNUM),0,100,sum(DEV.FNOWPOTENTIALVISITNUM)/sum(DEV.FNOWPOTENTIALNUM)*100),2),'9990.99')||'%' nowPotentialVisitRate,
+			sum(DEV.FBEFOREPOTENTIALNUM) beforePotentialNum,
+			sum(DEV.FNOWPOTENTIALDELEVIRYNUM) nowPotentialDeleviryNum,
+			to_char(round(decode(sum(DEV.FBEFOREPOTENTIALNUM),0,100,sum(DEV.FNOWPOTENTIALDELEVIRYNUM)/sum(DEV.FBEFOREPOTENTIALNUM)*100),2),'9990.99')||'%' potentialDevSuccessRate -->
+		<sql id="matAssess">
+		<![CDATA[
+			MAT.FID id,
+			MAT.FCREATETIME createTime,
+			MAT.FQUERYTIME queryTime,
+			MAT.FQUERYTIMESTR queryTimeStr,
+			MAT.FDEPTNAME salDeptName,
+			MAT.FDEPTID salDeptId,
+			MAT.FSMADEPTNAME smaDeptName,
+			MAT.FSMADEPTID smaDeptId,
+			MAT.FBIGDEPTNAME bigDeptName,
+			MAT.FBIGDEPTID bigDeptId,
+			MAT.FORGDEPTNAME orgDeptName,
+			MAT.FORGDEPTID orgDeptId,
+			MAT.FMANAGERDEPTNAME managerDeptName,
+			MAT.FMANAGERDEPTID managerDeptId,
+			MAT.FRECOMPENSECUSTNUM recompenseCustNum,
+			MAT.FLTTCOMPCUSTNUM lttCompCustNum,
+			MAT.FEXPCOMPCUSTNUM expCompCustNum,
+			MAT.FNOWVISITNUM nowVisitNum,
+			MAT.FLTTVISITNUM lttVisitNum,
+			MAT.FEXPVISITNUM expVisitNum,
+			to_char(round(decode(MAT.FRECOMPENSECUSTNUM,0,100,MAT.FNOWVISITNUM/MAT.FRECOMPENSECUSTNUM*100),2),'9990.99')||'%' nowVisitRate,
+			to_char(round(decode(MAT.FLTTCOMPCUSTNUM,0,100,MAT.FLTTVISITNUM/MAT.FLTTCOMPCUSTNUM*100),2),'9990.99')||'%' lttVisitRate,
+			to_char(round(decode(MAT.FEXPCOMPCUSTNUM,0,100,MAT.FEXPVISITNUM/MAT.FEXPCOMPCUSTNUM*100),2),'9990.99')||'%' expVisitRate,
+			sum(MAT.FLOSTCUSTNUM) lostCustNum,
+			sum(MAT.FMEMBERDELEVIRYNUM) memberDeleviryNum,
+			to_char(round(decode(MAT.FMEMBERDELEVIRYNUM,0,100,MAT.FLOSTCUSTNUM/MAT.FMEMBERDELEVIRYNUM*100),2),'9990.99')||'%' lostCustRate,
+			sum(MAT.FLOSTVISITNUM) lostCustVisitNum,
+			to_char(round(decode(MAT.FLOSTCUSTNUM,0,100,MAT.FLOSTVISITNUM/MAT.FLOSTCUSTNUM*100),2),'9990.99')||'%' lostVisitRate,
+			sum(MAT.FSAVECUSTNUM) saveCustNum,
+			to_char(round(decode(MAT.FLOSTCUSTNUM,0,100,MAT.FSAVECUSTNUM/MAT.FLOSTCUSTNUM*100),2),'9990.99')||'%' saveCustRate
+		]]>
+	</sql>
+	
+	<sql id="countMatAssess">
+		<![CDATA[
+			MAX(MAT.FID) id,
+			MAX(MAT.FCREATETIME) createTime,
+			MAX(MAT.FQUERYTIME) queryTime,
+			MAX(MAT.FQUERYTIMESTR) queryTimeStr,
+			sum(MAT.FRECOMPENSECUSTNUM) recompenseCustNum,
+			sum(MAT.FLTTCOMPCUSTNUM) lttCompCustNum,
+			sum(MAT.FEXPCOMPCUSTNUM) expCompCustNum,
+			sum(MAT.FNOWVISITNUM) nowVisitNum,
+			sum(MAT.FLTTVISITNUM) lttVisitNum,
+			sum(MAT.FEXPVISITNUM) expVisitNum,
+			to_char(round(decode(sum(MAT.FRECOMPENSECUSTNUM),0,100,sum(MAT.FNOWVISITNUM)/sum(MAT.FRECOMPENSECUSTNUM)*100),2),'9990.99')||'%' nowVisitRate,
+			to_char(round(decode(sum(MAT.FLTTCOMPCUSTNUM),0,100,sum(MAT.FLTTVISITNUM)/sum(MAT.FLTTCOMPCUSTNUM)*100),2),'9990.99')||'%' lttVisitRate,
+			to_char(round(decode(sum(MAT.FEXPCOMPCUSTNUM),0,100,sum(MAT.FEXPVISITNUM)/sum(MAT.FEXPCOMPCUSTNUM)*100),2),'9990.99')||'%' expVisitRate,
+			sum(MAT.FLOSTCUSTNUM) lostCustNum,
+			sum(MAT.FMEMBERDELEVIRYNUM) memberDeleviryNum,
+			to_char(round(decode(sum(MAT.FMEMBERDELEVIRYNUM),0,100,sum(MAT.FLOSTCUSTNUM)/sum(MAT.FMEMBERDELEVIRYNUM)*100),2),'9990.99')||'%' lostCustRate,
+			sum(MAT.FLOSTVISITNUM) lostCustVisitNum,
+			to_char(round(decode(sum(MAT.FLOSTCUSTNUM),0,100,sum(MAT.FLOSTVISITNUM)/sum(MAT.FLOSTCUSTNUM)*100),2),'9990.99')||'%' lostVisitRate,
+			sum(MAT.FSAVECUSTNUM) saveCustNum,
+			to_char(round(decode(sum(MAT.FLOSTCUSTNUM),0,100,sum(MAT.FSAVECUSTNUM)/sum(MAT.FLOSTCUSTNUM)*100),2),'9990.99')||'%' saveCustRate
+		]]>
+	</sql>
+	
+	<select id="searchDepts" parameterType="list" 
+		resultType="com.deppon.crm.module.marketing.shared.domain.AssessDept">
+		<![CDATA[
+			SELECT
+				T.FID Id,
+				T.FDEPTNAME deptName,
+				T.FPRINCIPAL principal
+				FROM T_ORG_DEPARTMENT T
+		]]>
+		<where>
+		<choose>
+			<when test="list != null and list.size()!=0 and list[0] != null and list[0] !=''">
+				<![CDATA[
+				T.FID in
+				]]>
+				<foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+					<if test="item != null and item !=''">
+						<![CDATA[#{item}]]>
+					</if>
+				</foreach>
+			</when>
+			<otherwise>
+			<![CDATA[
+				T.FID = null
+				]]>
+			</otherwise>
+		</choose>
+		</where>
+	</select>
+	
+	<select id="searchDeptPrincipal" parameterType="com.deppon.crm.module.marketing.shared.domain.AssessDeptPrincipal"
+		resultType="com.deppon.crm.module.marketing.shared.domain.AssessDeptPrincipal">
+		<![CDATA[
+			SELECT 
+				FID deptId,
+				FDEPTNAME deptName,
+				FPRINCIPAL principal
+			FROM
+				T_ORG_DEPARTMENT 
+			WHERE
+				FPRINCIPAL = #{empCode}
+				AND
+				FSTATUS = 1
+				AND
+				(FDEPTNAME LIKE '%'||#{serCenter}
+				OR
+				 FDEPTNAME LIKE '%'||#{buDept}
+				OR
+				 FDEPTNAME LIKE '%'||#{region}
+				OR
+				 FDEPTNAME LIKE '%'||#{buQuarter}
+				OR
+				 FDEPTNAME LIKE '%'||#{salDept})
+				AND
+				 FSTANDARDCODE IS NOT NULL	
+		]]>
+	</select>
+	
+	<select id="searchCustDevByAuth" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchAssessCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustDevAssess">
+		<choose>
+		<!-- 具有全国权限 -->
+		<when test="searchDept == null and groupDept != null and 
+				groupDept.hierarchy ==&quot;5&quot; and groupDept.authority ==&quot;Y&quot; ">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FMANAGERDEPTNAME) deptName,
+					DEV.FMANAGERDEPTID deptId,
+					null parentName,
+					null parentId,					
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					DEV.FMANAGERDEPTID managerDeptId,		
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+			]]>
+			<where>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				 AND DEV.FMANAGERDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			</where>
+			<![CDATA[
+				GROUP BY DEV.FMANAGERDEPTID
+			]]>
+		</when>
+		<!-- 经营本部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;4&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;5&quot;
+			and searchDept.id != null and searchDept.id != '' ">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FORGDEPTNAME) deptName,
+					DEV.FORGDEPTID deptId,
+					null parentName,
+					null parentId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					DEV.FORGDEPTID orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FMANAGERDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FORGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY DEV.FORGDEPTID
+			]]>
+		</when>
+		<!-- 事业部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;3&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;4&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FBIGDEPTNAME) deptName,
+					DEV.FBIGDEPTID deptId,
+					MAX(DEV.FMANAGERDEPTNAME) parentName,
+					MAX(DEV.FMANAGERDEPTID) parentId,
+					MAX(DEV.FBIGDEPTNAME) bigDeptName,
+					DEV.FBIGDEPTID bigDeptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					MAX(DEV.FORGDEPTID) orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FORGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FBIGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY DEV.FBIGDEPTID
+			]]>
+		</when>
+		<!-- 大区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;2&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;3&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FSMADEPTNAME) deptName,
+					DEV.FSMADEPTID deptId,
+					MAX(DEV.FORGDEPTNAME) parentName,
+					MAX(DEV.FORGDEPTID) parentId,
+					MAX(DEV.FSMADEPTNAME) smaDeptName,
+					DEV.FSMADEPTID smaDeptId,
+					MAX(DEV.FBIGDEPTNAME) bigDeptName,
+					MAX(DEV.FBIGDEPTID) bigDeptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					MAX(DEV.FORGDEPTID) orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,					
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FBIGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FSMADEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY DEV.FSMADEPTID
+			]]>
+		</when>
+		<!-- 营业区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;1&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;2&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+			SELECT
+				MAX(DEV.FDEPTNAME) deptName,
+				DEV.FDEPTID deptId,
+				MAX(DEV.FBIGDEPTNAME) parentName,
+				MAX(DEV.FBIGDEPTID) parentId,
+				MAX(DEV.FDEPTNAME) salDeptName,
+				DEV.FDEPTID salDeptId,
+				MAX(DEV.FSMADEPTNAME) smaDeptName,
+				MAX(DEV.FSMADEPTID) smaDeptId,
+				MAX(DEV.FBIGDEPTNAME) bigDeptName,
+				MAX(DEV.FBIGDEPTID) bigDeptId,
+				MAX(DEV.FORGDEPTNAME) orgDeptName,
+				MAX(DEV.FORGDEPTID) orgDeptId,	
+				MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+				MAX(DEV.FMANAGERDEPTID) managerDeptId,						
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+				DEV.FSMADEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[	
+				AND DEV.FDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<![CDATA[
+				GROUP BY DEV.FDEPTID
+			]]>
+		</when>
+		<otherwise>
+			<![CDATA[
+			SELECT 1 FROM T_MARK_CUSTDEVASSESS WHERE FID = null
+			]]>		
+		</otherwise>
+		</choose>
+	</select>
+	
+	<select id="countCustDevByAuth" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchAssessCondition"
+		resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM
+			(
+		]]>
+		<choose>
+		<!-- 具有全国权限 -->
+		<when test="searchDept == null and groupDept != null and 
+				groupDept.hierarchy ==&quot;5&quot; and groupDept.authority ==&quot;Y&quot; ">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FMANAGERDEPTNAME) deptName,
+					DEV.FMANAGERDEPTID deptId,
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					DEV.FMANAGERDEPTID managerDeptId,		
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+			]]>
+			<where>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				 AND DEV.FMANAGERDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			 -->
+			</where>
+			<![CDATA[
+				GROUP BY DEV.FMANAGERDEPTID
+			]]>
+		</when>
+		<!-- 经营本部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;4&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;5&quot;
+			and searchDept.id != null and searchDept.id != '' ">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FORGDEPTNAME) deptName,
+					DEV.FORGDEPTID deptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					DEV.FORGDEPTID orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FMANAGERDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FORGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY DEV.FORGDEPTID
+			]]>
+		</when>
+		<!-- 事业部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;3&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;4&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FBIGDEPTNAME) deptName,
+					DEV.FBIGDEPTID deptId,
+					MAX(DEV.FBIGDEPTNAME) bigDeptName,
+					DEV.FBIGDEPTID bigDeptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					MAX(DEV.FORGDEPTID) orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FORGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FBIGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY DEV.FBIGDEPTID
+			]]>
+		</when>
+		<!-- 大区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;2&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;3&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FSMADEPTNAME) deptName,
+					DEV.FSMADEPTID deptId,
+					MAX(DEV.FSMADEPTNAME) smaDeptName,
+					DEV.FSMADEPTID smaDeptId,
+					MAX(DEV.FBIGDEPTNAME) bigDeptName,
+					MAX(DEV.FBIGDEPTID) bigDeptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					MAX(DEV.FORGDEPTID) orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,					
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FBIGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FSMADEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY DEV.FSMADEPTID
+			]]>
+		</when>
+		<!-- 营业区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;1&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;2&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+			SELECT
+				MAX(DEV.FDEPTNAME) deptName,
+				DEV.FDEPTID deptId,
+				MAX(DEV.FDEPTNAME) salDeptName,
+				DEV.FDEPTID salDeptId,
+				MAX(DEV.FSMADEPTNAME) smaDeptName,
+				MAX(DEV.FSMADEPTID) smaDeptId,
+				MAX(DEV.FBIGDEPTNAME) bigDeptName,
+				MAX(DEV.FBIGDEPTID) bigDeptId,
+				MAX(DEV.FORGDEPTNAME) orgDeptName,
+				MAX(DEV.FORGDEPTID) orgDeptId,	
+				MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+				MAX(DEV.FMANAGERDEPTID) managerDeptId,						
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+				DEV.FSMADEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[	
+				AND DEV.FDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<![CDATA[
+				GROUP BY DEV.FDEPTID
+			]]>
+		</when>
+		<otherwise>
+			<![CDATA[
+			SELECT 1 FROM T_MARK_CUSTDEVASSESS DEV WHERE FID = null
+			]]>		
+		</otherwise>
+		</choose>
+		<![CDATA[
+			)
+		]]>
+	</select>
+	
+	<select id="searchAmountCustDevByAuth" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchAssessCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustDevAssess">
+		<choose>
+		<!-- 具有全国权限 -->
+		<when test="searchDept == null and groupDept != null and 
+				groupDept.hierarchy ==&quot;5&quot; and groupDept.authority ==&quot;Y&quot; ">
+			<![CDATA[
+				SELECT
+					'全国总计' deptName,
+					null deptId,
+					'总计' managerDeptName,
+					null managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+			]]>
+			<where>			
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id != null and groupDept.id != ''">
+			<![CDATA[
+				 AND DEV.FMANAGERDEPTID = #{groupDept.id}
+			]]>
+			</if> 
+			--> 
+			</where>
+		</when>
+		<!-- 经营本部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;4&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;5&quot;
+			and searchDept.id != null and searchDept.id != '' ">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FMANAGERDEPTNAME)||'总计' deptName,
+					null deptId,
+					'总计' orgDeptName,
+					null orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FMANAGERDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FORGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+		</when>
+		<!-- 事业部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;3&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;4&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FORGDEPTNAME)||'总计' deptName,
+					null deptId,
+					'总计' bigDeptName,
+					null bigDeptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					MAX(DEV.FORGDEPTID) orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FORGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FBIGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+		</when>
+		<!-- 大区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;2&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;3&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(DEV.FBIGDEPTNAME)||'总计' deptName,
+					null deptId,
+					'总计' smaDeptName,
+					null smaDeptId,
+					MAX(DEV.FBIGDEPTNAME) bigDeptName,
+					MAX(DEV.FBIGDEPTID) bigDeptId,
+					MAX(DEV.FORGDEPTNAME) orgDeptName,
+					MAX(DEV.FORGDEPTID) orgDeptId,	
+					MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+					MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+					DEV.FBIGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND DEV.FSMADEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+		</when>
+		<!-- 营业区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;1&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;2&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT	
+				MAX(DEV.FSMADEPTNAME)||'总计' deptName,
+				null deptId,
+				'总计' salDeptName,
+				null salDeptId,
+				MAX(DEV.FSMADEPTNAME) smaDeptName,
+				MAX(DEV.FSMADEPTID) smaDeptId,
+				MAX(DEV.FBIGDEPTNAME) bigDeptName,
+				MAX(DEV.FBIGDEPTID) bigDeptId,
+				MAX(DEV.FORGDEPTNAME) orgDeptName,
+				MAX(DEV.FORGDEPTID) orgDeptId,	
+				MAX(DEV.FMANAGERDEPTNAME) managerDeptName,
+				MAX(DEV.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countDevAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTDEVASSESS DEV
+				WHERE
+				DEV.FSMADEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[	
+				AND DEV.FDEPTID = #{groupDept.id}
+			]]>
+			</if>	
+			-->		
+		</when>
+		<otherwise>
+			<![CDATA[
+			SELECT 1 FROM T_MARK_CUSTDEVASSESS DEV WHERE FID = null
+			]]>		
+		</otherwise>
+		</choose>
+	</select>
+	
+	<select id="searchCustDevAllSalDept" parameterType="com.deppon.crm.module.marketing.shared.domain.AuthAllSalCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustDevAssess">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="devAssess"/>
+		<![CDATA[
+			FROM T_MARK_CUSTDEVASSESS DEV
+		]]>
+		<where>
+			<![CDATA[
+				DEV.FQUERYTIMESTR = #{dateStr}
+			]]>
+			<if test="potenSource != null and potenSource != ''">
+			    AND DEV.FPOTENSOURCE = #{potenSource,jdbcType=VARCHAR}
+		    </if>
+		    <if test="custCategory == 'LTT'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'LTT','EL')
+		    </if>
+		    <if test="custCategory == 'EXPRESS'">
+		    	AND DEV.FCUSTCATEGORY IN ( 'EXPRESS','EL')
+		    </if>
+			<choose>
+				<when test="authority ==&quot;5&quot; ">
+			 	AND 1=1
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;4&quot; ">
+			  		<![CDATA[
+			  			AND DEV.FMANAGERDEPTID = #{deptId}
+			  		]]>
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;3&quot; ">
+			  		<![CDATA[
+			  			AND DEV.FORGDEPTID = #{deptId}
+			  		]]>
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;2&quot; ">
+			  		<![CDATA[
+			  			AND DEV.FBIGDEPTID = #{deptId}
+			  		]]>
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;1&quot; ">
+			  		<![CDATA[
+			  			AND DEV.FSMADEPTID = #{deptId}
+			  		]]>
+				</when>
+				<otherwise>
+					AND 1=2
+				</otherwise>
+			</choose>
+		</where>
+		GROUP BY FDEPTID
+	</select>
+	
+	<select id="countCustMatByAuth" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchAssessCondition"
+		resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM
+			(
+		]]>
+		<choose>
+		<!-- 具有全国权限 -->
+		<when test="searchDept == null and groupDept != null and 
+				groupDept.hierarchy ==&quot;5&quot; and groupDept.authority ==&quot;Y&quot; ">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FMANAGERDEPTNAME) deptName,
+					MAT.FMANAGERDEPTID deptId,
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAT.FMANAGERDEPTID managerDeptId,		
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+			]]>
+			<where>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FMANAGERDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			</where>
+			<![CDATA[
+				GROUP BY MAT.FMANAGERDEPTID
+			]]>
+		</when>
+		<!-- 经营本部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;4&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;5&quot;
+			and searchDept.id != null and searchDept.id != '' ">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FORGDEPTNAME) deptName,
+					MAT.FORGDEPTID deptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAT.FORGDEPTID orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FMANAGERDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FORGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY MAT.FORGDEPTID
+			]]>
+		</when>
+		<!-- 事业部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;3&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;4&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FBIGDEPTNAME) deptName,
+					MAT.FBIGDEPTID deptId,
+					MAX(MAT.FBIGDEPTNAME) bigDeptName,
+					MAT.FBIGDEPTID bigDeptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAX(MAT.FORGDEPTID) orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FORGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FBIGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY MAT.FBIGDEPTID
+			]]>
+		</when>
+		<!-- 大区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;2&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;3&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FSMADEPTNAME) deptName,
+					MAT.FSMADEPTID deptId,
+					MAX(MAT.FSMADEPTNAME) smaDeptName,
+					MAT.FSMADEPTID smaDeptId,
+					MAX(MAT.FBIGDEPTNAME) bigDeptName,
+					MAX(MAT.FBIGDEPTID) bigDeptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAX(MAT.FORGDEPTID) orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,					
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FBIGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if> 
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FSMADEPTID = #{groupDept.id}
+			]]>			
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY MAT.FSMADEPTID
+			]]>
+		</when>
+		<!-- 营业区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;1&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;2&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+			SELECT
+				MAX(MAT.FDEPTNAME) deptName,
+				MAT.FDEPTID deptId,
+				MAX(MAT.FDEPTNAME) salDeptName,
+				MAT.FDEPTID salDeptId,
+				MAX(MAT.FSMADEPTNAME) smaDeptName,
+				MAX(MAT.FSMADEPTID) smaDeptId,
+				MAX(MAT.FBIGDEPTNAME) bigDeptName,
+				MAX(MAT.FBIGDEPTID) bigDeptId,
+				MAX(MAT.FORGDEPTNAME) orgDeptName,
+				MAX(MAT.FORGDEPTID) orgDeptId,	
+				MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+				MAX(MAT.FMANAGERDEPTID) managerDeptId,						
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+				MAT.FSMADEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[	
+				AND MAT.FDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			<![CDATA[
+				GROUP BY MAT.FDEPTID
+			]]>
+		</when>
+		<otherwise>
+			<![CDATA[
+			SELECT 1 FROM T_MARK_CUSTMATASSESS MAT WHERE FID = null
+			]]>		
+		</otherwise>
+		</choose>
+		<![CDATA[
+			)
+		]]>
+	</select>
+	
+	
+	<select id="searchCustMatByAuth" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchAssessCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustMatAssess">
+		<choose>
+		<!-- 具有全国权限 -->
+		<when test="searchDept == null and groupDept != null and 
+				groupDept.hierarchy ==&quot;5&quot; and groupDept.authority ==&quot;Y&quot; ">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FMANAGERDEPTNAME) deptName,
+					MAT.FMANAGERDEPTID deptId,
+					null parentName,
+					null parentId,
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAT.FMANAGERDEPTID managerDeptId,		
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+			]]>
+			<where>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!--  
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				 AND MAT.FMANAGERDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			</where>
+			<![CDATA[
+				GROUP BY MAT.FMANAGERDEPTID
+			]]>
+		</when>
+		<!-- 经营本部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;4&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;5&quot;
+			and searchDept.id != null and searchDept.id != '' ">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FORGDEPTNAME) deptName,
+					MAT.FORGDEPTID deptId,
+					null parentName,
+					null parentId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAT.FORGDEPTID orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FMANAGERDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FORGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY MAT.FORGDEPTID
+			]]>
+		</when>
+		<!-- 事业部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;3&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;4&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FBIGDEPTNAME) deptName,
+					MAT.FBIGDEPTID deptId,
+					MAX(MAT.FMANAGERDEPTNAME) parentName,
+					MAX(MAT.FMANAGERDEPTID) parentId,
+					MAX(MAT.FBIGDEPTNAME) bigDeptName,
+					MAT.FBIGDEPTID bigDeptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAX(MAT.FORGDEPTID) orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FORGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FBIGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY MAT.FBIGDEPTID
+			]]>
+		</when>
+		<!-- 大区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;2&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;3&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FSMADEPTNAME) deptName,
+					MAT.FSMADEPTID deptId,
+					MAX(MAT.FORGDEPTNAME) parentName,
+					MAX(MAT.FORGDEPTID) parentId,
+					MAX(MAT.FSMADEPTNAME) smaDeptName,
+					MAT.FSMADEPTID smaDeptId,
+					MAX(MAT.FBIGDEPTNAME) bigDeptName,
+					MAX(MAT.FBIGDEPTID) bigDeptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAX(MAT.FORGDEPTID) orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,					
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FBIGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FSMADEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+			<![CDATA[
+				GROUP BY MAT.FSMADEPTID
+			]]>
+		</when>
+		<!-- 营业区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;1&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;2&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+			SELECT
+				MAX(MAT.FDEPTNAME) deptName,
+				MAT.FDEPTID deptId,
+				MAX(MAT.FBIGDEPTNAME) parentName,
+				MAX(MAT.FBIGDEPTID) parentId,
+				MAX(MAT.FDEPTNAME) salDeptName,
+				MAT.FDEPTID salDeptId,
+				MAX(MAT.FSMADEPTNAME) smaDeptName,
+				MAX(MAT.FSMADEPTID) smaDeptId,
+				MAX(MAT.FBIGDEPTNAME) bigDeptName,
+				MAX(MAT.FBIGDEPTID) bigDeptId,
+				MAX(MAT.FORGDEPTNAME) orgDeptName,
+				MAX(MAT.FORGDEPTID) orgDeptId,	
+				MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+				MAX(MAT.FMANAGERDEPTID) managerDeptId,						
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+				MAT.FSMADEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[	
+				AND MAT.FDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			<![CDATA[
+				GROUP BY MAT.FDEPTID
+			]]>
+		</when>
+		<otherwise>
+			<![CDATA[
+			SELECT 1 FROM T_MARK_CUSTMATASSESS MAT WHERE FID = null
+			]]>		
+		</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="searchAmountCustMatByAuth" parameterType="com.deppon.crm.module.marketing.shared.domain.SearchAssessCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustMatAssess">
+		<choose>
+		<!-- 具有全国权限 -->
+		<when test="searchDept == null and groupDept != null and 
+				groupDept.hierarchy ==&quot;5&quot; and groupDept.authority ==&quot;Y&quot; ">
+			<![CDATA[
+				SELECT
+					'全国总计' deptName,
+					null deptId,
+					'总计' managerDeptName,
+					null managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+			]]>
+			<where>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!--  
+			<if test="groupDept.id != null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FMANAGERDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			 -->			
+			</where>
+		</when>
+		<!-- 经营本部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;4&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;5&quot;
+			and searchDept.id != null and searchDept.id != '' ">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FMANAGERDEPTNAME)||'总计' deptName,
+					null deptId,
+					'总计' orgDeptName,
+					null orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FMANAGERDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FORGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->	
+		</when>
+		<!-- 事业部权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;3&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;4&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FORGDEPTNAME)||'总计' deptName,
+					null deptId,
+					'总计' bigDeptName,
+					null bigDeptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAX(MAT.FORGDEPTID) orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FORGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FBIGDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+		</when>
+		<!-- 大区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;2&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;3&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT
+					MAX(MAT.FBIGDEPTNAME)||'总计' deptName,
+					null deptId,
+					'总计' smaDeptName,
+					null smaDeptId,
+					MAX(MAT.FBIGDEPTNAME) bigDeptName,
+					MAX(MAT.FBIGDEPTID) bigDeptId,
+					MAX(MAT.FORGDEPTNAME) orgDeptName,
+					MAX(MAT.FORGDEPTID) orgDeptId,	
+					MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+					MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+					MAT.FBIGDEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>
+			<!-- 
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[
+				AND MAT.FSMADEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+		</when>
+		<!-- 营业区权限 -->
+		<when test="searchDept != null and groupDept != null and groupDept.hierarchy ==&quot;1&quot; 
+			and groupDept.authority ==&quot;Y&quot; and searchDept.hierarchy==&quot;2&quot; 
+			and searchDept.id != null and searchDept.id != ''">
+			<![CDATA[
+				SELECT	
+				MAX(MAT.FSMADEPTNAME)||'总计' deptName,
+				null deptId,
+				'总计' salDeptName,
+				null salDeptId,
+				MAX(MAT.FSMADEPTNAME) smaDeptName,
+				MAX(MAT.FSMADEPTID) smaDeptId,
+				MAX(MAT.FBIGDEPTNAME) bigDeptName,
+				MAX(MAT.FBIGDEPTID) bigDeptId,
+				MAX(MAT.FORGDEPTNAME) orgDeptName,
+				MAX(MAT.FORGDEPTID) orgDeptId,	
+				MAX(MAT.FMANAGERDEPTNAME) managerDeptName,
+				MAX(MAT.FMANAGERDEPTID) managerDeptId,
+			]]>
+			<include refid="countMatAssess"/>
+			<![CDATA[
+				FROM T_MARK_CUSTMATASSESS MAT
+				WHERE
+				MAT.FSMADEPTID = #{searchDept.id}
+			]]>
+			<if test="dateStr !=null and dateStr != ''">
+			<![CDATA[
+				 AND MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			</if>		
+			<!--  	
+			<if test="groupDept.id !=null and groupDept.id != ''">
+			<![CDATA[	
+				AND MAT.FDEPTID = #{groupDept.id}
+			]]>
+			</if>
+			-->
+		</when>
+		<otherwise>
+			<![CDATA[
+			SELECT 1 FROM T_MARK_CUSTMATASSESS MAT WHERE FID = null
+			]]>		
+		</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="searchCustMatAllSalDept" parameterType="com.deppon.crm.module.marketing.shared.domain.AuthAllSalCondition"
+		resultType="com.deppon.crm.module.marketing.shared.domain.CustMatAssess">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="matAssess"/>
+		<![CDATA[
+			FROM T_MARK_CUSTMATASSESS MAT
+		]]>
+		<where>
+			<![CDATA[
+				MAT.FQUERYTIMESTR = #{dateStr}
+			]]>
+			<choose>
+				<when test="authority ==&quot;5&quot; ">
+			 	AND 1=1
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;4&quot; ">
+			  		<![CDATA[
+			  			AND MAT.FMANAGERDEPTID = #{deptId}
+			  		]]>
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;3&quot; ">
+			  		<![CDATA[
+			  			AND MAT.FORGDEPTID = #{deptId}
+			  		]]>
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;2&quot; ">
+			  		<![CDATA[
+			  			AND MAT.FBIGDEPTID = #{deptId}
+			  		]]>
+				</when>
+				<when test="deptId != null and deptId != '' and authority ==&quot;1&quot; ">
+			  		<![CDATA[
+			  			AND MAT.FSMADEPTID = #{deptId}
+			  		]]>
+				</when>
+				<otherwise>
+					AND 1=2
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+		<!-- <insert id="searchDevMarketReport" parameterType="map">
+		<![CDATA[
+				insert into T_CRM_CUSTDEVASSESS (
+    SELECT
+       seq_crm_custDevAssess.Nextval id,
+           sysdate createTime, 
+           sysdate-1 searchDeadline,
+           to_char(sysdate-1,'yyyymmdd') searchDeadlineVar,
+           DEP.FDEPTNAME  deptName, 
+             DEP.FID        salesDeptCode,  
+             SMAL.FDEPTNAME smaDeptName, 
+             SMAL.FID       smaDeptCode, 
+             BIG.FDEPTNAME  bigDeptName,
+             BIG.FID        bigDeptCode, 
+             ORG.FDEPTNAME  orgDeptName, 
+             ORG.FID        orgDeptCode,
+             JYBB.FDEPTNAME managerDeptName, 
+             JYBB.FID       managerDeptCode, 
+             NVL(T11.countt, 0) exposend,
+             NVL(T12.countt, 0) yellowPages,
+             NVL(T13.countt, 0) dispatchList,  
+             NVL(T14.countt, 0) alibaba,
+             NVL(T15.countt, 0) strangerCalls, 
+             NVL(T16.countt, 0) orderCust, 
+             NVL(T17.countt, 0) arriveCust, 
+             NVL(T2.NEWPSVISCOUNT, 0) newPlanVisitNum,
+             NVL(T3.NEWPSVISCOUNT, 0) factPlanVisitNum, 
+             decode(NVL(T2.NEWPSVISCOUNT, 0), 0, 0,
+               NVL(T3.NEWPSVISCOUNT, 0) / T2.NEWPSVISCOUNT) * 100 planVisitRate, 
+               NVL(T4.NEWPSCOUNT, 0)  as nowPotentialNum,
+               NVL(T5.NEWPSVISCOUNT, 0) as nowPotentialVisitNum, 
+             decode(NVL(T4.NEWPSCOUNT, 0),0,0,
+                    NVL(T5.NEWPSVISCOUNT, 0) / T4.NEWPSCOUNT) * 100 nowPotentialVisitRate,
+         NVL(T6.NEWPSVISCOUNT, 0)  beforePotentialNum,
+             NVL(T9.NEWPSVISCOUNT, 0) nowPotentialDeleviryNum,
+              decode(NVL(T6.NEWPSVISCOUNT, 0),0,0,
+                    NVL(T9.NEWPSVISCOUNT, 0) / T6.NEWPSVISCOUNT) * 100 potentialDevSuccessRate           
+    FROM T_ORG_DEPARTMENT DEP
+     JOIN T_ORG_DEPARTMENT SMAL ON SMAL.FID = DEP.FPARENTID
+     JOIN T_ORG_DEPARTMENT BIG ON BIG.FID = SMAL.FPARENTID
+     JOIN T_ORG_DEPARTMENT ORG ON ORG.FID = BIG.FPARENTID
+     JOIN T_ORG_DEPARTMENT JYBB ON JYBB.FID = ORG.FPARENTID
+     LEFT JOIN (
+             select fdeptid,fcustbase,count(distinct psCust.fid) countt
+                  from T_cust_potentialscatter psCust
+                       where fcusttype = 'PC_CUSTOMER'
+                         and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                         and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                        and fcustbase = 'EXPOSANDCONFERENCES'
+                       group by fdeptid, fcustbase
+        ) T11 ON DEP.FID =T11.FDEPTID
+     LEFT JOIN (
+             select fdeptid,fcustbase,count(distinct psCust.fid) countt
+                        from T_cust_potentialscatter psCust
+                       where fcusttype = 'PC_CUSTOMER'
+                          and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                         and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                        and fcustbase = 'YELLOW_PAGES'
+                       group by fdeptid, fcustbase
+        ) T12 ON DEP.FID =T12.FDEPTID    
+     LEFT JOIN (
+             select fdeptid,fcustbase,count(distinct psCust.fid) countt
+                       from T_cust_potentialscatter psCust
+                      where fcusttype = 'PC_CUSTOMER'
+                         and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                         and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                         and fcustbase = 'DISPATCH_LIST'
+                      group by fdeptid, fcustbase
+        ) T13 ON DEP.FID =T13.FDEPTID  
+        LEFT JOIN (
+             select fdeptid,fcustbase,count(distinct psCust.fid) countt
+                              from T_cust_potentialscatter psCust
+                             where fcusttype = 'PC_CUSTOMER'
+                              and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                                    and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                              and fcustbase = 'ALIBABA'
+                             group by fdeptid, fcustbase
+        ) T14 ON DEP.FID =T14.FDEPTID
+          LEFT JOIN (
+             select fdeptid,fcustbase,count(distinct psCust.fid) countt
+                              from T_cust_potentialscatter psCust
+                             where fcusttype = 'PC_CUSTOMER'
+                              and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                                    and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                              and fcustbase = 'STRANGER_CALLS'
+                             group by fdeptid, fcustbase
+        ) T15 ON DEP.FID =T15.FDEPTID
+          LEFT JOIN (
+             select fdeptid,fcustbase,count(distinct psCust.fid) countt
+                              from T_cust_potentialscatter psCust
+                             where fcusttype = 'PC_CUSTOMER'
+                              and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                                    and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                              and fcustbase = 'ORDER_CUSTOMER'
+          group by fdeptid, fcustbase
+        ) T16 ON DEP.FID =T16.FDEPTID
+          LEFT JOIN (
+             select fdeptid, fcustbase,count(distinct psCust.fid) countt
+                              from T_cust_potentialscatter psCust
+                             where fcusttype = 'PC_CUSTOMER'
+                              and fcreatetime >= #{beginDate,jdbcType=TIMESTAMP}
+                                  and fcreatetime <= #{endDate,jdbcType=TIMESTAMP}
+                              and fcustbase = 'ARRIVE_CUSTOMER'
+                             group by fdeptid, fcustbase
+        ) T17 ON DEP.FID =T17.FDEPTID
+     LEFT JOIN (SELECT SCH.FEXECDEPTID, COUNT(distinct SCH.fcustid) NEWPSVISCOUNT 
+                     FROM T_CUST_DEVELOPMAINTAINLIST PLAN
+                    INNER JOIN T_CUST_SCHEDULE SCH ON PLAN.FID = SCH.FPLANID
+                    INNER JOIN T_cust_potentialscatter PS ON PS.FID =SCH.fcustid
+                    WHERE PLAN.FBEGINTIME >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND PLAN.FENDTIME <=  last_day(#{endDate,jdbcType=TIMESTAMP})
+                      AND PLAN.FPLANTYPE = 'dev'
+                      AND PS.FCREATETIME >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND PS.FCREATETIME <= #{endDate,jdbcType=TIMESTAMP}
+                      AND PS.FCUSTTYPE = 'PC_CUSTOMER'
+                    GROUP BY SCH.FEXECDEPTID) T2 ON DEP.FID = T2.FEXECDEPTID
+        LEFT JOIN (SELECT SCH.FEXECDEPTID, COUNT(distinct VIS.Fqsid) NEWPSVISCOUNT
+                     FROM T_CUST_DEVELOPMAINTAINLIST PLAN
+                    INNER JOIN T_CUST_SCHEDULE SCH ON PLAN.FID = SCH.FPLANID
+                     LEFT JOIN T_CUST_RETURNVISIT VIS ON PLAN.FID = VIS.FPLANID
+                    INNER JOIN T_cust_potentialscatter PS ON PS.FID = VIS.FQSID
+                    WHERE PLAN.FBEGINTIME >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND PLAN.FENDTIME <= last_day(#{endDate,jdbcType=TIMESTAMP})
+                      AND PLAN.FPLANTYPE = 'dev'
+                      AND PS.FCREATETIME >=  #{beginDate,jdbcType=TIMESTAMP}
+                      AND PS.FCREATETIME <= #{endDate,jdbcType=TIMESTAMP}
+                      AND PS.FCUSTTYPE = 'PC_CUSTOMER'
+                      AND VIS.Fdate >=  #{beginDate,jdbcType=TIMESTAMP}
+                      AND VIS.Fdate <= #{endDate,jdbcType=TIMESTAMP}
+                    GROUP BY SCH.FEXECDEPTID) T3 ON DEP.FID = T3.FEXECDEPTID
+        LEFT JOIN (SELECT COUNT(distinct PS.fid) NEWPSCOUNT, PS.FDEPTID
+                     FROM T_cust_potentialscatter PS
+                    WHERE PS.FCREATETIME >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND PS.FCREATETIME <= #{endDate,jdbcType=TIMESTAMP}
+                      AND PS.FCUSTTYPE = 'PC_CUSTOMER'
+                    GROUP BY PS.FDEPTID) T4 ON DEP.FID = T4.FDEPTID
+        LEFT JOIN (SELECT PS.FDEPTID FEXECDEPTID, COUNT(distinct VIS.Fqsid) NEWPSVISCOUNT
+                     FROM T_CUST_RETURNVISIT VIS
+                    INNER JOIN T_cust_potentialscatter PS ON PS.FID = VIS.FQSID
+                    WHERE PS.FCREATETIME >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND PS.FCREATETIME <=#{endDate,jdbcType=TIMESTAMP}
+                      AND PS.FCUSTTYPE = 'PC_CUSTOMER'
+                      AND VIS.Fdate >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND VIS.Fdate <=#{endDate,jdbcType=TIMESTAMP}
+                    GROUP BY PS.FDEPTID) T5 ON DEP.FID = T5.FEXECDEPTID
+          LEFT JOIN (SELECT PS.FDEPTID FEXECDEPTID, COUNT(distinct VIS.Fqsid) NEWPSVISCOUNT
+                     FROM T_CUST_RETURNVISIT VIS
+                    INNER JOIN t_cust_potentialscatter PS ON PS.FID =VIS.FQSID
+                    WHERE VIS.Fdate >= add_months(#{beginDate,jdbcType=TIMESTAMP},-2)
+                 AND VIS.Fdate <= #{endDate,jdbcType=TIMESTAMP}
+                 and (ps.fiscancel = 0  or
+                   (ps.flastupdatetime > add_months(#{beginDate,jdbcType=TIMESTAMP},-1) and ps.fiscancel = 1))
+                   AND PS.FCUSTTYPE = 'PC_CUSTOMER'
+                    GROUP BY PS.FDEPTID) T6 ON DEP.FID = T6.FEXECDEPTID
+        LEFT JOIN (SELECT PS.FDEPTID FEXECDEPTID, COUNT(distinct VIS.Fqsid) NEWPSVISCOUNT
+                     FROM T_CUST_RETURNVISIT VIS
+                    INNER JOIN T_cust_potentialscatter PS ON PS.FID =VIS.FQSID
+                    INNER JOIN T_cust_potentialscatter PS2 ON PS2.FID =ps.FSCATTERID
+                    WHERE VIS.Fdate >= add_months(#{beginDate,jdbcType=TIMESTAMP},-2)
+                 AND VIS.Fdate <= #{endDate,jdbcType=TIMESTAMP}
+                 and (ps.fiscancel = 0  or
+                   (ps.flastupdatetime > add_months(#{beginDate,jdbcType=TIMESTAMP},-1) and ps.fiscancel = 1))
+                     AND PS.FSCATTERID IS NOT NULL
+                      AND PS.FISCANCEL = 1
+                      AND PS2.FCREATETIME >= #{beginDate,jdbcType=TIMESTAMP}
+                      AND PS2.FCREATETIME <=#{endDate,jdbcType=TIMESTAMP}
+                    GROUP BY PS.FDEPTID) T9 ON DEP.FID = T9.FEXECDEPTID
+       WHERE DEP.FSTATUS = 1
+        AND DEP.FSTANDARDCODE IS NOT NULL
+         AND REGEXP_LIKE(DEP.FDEPTNAME, '营业部$'))
+			   ]]>
+	</insert> -->
+	<select id="searchDevMarketReport" statementType="CALLABLE">
+		{call PAG_MARK_CUSTASSESS.createCustDevAssess(#{date,jdbcType=TIMESTAMP})}
+	</select>
+	<select id="searchMatMarketReport" statementType="CALLABLE">
+		{call PAG_MARK_CUSTASSESS.createCustMatAssess(#{date,jdbcType=TIMESTAMP})}
+	</select>
+	<!-- <insert id="searchMatMarketReport" parameterType="map">
+		<![CDATA[
+			insert into T_CRM_CUSTMATASSESS (
+		SELECT seq_crm_custMatAssess.Nextval id,
+		      sysdate createTime, 
+		      sysdate-1 searchDeadline,
+		      to_char(sysdate-1,'yyyymmdd') searchDeadlineVar,
+		      DEP.FDEPTNAME  fdeptName,
+		       DEP.FID        deptid,
+		       SMAL.FDEPTNAME fsmaDeptName,
+		       SMAL.FID       fsmaDeptCode,
+		       BIG.FDEPTNAME  fbigDeptName,
+		       BIG.FID        fbigDeptCode,
+		       ORG.FDEPTNAME  forgDeptName,
+		       ORG.FID        ofrgDeptCode,
+		       JYBB.FDEPTNAME fmanagerDeptName,
+		       JYBB.FID       fmanagerDeptCode,
+		       nvl(t2.countt,0)  recompenseCustNum,
+		       nvl(t3.countt,0) nowVisitNum,
+		       decode(nvl(t2.countt,0),0,0,nvl(t3.countt,0)/t2.countt)*100 nowVisitRate,
+		       nvl(t5.CUSTCOUNT,0)  lostCustNum,
+		       nvl(T6.CUSTCOUNT,0) memberDeleviryNum,
+		       decode(nvl(T6.CUSTCOUNT,0),0,0,nvl(t5.CUSTCOUNT,0)/T6.CUSTCOUNT)*100 lostCustRate,
+		        nvl(T7.CUSTCOUNT,0) lostCustVisitNum,
+		       decode(nvl(t5.CUSTCOUNT,0),0,0,nvl(T7.CUSTCOUNT,0)/t5.CUSTCOUNT)*100 lostVisitRate,
+		        nvl(T8.CUSTCOUNT,0) saveCustNum,
+		        decode(nvl(t5.CUSTCOUNT,0),0,0,nvl(T8.CUSTCOUNT,0)/t5.CUSTCOUNT)*100 saveCustRate
+		  FROM T_ORG_DEPARTMENT DEP
+		  JOIN T_ORG_DEPARTMENT SMAL ON SMAL.FID = DEP.FPARENTID
+		  JOIN T_ORG_DEPARTMENT BIG ON BIG.FID = SMAL.FPARENTID
+		  JOIN T_ORG_DEPARTMENT ORG ON ORG.FID = BIG.FPARENTID
+		  JOIN T_ORG_DEPARTMENT JYBB ON JYBB.FID = ORG.FPARENTID
+		   LEFT JOIN (
+		         select count(fid) countt,CUST.FEXECDEPTID from (
+		 SELECT distinct CUST.fid,CUST.fdeptid FEXECDEPTID From
+		                T_cust_complaint CP 
+		                INNER JOIN T_cust_custbasedata CUST ON CP.fcomplainid = CUST.fid AND CUST.FCUSTSTATUS = 0
+		               WHERE TO_CHAR(CP.freporttime, 'YYYYMM') = to_char(add_months(#{beginDate,jdbcType=TIMESTAMP},-1),'yyyymm')
+		              union
+		  SELECT distinct CUST.fid,CUST.fdeptid From
+		                T_cust_custbasedata CUST 
+		                Inner JOIN T_rec_recompense REC ON REC.fcustomerid = CUST.fid
+		               WHERE  CUST.FCUSTSTATUS = 0 AND TO_CHAR(REC.FREPORTDATE,'YYYYMM') = to_char(add_months(#{beginDate,jdbcType=TIMESTAMP},-1),'yyyymm'))cust
+		               GROUP BY CUST.FEXECDEPTID
+		      )T2 ON DEP.FID = T2.FEXECDEPTID
+		      LEFT JOIN (
+		         select count(fid) countt,CUST.FEXECDEPTID from (
+		 SELECT distinct CUST.fid,CUST.fdeptid FEXECDEPTID From
+		                T_cust_complaint CP 
+		                INNER JOIN T_cust_custbasedata CUST ON CP.fcomplainid = CUST.fid  AND CUST.FCUSTSTATUS = 0
+		                INNER JOIN T_CUST_RETURNVISIT VIS ON CUST.fid =  VIS.fcustid
+		               WHERE TO_CHAR(CP.freporttime, 'YYYYMM') = to_char(add_months(#{beginDate,jdbcType=TIMESTAMP},-1),'yyyymm')
+		               and VIS.FCREATETIME >= #{beginDate,jdbcType=TIMESTAMP} and VIS.FCREATETIME <= #{endDate,jdbcType=TIMESTAMP}
+                  union
+      SELECT distinct CUST.fid,CUST.fdeptid From
+                    T_CUST_CUSTBASEDATA CUST 
+                    Inner JOIN T_rec_recompense REC ON REC.fcustomerid = CUST.fid
+                     INNER JOIN T_CUST_RETURNVISIT VIS ON REC.fcustomerid = VIS.fcustid
+                   WHERE TO_CHAR(REC.FREPORTDATE,'YYYYMM') = to_char(add_months(#{beginDate,jdbcType=TIMESTAMP},-1),'yyyymm')
+                    AND CUST.FCUSTSTATUS = 0
+                   and VIS.FCREATETIME >= #{beginDate,jdbcType=TIMESTAMP} and VIS.FCREATETIME <= #{endDate,jdbcType=TIMESTAMP})cust
+                   GROUP BY CUST.FEXECDEPTID
+          )T3 ON DEP.FID = T3.FEXECDEPTID
+       LEFT JOIN (
+        SELECT  decode(COUNT(1), null, 0, COUNT(1)) CUSTCOUNT, RES.Fdeptid FEXECDEPTID FROM
+                      (       
+                       SELECT DEPT.FID AS FDEPTID,
+                              LOSTCUST.FCUSTNUMBER
+                         FROM T_CRM_CUSTOMERLOSEDETAIL LOSTCUST
+                         INNER JOIN T_CUST_CUSTBASEDATA CUST ON LOSTCUST.FCUSTNUMBER = CUST.FCUSTNUMBER AND CUST.FCUSTSTATUS=0
+                         LEFT JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FID =CUST.FDEPTID
+                        WHERE TRUNC(LOSTCUST.FDATE, 'MM')=TRUNC(ADD_MONTHS(SYSDATE-1, -1), 'MM')
+                      ) RES 
+                      GROUP BY RES.FDEPTID
+       )T5 ON DEP.FID = T5.FEXECDEPTID
+       LEFT JOIN (
+           SELECT CUST.FDEPTID FEXECDEPTID, COUNT(DISTINCT CUST.FID) CUSTCOUNT
+             FROM T_CRM_CUSTANALYSEBYDAY CAD
+             INNER JOIN T_CUST_CUSTBASEDATA CUST ON CUST.FCUSTNUMBER = CAD.FCUSTNUMBER AND CUST.FCUSTSTATUS = 0
+            WHERE CAD.FYEAR = TO_CHAR(ADD_MONTHS(#{endDate,jdbcType=TIMESTAMP},-2),'yyyy')
+              AND CAD.FMONTH = TO_CHAR(ADD_MONTHS(#{endDate,jdbcType=TIMESTAMP},-2),'MM')
+              AND CAD.FCANALYSETYPE = 1
+          GROUP BY CUST.FDEPTID
+       )T6 ON DEP.FID = T6.FEXECDEPTID
+       	 LEFT JOIN (
+       		 SELECT RES.FEXECDEPTID,COUNT(RES.FCUSTNUMBER)
+       	 		FROM (
+				SELECT  DEPT.FID FEXECDEPTID,
+				DETAIL.FCUSTNUMBER FCUSTNUMBER
+			 	FROM T_CRM_CUSTOMERLOSEDETAIL DETAIL
+			 	INNER JOIN T_CUST_CUSTBASEDATA CUSTD ON CUSTD.FCUSTNUMBER = DETAIL.FCUSTNUMBER AND CUSTD.FCUSTSTATUS = 0
+		 		LEFT JOIN T_ORG_DEPARTMENT DEPT ON DEPT.FID =CUSTD.FDEPTID
+       		    INNER JOIN (SELECT DISTINCT VIS.FCUSTID FCUSTID
+			                  FROM T_CUST_RETURNVISIT VIS
+			                  WHERE VIS.FDATE >=#{beginDate,jdbcType=TIMESTAMP}
+			                   AND VIS.FDATE <=#{endDate,jdbcType=TIMESTAMP}
+                            ) VIS ON VIS.FCUSTID = CUSTD.FID
+			 	WHERE TRUNC(DETAIL.FDATE, 'MM') =TRUNC(ADD_MONTHS(SYSDATE-1, -1), 'MM')
+ 				) RES
+ 				GROUP BY RES.FEXECDEPTID
+       )T7 ON DEP.FID = T7.FEXECDEPTID
+        LEFT JOIN (
+           SELECT CUST.FDEPTID FEXECDEPTID, COUNT(DISTINCT CUST.FID) CUSTCOUNT
+             FROM T_CRM_CUSTANALYSEBYDAY CAD
+             INNER JOIN T_CUST_CUSTBASEDATA CUST ON CUST.FCUSTNUMBER = CAD.FCUSTNUMBER  AND CUST.FCUSTSTATUS=0
+            WHERE CAD.FYEAR = to_char(#{endDate,jdbcType=TIMESTAMP},'yyyy')
+              AND CAD.FMONTH = to_char(#{endDate,jdbcType=TIMESTAMP},'MM')
+              AND CAD.FCANALYSETYPE = 1
+              AND CAD.FCUSTNUMBER IN (
+                   SELECT DETAIL.Fcustnumber 
+                     FROM T_CRM_CUSTOMERLOSEDETAIL DETAIL 
+                      INNER JOIN T_CUST_CUSTBASEDATA CUSTD 
+                     ON CUSTD.FCUSTNUMBER = DETAIL.FCUSTNUMBER
+                      AND  TRUNC(DETAIL.FDATE,'MM')=TRUNC(ADD_MONTHS(SYSDATE-1,-1),'MM'))
+              GROUP BY CUST.FDEPTID
+       )T8 ON DEP.FID = T8.FEXECDEPTID
+      WHERE DEP.FSTATUS = 1
+       AND DEP.FSTANDARDCODE IS NOT NULL
+       AND REGEXP_LIKE(DEP.FDEPTNAME, '营业部$')
+        )
+			   ]]>
+	</insert> -->
+	<select id = "searchManagerDept" parameterType="string" resultType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+				select FID id,FDEPTCODE deptCode,FDEPTNAME deptName,FSTANDARDCODE standardCode
+				  from t_org_department de
+				 where de.fdeptname like #{deptName,jdbcType=VARCHAR}
+				   and de.fstatus = 1
+    			   and de.fstandardcode is not null
+			]]>
+	</select>
+	<select id = "searchDeptsByParentId" parameterType="string" resultType="com.deppon.crm.module.organization.shared.domain.Department">
+		<![CDATA[
+				select FID id,FDEPTCODE deptCode,FDEPTNAME deptName,FSTANDARDCODE standardCode
+					  from t_org_department de
+					 where  de.fparentid = #{parentId,jdbcType=VARCHAR}
+					        and (de.fdeptname like '%经营本部'
+					        or  de.fdeptname like '%事业部'
+					        or  de.fdeptname like '%大区'
+					        or  de.fdeptname like '%营业区'
+					        or  de.fdeptname like '%营业部')
+					        and de.fstatus = 1
+					        and de.fstandardcode is not null
+			]]>
+	</select>
+</mapper>
+
+

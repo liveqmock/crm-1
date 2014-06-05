@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="schedulingControlDao" class="com.deppon.crm.module.scheduler.server.dao.impl.SchedulingControlDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="schedulingControlService" class="com.deppon.crm.module.scheduler.server.service.impl.SchedulingControlService">
+		<property name="schedulingControlDao" ref="schedulingControlDao" />
+	</bean>
+
+	<bean id="timerSchedulingControl" class="com.deppon.crm.module.scheduler.server.manager.TimerSchedulingControl">
+		<property name="schedulingControlService" ref="schedulingControlService" />
+		<property name="planScheduleTimer11" ref="planScheduleTimer11" />
+		<property name="timerPotentialCustomer" ref="timerPotentialCustomer" />
+		<property name="timerMemberCustomer" ref="timerMemberCustomer" />
+		<property name="timeDataProcessTimer" ref="timeDataProcessTimer" />
+		<property name="timerWaybillIntegral" ref="timerWaybillIntegral" />
+		<property name="mailSenderService" ref="mailSenderService" />
+	</bean>
+	
+	<bean id="mailSenderService" class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+	<property name="host" value="smtp.deppon.com"/>
+	<property name="userName" value="CRM@deppon.com"/>
+	<property name="password" value="dp31350606"/>
+	</bean>
+
+</beans>
+

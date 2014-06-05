@@ -1,0 +1,566 @@
+<html>
+	<head>
+		<link  type="text/css" rel="stylesheet" href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+		<link rel="stylesheet" type="text/css" href="../styles/common/deppon.css?2012081110.0.1" />
+		<style type="text/css">
+		.x-grid-row-editor .x-form-display-field {
+			font-size: 12px !important;
+		}
+		.x-grid-row-editor .x-form-field {
+			font-size: 12px !important;
+		}
+		</style>
+	    <script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+	    <script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+	    <script type="text/javascript" src="../scripts/order/util/DButil.js?2012081110.0.1"></script>
+	    <script type="text/javascript" charset="utf-8" src="../scripts/common/util/MessageUtil.js?2012081110.0.1"></script>
+		<script type="text/javascript">
+		var dataDictionary;
+		var param = {'dataDictionaryKeys':['TRANS_TYPE']};
+		var successFn = function(json){
+			dataDictionary = json.dataDictionary;
+			init();
+		};
+		var failureFn = function(json){
+			MessageUtil.showErrorMes(json.message);
+		};
+		DButil.getBusinessDictionary(param,successFn,failureFn);
+		function init(){
+			Ext.define('OrderNumberRuleModel',{
+				extend: 'Ext.data.Model',
+				fields: [
+				         {name: 'id', type: 'string'},
+				         {name: 'name', type: 'string'},
+				         {name: 'resource', type: 'string'},
+				         {name: 'transportMode', type: 'string'},
+				         {name: 'sign', type: 'string'},
+				         {name: 'remark', type: 'string'},
+				         {name: 'status', type: 'integer'},
+				         {name: 'createUserId', type: 'string'},
+				         {name: 'createUserEmpName', type: 'string'},
+				         {name: 'createTime', type: 'int'}
+				]
+			});
+			var store = Ext.create('Ext.data.Store',{
+				extend:'Ext.data.Store',
+				model:'OrderNumberRuleModel',
+		    	groupField: 'resource',
+				proxy:{
+					type: 'ajax',
+					url: '../order/allRules.action',
+					reader: {
+						type: 'json',
+						root: 'rules'
+					}
+				},
+				listeners: {
+					load: function(){
+						grid.getView().refresh();
+					}
+				}
+			})
+			store.load();
+			
+			var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+		        clicksToMoveEditor: 2,
+		        autoCancel: false,
+		        listeners: {
+		        	edit: function(e){
+		        		commitData(e);
+		        	}
+		        }
+		    });
+			function commitData(e){
+        		Ext.Ajax.request({
+        			url: '../order/updateRule.action',
+        			params: {
+        				'rule.id': e.record.get('id'),
+        				'rule.name': e.record.get('name'),
+        				'rule.resource': e.record.get('resource'),
+        				'rule.transportMode': e.record.get('transportMode'),
+        				'rule.sign': e.record.get('sign'),
+        				'rule.remark': e.record.get('remark'),
+        				'rule.status': e.record.get('status'),
+        				'autoChangeStatus': true
+        			},
+        			success: function(res){
+        				var data = Ext.decode(res.responseText);
+        				if(data.isException){
+        					MessageUtil.showErrorMes(data.message,function(){
+	        					e.record.reject();
+        					});
+        				}else{
+	        				MessageUtil.showInfoMes("修改成功！",function(){
+	        					e.record.commit();
+	        					store.group("resource");
+	        				});
+        				}
+        			},
+        			failure: function(){
+        				MessageUtil.showErrorMes("修改失败！");
+        				e.record.reject();
+        			}
+        		})
+			}
+			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
+		        groupHeaderTpl: '渠道代号: {name} ({rows.length} 项)'
+		    });
+		    var grid = Ext.create('Ext.grid.Panel', {
+		    	region: 'center',
+		    	features: [groupingFeature],
+		    	selType: 'checkboxmodel',
+		    	listeners: {
+		        	scrollershow: function(scroller) {
+		        		if (scroller && scroller.scrollEl) {
+		        				scroller.clearManagedListeners(); 
+		        				scroller.mon(scroller.scrollEl, 'scroll', scroller.onElScroll, scroller); 
+		        		}
+		        	}
+		        },
+		    	selModel: {
+		    		mode: 'MULTI',
+		    		checkOnly: false,
+		    		listeners: {
+		    			selectionchange: function(model,selected){
+		    				if(selected.length == 0){
+	    						Ext.getCmp('btn-rule-enable').disable();
+	    						Ext.getCmp('btn-rule-disable').disable();
+		    				}else{
+		    					var enabled = false;
+		    					var disabled = false;
+		    					for(var i=0;i<selected.length;i++){
+		    						var r = selected[i];
+		    						if(r.get('status') == 0){
+		    							enabled = true;
+		    						}else{
+		    							disabled = true;
+		    						}
+		    					}
+	    						Ext.getCmp('btn-rule-enable').setDisabled(!enabled);
+	    						Ext.getCmp('btn-rule-disable').setDisabled(!disabled);
+		    				}
+		    			}
+		    		}
+	    		},
+		        store: store,
+		        style: {
+		        	marginTop: '10px'
+		        },
+		        columns: [{
+	                text     : '渠道名',
+	                width: 100,
+	                sortable : false,
+	                dataIndex: 'name',
+	                editor: {
+	                    allowBlank: false,
+	           	    	maxLength: 10
+	                }
+		        },{
+	                text     : '渠道代号',
+	                width: 120,
+	                sortable : true,
+	                dataIndex: 'resource',
+	                editor: {
+	                    allowBlank: false,
+	                    fieldStyle: 'text-transform: uppercase',
+	           	    	maxLength: 20,
+	                    listeners: {
+	                    	change: function(field,newValue){
+	                    		this.setRawValue(newValue.toUpperCase());
+	                    	}
+	                    }
+	                }
+		        },{
+	                text     : '运输方式',
+	                width: 100,
+	                sortable : true,
+	                dataIndex: 'transportMode',
+	                renderer : function(value){
+	                	var transType = dataDictionary.TRANS_TYPE;
+	                	for(var i=0;i<transType.length;i++){
+	                		if(transType[i].code == value){
+	                			return transType[i].codeDesc; 
+	                		}
+	                	}
+	                },
+	                editor: {
+	                	xtype: 'combo',
+	                	store: Ext.create('Ext.data.Store', {
+	                        fields: ['code', 'codeDesc'],
+	                        data : dataDictionary.TRANS_TYPE
+	                    }),
+	                    queryMode: 'local',
+	                    displayField: 'codeDesc',
+	                    valueField: 'code',
+	                    editable: false
+	                }
+	        	},{
+	                text     : '前缀',
+	                width: 75,
+	                sortable : false,
+	                dataIndex: 'sign',
+	                editor: {
+	                    allowBlank: false,
+	                    fieldStyle: 'text-transform: uppercase',
+	                    regex: /^[A-Z]+$/,
+	                    regexText: '只能输入大写字母',
+	                    maxLength: 4,
+	                    listeners: {
+	                    	change: function(field,newValue){
+	                    		this.setRawValue(newValue.toUpperCase());
+	                    	}
+	                    }
+	                }
+	        	},{
+	        		text	: '状态',
+	        		width	: 75,
+	        		sortable: false,
+	        		dataIndex:'status',
+	        		renderer: function(value){
+	        			return value == 1 ? '启用' : '<span style="color: red">禁用</span>';
+	        		}
+	        	},{
+	        		text: '新增人',
+	        		width: 100,
+	        		sortable: false,
+	        		dataIndex: 'createUserEmpName'
+	        	},{
+	        		text: '新增时间',
+	        		width: 100,
+	        		dataIndex: 'createTime',
+	        		renderer: function(value){
+	        			var date = new Date(value);
+	        			return Ext.Date.format(date,'Y-m-d');
+	        		}
+	        	},{
+	                text     : '备注',
+	                flex     : 1,
+	                sortable : false,
+	                dataIndex: 'remark',
+	                editor: {
+	                    maxLength: 50
+	                }
+	        	}],
+		        viewConfig: {
+		            stripeRows: true
+		        },
+		        tbar: [{
+		            text: '新增',
+		            handler : function() {
+		            	showAddRuleWin();
+		            }
+		        },{
+		        	text: '启用',
+		        	id: 'btn-rule-enable',
+		        	disabled: true,
+		        	handler: function(){
+		        		var params = {};
+		        		var records = grid.getSelectionModel().getSelection();
+		        		var j=0;
+		        		for(var i=0;i<records.length;i++){
+		        			var r = records[i];
+		        			if(r.get('status') != 1){
+		        				params['changeStatusRules[' + j + '].id'] = r.get('id');
+		        				params['changeStatusRules[' + j + '].status'] = 1;
+		        				j++;
+		        			}
+		        		}
+		        		Ext.Ajax.request({
+		        			url: '../order/changeStatus.action',
+		        			params: params,
+		        			success: function(res){
+				        		for(var i=0;i<records.length;i++){
+				        			var r = records[i];
+				        			if(r.get('status') != 1){
+				        				r.set('status',1);
+				        			}
+				        			r.commit();
+				        		}
+		        				Ext.getCmp('btn-rule-disable').enable();
+		        				Ext.getCmp('btn-rule-enable').disable();
+		        				MessageUtil.showInfoMes('启用成功!');
+		        			}
+		        		})
+		        	}
+		        },{
+		        	text: '禁用',
+		        	id: 'btn-rule-disable',
+		        	disabled: true,
+		        	handler: function(){
+		        		var params = {};
+		        		var records = grid.getSelectionModel().getSelection();
+		        		var j=0;
+		        		for(var i=0;i<records.length;i++){
+		        			var r = records[i];
+		        			if(r.get('status') != 0){
+		        				params['changeStatusRules[' + j + '].id'] = r.get('id');
+		        				params['changeStatusRules[' + j + '].status'] = 0;
+		        				j++;
+		        			}
+		        		}
+		        		Ext.Ajax.request({
+		        			url: '../order/changeStatus.action',
+		        			params: params,
+		        			success: function(res){
+		        				for(var i=0;i<records.length;i++){
+				        			var r = records[i];
+				        			if(r.get('status') != 0){
+				        				r.set('status',0);
+				        			}
+				        			r.commit();
+				        		}
+		        				Ext.getCmp('btn-rule-disable').disable();
+		        				Ext.getCmp('btn-rule-enable').enable();
+		        				MessageUtil.showInfoMes('禁用成功!');
+		        			}
+		        		})
+		        	}
+		        }],
+		        plugins: [rowEditing]
+		    });
+		    function showAddRuleWin(){
+            	var win = Ext.WindowManager.get('ordernumberrule-add-win');
+            	if(!win){
+            		var form = Ext.create('Ext.form.Panel', {
+            			url: '../order/createRule.action',
+            			frame: false,
+            			border: 0,
+	            	    items: [{
+	            	    	allowBlank: false,
+	            	    	xtype: 'textfield',
+	            	    	name: 'rule.name',
+	            	    	fieldLabel: '渠道名',
+	            	    	maxLength: 10,
+	            	    	msgTarget: 'side',
+	            	    	value: ''
+	            	    },{
+	            	    	allowBlank: false,
+	            	    	xtype: 'textfield',
+	            	    	name: 'rule.resource',
+	            	    	fieldLabel: '渠道代号',
+	            	    	maxLength: 20,
+	            	    	msgTarget: 'side',
+		                    fieldStyle: 'text-transform: uppercase',
+		                    listeners: {
+		                    	change: function(field,newValue){
+		                    		this.setRawValue(newValue.toUpperCase());
+		                    	}
+		                    },
+	            	    	value: ''
+	            	    },{
+	            	    	allowBlank: false,
+	            	    	xtype: 'combo',
+	            	    	name: 'rule.transportMode',
+	                    	store: Ext.create('Ext.data.Store', {
+	                            fields: ['code', 'codeDesc'],
+	                            data : dataDictionary.TRANS_TYPE
+	                        }),
+	                        queryMode: 'local',
+	                        displayField: 'codeDesc',
+	                        valueField: 'code',
+	                        editable: false,
+	    		    		fieldLabel: '运输方式(可多选)',
+	    		    		multiSelect: true,
+	            	    	msgTarget: 'side',
+	            	    	value: ''
+	            	    },{
+	            	    	xtype: 'textfield',
+	            	    	name: 'rule.sign',
+	            	    	fieldLabel: '前缀',
+	            	    	allowBlank: false,
+		                    fieldStyle: 'text-transform: uppercase',
+		                    regex: /^[A-Z]+$/,
+		                    regexText: '只能输入大写字母',
+		                    maxLength: 4,
+		                    listeners: {
+		                    	change: function(field,newValue){
+		                    		this.setRawValue(newValue.toUpperCase());
+		                    	}
+		                    },
+	            	    	msgTarget: 'side',
+	            	    	value: ''
+	            	    },{
+	            	    	allowBlank: false,
+	            	    	fieldLabel: '状态',
+            	    		xtype: 'combo',
+            	    		name: 'rule.status',
+    	                    store: Ext.create('Ext.data.Store', {
+    	                        fields: ['field', 'value'],
+    	                        data : [
+    	                            {"field":"启用", "value":"1"},
+    	                            {"field":"禁用", "value":"0"}
+    	                        ]
+    	                    }),
+    	                    queryMode: 'local',
+    	                    displayField: 'field',
+    	                    valueField: 'value',
+    	                    editable: false,
+	            	    	msgTarget: 'side',
+	            	    	value: '1'
+	            	    },{
+	            	    	xtype: 'textfield',
+	            	    	name: 'rule.remark',
+	            	    	fieldLabel: '备注',
+	            	    	maxLength: 50
+	            	    }],
+	            	    buttons: [{
+	            	    	text: '提交',
+	            	    	handler: function(){
+	            	    		var f = form.getForm();
+	            	    		if(f.isValid()){
+	            	    			f.submit({
+	            	    				success: function(){
+	            	    					store.load();
+	            	    					MessageUtil.showInfoMes('新增成功',function(){
+	            	    						win.close();
+	            	    					});
+	            	    				},
+	            	    				failure: function(form,action){
+	            	    					MessageUtil.showErrorMes(action.result.message);
+	            	    				}
+	            	    			});
+	            	    		}
+	            	    	}
+	            	    },{
+	            	    	text: '取消',
+	            	    	handler: function(){
+	            	    		win.close();
+	            	    	}
+	            	    }]
+	            	});
+            		win = Ext.create('Ext.window.Window',{
+	            		id: 'ordernumberrule-add-win',
+	            	    title: '新增规则',
+	            	    height: 250,
+	            	    width: 380,
+	            	    layout: 'fit',
+	            	    items: [form]
+            		})
+	            	win.show();
+            	}
+		    }
+		    var filter = {
+	    		transTypes: [],
+	    		resource: '',
+	    		sign: '',
+	    		name: '',
+	    		execute: function(records,resource){
+			    	store.clearFilter();
+			    	var transTypes = this.transTypes;
+	    			if(transTypes.length > 0){
+	    				store.filterBy(function(record){
+	    					for(var i=0;i<transTypes.length;i++){
+	    						if(transTypes[i].get('code') == record.get('transportMode')){
+	    							return true;
+	    						}
+	    					}
+	    				});
+   					}
+	    			if(this.resource){
+	    				var regex = new RegExp(this.resource,"i");
+	    				store.filter('resource',regex);
+	    			}
+	    			if(this.sign){
+	    				var regex = new RegExp(this.sign,"i");
+	    				store.filter('sign',regex);
+	    			}
+	    			if(this.name){
+	    				var regex = new RegExp(this.name,"i");
+	    				store.filter('name',regex);
+	    			}
+		    	},
+		    	reset: function(){
+	    			this.resource = '';
+	    			this.sign = '';
+	    			this.name = '';
+	    			this.transTypes = [];
+		    	}
+		    }
+		    var filterPanel = Ext.create('Ext.form.Panel',{
+		    	region: 'north',
+		    	frame: true,
+		    	layout: {
+		    		type: 'table',
+		    		columns: 2
+		    	},
+		    	buttons: [{
+		    		xtype: 'button',
+		    		text: '重置',
+		    		handler: function(){
+		    			filterPanel.getForm().reset();
+		    			filter.reset();
+		    			filter.execute();
+		    		}
+		    	}],
+		    	items: [{
+		    		xtype: 'textfield',
+		    		fieldLabel: '渠道名',
+		    		maxLength: 10,
+		    		listeners: {
+		    			change: function(field,newValue,oldValue){
+		    				filter.name = newValue;
+		    				filter.execute();
+		    			}
+		    		}
+		    	},{
+		    		xtype: 'textfield',
+		    		fieldLabel: '渠道代号',
+		    		fieldStyle: 'text-transform: uppercase',
+		    		maxLength: 20,
+		    		listeners: {
+		    			change: function(field,newValue,oldValue){
+		    				filter.resource = newValue;
+		    				filter.execute();
+		    			}
+		    		}
+		    	},{
+		    		xtype: 'combo',
+                	store: Ext.create('Ext.data.Store', {
+                        fields: ['code', 'codeDesc'],
+                        data : dataDictionary.TRANS_TYPE
+                    }),
+                    queryMode: 'local',
+                    displayField: 'codeDesc',
+                    valueField: 'code',
+                    editable: false,
+		    		fieldLabel: '运输方式',
+		    		multiSelect: true,
+		    		selectedRecords: [],
+		    		listeners: {
+		    			select: function(combo,records){
+		    				filter.transTypes = records;
+		    				filter.execute();
+		    			},
+		    			beforedeselect: function(combo,record){
+		    				var transTypes = filter.transTypes;
+		    				for(var i=0;i<transTypes.length;i++){
+	    						if(transTypes[i].get('code') == record.get('code')){
+	    							transTypes.pop(record);
+	    						}
+	    					}
+		    				filter.execute();
+		    			}
+		    		}
+		    	},{
+		    		xtype: 'textfield',
+		    		fieldLabel: '前缀',
+                    fieldStyle: 'text-transform: uppercase',
+                    maxLength: 10,
+                    listeners: {
+                    	change: function(field,newValue){
+                    		filter.sign = newValue;
+                    		filter.execute();
+                    	}
+                    }
+		    	}]
+		    })
+		    Ext.create('Ext.container.Viewport',{
+		    	layout: 'border',
+		    	items: [filterPanel,grid]
+		    })
+		}
+		</script>
+	</head>
+	<body class="tabcontentpadding">
+	</body>
+</html>

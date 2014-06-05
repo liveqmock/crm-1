@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.WorkOrder">
+	<resultMap id="workOrderMap" type="com.deppon.crm.module.complaint.shared.domain.WorkOrder" >
+	<id column="fid" property="fid" jdbcType="DECIMAL" />
+    <result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+  	<result column="FCREATEUSERID" property="createUser" jdbcType="DECIMAL" />
+  	<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="DECIMAL" />
+    <result column="FCOMPLAINTID" property="complaintId" jdbcType="DECIMAL" />    
+    <result column="FOPERATORID" property="operatorId" jdbcType="DECIMAL" />
+    <result column="FOPERATORNAME" property="operatorName" jdbcType="VARCHAR" />
+    <result column="FOPERATORTIME" property="operatorTime" jdbcType="TIMESTAMP" />
+    <result column="FOPERATORTYPE" property="operatorType" jdbcType="VARCHAR" />
+    <result column="FOPERATORRECORD" property="operatorRecord" jdbcType="VARCHAR" />    
+    <result column="FCURRENTSTAT" property="currentState" jdbcType="VARCHAR" />
+    <result column="FPREVIOUSSTAT" property="previousState" jdbcType="VARCHAR" />
+    <result column="OPERATORROLEID" property="operatorRoleId" jdbcType="DECIMAL" />
+    <!-- 7.5新增 调查建议字段-->
+    <result column="FSUGGESTION" property="suggestion" jdbcType="VARCHAR" /> 
+    <!--  -->   
+    <association property="complaint" column="FCOMPLAINTID"
+			select="com.deppon.crm.module.complaint.shared.domain.Complaint.getComplaintById" /> 
+  </resultMap>
+
+
+ 	<insert id="saveWorkOrder" 
+	parameterType="com.deppon.crm.module.complaint.shared.domain.WorkOrder">
+	<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT seq_id_workorder.nextval AS
+			id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CRM_WORKORDER
+		  (FID,
+		   FCREATETIME,
+		   FCREATEUSERID,
+		   FLASTUPDATETIME,
+		   FLASTMODIFYUSERID,
+		   FCOMPLAINTID,
+		   FOPERATORID,
+		   FOPERATORNAME,
+		   FOPERATORTIME,
+		   FOPERATORTYPE,
+		   FOPERATORRECORD,
+		   FCURRENTSTAT,
+		   FPREVIOUSSTAT,
+		   OPERATORROLEID
+		   ,FSUGGESTION
+		   )
+		VALUES
+		  (#{id},
+		   #{createDate, jdbcType=TIMESTAMP},
+		   #{createUser, jdbcType=DECIMAL},
+		   #{modifyDate, jdbcType=TIMESTAMP},
+		   #{modifyUser, jdbcType=DECIMAL},
+		   #{complaintId, jdbcType=DECIMAL},
+		   #{operatorId, jdbcType=DECIMAL},
+		   #{operatorName, jdbcType=VARCHAR},
+		   #{operatorTime, jdbcType=TIMESTAMP},
+		   #{operatorType, jdbcType=VARCHAR},
+		   #{operatorRecord, jdbcType=VARCHAR},
+		   #{currentState, jdbcType=VARCHAR},
+		   #{previousState, jdbcType=VARCHAR},
+		   #{operatorRoleId, jdbcType=DECIMAL},
+		   #{suggestion, jdbcType=VARCHAR}
+		  )
+		   
+	</insert>
+	
+	<update id="updateWorkOrder" parameterType="com.deppon.crm.module.complaint.shared.domain.WorkOrder">
+		UPDATE T_CRM_WORKORDER SET 
+		<if test="createDate != null and createDate != ''">
+			FCREATETIME=#{createDate},
+		</if>
+		<if test="createUser != null and createUser != ''">
+			FCREATEUSERID=#{createUser},
+		</if>
+		<if test="modifyUser != null and modifyUser != ''">
+			FLASTMODIFYUSERID=#{modifyUser},
+		</if>
+		<if test="complaintId != null and complaintId != ''">
+			FCOMPLAINTID=#{complaintId},
+		</if>
+		<if test="operatorId != null and operatorId != ''">
+			FOPERATORID=#{operatorId},
+		</if>
+		<if test="operatorName != null and operatorName != ''">
+			FOPERATORNAME=#{operatorName},
+		</if>
+		<if test="operatorTime != null and operatorTime != ''">
+			FOPERATORTIME=#{operatorTime},
+		</if>
+		<if test="operatorType != null and operatorType != ''">
+			FOPERATORTYPE=#{operatorType},
+		</if>
+		<if test="operatorRecord != null and operatorRecord != ''">
+			FOPERATORRECORD=#{operatorRecord},
+		</if>
+		<if test="currentState != null and currentState != ''">
+			FCURRENTSTAT=#{currentState},
+		</if>
+		<if test="previousState != null and previousState != ''">
+			FPREVIOUSSTAT=#{previousState},
+		</if>
+		<if test="operatorRoleId != null and operatorRoleId != ''">
+			OPERATORROLEID=#{operatorRoleId},
+		</if>
+		<if test="suggestion != null and suggestion != ''">
+			FSUGGESTION=#{suggestion},
+		</if>
+				
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{fid}
+	</update>
+	
+	<select id="getWorkOrderRecordByComplaintId" resultMap="workOrderMap" parameterType="com.deppon.crm.module.complaint.shared.domain.WorkOrderCondition">
+		<![CDATA[
+			SELECT t.FID, t.FCREATETIME, t.FCREATEUSERID, t.FLASTUPDATETIME,t.FLASTMODIFYUSERID,
+			t.FCOMPLAINTID, t.FOPERATORID, t.FOPERATORNAME, t.FOPERATORTIME, t.FOPERATORTYPE, t.FOPERATORRECORD,
+			t.FCURRENTSTAT, t.FPREVIOUSSTAT, t.OPERATORROLEID ,t.FSUGGESTION   
+			FROM T_CRM_WORKORDER t inner join (
+		       select temp.FCOMPLAINTID as FCOMPLAINTID,max(temp.flastupdatetime) as flastupdatetime FROM T_CRM_WORKORDER temp 
+		       where temp.FCOMPLAINTID = to_number(#{complaintId}) and temp.foperatortype is not null
+		       group by temp.fcomplaintid
+		    ) last_wordorder on t.fcomplaintid = last_wordorder.fcomplaintid and t.flastupdatetime = last_wordorder.flastupdatetime
+        ]]>
+	</select>	
+	
+		<select id="selectWorkOrderByCompId" resultMap="workOrderMap"
+	parameterType="map">
+		SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,FLASTMODIFYUSERID,
+		FCOMPLAINTID, FOPERATORID, FOPERATORNAME, FOPERATORTIME, FOPERATORTYPE, FOPERATORRECORD,
+		FCURRENTSTAT, FPREVIOUSSTAT, OPERATORROLEID , FSUGGESTION 
+		FROM T_CRM_WORKORDER 
+		WHERE FCOMPLAINTID=#{compId} 
+		and (FOPERATORTYPE='FROMAPPROVAL' or FOPERATORTYPE='FROMUPGRADE' or FOPERATORTYPE='FROMPROCESS' ) 
+		ORDER BY FOPERATORTIME DESC
+	</select>
+
+	<select id="getSuggestionByComplaintId" resultMap="workOrderMap" parameterType="com.deppon.crm.module.complaint.shared.domain.WorkOrderCondition">
+		<![CDATA[
+		SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,FLASTMODIFYUSERID,
+		FCOMPLAINTID, FOPERATORID, FOPERATORNAME, FOPERATORTIME, FOPERATORTYPE, FOPERATORRECORD,
+		FCURRENTSTAT, FPREVIOUSSTAT, OPERATORROLEID ,FSUGGESTION    
+		FROM T_CRM_WORKORDER 
+		WHERE FCOMPLAINTID = to_number(#{complaintId}) AND (FSUGGESTION is not null)
+        ORDER BY FLASTUPDATETIME DESC
+        ]]>
+	</select>
+
+
+</mapper>

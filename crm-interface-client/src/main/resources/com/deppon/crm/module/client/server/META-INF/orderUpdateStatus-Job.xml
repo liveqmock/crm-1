@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+	http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- 订单状态更新 -->
+	<bean id="orderLogDao" class="com.deppon.crm.module.client.order.dao.impl.OrderLogDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="logProviderImpl" class="com.deppon.crm.module.client.jobs.impl.LogProviderImpl" >
+		<property name="orderLogDao" ref="orderLogDao"></property>
+	</bean>
+	<bean id="logProcessImpl" class="com.deppon.crm.module.client.jobs.impl.LogProcessImpl">
+		<property name="orderLogDao" ref="orderLogDao" ></property>
+	</bean>
+	<bean id="logSenderImpl" class="com.deppon.crm.module.client.jobs.impl.LogSenderImpl">
+		<property name="orderOperate" ref="orderOperate"/>
+	</bean>
+	<bean id="memryLock" class="com.deppon.crm.module.client.jobs.impl.MemryLock">
+	</bean>
+	
+	<bean id="orderStatusInterfaceJob"
+		class="com.deppon.crm.module.client.jobs.impl.ExecutorContext">
+		<property name="provider" ref="logProviderImpl"></property>
+		<property name="process" ref="logProcessImpl"></property>
+		<property name="sender" ref="logSenderImpl"></property>
+		<property name="lock" ref="memryLock"></property>
+	</bean>
+	
+	<bean id="feeEndorseToCore"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="orderStatusInterfaceJob" />
+		<property name="targetMethod" value="execute" />
+	</bean>
+	<bean id="feeEndorseToCoreTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="feeEndorseToCore"></property>
+		<property name="cronExpression">
+			<!-- 每分钟启动一次 -->
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="feeEndorseToCoreTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>
+

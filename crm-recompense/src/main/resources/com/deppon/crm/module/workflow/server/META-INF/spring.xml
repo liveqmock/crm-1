@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+		
+<!-- 		理赔工作流	 -->
+	<bean id="normalClaimDao" scope="singleton"
+		class="com.deppon.crm.module.workflow.server.dao.impl.NormalClaimDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="normalClaimService" scope="singleton" class="com.deppon.crm.module.workflow.server.service.impl.NormalClaimServiceImpl">
+		<property name="normalClaimDao" ref="normalClaimDao" />
+	</bean>
+	
+	<bean id="normalClaimManager" scope="singleton" class="com.deppon.crm.module.workflow.server.manager.impl.NormalClaimManagerImpl">
+		<property name="normalClaimService" ref="normalClaimService" />
+		<property name="departmentService" ref="departmentService" />
+		<property name="employeeService" ref="employeeService" />
+		<property name="fileManager" ref="fileManager" />
+		<property name="signetManagerManager" ref="signetManagerManager" />
+		<property name="recompenseManager" ref="recompenseManager" />
+		<property name="userService" ref="userService" />
+		<property name="recompenseService" ref="recompenseService" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager"/>
+		<property name="serviceRecoveryService" ref="serviceRecoveryService"/>
+		<property name="ServiceRecoveryManager" ref="serviceRecoveryManager"/>
+	</bean>
+	
+	<bean id="normalClaimAction" scope="prototype" class="com.deppon.crm.module.workflow.server.action.NormalClaimAction">
+		<property name="normalClaimManager" ref="normalClaimManager" />
+	</bean>
+	
+	<!-- <bean id="casLoginAction" scope="prototype" class="com.deppon.crm.module.workflow.server.action.CasLoginAction">
+		<property name="normalClaimManager" ref="normalClaimManager" />
+	</bean> -->
+	<!-- 	印章管理员 设置-->
+	<bean id="signetManagerDao" scope="singleton"
+		class="com.deppon.crm.module.workflow.server.dao.impl.SignetManagerDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="signetManagerService" scope="singleton" class="com.deppon.crm.module.workflow.server.service.impl.SignetManagerServiceImpl">
+		<property name="signetManagerDao" ref="signetManagerDao" />
+	</bean>
+	
+	<bean id="signetManagerManager" scope="singleton" class="com.deppon.crm.module.workflow.server.manager.impl.SignetManagerManagerImpl">
+		<property name="signetManagerService" ref="signetManagerService" />
+		<property name="departmentService" ref="departmentService" />
+	</bean>
+	
+	<bean id="signetManagerAction" scope="prototype" class="com.deppon.crm.module.workflow.server.action.SignetManagerAction">
+		<property name="signetManagerManager" ref="signetManagerManager" />
+	</bean>
+	
+	<!--	审批金额配置-->
+	
+	<bean id="amountConfigManager" scope="singleton" class="com.deppon.crm.module.workflow.server.manager.impl.AmountConfigManagerImpl">
+		<property name="amountConfigService" ref="amountConfigService" />
+		<property name="normalClaimManager" ref="normalClaimManager" />
+	</bean>
+	
+	<bean id="amountConfigService" scope="singleton" class="com.deppon.crm.module.workflow.server.service.impl.AmountConfigServiceImpl">
+		<property name="amountConfigDao" ref="amountConfigDao" />
+	</bean>
+	
+	<bean id="amountConfigDao" scope="singleton" class="com.deppon.crm.module.workflow.server.dao.impl.AmountConfigDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="amountConfigAction" scope="prototype" class="com.deppon.crm.module.workflow.server.action.AmountConfigAction">
+		<property name="amountConfigManager" ref="amountConfigManager" />
+	</bean>
+ </beans>
+

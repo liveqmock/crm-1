@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.gis.shared.domain.PolygonEntity">
+	<!-- 区域坐标信息 -->
+	<resultMap
+		type="com.deppon.crm.module.gis.shared.domain.PolygonEntity"
+		id="polygonMap">
+		<result property="id" column="ID" /><!--主键id -->
+		<result property="polygonID" column="POLYGONID"/>
+		<result property="type" column="TYPE" /><!--区域坐标类型 -->
+		<!--google区域坐标范围 -->
+		<result property="google" column="BOUNDARY_MARS"
+			typeHandler="com.deppon.crm.module.gis.server.util.CoordinatesTypeHandler" /><!--空间坐标转化为字符串 -->
+	    <!--baidu区域坐标范围-->
+		<result property="baidu" column="BOUNDARY_BAIDU"
+			typeHandler="com.deppon.crm.module.gis.server.util.CoordinatesTypeHandler" /><!--空间坐标转化为字符串 -->
+		<result property="description" column="DESCRIPTION" /><!--区域坐标描述 -->
+		<result property="name" column="NAME" /><!--坐标名称 -->
+	</resultMap>
+
+	<sql id="polygonSql_param">
+	id ID,
+	polygonID POLYGONID,
+	type TYPE,
+	boundary_mars BOUNDARY_MARS,
+	boundary_baidu BOUNDARY_BAIDU,
+	description DESCRIPTION,
+	name NAME
+	
+	</sql>
+	<!-- 根据id，查询范围信息 -->
+	<select id="selectPolygonById" resultMap="polygonMap" parameterType="String">
+		select 
+		<include refid="polygonSql_param" />
+		from t_crm_map_polygon where polygonID=#{id} and isvalid = 1
+	</select>
+
+	<!-- 保存范围 -->
+	<insert id="savePolygon" parameterType="com.deppon.crm.module.gis.shared.domain.PolygonEntity">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+		    select sys_guid() from dual
+		</selectKey>
+		  DECLARE 
+		      v_id varchar2(4000);
+		      v_polygonID varchar2(4000);
+		      v_createtime timestamp;
+		      v_modifytime timestamp;
+		      v_type varchar2(4000);
+		      google SDO_GEOMETRY;
+		      baidu SDO_GEOMETRY;
+		      v_name varchar2(4000);
+		      v_description varchar2(4000);
+		      v_isvalid varchar2(4000);
+		    
+		      BEGIN
+		         v_id := #{id,jdbcType=VARCHAR};
+		           <choose>
+		          <when test="polygonID != null and ''!= polygonID">
+		             <![CDATA[v_polygonID:=#{polygonID,jdbcType=VARCHAR};]]>  
+		          </when>
+		          <otherwise>
+		             v_polygonID:=#{id,jdbcType=VARCHAR};
+		          </otherwise>
+		         </choose>
+		        
+		       v_createtime:= sysdate;
+		       v_modifytime := sysdate;
+		       v_type:=#{type,jdbcType=VARCHAR};
+		       google :=SDO_GEOMETRY  
+		      (  
+		      2003, 4326, NULL, SDO_ELEM_INFO_ARRAY(1, 1003, 1), 
+		      SDO_ORDINATE_ARRAY(${google}));
+		      baidu := SDO_GEOMETRY  
+		      (  
+		      2003, 4326, NULL, SDO_ELEM_INFO_ARRAY(1, 1003, 1), 
+		      SDO_ORDINATE_ARRAY(${baidu}));
+		      v_name:=#{name,jdbcType=VARCHAR};
+		      v_description:=#{description,jdbcType=VARCHAR};
+		      v_isvalid:=1;
+		      
+		    EXECUTE IMMEDIATE 'insert into t_crm_map_polygon(ID,
+		   POLYGONID,
+		   CREATETIME,
+		   MODIFYTIME,
+		   type,
+		   boundary_mars,
+		   boundary_baidu,
+		   NAME,
+		   DESCRIPTION,
+		   ISVALID)
+		      values(:1,:2,:3,:4,:5,:6,:7,:8,:9,:10)' using v_id,v_polygonID,v_createtime,v_modifytime,v_type,google,baidu,v_name,v_description,v_isvalid;
+		    END;
+	</insert>
+	
+	<!-- 删除范围 将范围作废 -->
+	<update id="deletePolygonById" parameterType="String">
+	update t_crm_map_polygon
+		set isvalid='0',
+		modifytime=sysdate
+		where POLYGONID= #{value}
+		and isvalid='1'
+	   
+	</update>	
+	
+	<update id="updatePolygonBaiduById" parameterType="com.deppon.crm.module.gis.shared.domain.PolygonEntity">
+		    DECLARE 
+      baidu SDO_GEOMETRY;
+      v_modifytime timestamp;
+      v_id varchar2(4000);
+      v_isvalid varchar2(200);
+      BEGIN
+        <set>
+	         <if test="baidu!=null and ''!=baidu">
+      <![CDATA[baidu := SDO_GEOMETRY  
+      (  
+      2003, 4326, NULL, SDO_ELEM_INFO_ARRAY(1,1003, 1), 
+      SDO_ORDINATE_ARRAY(${baidu}));]]> 
+           </if>
+	      </set>
+        v_modifytime:=sysdate;
+      v_id:=#{id,jdbcType=VARCHAR};
+      v_isvalid:=1;
+    EXECUTE IMMEDIATE 'update t_crm_map_polygon set BOUNDARY_BAIDU=:1,modifytime=:2 where id =:3 and isvalid=:4'
+			using baidu,v_id,v_isvalid;
+		END;
+    
+	</update>
+</mapper>

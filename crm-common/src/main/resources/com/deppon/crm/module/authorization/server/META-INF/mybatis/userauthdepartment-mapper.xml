@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.authorization.shared.domain.UserAuthDepartment">
+
+	<!-- 插入用户授权部门 -->
+	<insert id="insert" parameterType="map">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT USER_AUTH_DEPARTMENT_SEQ.NEXTVAL AS
+			id FROM DUAL
+			<!--
+			 SELECT (CASE WHEN MAX(ID) IS NULL THEN 1 ELSE MAX(ID)+1 END) AS id 
+				FROM T_AUTH_USERAUTHDEPARTMENT
+			-->
+		</selectKey>
+		<![CDATA[
+			insert into T_AUTH_USERAUTHDEPARTMENT(
+				FID,
+				FUSERID,
+				FDEPTID
+			) values (
+				#{id},
+				#{userId},
+				#{deptId}
+			)
+		]]>
+	</insert>
+
+	<!-- 根据用户ID删除用户已经授权的部门 -->
+	<delete id="deleteByUserId" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_USERAUTHDEPARTMENT WHERE FUSERID = #{id}
+		]]>
+	</delete>
+
+	<!-- 得到用户已经授权的部门 -->
+	<select id="getAllDepartmentIdByUserId" parameterType="map" resultType="string">
+		<![CDATA[
+			SELECT
+			FDEPTID
+		]]>
+		<!-- 修改前-->
+		<!--
+		<![CDATA[
+			FROM T_AUTH_USERAUTHDEPARTMENT
+			WHERE FUSERID = #{userId}
+		]]>
+		-->
+		<!-- 
+		修改后
+			修改人:ztjie
+			修改时间：2012-04-18
+			修改说明：增加了不是超级管理员时的判断
+		-->
+		<if test="currentUserId!=null and userId!=''">
+			<![CDATA[
+				 FROM T_AUTH_USERAUTHDEPARTMENT MASTAR
+				 LEFT JOIN T_ORG_DEPARTMENT DEPT
+				 ON MASTAR.FDEPTID  = DEPT.FID
+				 WHERE MASTAR.FUSERID = #{currentUserId}
+				 AND DEPT.FSTATUS = 1 AND DEPT.FSTANDARDCODE IS NOT NULL
+				   AND MASTAR.FDEPTID NOT IN
+				       (SELECT FDEPTID FROM T_AUTH_USERAUTHDEPARTMENT WHERE FUSERID = #{userId})
+			]]>
+		</if>
+		<if test="currentUserId==null and userId!=''">
+			<![CDATA[
+				FROM T_AUTH_USERAUTHDEPARTMENT MASTAR
+				LEFT JOIN T_ORG_DEPARTMENT DEPT
+				 ON MASTAR.FDEPTID  = DEPT.FID
+				WHERE MASTAR.FUSERID = #{userId}
+				AND DEPT.FSTATUS = 1 AND DEPT.FSTANDARDCODE IS NOT NULL
+			]]>
+		</if>
+	</select>
+		<!-- 得到用户已经授权的部门 -->
+	<select id="getChildDepartmentIdByUserId" parameterType="map" resultType="string">
+		<![CDATA[
+			SELECT
+			FDEPTID
+		]]>
+		<!-- 修改前-->
+		<!--
+		<![CDATA[
+			FROM T_AUTH_USERAUTHDEPARTMENT
+			WHERE FUSERID = #{userId}
+		]]>
+		-->
+		<!-- 
+		修改后
+			修改人:张斌
+			修改时间：2012-07-06
+			修改说明：增加了不是超级管理员时的判断
+		-->
+		<if test="currentUserId!=null and userId!=''">
+			<![CDATA[
+				 FROM T_AUTH_USERAUTHDEPARTMENT MASTAR
+				 LEFT JOIN T_ORG_DEPARTMENT  ENTY_0
+				 ON MASTAR.FDEPTID  = ENTY_0.FID
+				 WHERE FUSERID = #{currentUserId}
+				 AND ENTY_0.FPARENTID = #{parentDeptId}
+				 AND ENTY_0.FSTATUS = 1 AND ENTY_0.FSTANDARDCODE IS NOT NULL
+				   AND FDEPTID NOT IN
+				       (SELECT FDEPTID FROM T_AUTH_USERAUTHDEPARTMENT WHERE FUSERID = #{userId})
+			]]>
+		</if>
+		<if test="currentUserId==null and userId!=''">
+			<![CDATA[
+				FROM T_AUTH_USERAUTHDEPARTMENT MASTAR
+				LEFT JOIN T_ORG_DEPARTMENT  ENTY_0
+				ON MASTAR.FDEPTID  = ENTY_0.FID
+				WHERE MASTAR.FUSERID = #{userId} AND 
+				ENTY_0.FPARENTID = #{parentDeptId}
+				AND ENTY_0.FSTATUS = 1 AND ENTY_0.FSTANDARDCODE IS NOT NULL
+			]]>
+		</if>
+	</select>
+	
+	<!-- 修改人：张斌
+	修改时间：2013-7-3 9:47
+	修改内容：获取当前登录用户可分配，当前选择用户已分配的部门ID -->
+	<select id="getHavedDepartmentId" parameterType="map" resultType="string">
+		<![CDATA[
+			SELECT
+			FDEPTID
+		]]>
+		<if test="currentUserId!=null and userId!=''">
+			<![CDATA[
+				 FROM T_AUTH_USERDEPARTMENT MASTAR
+				 LEFT JOIN T_ORG_DEPARTMENT  ENTY_0
+				 ON MASTAR.FDEPTID  = ENTY_0.FID
+				 WHERE FUSERID = #{userId}
+				 AND ENTY_0.FPARENTID = #{parentDeptId}
+				 AND ENTY_0.FSTATUS = 1 AND ENTY_0.FSTANDARDCODE IS NOT NULL
+				   AND FDEPTID IN
+				       (SELECT FDEPTID FROM T_AUTH_USERAUTHDEPARTMENT WHERE FUSERID = #{currentUserId})
+				       
+				       
+			]]>
+		</if>
+		<if test="currentUserId==null and userId!=''">
+			<![CDATA[
+				 FROM T_AUTH_USERDEPARTMENT MASTAR
+				 LEFT JOIN T_ORG_DEPARTMENT  ENTY_0
+				 ON MASTAR.FDEPTID  = ENTY_0.FID
+				 WHERE FUSERID = #{userId}
+				 AND ENTY_0.FPARENTID = #{parentDeptId}
+				 AND ENTY_0.FSTATUS = 1 AND ENTY_0.FSTANDARDCODE IS NOT NULL  
+			]]>
+		</if>
+	</select>
+		<!-- 修改人：张斌 
+	修改时间 ：2013-8-9
+	修改内容：
+		<select id="getAllDepartmentByUserIdAndLikeDeptName" parameterType="map" resultMap="departmentResultMap">
+		<![CDATA[
+			SELECT
+			AD.FDEPTID,
+			OD.FDEPTNAME,
+			OD.FSTANDARDCODE
+		]]>
+		<![CDATA[
+			FROM T_AUTH_USERDEPARTMENT AD 
+			JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID 
+			WHERE AD.FUSERID = #{userId}
+			AND OD.FDEPTNAME like #{deptName}
+			AND OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	修改原因，去掉重复的部门权限
+	 -->
+	<!-- 得到用户拥有的数据权限部门 -->
+	<select id="getAllDepartmentByUserIdAndLikeDeptName" parameterType="map" resultMap="departmentResultMap">
+		<![CDATA[
+			SELECT
+			OD.FID AS FDEPTID,
+			OD.FDEPTNAME,
+			OD.FSTANDARDCODE
+		]]>
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT OD 
+			WHERE OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL AND OD.FDEPTNAME like #{deptName} AND OD.FID IN(
+			SELECT DISTINCT(FDEPTID) from T_AUTH_USERDEPARTMENT WHERE FUSERID = #{userId})
+		]]>
+	</select>
+	<!-- 修改人：张斌 
+	修改时间 ：2013-8-6
+	修改内容：
+	<select id="countAllDepartmentByUserId" parameterType="string" resultType="int">
+		<![CDATA[
+			SELECT
+			count(*)
+		]]>
+		<![CDATA[
+			FROM T_AUTH_USERDEPARTMENT AD 
+			JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID 
+			WHERE AD.FUSERID = #{userId}
+			AND OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	修改原因，去掉重复的部门权限
+	 -->
+	<select id="countAllDepartmentByUserId" parameterType="string" resultType="int">
+		<![CDATA[
+			SELECT
+			count(*)
+		]]>
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT OD 
+			WHERE OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL AND OD.FID IN(
+			SELECT DISTINCT(FDEPTID) from T_AUTH_USERDEPARTMENT WHERE FUSERID = #{userId})
+		]]>
+	</select>
+		
+	<!-- 修改人：张斌 
+	修改时间 ：2013-8-6
+	修改内容：
+	<select id="getAllDepartmentByUserId" parameterType="string" resultMap="departmentResultMap">
+		<![CDATA[
+			SELECT
+			AD.FDEPTID,
+			OD.FDEPTNAME
+		]]>
+		<![CDATA[
+			FROM T_AUTH_USERDEPARTMENT AD 
+			JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID 
+			WHERE AD.FUSERID = #{userId}
+			AND OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	修改原因，去掉重复的部门权限
+	 -->
+	 <!-- 得到用户拥有的数据权限部门 -->
+	 <select id="getAllDepartmentByUserId" parameterType="string" resultMap="departmentResultMap">
+		<![CDATA[
+			SELECT
+			OD.FID AS FDEPTID,
+			OD.FDEPTNAME
+		]]>
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT OD 
+			WHERE OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL AND OD.FID IN(
+			SELECT DISTINCT(FDEPTID) from T_AUTH_USERDEPARTMENT WHERE FUSERID = #{userId})
+		]]>
+	</select>
+	
+			<!-- 修改人：张斌 
+	修改时间 ：2013-8-9
+	修改内容：
+	<select id="countAllDepartmentByUserIdAndLikeDeptName" parameterType="map" resultType="int">
+		<![CDATA[
+			SELECT
+			count(*)
+		]]>
+		<![CDATA[
+			FROM T_AUTH_USERDEPARTMENT AD 
+			JOIN T_ORG_DEPARTMENT OD ON OD.FID = AD.FDEPTID 
+			WHERE AD.FUSERID = #{userId}
+			AND OD.FDEPTNAME like #{deptName}
+			AND OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	修改原因，去掉重复的部门权限
+	 -->
+	<select id="countAllDepartmentByUserIdAndLikeDeptName" parameterType="map" resultType="int">
+		<![CDATA[
+			SELECT
+			count(*)
+		]]>
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT OD 
+			WHERE OD.FSTATUS = 1 AND OD.FSTANDARDCODE IS NOT NULL AND OD.FDEPTNAME like #{deptName} AND OD.FID IN(
+			SELECT DISTINCT(FDEPTID) from T_AUTH_USERDEPARTMENT WHERE FUSERID = #{userId})
+		]]>
+	</select>
+	
+	
+	<!-- 得到该部门下的全部叶子节点数据 -->
+	<select id="getAllleafByParentId" resultMap="departmentResultMap">
+		SELECT 
+			t.FID FDEPTID,
+			t.FDEPTNAME
+		FROM t_org_department t 
+		WHERE CONNECT_BY_ISLEAF = 1 AND t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+			 <if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ START WITH t.fid in ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+			</if>
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	
+	<select id="countAllleafByParentId"  resultType="int">
+		SELECT 
+			count(*)
+		FROM t_org_department t 
+		WHERE CONNECT_BY_ISLEAF = 1 AND t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		<if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ START WITH t.fid in ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	
+		
+	<!-- 得到该部门下的全部叶子节点数据 -->
+	<select id="getAllleafByParentIdAndLikeDeptName" parameterType="map" resultMap="departmentResultMap">
+		SELECT 
+			t.FID FDEPTID,
+			t.FDEPTNAME
+		FROM t_org_department t 
+		WHERE CONNECT_BY_ISLEAF = 1 AND t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		AND t.fdeptName like #{deptName}
+		<if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ START WITH t.fid in ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	
+	<select id="countAllleafByParentIdAndLikeDeptName" parameterType="map" resultType="int">
+		SELECT 
+			count(*)
+		FROM t_org_department t 
+		WHERE CONNECT_BY_ISLEAF = 1 AND t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		AND t.fdeptName like #{deptName}
+		<if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ START WITH t.fid in ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	
+	<resultMap id="departmentResultMap"
+		type="com.deppon.crm.module.organization.shared.domain.Department">
+		<id property="id" column="FDEPTID" />
+		<result property="deptName" column="FDEPTNAME" />
+		<result property="standardCode" column="FSTANDARDCODE" />
+	</resultMap>
+	
+	<!-- 通过部门的ID去关联查询到部门权限的信息 -->
+	<select id="getWaybillRightsDepartmentsByDeptId" parameterType="String" resultMap="departmentResultMap">
+ 		SELECT 
+		 	D2.FID FDEPTID, 
+		 	D2.FDEPTNAME
+   		 FROM T_CRM_ORDERRIGHT O
+   		 INNER JOIN T_ORG_DEPARTMENT D
+     	 ON O.FORDERTEAM = D.FSTANDARDCODE
+       	 INNER JOIN T_ORG_DEPARTMENT D2 
+         ON O.FDEPARTMENT = D2.FSTANDARDCODE
+  		 WHERE D.FID = #{deptId} 
+  		 	   AND O.FSTATUS='1' 
+  		 	   AND D.FSTATUS='1' 
+  		 	   AND D2.FSTATUS = '1'
+	</select>
+	<!-- 通过部门的名字去关联查询到部门权限的信息 -->
+	<select id="getWaybillRightsDepartmentsByDeptName" parameterType="map" resultMap="departmentResultMap">
+		SELECT 
+		 	D2.FID FDEPTID, 
+		 	D2.FDEPTNAME
+   		 FROM T_CRM_ORDERRIGHT O
+   		 INNER JOIN T_ORG_DEPARTMENT D
+     	 ON O.FORDERTEAM = D.FSTANDARDCODE
+       	 INNER JOIN T_ORG_DEPARTMENT D2 
+         ON O.FDEPARTMENT = D2.FSTANDARDCODE
+  		 WHERE D.FID = #{deptId}  
+			   AND D.FDEPTNAME like '%'||#{deptName}||'%' 
+  		 	   AND O.FSTATUS='1' 
+  		 	   AND D.FSTATUS='1' 
+  		 	   AND D2.FSTATUS = '1'
+		
+	</select>
+		<!-- 通过部门的名字查询到部门的信息 -->
+	<select id="getAllDepartments" parameterType="map" resultMap="departmentResultMap">
+		SELECT 
+		 	D.FSTANDARDCODE, 
+		 	D.FDEPTNAME
+   		 FROM T_ORG_DEPARTMENT D
+  		 WHERE 
+			   <!-- AND D.FDEPTNAME like '%'||#{deptName}||'%'  -->
+  		 	   D.FSTATUS='1' and D.FSTANDARDCODE IS NOT NULL
+  		 	  <if test=" deptName != null  and deptName != ''  ">
+				 And D.FDEPTNAME like #{deptName}
+			</if>
+	</select>
+	<!-- 通过公司的名字查询到公司的信息 -->
+	<!-- tangliang -->
+	<select id="getAllSignCompanys" parameterType="map" resultType="string">
+		SELECT distinct D.FCOMPANYNAME
+   		 FROM T_ORG_DEPARTMENT D
+			   <!-- AND D.FDEPTNAME like '%'||#{deptName}||'%'  -->
+  		 	   <!-- D.FSTATUS='1' and D.FSTANDARDCODE IS NOT NULL -->
+  		 	  <if test=" companyName != null  and companyName != ''  ">
+				 WHERE D.FCOMPANYNAME is not null and D.FCOMPANYNAME LIKE #{companyName}
+			</if>
+	</select>
+	
+	<!-- 通过部门的名字查询到部门的信息 -->
+	<select id="countAllDepartments" parameterType="map" resultType="int">
+		SELECT 
+		 	COUNT(*)
+   		 FROM T_ORG_DEPARTMENT D
+  		 WHERE 
+			   <!-- AND D.FDEPTNAME like '%'||#{deptName}||'%'  -->
+  		 	   D.FSTATUS='1' and D.FSTANDARDCODE IS NOT NULL
+  		 	  <if test=" deptName != null  and deptName != ''  ">
+				 And D.FDEPTNAME like #{deptName}
+			</if>
+	</select>
+	<!-- 通过公司的名字查询到公司的信息 -->
+	<select id="countAllCompanys" parameterType="map" resultType="int">
+		SELECT 
+		 	 count(distinct d.fcompanyname) from t_org_department d 
+			   <!-- AND D.FDEPTNAME like '%'||#{deptName}||'%'  -->
+  		 	   <!-- D.FSTATUS='1' and D.FSTANDARDCODE IS NOT NULL -->
+  		 	  <if test=" companyName != null  and companyName != ''  ">
+				 WHERE d.FCOMPANYNAME LIKE #{companyName}
+			</if>
+	</select>
+	<!-- 统计 部门Id查询出部门的权限 的总数，提供给散客管理开单组 -->
+	<select id="countAllDepartmentsByDeptId" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+   		 FROM T_CRM_ORDERRIGHT O
+   		 INNER JOIN T_ORG_DEPARTMENT D
+     	 ON O.FORDERTEAM = D.FSTANDARDCODE
+       	 INNER JOIN T_ORG_DEPARTMENT D2 
+         ON O.FDEPARTMENT = D2.FSTANDARDCODE
+  		 WHERE D.FID = #{deptId} 
+  		 	   AND O.FSTATUS='1' 
+  		 	   AND D.FSTATUS='1' 
+  		 	   AND D2.FSTATUS = '1'
+	</select>
+	<!-- 统计 部门名字查询出部门的权限 的总数，提供给散客管理开单组 -->
+	<select id="countAllDepartmentsByDeptName" parameterType="map" resultType="int">
+	SELECT COUNT(*)
+   		 FROM T_CRM_ORDERRIGHT O
+   		 INNER JOIN T_ORG_DEPARTMENT D
+     	 ON O.FORDERTEAM = D.FSTANDARDCODE
+       	 INNER JOIN T_ORG_DEPARTMENT D2 
+         ON O.FDEPARTMENT = D2.FSTANDARDCODE
+  		 WHERE D.FID = #{deptId}
+			   AND d.FDEPTNAME like '%'||#{deptName}||'%'  
+  		 	   AND O.FSTATUS='1' 
+  		 	   AND D.FSTATUS='1' 
+  		 	   AND D2.FSTATUS = '1'
+	</select>
+	
+	
+	<!-- 修改人：张斌
+	修改时间：2013-7-3 8:46
+	修改内容：增加校验是否有其子节点的 -->
+	<select id="checkIsHaveChildNode" parameterType="map" resultType="int">
+	SELECT COUNT(FDEPTSEQ)
+   		 FROM t_org_department 
+   		 WHERE 1=1
+   		 <if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ AND FID IN  ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+		AND FDEPTSEQ LIKE '%.'||#{deptId}||'.%'
+		AND FSTATUS = 1 AND FSTANDARDCODE IS NOT NULL
+	</select>
+		<!-- 修改人：张斌
+	修改时间：2013-7-3 8:46
+	修改内容：根据条件删除授权表 -->
+	<select id="deleteUserDeptAuth" parameterType="map" >
+	DELETE 
+   		 FROM T_AUTH_USERAUTHDEPARTMENT 
+   		 WHERE 1=1 
+		AND FUSERID = #{userId} AND FDEPTID = #{deptId}
+	</select>
+	
+			<!-- 修改人：张斌
+	修改时间：2013-7-18 8:46
+	修改内容：根据条件批量删除授权表 -->
+	<select id="deleteUserDeptAuthAll" parameterType="map" >
+	DELETE 
+   		 FROM T_AUTH_USERAUTHDEPARTMENT 
+   		 WHERE 1=1 
+		AND FUSERID = #{userId} 
+		 <if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ AND FDEPTID IN  ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+	</select>
+	<!-- 
+		功能：查询点部/分部/快递大区映射的营业部 
+		新增人：苏玉军
+	 -->
+	 <select id="getAllDeptMappedExpress" parameterType="map" resultMap="departmentResultMap">
+			 SELECT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+			   FROM T_ORG_DEPARTMENT OD
+			   JOIN T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+			     ON OD.FSTANDARDCODE = EB.FBUSINESSDEPTCODE
+			     WHERE 1=1
+			  <if test="deptStandardCode!=null and deptStandardCode!='DP11921'">
+			     AND EB.FEXPRESSPOINTCODE IN
+			        (SELECT DEPT.FSTANDARDCODE
+				          FROM T_AUTH_USER U
+				          JOIN T_ORG_EMPLOYEE EMP
+				            ON U.FEMPCODE = EMP.FEMPCODE
+				          JOIN T_ORG_DEPARTMENT DEPT
+				            ON EMP.FDEPTID = DEPT.FID
+				         START WITH U.FID = #{userId,jdbcType=NUMERIC}
+				        CONNECT BY PRIOR DEPT.FID = DEPT.FPARENTID)
+			 </if>
+			 <if test="deptName!=null and deptName!=''">
+			 	AND OD.FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+			 </if>
+			 ORDER BY OD.FID DESC
+	 </select>
+	 
+	 <select id="countAllDeptMappedExpress" resultType="int">
+			 SELECT count(1)
+			   FROM T_ORG_DEPARTMENT OD
+			   JOIN T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+			     ON OD.FSTANDARDCODE = EB.FBUSINESSDEPTCODE
+			     WHERE 1=1
+			  <if test="deptStandardCode!=null and deptStandardCode!='DP11921'">
+			     AND EB.FEXPRESSPOINTCODE IN
+			        (SELECT DEPT.FSTANDARDCODE
+				          FROM T_AUTH_USER U
+				          JOIN T_ORG_EMPLOYEE EMP
+				            ON U.FEMPCODE = EMP.FEMPCODE
+				          JOIN T_ORG_DEPARTMENT DEPT
+				            ON EMP.FDEPTID = DEPT.FID
+				         START WITH U.FID = #{userId,jdbcType=NUMERIC}
+				        CONNECT BY PRIOR DEPT.FID = DEPT.FPARENTID)
+			 </if>
+			 <if test="deptName!=null and deptName!=''">
+			 	AND OD.FDEPTNAME LIKE '%'||#{deptName,jdbcType=VARCHAR}||'%'
+			 </if>
+	 </select>
+	 
+	 <!-- 查询所有的快递大区和分部 -->
+	 <select id="getAllRegionAndDivision" resultMap="departmentResultMap" parameterType="map">
+		select OD.FDEPTID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+		  from (SELECT DISTINCT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+		          FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+		          JOIN T_ORG_DEPARTMENT DIANBU
+		            ON EB.FEXPRESSPOINTCODE = DIANBU.FSTANDARDCODE
+		          JOIN T_ORG_DEPARTMENT OD
+		            ON DIANBU.FPARENTID = OD.FID
+		          AND (OD.FDEPTNAME NOT LIKE '%营业部' and OD.FDEPTNAME NOT LIKE '%营业区')
+		          union
+<!-- 		        SELECT DISTINCT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE -->
+<!-- 		          FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EB -->
+<!-- 		          JOIN T_ORG_DEPARTMENT YYB -->
+<!-- 		            ON EB.Fbusinessdeptcode = YYB.FSTANDARDCODE -->
+<!-- 		          JOIN T_ORG_DEPARTMENT OD -->
+<!-- 		            ON YYB.FPARENTID = OD.FID -->
+<!-- 		        union -->
+		        SELECT DISTINCT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+		          FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+		          JOIN T_ORG_DEPARTMENT YYB
+		            ON EB.Fbusinessdeptcode = YYB.FSTANDARDCODE
+		          JOIN T_ORG_DEPARTMENT xq
+		            ON yyb.fparentid = xq.fid
+		          JOIN T_ORG_DEPARTMENT OD
+		            ON xq.FPARENTID = OD.FID) OD
+    	<if test="deptName!=null and deptName!=''">
+			WHERE OD.FDEPTNAME like '%'||#{deptName,jdbcType=VARCHAR}||'%'
+		</if>
+	 </select>
+	 
+	 <!-- 查询所有的快递大区和分部 ,计数-->
+	 <select id="countAllRegionAndDivision" resultType="int">
+		SELECT count(DISTINCT OD.FDEPTID)
+		  from (SELECT DISTINCT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+		          FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+		          JOIN T_ORG_DEPARTMENT DIANBU
+		            ON EB.FEXPRESSPOINTCODE = DIANBU.FSTANDARDCODE
+		          JOIN T_ORG_DEPARTMENT OD
+		            ON DIANBU.FPARENTID = OD.FID
+		             AND (OD.FDEPTNAME NOT LIKE '%营业部' and OD.FDEPTNAME NOT LIKE '%营业区')
+		        union
+<!-- 		        SELECT DISTINCT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE -->
+<!-- 		          FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EB -->
+<!-- 		          JOIN T_ORG_DEPARTMENT YYB -->
+<!-- 		            ON EB.Fbusinessdeptcode = YYB.FSTANDARDCODE -->
+<!-- 		          JOIN T_ORG_DEPARTMENT OD -->
+<!-- 		            ON YYB.FPARENTID = OD.FID -->
+<!-- 		        union -->
+		        SELECT DISTINCT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+		          FROM T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+		          JOIN T_ORG_DEPARTMENT YYB
+		            ON EB.Fbusinessdeptcode = YYB.FSTANDARDCODE
+		          JOIN T_ORG_DEPARTMENT xq
+		            ON yyb.fparentid = xq.fid
+		          JOIN T_ORG_DEPARTMENT OD
+		            ON xq.FPARENTID = OD.FID) OD
+    	<if test="deptName!=null and deptName!=''">
+			WHERE OD.FDEPTNAME like '%'||#{deptName,jdbcType=VARCHAR}||'%'
+		</if>
+	 </select>
+	 
+	 <!-- 分部高级经理，快递大区总经理 ，查询结果为快递大区/分部/点部/营业部-->
+	 <select id="getAllDeptMappedExpressForMonitor" parameterType="map" resultMap="departmentResultMap">
+	 	SELECT OD.FID AS FDEPTID, OD.FDEPTNAME, OD.FSTANDARDCODE
+		  FROM (<!-- SELECT DISTINCT D.FID, D.FDEPTNAME, D.FSTANDARDCODE
+		          FROM T_ORG_DEPARTMENT D
+		          JOIN T_ORG_EMPLOYEE EMP
+		            ON EMP.FDEPTID = D.FID
+		          JOIN T_AUTH_USER U
+		            ON EMP.FEMPCODE = U.FEMPCODE
+		         START WITH U.FID = #{userId,jdbcType=VARCHAR}
+		        CONNECT BY PRIOR D.FID = D.FPARENTID
+		        UNION -->
+		        SELECT D.FID, D.FDEPTNAME, D.FSTANDARDCODE
+		          FROM T_ORG_DEPARTMENT D
+		          JOIN T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+		            ON D.FSTANDARDCODE = EB.FBUSINESSDEPTCODE
+		         WHERE EB.FEXPRESSPOINTCODE IN
+		               (SELECT DISTINCT DEPT.FSTANDARDCODE
+		                  FROM T_AUTH_USER U
+		                  JOIN T_ORG_EMPLOYEE EMP
+		                    ON U.FEMPCODE = EMP.FEMPCODE
+		                  JOIN T_ORG_DEPARTMENT DEPT
+		                    ON EMP.FDEPTID = DEPT.FID
+		                 START WITH  U.FID = #{userId,jdbcType=VARCHAR}
+		                CONNECT BY PRIOR DEPT.FID = DEPT.FPARENTID)) OD
+		 <if test="deptName!=null and deptName!=''">
+		 	WHERE OD.FDEPTNAME like '%'||#{deptName,jdbcType=VARCHAR}||'%' 
+		 </if>
+		 ORDER BY OD.FID DESC
+	 </select>
+	 
+	 <!-- 分部高级经理，快递大区总经理 ，查询结果为快递大区/分部/点部/营业部 计数 -->
+	 <select id="countAllDeptMappedExpressForMonitor" resultType="int">
+	 	SELECT COUNT(1)
+		  FROM (<!-- SELECT DISTINCT D.FID, D.FDEPTNAME, D.FSTANDARDCODE
+		          FROM T_ORG_DEPARTMENT D
+		          JOIN T_ORG_EMPLOYEE EMP
+		            ON EMP.FDEPTID = D.FID
+		          JOIN T_AUTH_USER U
+		            ON EMP.FEMPCODE = U.FEMPCODE
+		         START WITH U.FID = #{userId,jdbcType=VARCHAR}
+		        CONNECT BY PRIOR D.FID = D.FPARENTID
+		        UNION -->
+		        SELECT D.FID, D.FDEPTNAME, D.FSTANDARDCODE
+		          FROM T_ORG_DEPARTMENT D
+		          JOIN T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+		            ON D.FSTANDARDCODE = EB.FBUSINESSDEPTCODE
+		         WHERE EB.FEXPRESSPOINTCODE IN
+		               (SELECT DISTINCT DEPT.FSTANDARDCODE
+		                  FROM T_AUTH_USER U
+		                  JOIN T_ORG_EMPLOYEE EMP
+		                    ON U.FEMPCODE = EMP.FEMPCODE
+		                  JOIN T_ORG_DEPARTMENT DEPT
+		                    ON EMP.FDEPTID = DEPT.FID
+		                 START WITH U.FID = #{userId,jdbcType=VARCHAR}
+		                CONNECT BY PRIOR DEPT.FID = DEPT.FPARENTID)) OD
+		 <if test="deptName!=null and deptName!=''">
+		 	WHERE OD.FDEPTNAME like '%'||#{deptName,jdbcType=VARCHAR}||'%' 
+		 </if>	 	
+	 </select>
+	 
+	 <!-- 查询选择点部下映射的营业部 -->
+	 <select id="getChildDeptIds" resultType="String" parameterType="map">
+	SELECT DISTINCT D.FID
+	FROM T_ORG_DEPARTMENT D
+	JOIN T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+	ON D.FSTANDARDCODE = EB.FBUSINESSDEPTCODE
+	WHERE EB.FBUSINESSDEPTCODE IN
+	(SELECT DISTINCT DEPT.FSTANDARDCODE
+<!-- 		          FROM T_AUTH_USER U -->
+<!-- 		          JOIN T_ORG_EMPLOYEE EMP -->
+<!-- 		            ON U.FEMPCODE = EMP.FEMPCODE JOIN-->
+		          from T_ORG_DEPARTMENT DEPT
+<!-- 		            ON EMP.FDEPTID = DEPT.FID -->
+<!-- 		            WHERE DEPT.FID = #{dep,jdbcType=VARCHAR}  -->
+<!-- 		            WHERE DEPT.FPARENTID = #{dep,jdbcType=VARCHAR}  -->
+<!-- 		            	  OR DEPT.FID = #{dep,jdbcType=VARCHAR} -->
+	START WITH dept.fid = #{dep,jdbcType=NUMERIC}
+	CONNECT BY PRIOR DEPT.FID = DEPT.FPARENTID)
+	union
+	SELECT DISTINCT D.FID
+	FROM T_ORG_DEPARTMENT D
+	JOIN T_CRM_EXPRESSPOINTBUSINESSDEPT EB
+	ON D.FSTANDARDCODE = EB.FBUSINESSDEPTCODE
+	WHERE EB.FEXPRESSPOINTCODE  IN
+	(SELECT DISTINCT DEPT.FSTANDARDCODE
+<!-- 		          FROM T_AUTH_USER U -->
+<!-- 		          JOIN T_ORG_EMPLOYEE EMP -->
+<!-- 		            ON U.FEMPCODE = EMP.FEMPCODE JOIN-->
+		          from T_ORG_DEPARTMENT DEPT
+<!-- 		            ON EMP.FDEPTID = DEPT.FID -->
+<!-- 		            WHERE DEPT.FID = #{dep,jdbcType=VARCHAR}  -->
+<!-- 		            WHERE DEPT.FPARENTID = #{dep,jdbcType=VARCHAR}  -->
+<!-- 		            	  OR DEPT.FID = #{dep,jdbcType=VARCHAR} -->
+		        START WITH dept.fid = #{dep,jdbcType=NUMERIC}
+		        CONNECT BY PRIOR DEPT.FID = DEPT.FPARENTID)
+	 </select>
+</mapper>

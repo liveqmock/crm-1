@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.authorization.shared.domain.UserDepartment">
+
+
+	<!-- 部門表返回的结果集，单表查询 -->
+	<resultMap id="departmentSimpleResultMap"
+		type="com.deppon.crm.module.organization.shared.domain.Department">
+		<id property="id" column="MASTER_ID" />
+		<result property="deptCode" column="MASTER_DEPTCODE" />
+		<result property="deptName" column="MASTER_DEPTNAME" />
+		<result property="phone" column="MASTER_PHONE" />
+		<result property="fax" column="MASTER_FAX" />
+		<result property="zipCode" column="MASTER_ZIPCODE" />
+		<result property="address" column="MASTER_ADDRESS" />
+		<result property="status" column="MASTER_STATUS" />
+		<result property="companyName" column="MASTER_COMPANYNAME" />
+		<result property="validDate" column="MASTER_VALIDDATE" />
+		<result property="invalidDate" column="MASTER_INVALIDDATE" />
+		<result property="displayOrder" column="MASTER_DISPLAYORDER" />
+		<result property="deptLevel" column="MASTER_DEPTLEVEL" />
+		<result property="deptDesc" column="MASTER_DEPTDESC" />
+		<result property="deptSeq" column="MASTER_DEPTSEQ" />
+		<result property="principal" column="MASTER_PRINCIPAL" />
+		<result property="standardCode" column="MASTER_FSTANDARDCODE" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<association property="parentCode" column="MASTER_PARENTID"
+			javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="MASTER_PARENTID" />
+		</association>
+	</resultMap>
+
+	<!-- 单表查询字段 -->
+	<sql id="select_simple_param">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FDEPTCODE AS
+		MASTER_DEPTCODE,
+		MASTER.FDEPTNAME AS MASTER_DEPTNAME,
+		MASTER.FCOMPANYNAME AS MASTER_COMPANYNAME,
+		MASTER.FPRINCIPAL AS
+		MASTER_PRINCIPAL,
+		MASTER.FPHONE AS MASTER_PHONE,
+		MASTER.FFAX AS
+		MASTER_FAX,
+		MASTER.FPARENTID AS MASTER_PARENTID,
+		MASTER.FZIPCODE AS
+		MASTER_ZIPCODE,
+		MASTER.FADDRESS AS MASTER_ADDRESS,
+		MASTER.FSTATUS AS
+		MASTER_STATUS,
+		MASTER.FVALIDDATE AS MASTER_VALIDDATE,
+		MASTER.FINVALIDDATE AS MASTER_INVALIDDATE,
+		MASTER.FDISPLAYORDER AS
+		MASTER_DISPLAYORDER,
+		MASTER.FDEPTLEVEL AS MASTER_DEPTLEVEL,
+		MASTER.FDEPTDESC AS MASTER_DEPTDESC,
+		MASTER.FDEPTSEQ AS MASTER_DEPTSEQ,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS
+		MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FSTANDARDCODE AS MASTER_FSTANDARDCODE,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE
+	</sql>
+
+	<!-- 插入用户授权部门 -->
+	<insert id="insertUserDeptAuth" parameterType="map">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT USER_DEPARTMENT_SEQ.NEXTVAL AS
+			id FROM DUAL
+			<!-- SELECT (CASE WHEN MAX(ID) IS NULL THEN 1 ELSE MAX(ID)+1 END) AS id 
+				FROM T_AUTH_USERDEPARTMENT -->
+		</selectKey>
+		<![CDATA[
+			insert into  T_AUTH_USERDEPARTMENT(
+				FID,
+				FUSERID,
+				FDEPTID
+			) values (
+				#{id},
+				#{userId},
+				#{deptId}
+			)
+		]]>
+	</insert>
+		<!-- 得到非当前用户分配的部门ID集合 -->
+	<select id="getAllDepartmentsByIds" resultMap="departmentSimpleResultMap"
+		parameterType="map">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+    		FROM T_ORG_DEPARTMENT MASTER
+   			WHERE MASTER.FID IN ${seqIn}
+   			AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	<!-- 根据用户ID删除用户已经授权的部门 -->
+	<delete id="deleteUserDeptAuthByUserId" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_USERDEPARTMENT WHERE FUSERID = #{id}
+		]]>
+	</delete>
+
+	<!-- 得到用户已经授权的部门 -->
+	<select id="getUserDepartment" parameterType="string"
+		resultMap="departmentSimpleResultMap">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			WHERE MASTER.FID IN (SELECT FDEPTID FROM T_AUTH_USERAUTHDEPARTMENT WHERE FUSERID=#{userId})
+			AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+
+	</select>
+
+	<!-- 得到当前用户所属的部门id -->
+	<select id="getUserDeptIds" parameterType="String" resultType="String">
+		<![CDATA[
+			SELECT FDEPTID FROM T_AUTH_USERDEPARTMENT WHERE FUSERID = #{userId}
+		]]>
+	</select>
+	<!-- 通过部门标杆编码查询部门信息 -->
+	<select id="getDeptByStandardCode" resultMap="departmentSimpleResultMap">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			WHERE MASTER.FSTANDARDCODE = #{StandardCode}
+			AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	<!-- 通过部门编码查询部门信息 -->
+	<select id="getDeptByCode" resultMap="departmentSimpleResultMap">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_ORG_DEPARTMENT MASTER
+			WHERE MASTER.FDEPTCODE = #{deptCode}
+			AND MASTER.FSTATUS = 1 AND MASTER.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	
+			<!-- 修改人：张斌
+	修改时间：2013-7-3 8:46
+	修改内容：根据条件删除分配表 -->
+	<select id="deleteUserDept" parameterType="map" >
+	DELETE 
+   		 FROM T_AUTH_USERDEPARTMENT 
+   		 WHERE 1=1 
+		AND FUSERID = #{userId} AND FDEPTID = #{deptId}
+	</select>
+	
+	
+				<!-- 修改人：张斌
+	修改时间：2013-7-18 8:46
+	修改内容：根据条件批量删除分配表 -->
+	<select id="deleteUserDeptAll" parameterType="map" >
+	DELETE 
+   		 FROM T_AUTH_USERDEPARTMENT 
+   		 WHERE 1=1 
+		AND FUSERID = #{userId} 
+		<if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ AND FDEPTID IN  ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+	</select>
+	<select id="deleteByDept" parameterType="string" >
+		DELETE 
+   		 FROM T_AUTH_USERDEPARTMENT 
+   		 WHERE  FDEPTID = #{orgId}
+	</select>
+	<select id="deleteUserDeptAuthAll" parameterType="map" >
+	DELETE 
+   		 FROM T_AUTH_USERDEPARTMENT 
+   		 WHERE 1=1 
+		AND FUSERID = #{userId} 
+		 <if test="deptIds != null and deptIds.size>0"> 
+					<![CDATA[ AND FDEPTID IN  ]]>
+					<foreach collection="deptIds" item="dept" open="(" close=")" separator=",">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+		</if>
+	</select>
+</mapper>

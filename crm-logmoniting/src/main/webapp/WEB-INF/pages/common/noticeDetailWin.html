@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>公告预览</title>
+<link href="../styles/common/deppon.css?2013030510.0.1" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+
+	<script  type="text/javascript">
+		Ext.onReady(function(){
+			document.getElementById('title').innerHTML = window.dialogArguments.title;
+			document.getElementById('createUser').innerHTML=window.dialogArguments.createUser;
+			document.getElementById('type').innerHTML = window.dialogArguments.type;
+			document.getElementById('createDate').innerHTML=window.dialogArguments.createDate;
+			document.getElementById('modifyDate').innerHTML=window.dialogArguments.modifyDate;
+			document.getElementById('visits').innerHTML=window.dialogArguments.visits;
+			document.getElementById('content').innerHTML = window.dialogArguments.content;
+			if(!Ext.isEmpty(window.dialogArguments.imageAddr)){
+				document.getElementById('imageAddr').innerHTML= window.dialogArguments.imageAddr;
+			}
+			if(!Ext.isEmpty(window.dialogArguments.imageDescribe)){
+				document.getElementById('imageDescribe').innerHTML = window.dialogArguments.imageDescribe;
+			}
+			
+			var str='<span>附件：</span><br/>';
+			if(window.dialogArguments.fileInfoList.length==0){
+				str+='<span style="color:red" align="left">没有上传附件</span>';
+			}
+			for(var i=0;i<window.dialogArguments.fileInfoList.length;i++){
+				//去除空格
+				var fileName = window.dialogArguments.fileInfoList[i].fileName;
+				fileName = Ext.util.Format.trim(fileName);				
+				fileName = fileName.replace(/\s/g, "");			
+				
+				str+='<span align="left"><a href=javascript:downLoadFile("'+
+						fileName+'","'+
+						window.dialogArguments.fileInfoList[i].savePath+'")>'+
+						window.dialogArguments.fileInfoList[i].fileName+'</a></span>';
+			}
+			document.getElementById('fileInfo').innerHTML=str;
+		});
+		
+		/**
+		 * 公告附件下载
+		 * @param fileName
+		 * @param filePath
+		 */
+		function downLoadFile(fileName,filePath){
+			window.location.href="../common/downLoad.action?fileName="+fileName+"&inputPath="+filePath;
+		}
+	</script>
+</head>
+<body class="notice_bg">
+	<div class="title">
+    	<h2 id="title"></h2>
+        <div class="line"></div>
+    	<div class="headline">
+        	<label class="subhead">发布人:<span id="createUser"></span></label>
+            <label class="subhead">公告类别:<span id="type"></span></label>
+            <label class="subhead">发布时间:<span id="createDate"></span></label>
+            <label class="subhead">最后更新日期:<span id="modifyDate"></span></label>
+            <label class="subhead">查阅人数:<span id="visits"></span></label>
+        </div>
+    </div>
+	
+	<div class="content">
+		<div class="img">
+        	<span class="img_tit" id="imageAddr"></span>
+			<span class="img_tit" id="imageDescribe"></span>
+    	</div>
+        <div class="text" id="content"></div>
+	</div>	
+</div>
+<div class="foot">
+	<div class="line"></div>
+    <div class="ttachment" id="fileInfo"></div>
+</div>
+</body>
+</html>

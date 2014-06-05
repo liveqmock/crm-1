@@ -1,0 +1,11 @@
+delete from T_CRM_PILOTCITY;
+insert into T_CRM_PILOTCITY(FID,FCODE,FNAME,FISPILOT,FHASAGENT,FCREATE_TIME,FMODIFY_TIME)
+values('1','N101','上海','y','n',sysdate,sysdate);
+insert into T_CRM_PILOTCITY(FID,FCODE,FNAME,FISPILOT,FHASAGENT,FCREATE_TIME,FMODIFY_TIME)
+values('2','N102','北京','y','n',sysdate,sysdate);
+insert into T_CRM_PILOTCITY(FID,FCODE,FNAME,FISPILOT,FHASAGENT,FCREATE_TIME,FMODIFY_TIME)
+values('3','N103','广州','n','y',sysdate,sysdate);
+insert into T_CRM_PILOTCITY(FID,FCODE,FNAME,FISPILOT,FHASAGENT,FCREATE_TIME,FMODIFY_TIME)
+values('4','N104','武汉','n','n',null,null);
+insert into T_CRM_PILOTCITY(FID,FCODE,FNAME,FISPILOT,FHASAGENT,FCREATE_TIME,FMODIFY_TIME)
+values('10','N110','武汉市','y','n',null,null);

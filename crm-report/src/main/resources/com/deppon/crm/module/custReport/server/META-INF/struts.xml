@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="custReport" namespace="/custReport" extends="crm-default">
+		<!-- 大客户走货报告 -->
+		<action name="keycustShipmentReport">
+			<result name="success">keycustShipmentReport.html</result>
+		</action>
+		<!-- 客户信用报表 -->
+		<action name="custCreditReport">
+			<result name="success">worsecustReport.html</result>
+		</action>
+		<!-- 查询走货量 -->
+		<action name="queryShipmentAmount" class="keycustReportAction"
+			method="queryShipmentAmount">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询产品货量 -->
+		<action name="queryProductAmount" class="keycustReportAction"
+			method="queryProductAmount">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 线路货量 -->
+		<action name="queryRoadAmount" class="keycustReportAction"
+			method="queryRoadAmount">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询走货时效 -->
+		<action name="queryShipmentAging" class="keycustReportAction"
+			method="queryShipmentAging">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询走货质量 -->
+		<action name="queryShipmentQuality" class="keycustReportAction"
+			method="queryShipmentQuality">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询走货质量 图表数据-->
+		<action name="queryShipmentQualityForChart" class="keycustReportAction"
+			method="queryShipmentQualityForChart">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="checkCustNum" class="keycustReportAction" method="checkCustNum">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 大客户走货报表文件下载 -->
+		<action name="downReportFile" class="keycustReportAction"
+			method="downReportFile">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream;charset=ISO8859-1</param>
+				<param name="inputName">stream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+			</result>
+		</action>
+		<!-- 添加查询信用较差客户报表映射 -->
+		<action name="queryWorsecustReport" class="worsecustReportAction" 
+				method="queryWorsecustReport">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 添加导出信用较差客户报表映射 -->
+		<action name="exportWorsecustReport" class="worsecustReportAction" 
+				method="exportWorsecustReport">
+			<result name="success" type="stream">
+				<param name="contentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+			</result>
+		</action>
+		<action name="verificationAuth" class="worsecustReportAction" 
+				method="verificationAuth">
+			<result name="success" type="json">
+				<param name="checkReportView">checkReportView</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

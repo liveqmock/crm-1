@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.scheduler.shared.domain.CustomerTemp">
+	<!-- 查询到达潜客信息 -->
+	<!-- <select id="queryArrPC_ByDate"
+		resultMap="com.deppon.crm.module.customer.shared.domain.ScatterCustomer.CustomerRM">
+		<![CDATA[
+			SELECT 
+			   CUST.FID PS_FID,
+		       CUST.FCUSTOMERNAME PS_FCUSTNAME,
+		       CUST.FNAME PS_FLINKMANNAME,
+		       CUST.FCELLPHONE PS_FLINKMANMOBILE,
+		       CUST.FTELEPHONE PS_FLINKMANPHONE,
+           	   CUST.FADDRESS PS_FADDRESS
+            FROM 
+            	T_CRM_WAYBILLCLIENT CUST
+	       	WHERE
+	       		TRUNC(CUST.FDATE) = 
+	       		TRUNC(#{date}) 
+	     ]]>
+	</select> -->
+	<update id="updateWaybillClient" parameterType="map">	     
+	     UPDATE T_CRM_WAYBILLCLIENT WL
+		 SET WL.FDEPTID = #{deptId,jdbcType=NUMERIC}
+			,WL.FCITYID = #{cityId,jdbcType=NUMERIC}
+		 WHERE WL.FID = #{id}
+	</update>
+	<!-- 查询到达散客户信息 -->
+	<!-- <select id="queryArrSC_ByDate" 
+		resultMap="com.deppon.crm.module.customer.shared.domain.ScatterCustomer.CustomerRM">
+		<![CDATA[
+			SELECT 
+				DS.FID PS_FID,
+       			DS.FCUSTOMERNAME  PS_FCUSTNAME,
+       			DS.FNAME  PS_FLINKMANNAME,
+       			DS.FCELLPHONE PS_FLINKMANMOBILE,
+       			DS.FTELEPHONE PS_FLINKMANPHONE,
+       			DS.FADDRE PS_FADDRESS,
+       			DS.FDEPTID PS_FDEPTID,
+       			DS.FCUSTTYPE PS_FCUSTNATURE
+ 			FROM 
+ 				T_CRM_DISPERSECLIENT DS
+	        WHERE
+	        	DS.FCUSTTYPE is not null 
+	        AND 
+            	TRUNC(DS.FDATE) = 
+            	TRUNC(#{date})
+	     ]]>
+	</select> -->
+	<insert id="insertPCByWaybillClient" parameterType="map">
+	<![CDATA[
+		INSERT INTO T_CUST_POTENTIALSCATTER
+			  (FID,
+			   FCUSTNAME,
+			   FLINKMANNAME,
+			   FLINKMANMOBILE,
+			   FLINKMANPHONE,
+			   FADDRESS,
+			   FDEPTID,
+			   FCITY,
+			   FCUSTTYPE,
+			   FCREATEUSERID,
+			   FCREATETIME,
+			   FISCANCEL)
+			select SEQ_ID_POTENTIALSCATTER.NEXTVAL,
+			         RS.fcustomername,
+			         RS.fname,
+			         RS.fcellphone,
+			         RS.ftelephone,
+			         RS.faddress,
+			         RS.fdeptid,
+			         RS.fcityid,
+			         'PC_CUSTOMER',
+			         '86301',
+			         SYSDATE,
+			         '0'
+			  from (
+			SELECT to_char(cust.fcellphone)  fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			  FROM T_CRM_WAYBILLCLIENT CUST
+			 WHERE CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			       and cust.fcellphone is not null
+			       and cust.fdeptid is not null
+			minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			  from T_CUST_CUSTLINKMAN ll
+			 inner join T_CRM_WAYBILLCLIENT cust
+			    on cust.fcellphone = ll.fmobiletel
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.fcellphone is not null
+			   and cust.fdeptid is not null
+			 where ll.fstatus <= 1
+			   and ll.fmobiletel is not null
+			minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			from T_CUST_APPROVINGWORKFLOWDATA ap
+			inner join T_CRM_WAYBILLCLIENT cust
+			    on cust.fcellphone = ap.fcontactmobile
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.fcellphone is not null
+			   and cust.fdeptid is not null
+			where ap.fstatus = 1 and ap.fcontactmobile is not null
+			minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			from t_cust_potentialscatter pp
+			inner join T_CRM_WAYBILLCLIENT cust
+			    on cust.fcellphone = pp.flinkmanmobile 
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.fcellphone is not null
+			   and cust.fdeptid is not null
+			   and cust.fdeptid=pp.fdeptid
+			where pp.fcusttype = 'SC_CUSTOMER' and pp.fiscancel = '0'
+			minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			from t_cust_potentialscatter pp
+			inner join T_CRM_WAYBILLCLIENT cust
+			    on cust.fcellphone = pp.flinkmanmobile
+			    and cust.fdeptid = pp.fdeptid
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.fcellphone is not null
+			   and cust.fdeptid is not null
+			where pp.fcusttype = 'PC_CUSTOMER' and pp.fiscancel = '0'
+			
+			union 
+			
+			SELECT to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			  FROM T_CRM_WAYBILLCLIENT CUST
+			 WHERE CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.ftelephone is not null
+			   and cust.fdeptid is not null
+			minus
+			SELECT to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			  from T_CUST_CUSTLINKMAN ll
+			 inner join T_CRM_WAYBILLCLIENT CUST
+			    on ll.foffertel = cust.ftelephone
+			   and ll.fname = cust.fname
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.ftelephone is not null
+			   and cust.fdeptid is not null
+			 where ll.fstatus <= 1
+			   and ll.foffertel is not null
+			minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			  from T_CUST_APPROVINGWORKFLOWDATA ap
+			   inner join T_CRM_WAYBILLCLIENT CUST
+			    on ap.fcontacttel = cust.ftelephone
+			   and ap.fcontactname = cust.fname
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.ftelephone is not null
+			   and cust.fdeptid is not null
+			 where ap.fstatus = 1
+			   and ap.fcontacttel is not null  
+			 minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			from t_cust_potentialscatter pp
+			inner join T_CRM_WAYBILLCLIENT cust
+			    on cust.fname = pp.flinkmanname 
+			    and cust.ftelephone = pp.flinkmanphone
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.ftelephone is not null
+			   and cust.fdeptid is not null
+			   and cust.fdeptid=pp.fdeptid
+			where pp.fcusttype = 'SC_CUSTOMER' and pp.fiscancel = '0' 
+			 minus
+			select to_char(cust.fcellphone) fcellphone,
+			       to_char(cust.fid) fid,
+			       to_char(cust.fcustomername) fcustomername,
+			       to_char(cust.fname) fname,
+			       to_char(cust.ftelephone) ftelephone,
+			       to_char(cust.fdate) fdate,
+			       to_char(cust.faddress) faddress,
+			       to_char(cust.fdeptid) fdeptid,
+			       to_char(cust.fcityid) fcityid
+			from t_cust_potentialscatter pp
+			inner join T_CRM_WAYBILLCLIENT cust
+			    on cust.fname = pp.flinkmanname 
+			    and cust.ftelephone = pp.flinkmanphone
+			    and cust.fdeptid = pp.fdeptid
+			   and CUST.FDATE between TRUNC(#{date}) + 1 / 12 * (#{num} - 1) and
+				       			      TRUNC(#{date}) + 1 / 12 * #{num}
+			   and cust.ftelephone is not null
+			   and cust.fdeptid is not null
+			where pp.fcusttype = 'PC_CUSTOMER' and pp.fiscancel = '0') RS
+		]]>
+	
+	</insert>
+</mapper>

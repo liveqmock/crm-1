@@ -1,0 +1,8 @@
+id,fid,VARCHAR
+createDate,fcreateDate,DATE
+createUser,fcreateUser,VARCHAR
+modifyDate,fmodifyDate,DATE
+modifyUser,fmodifyUser,VARCHAR
+mobile,fmobile,VARCHAR
+radomnumber,fradomnumber,VARCHAR
+effecttime,feffecttime,DATE

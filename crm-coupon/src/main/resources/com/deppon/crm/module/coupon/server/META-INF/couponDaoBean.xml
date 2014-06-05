@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- dao层配置 -->
+	<bean id="couponDaoImpl"
+		class="com.deppon.crm.module.coupon.server.dao.impl.CouponDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<!-- <property name="template" ref="template" /> -->
+	</bean>
+	<bean id="marketPlanDaoImpl"
+		class="com.deppon.crm.module.coupon.server.dao.impl.MarketPlanDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+</beans>

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.BussinessDept">
+
+	<!-- 简单映射 -->
+	<resultMap id="BussinssDeptSimResultMap" type="com.deppon.crm.module.common.shared.domain.BussinessDept">
+		<id property="id" column="BD_FID" />
+		<result property="createDate" column="BD_FCREATETIME" />
+		<result property="createUser" column="BD_FCREATEUSERID" />
+		<result property="modifyDate" column="BD_FLASTUPDATETIME" />
+		<result property="modifyUser" column="BD_FLASTMODIFYUSERID" />
+		<result property="deptName" column="BD_FDEPTNAME" />
+		<result property="deptCode" column="BD_FSTANDARDCODE" />
+		<result property="deptAddress" column="BD_FDEPTADDR" />
+		<result property="deptContext" column="BD_DEPTCONTEXT" />
+		<result property="contactMethod" column="BD_FCONTACT" />
+		<result property="ifOutField" column="BD_FISOUTFIELD" />
+		<result property="ifTransit" column="BD_FISTRANSIT" />
+		<result property="ifEnable" column="BD_FISENABLE" />
+		<result property="ifOpen" column="BD_FISOPEN" />
+		<result property="organizeId" column="BD_FORGID" />
+		<result property="ifArrive" column="BD_FISARRIVE" />
+		<result property="ifLeave" column="BD_FISLEAVE" />
+		<result property="ifHavePDA" column="BD_FISHAVEPDA" />
+		<result property="ifHomeDelivery" column="BD_FISHOMEDELIVERY" />
+		<result property="ifSelfDelivery" column="BD_FISSELFDELIVERY" />
+		<result property="ifOutward" column="BD_FISOUTWARD" />
+		<result property="ifVehicleTeam" column="BD_IFVEHICLETEAM" />
+		<result property="ifHashGoodsType" column="CT_GOODSTYPE" />
+		<result property="erpId" column="BD_FERPID" />
+		<result property="ifDivision" column="fifDivision"/>
+		<result property="ifBigRegion" column="fifBigRegion"/>
+		<result property="isExpressRegion" column="fifExpressRegion"/>
+		<result property="ifSmallRegion" column="fifSmallRegion"/>
+		<result property="ifBussinessDept" column="fifBussinessDept"/>
+		<result property="depCoordinate" column="fdepCoordinate"/>
+		<result property="deliveryCoordinate" column="fdeliveryCoordinate"/>
+		<!-- /**		修改人：张斌
+	                    修改时间：2013-7-30
+	                    修改内容：无(新增)
+	                    修改原因：增加省市区县名称*/ -->
+	    <!-- begin -->
+		<result property="provinceName" column="PR_FNAME"/>
+		<result property="cityName" column="CT_FNAME"/>
+		<result property="regionName" column="RE_FNAME"/>
+		<!-- end -->
+	</resultMap>
+	<select id="queryLadingstationByERPID" resultMap="BussinssDeptSimResultMap">
+		SELECT 
+			<include refid="tableFields"/>
+			<include refid="commonRealtionTables" />
+		WHERE 
+			FERPID = #{erpId,jdbcType=VARCHAR}
+	</select>
+	<update id="updateBussinessDeptByStandardcode" 
+		parameterType="com.deppon.crm.module.common.shared.domain.BussinessDept">
+		UPDATE 
+			T_CRM_LADINGSTATION 
+		SET 
+			FERPID = #{erpId,jdbcType=VARCHAR},
+			FLASTUPDATETIME = SYSDATE
+		 <if test="deptName != null and deptName != ''">
+			,FDEPTNAME = #{deptName,jdbcType=VARCHAR}
+		</if>
+		 <if test="deptCode != null and deptCode != ''">
+			,FSTANDARDCODE = #{deptCode,jdbcType=VARCHAR}
+		</if>
+		 <if test="province != null and province != ''">
+			,FNEWPROVINCEID = #{province.id,jdbcType=VARCHAR}
+		</if>
+		 <if test="city != null and city != ''">
+			,FNEWCITYID = #{city.id,jdbcType=VARCHAR}
+		</if>
+		 <if test="region != null and region != ''">
+			,FNEWAREAID = #{region.id,jdbcType=VARCHAR}
+		</if>
+		 <if test="deptAddress != null and deptAddress != ''">
+			,FDEPTADDR = #{deptAddress,jdbcType=VARCHAR}
+		</if>
+		 <if test="contactMethod != null and contactMethod != ''">
+			,FCONTACT = #{contactMethod,jdbcType=VARCHAR}
+		</if>
+		 <if test="ifOutField != null">
+			,FISOUTFIELD = #{ifOutField,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifTransit != null">
+			,FISTRANSIT = #{ifTransit,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifEnable != null">
+			,FISENABLE = #{ifEnable,jdbcType=NUMERIC}
+		</if>
+		 <if test="belongArea != null and belongArea != ''">
+			,FBELONGAREA = #{belongArea.id,jdbcType=VARCHAR}
+		</if>
+		 <if test="ifOpen != null">
+			,FISOPEN = #{ifOpen,jdbcType=NUMERIC}
+		</if>
+		 <if test="organizeId != null and organizeId != ''">
+			,FORGID = #{organizeId,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifArrive != null">
+			,FISARRIVE = #{ifArrive,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifLeave != null">
+			,FISLEAVE = #{ifLeave,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifHomeDelivery != null">
+			,FISHOMEDELIVERY = #{ifHomeDelivery,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifSelfDelivery != null">
+			,FISSELFDELIVERY = #{ifSelfDelivery,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifOutward != null">
+			,FISOUTWARD = #{ifOutward,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifVehicleTeam != null">
+			,FISTEAM = #{ifVehicleTeam,jdbcType=NUMERIC}
+		</if>
+		 <if test="ifHavePDA != null">
+			,FISHAVEPDA = #{ifHavePDA,jdbcType=NUMERIC}
+		</if>
+		<if test="ifDivision != null">
+			,fifDivision = #{ifDivision,jdbcType=NUMERIC}
+		</if>
+		<if test="ifBigRegion != null">
+			,fifBigRegion = #{ifBigRegion,jdbcType=NUMERIC}
+		</if>
+		<if test="isExpressRegion != null">
+			,fifExpressRegion = #{isExpressRegion,jdbcType=NUMERIC}
+		</if>
+		<if test="ifSmallRegion != null">
+			,fifSmallRegion = #{ifSmallRegion,jdbcType=NUMERIC}
+		</if>
+		<if test="ifBussinessDept != null">
+			,fifBussinessDept = #{ifBussinessDept,jdbcType=NUMERIC}
+		</if>
+		<if test="depCoordinate != null and depCoordinate != ''">
+			,fdepCoordinate = #{depCoordinate,jdbcType=VARCHAR}
+		</if>
+		<if test="deliveryCoordinate != null and deliveryCoordinate != ''">
+			,fdeliveryCoordinate = #{deliveryCoordinate,jdbcType=VARCHAR}
+		</if>
+		<if test="isTopFleet != null">
+			,fisTopFleet = #{isTopFleet,jdbcType=NUMERIC}
+		</if>
+		<if test="id != null and id != ''">
+			,fid = #{id,jdbcType=VARCHAR}
+		</if>
+		WHERE FSTANDARDCODE = #{deptCode,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="insertBussinessDept" parameterType="com.deppon.crm.module.common.shared.domain.BussinessDept">
+		<!-- 要求网点的FID 和 组织ID必须保持一致，代码中赋值
+		 <selectKey keyProperty="id" resultType="String" order="BEFORE">
+			SELECT seq_id_area.nextval AS id FROM DUAL
+		</selectKey>-->
+		INSERT INTO T_CRM_LADINGSTATION
+		(FID,FCREATETIME,FLASTUPDATETIME,FCREATEUSERID,FLASTMODIFYUSERID,
+		FDEPTNAME,
+		FSTANDARDCODE,FNEWPROVINCEID,
+		FNEWCITYID,
+		FNEWAREAID,FDEPTADDR,
+		FCONTACT,
+		FISOUTFIELD,FISTRANSIT,
+		FISENABLE,
+		FISOPEN,FORGID,
+		FISARRIVE,FISLEAVE,
+		FISHOMEDELIVERY,FISSELFDELIVERY,
+		FISOUTWARD,FISTEAM,
+		FISHAVEPDA,FERPID,
+		fifDivision,fifBigRegion,
+		fifSmallRegion,fifBussinessDept,
+		fdepCoordinate,fdeliveryCoordinate,fifexpressregion) 
+		VALUES
+		 (#{id,jdbcType=VARCHAR},sysdate,sysdate,
+		 #{createUser,jdbcType=VARCHAR}, #{modifyUser,jdbcType=VARCHAR},
+		 #{deptName,jdbcType=VARCHAR},
+		#{deptCode,jdbcType=VARCHAR},#{province.id,jdbcType=VARCHAR},
+		#{city.id,jdbcType=VARCHAR},
+		#{region.id,jdbcType=VARCHAR},#{deptAddress,jdbcType=VARCHAR},
+		#{contactMethod,jdbcType=VARCHAR},
+		#{ifOutField,jdbcType=NUMERIC},#{ifTransit,jdbcType=NUMERIC},
+		#{ifEnable,jdbcType=NUMERIC},
+		#{ifOpen,jdbcType=NUMERIC},#{organizeId,jdbcType=NUMERIC},
+		#{ifArrive,jdbcType=NUMERIC},#{ifLeave,jdbcType=NUMERIC},
+		#{ifHomeDelivery,jdbcType=NUMERIC},#{ifSelfDelivery,jdbcType=NUMERIC},
+		#{ifOutward,jdbcType=NUMERIC},#{ifVehicleTeam,jdbcType=NUMERIC},
+		#{ifHavePDA,jdbcType=NUMERIC},#{erpId,jdbcType=VARCHAR},
+		#{ifDivision,jdbcType=NUMERIC},#{ifBigRegion,jdbcType=NUMERIC},
+		#{ifSmallRegion,jdbcType=NUMERIC},#{ifBussinessDept,jdbcType=NUMERIC},
+		#{depCoordinate,jdbcType=VARCHAR},#{deliveryCoordinate,jdbcType=VARCHAR},
+		#{isExpressRegion,jdbcType=NUMERIC})
+	</insert>
+
+	<!-- 复杂映射 -->
+	<resultMap id="BussinssDeptResultMap" type="com.deppon.crm.module.common.shared.domain.BussinessDept"
+		extends="BussinssDeptSimResultMap">
+		<association property="province" javaType="com.deppon.crm.module.common.shared.domain.Province">
+			<id property="id" column="PR_FID" />
+			<result property="name" column="PR_FNAME" />
+		</association>
+
+		<association property="city" javaType="com.deppon.crm.module.common.shared.domain.City">
+			<id property="id" column="CT_FID" />
+			<result property="name" column="CT_FNAME" />
+		</association>
+
+		<association property="region" javaType="com.deppon.crm.module.common.shared.domain.Area">
+			<id property="id" column="RE_FID" />
+			<result property="name" column="RE_FNAME" />
+		</association>
+
+		<association property="belongArea" javaType="com.deppon.crm.module.organization.shared.domain.Department">
+			<id property="id" column="BA_FID" />
+			<result property="deptName" column="BA_FDEPTNAME" />
+		</association>
+	</resultMap>
+
+	<!-- 表所有字段 -->
+	<sql id="tableFields">
+	<![CDATA[
+		BD.FID BD_FID ,	BD.FCREATETIME BD_FCREATETIME,
+		BD.FCREATEUSERID BD_FCREATEUSERID,BD.FLASTUPDATETIME
+		BD_FLASTUPDATETIME,BD.FLASTMODIFYUSERID BD_FLASTMODIFYUSERID,
+		BD.FDEPTNAME BD_FDEPTNAME,BD.FDEPTADDR BD_FDEPTADDR,
+		BD.FREMARK		BD_FREMARK,BD.FCONTACT BD_FCONTACT,
+		BD.FISOUTFIELD BD_FISOUTFIELD,	BD.FISTRANSIT BD_FISTRANSIT,
+		BD.FISENABLE BD_FISENABLE,BD.FISOPEN	BD_FISOPEN,
+		BD.FORGID BD_FORGID,BD.FISARRIVE BD_FISARRIVE,BD.FISHAVEPDA BD_FISHAVEPDA,
+		BD.FISLEAVE BD_FISLEAVE,BD.FISHOMEDELIVERY BD_FISHOMEDELIVERY,
+		BD.FISSELFDELIVERY BD_FISSELFDELIVERY,	BD.FISOUTWARD BD_FISOUTWARD,
+		BD.FISTEAM BD_FISTEAM,		BD.FAREA BD_FAREA,fifDivision,fifBigRegion,fifExpressRegion,
+		fifSmallRegion,fifBussinessDept,fdepCoordinate,fdeliveryCoordinate,
+		BD.FNEWPROVINCEID BD_FNEWPROVINCEID,BD.FNEWCITYID	BD_FNEWCITYID,
+		BD.FNEWAREAID BD_FNEWAREAID,BD.FERPID BD_FERPID,BD.FSTANDARDCODE BD_FSTANDARDCODE,	PR.FID PR_FID,
+		PR.FNAME	PR_FNAME,CT.FID CT_FID,CT.FNAME CT_FNAME,
+		NVL((SELECT 1  FROM T_CRM_ABCITY C LEFT JOIN T_CRM_CITY ORD ON ORD.FID = C.FID WHERE ORD.FID=BD.FNEWCITYID),0) CT_GOODSTYPE,
+		RE.FID RE_FID,RE.FNAME		RE_FNAME
+		]]>
+	</sql>
+
+	<!-- <select id="getLeaveBusDeptByName" resultMap="BussinssDeptResultMap" parameterType="string"> -->
+	<!-- select -->
+	<!-- <include refid="tableFields" /> -->
+	<!-- FROM T_CRM_LADINGSTATION BD LEFT JOIN T_CRM_PROVINCE PR ON -->
+	<!-- BD.FNEWPROVINCEID=PR.FID -->
+	<!-- LEFT JOIN T_CRM_CITY CT ON -->
+	<!-- BD.FNEWPROVINCEID=CT.FID LEFT JOIN T_CRM_AREA -->
+	<!-- RE ON BD.FNEWAREAID=RE.FID -->
+	<!-- WHERE BD.FISLEAVE=1 AND BD.FISOPEN=1 AND BD.FDEPTNAME like CONCAT(#{deptName},'%') -->
+	<!-- </select> -->
+
+	<!-- 公共关联表 -->
+	<sql id="commonRealtionTables">
+		FROM T_CRM_LADINGSTATION BD LEFT JOIN T_CRM_PROVINCE PR ON
+		BD.FNEWPROVINCEID=PR.FID
+		LEFT JOIN
+		T_CRM_CITY CT
+		ON
+		BD.FNEWCITYID=CT.FID LEFT JOIN T_CRM_AREA
+		RE ON BD.FNEWAREAID=RE.FID 
+	</sql>
+
+	<!-- 根据条件查询-公共条件 -->
+	<sql id="searchCommonCondition">
+		WHERE BD.FISOPEN=1 and BD.fisopen=1 
+		<if test="null != ifOutward">
+			AND BD.FISOUTWARD=#{ifOutward}
+		</if>
+		<if test="null != ifVehicleTem">
+			AND BD.FISTOPFLEET=#{ifVehicleTem}
+		</if>
+		<if test="null != ifLeave">
+			AND BD.FISLEAVE=#{ifLeave}
+		</if>
+		<if test="null != ifArrive">
+			AND BD.FISARRIVE=#{ifArrive}
+		</if>
+		<if test="null != deptName and  '' != deptName">
+			AND BD.FDEPTNAME LIKE CONCAT(CONCAT('%',#{deptName}),'%')
+		</if>
+	</sql>
+
+	<!-- 根据条件查询 -->
+	<select id="getBussinessDeptByCondition" resultMap="BussinssDeptSimResultMap">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		<include refid="searchCommonCondition" />
+		ORDER BY BD.FDEPTNAME 
+	</select>
+
+	<!-- 根据条件查询记录数 -->
+	<select id="getBussinessNumber" resultType="long">
+		select count(*)
+		<include refid="commonRealtionTables" />
+		<include refid="searchCommonCondition" />
+	</select>
+
+	<select id="getBusDeptById" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FISOPEN=1 AND BD.FID=#{deptId}
+	</select>
+
+	<select id="getBusDeptByDeptId" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FISOPEN=1 AND BD.FORGID=#{deptId}
+	</select>
+
+
+	<select id="getBusDeptByName" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FISOPEN=1 AND BD.FDEPTNAME=#{deptName}
+	</select>
+
+	<select id="getById" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FID=#{id}
+	</select>
+
+	<select id="getBusDeptByCode" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FSTANDARDCODE=#{deptCode}
+	</select>
+
+	<select id="getBusdeptbyErpId" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FERPID=#{erpId}
+	</select>
+	
+	<!-- 根据标杆编码查询营业部门 -->
+	<select id="getBusdeptbyStandardCode" resultMap="BussinssDeptResultMap" parameterType="string">
+		SELECT
+		<include refid="tableFields" />
+		<include refid="commonRealtionTables" />
+		WHERE BD.FISOPEN=1 AND BD.FSTANDARDCODE=#{standardCode}
+	</select>
+	
+	<!--通过ID或者Id和名字 去查询本部门下  所有网点营业部门实体及相关信息  -->
+   <select id="getBusDeptByDeptIdOrDeptName" resultType="map" parameterType="map">
+		SELECT
+		t.fid deptId,
+		t.fdeptName deptName,
+		pr.fname provinceName
+		FROM t_org_department t 
+		left join T_CRM_LADINGSTATION BD 
+		on t.fstandardcode = BD.fstandardcode
+		LEFT JOIN T_CRM_PROVINCE PR ON
+		BD.FNEWPROVINCEID=PR.FID
+		LEFT JOIN T_CRM_CITY CT
+		ON BD.FNEWCITYID=CT.FID LEFT JOIN T_CRM_AREA
+		RE ON BD.FNEWAREAID=RE.FID 
+		WHERE CONNECT_BY_ISLEAF = 1 AND t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		  and t.fdeptname like '%营业部'
+		<if test="deptName != null and deptName != ''"> 
+				AND t.fdeptname like #{deptName}
+		</if>
+		START WITH t.fid = #{deptId}
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	<!--  算出总量  通过ID或者Id和名字 去查询本部门下  所有网点营业部门实体及相关信息-->
+	   <select id="countBusDeptByDeptIdOrDeptName" resultType="int" parameterType="map">
+		SELECT
+		count(*)
+		FROM t_org_department t 
+		left join T_CRM_LADINGSTATION BD 
+		on t.fstandardcode = BD.fstandardcode
+		LEFT JOIN T_CRM_PROVINCE PR ON
+		BD.FNEWPROVINCEID=PR.FID
+		LEFT JOIN T_CRM_CITY CT
+		ON BD.FNEWCITYID=CT.FID LEFT JOIN T_CRM_AREA
+		RE ON BD.FNEWAREAID=RE.FID 
+		WHERE CONNECT_BY_ISLEAF = 1 AND t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		  and t.fdeptname like '%营业部'
+		<if test="deptName != null and deptName != ''"> 
+				AND t.fdeptname like #{deptName}
+		</if>
+		START WITH t.fid = #{deptId}
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	
+		<!--通过ID或者Id和名字 去查询本部门下  所有网点营业部门实体及相关信息  -->
+   <select id="getAllBusDeptByDeptIdOrDeptName" resultType="map" parameterType="map">
+		SELECT
+		t.fid deptId,
+		t.fdeptName deptName,
+		pr.fname provinceName
+		FROM t_org_department t 
+		left join T_CRM_LADINGSTATION BD 
+		on t.fstandardcode = BD.fstandardcode
+		LEFT JOIN T_CRM_PROVINCE PR ON
+		BD.FNEWPROVINCEID=PR.FID
+		LEFT JOIN T_CRM_CITY CT
+		ON BD.FNEWCITYID=CT.FID LEFT JOIN T_CRM_AREA
+		RE ON BD.FNEWAREAID=RE.FID 
+		WHERE  t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		  and t.fdeptname like '%营业部' and t.fdeptname not  like '%快递营业部'
+		<if test="deptName != null and deptName != ''"> 
+				AND t.fdeptname like #{deptName}
+		</if>
+		START WITH t.fid = #{deptId}
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+	<!--  算出总量  通过ID或者Id和名字 去查询本部门下  所有网点营业部门实体及相关信息-->
+	   <select id="countAllBusDeptByDeptIdOrDeptName" resultType="int" parameterType="map">
+		SELECT
+		count(*)
+		FROM t_org_department t 
+		left join T_CRM_LADINGSTATION BD 
+		on t.fstandardcode = BD.fstandardcode
+		LEFT JOIN T_CRM_PROVINCE PR ON
+		BD.FNEWPROVINCEID=PR.FID
+		LEFT JOIN T_CRM_CITY CT
+		ON BD.FNEWCITYID=CT.FID LEFT JOIN T_CRM_AREA
+		RE ON BD.FNEWAREAID=RE.FID 
+		WHERE  t.fstatus = 1 AND t.fstandardcode IS NOT NULL
+		  and t.fdeptname like '%营业部' and t.fdeptname not  like '%快递营业部'
+		<if test="deptName != null and deptName != ''"> 
+				AND t.fdeptname like #{deptName}
+		</if>
+		START WITH t.fid = #{deptId}
+		CONNECT BY PRIOR t.fid = t.fparentid
+	</select>
+</mapper>

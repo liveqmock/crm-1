@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="duty" namespace="/duty" extends="crm-default">
+		<!--工单责任划分-->
+		<action name="dutyAllocation" >
+			<result name="success">dutyAllocation.html</result>
+	    </action>
+	     
+	    <!--工单责任反馈-->
+		<action name="dutyFeedback" >
+			<result name="success">dutyFeedback.html</result>
+	    </action>
+	    
+	    <!--工单责任审批-->
+		<action name="dutyApproval" >
+			<result name="success">dutyApproval.html</result>
+	    </action>
+	    <!--工单责任审批：根据责任ID，查询责任反馈记录列表-->
+	    <action name="searchDutyFeedbackByDutyId" class="listDutyAction" method="searchDutyFeedbackByDutyId">
+			<result name="success" type="json" />
+		</action>
+		<!--工单责任审批操作-->
+	    <action name="dutyApprovalOperation" class="dutyAction" method="dutyApprovalOperation">
+			<result name="success" type="json" />
+		</action>
+	    
+	    <!--工单责任查询-->
+		<action name="dutySearch" >
+			<result name="success">dutySearch.html</result>
+	    </action>
+	    
+	    <!--工单责任：基础资料维护-->
+		<action name="dutyBasicData" >
+			<result name="success">dutyBasicData.html</result>
+	    </action>
+	    <!--工单责任：责任部门配置管理页面-->
+	    <action name="dutyDeptManage">
+	    	<result name="success">dutyDeptManage.html</result>
+	    </action>
+	    
+	    <!--工单责任：工作日维护-->
+		<action name="dutyWorkdayMaintain" >
+			<result name="success">dutyWorkdayMaintain.html</result>
+	    </action>
+	    <!--基础资料：基础信息分页查询-->
+	    <action name="searchBasicInfoPager" method="searchBasicInfoPager" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">basicInfoList,totalCount</param>
+			</result>
+		</action>
+		<!--基础资料：基础信息查询Count-->
+	    <action name="searchBasicInfoCount" method="searchBasicInfoCount" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">totalCount</param>
+			</result>
+		</action>
+		
+		<!--基础资料：基础数据查询集合-->
+	    <action name="searchBasicInfoList" method="searchBasicInfoList" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">basicInfoList</param>
+			</result>
+		</action>
+		
+		<!--（只有有业务类型的业务向才会被查出）基础资料：基础数据查询集合-->
+	    <action name="searchBasicInfoListOnly" method="searchBasicInfoListOnly" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">basicInfoList</param>
+			</result>
+		</action>
+		
+		<!--基础资料：基础信息-业务项保存-->
+	    <action name="saveBusItemList" method="saveBusItemList" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">boolResult</param>
+			</result>
+		</action>
+		
+		<!--基础资料：基础数据集合删除-->
+	    <action name="deleteBusItemByIds" method="deleteBusItemByIds" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">boolResult</param>
+			</result>
+		</action>
+		<!--基础资料：基础数据集合-删除业务范围、业务类型-->
+	    <action name="deleteBusTypeByIds" method="deleteBusTypeByIds" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">boolResult</param>
+			</result>
+		</action>
+		
+		<!--基础资料：基础资料设置页面-保存-->
+	    <action name="saveBasicBusScopeVO" method="saveBasicBusScopeVO" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">boolResult</param>
+			</result>
+		</action>
+		<!--基础资料：删除自出资料页面-业务类型集合-->
+	    <action name="deleteBusTypeByIdsInBusScopeVO" method="deleteBusTypeByIdsInBusScopeVO" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">boolResult</param>
+			</result>
+		</action>
+		<!--基础资料：基础资料设置-业务类型集合-->
+	    <action name="searchBasicBusScopeVOSimple" method="searchBasicBusScopeVOSimple" class="basalTypeAction">
+			<result name="success" type="json" >
+				<param name="includeProperties">basicBusScopeVO</param>
+			</result>
+		</action>
+		 <!--工单责任查询-->
+		  <action name="queryDutyList" method="queryDutyList" class="listDutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--初始化工单责任接入页面-->
+		  <action name="initReceiveDuty" method="initReceiveDuty" class="listDutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--查询为接入的工单责任数-->
+		  <action name="countUnreceiveDutyNum" method="countUnreceiveDutyNum" class="listDutyAction">
+			<result name="success" type="json" >
+			</result>
+		</action>
+		<!--接入工单-->
+		  <action name="receiveDuty" method="receiveDuty" class="listDutyAction">
+			<result name="success" type="json" >
+			</result>
+		</action>
+		 <!--工单责任查询-->
+		  <action name="searchDutyDetail" method="searchDutyDetail" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		 <!--工单详情查询-->
+		  <action name="searchCompalaintDetail" method="searchCompalaintDetail" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		 <!--工单责任查询-展开列表-->
+		  <action name="queryDutyDetailList" method="queryDutyDetailList" class="listDutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		
+		<!-- 工单责任审批查询 列表-->
+		<action name="queryDutyApprovalList" method="queryDutyApprovalList" class="listDutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		
+		<!--查询业务类型集合-->
+		<action name="searchProcResultList" method="searchProcResultList" class="basalTypeAction">
+			<result name="success" type="json" >procResultList</result>
+		</action>
+		<!--根据业务项ID 查询业务范围集合-->
+		<action name="searchBusScopeByParentId" method="searchBusScopeByParentId" class="basalTypeAction">
+			<result name="success" type="json" >basicInfoList</result>
+		</action>
+		<!--(只有有业务类型的业务范围才能被查出)根据业务项ID 查询业务范围集合-->
+		<action name="searchBusScopeByParentIdOnly" method="searchBusScopeByParentIdOnly" class="basalTypeAction">
+			<result name="success" type="json" >basicInfoList</result>
+		</action>
+		<!--工单责任经理查询-->
+		<action name="searchDutyByManager" method="searchDutyByManager" class="listDutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:工单责任查询-->
+		<action name="searchDutyById" method="searchDutyById" class="dutyAction">
+			<result name="success" type="json" >dutyDetail</result>
+		</action>
+		
+		<!--zm:工单责任划分结果查询-->
+		<action name="searchDutyResult" method="searchDutyResult" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		
+		<!--hpf:责任划分 - 确认无责-->
+		<action name="confirmNotDuty" method="confirmNotDuty" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:责任划分 - 暂存-->
+		<action name="temporarySave" method="temporarySave" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:责任划分 - 提交-->
+		<action name="submitDutyDivide" method="submitDutyDivide" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:责任划分 - 查询处理结果-->
+		<action name="searchDutyResultList" method="searchDutyResultList" class="listDutyAction">
+			<result name="success" type="json" >dutyResultList</result>
+		</action>
+		<!--hpf:责任划分 - 查询通知对象-->
+		<action name="searchInformUserList" method="searchInformUserList" class="listDutyAction">
+			<result name="success" type="json" >informUserList</result>
+		</action>
+		<!--hpf:责任反馈 - 查询分页集合-->
+		<action name="searchDutyFeedbackPager" method="searchDutyFeedbackPager" class="listDutyAction">
+			<result name="success" type="json" >searchDutyResultVOList,totalCount</result>
+		</action>
+		<!--hpf:责任反馈 - 查询附件集合-->
+		<action name="searchFeedAttachList" method="searchFeedAttachList" class="listDutyAction">
+			<result name="success" type="json" >feedAttachList</result>
+		</action>
+		<!--hpf:责任反馈 - 责任认领-->
+		<action name="dutyClaim" method="dutyClaim" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:责任反馈 - 责任反馈-->
+		<action name="dutyFeedbackProcess" method="dutyFeedbackProcess" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:责任反馈 - 统计员所在部门集合-->
+		<action name="searchActuaryDeptList" method="searchActuaryDeptList" class="listDutyAction">
+			<result name="success" type="json" >departmentList</result>
+		</action>
+		<!--hpf:责任划分 - 查询最新的处理经过-->
+		<action name="searchNewProcessPass" method="searchNewProcessPass" class="dutyAction">
+			<result name="success" type="json" >dealProcess</result>
+		</action>
+		<!--hpf:责任划分 - 得到反馈时限的默认值-->
+		<action name="serarchFeedbackTime" method="serarchFeedbackTime" class="dutyAction">
+			<result name="success" type="json" >feedbackTime</result>
+		</action>
+		<!--LiuY:查询特殊责任部门-->
+		<action name="searchDutyDeptList" method="searchDutyDeptList" class="listDutyAction">
+			<result name="success" type="json" >dutyDeptList</result>
+		</action>
+		<!--LiuY:保存特殊责任部门-->
+		<action name="saveDutyDept" method="saveDutyDept" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--LiuY:删除特殊责任部门-->
+		<action name="deleteDutyDept" method="deleteDutyDept" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		<!--hpf:责任审批-->
+		<action name="feedbackApproval" method="feedbackApproval" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		
+		
+		<!--hpf:验证 多个部门或个人 是否在同一个事业部内-->
+		<action name="isSameDepartmentByDeptIds" method="isSameDepartmentByDeptIds" class="dutyAction">
+			<result name="success" type="json" ></result>
+		</action>
+		
+		
+	</package>
+</struts>

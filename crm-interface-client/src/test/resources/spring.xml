@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- 工作流 -->
+	<bean id="contractApplyOperate" class="com.deppon.crm.module.client.test.ContractApplyOperateImplTest">
+		
+	</bean>
+	<bean id="giftApplyOperate" class="com.deppon.crm.module.client.test.GiftApplyOperateImplTest">
+	</bean>
+	<bean id="paymentApplyOperate" class="com.deppon.crm.module.client.test.PaymentApplyOperateImplTest">
+	</bean>
+	<bean id="recompenseApplyOperate" class="com.deppon.crm.module.client.test.RecompenseAplyOperateImplTest">
+	</bean>
+	
+	<!-- 订单 -->
+	<bean id="waybillOperate" class="com.deppon.crm.module.client.test.WaybillOperateImplTest"></bean>
+	<bean id="orderOperate" class="com.deppon.crm.module.client.test.OrderOperateImplTest"></bean>
+	<bean id="oaAccidentOperate" class="com.deppon.crm.module.client.test.OaAccidentOperateImplTest"></bean>
+	
+	<!-- 客户，报表-->
+	<bean id="customerOperate" class="com.deppon.crm.module.client.test.CustomerOperateImplTest"></bean>
+	
+	<!-- 网关 -->
+	<bean id="smsSender" class="com.deppon.crm.module.client.test.SmsSenderImplTest"></bean>
+	
+	<!-- 电子地图 -->
+	<bean id="mapOperate" class="com.deppon.crm.module.client.test.MapOperateTest">
+	</bean>
+	<!-- 呼叫中心 -->
+	<bean id="complaintOperate" class="com.deppon.crm.module.client.test.ComplaintOperateTest">
+	</bean>
+	
+	<!-- 客户主数据同步 -->
+	<bean id="customerLog" class="com.deppon.crm.module.client.test.WaitCustomerLogStub"></bean>
+</beans>
+

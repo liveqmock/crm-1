@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.complaint.shared.domain.FeedBackReasion">
+	<resultMap id="baseResultMap"
+		type="com.deppon.crm.module.complaint.shared.domain.FeedBackReasion">
+		<id column="fid" property="fid" jdbcType="DECIMAL" />
+		<result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="FCREATEUSERID" property="createUser" jdbcType="VARCHAR"  />
+		<result column="FLASTUPDATETIME" property="modifyDate"
+			jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="modifyUser"
+			jdbcType="VARCHAR"  />
+		<result column="FCOMPLAINTID" property="complaintid" jdbcType="DECIMAL" />
+		<result column="FWAILBILLNUMBER" property="wailbillnunber" jdbcType="VARCHAR" />
+		<result column="FWAILBILLCONTENT" property="wailbillcontent"
+			jdbcType="VARCHAR" />
+			
+		<result column="FRECORDMAN" property="recordman" jdbcType="VARCHAR" />
+		<result column="FRECORDPARTMENTID" property="recordpartermentid"
+			jdbcType="DECIMAL" />
+		<result column="FRECORDPARTMENTNAME" property="recordpartmentname"
+			jdbcType="VARCHAR" />
+		<result column="FRECORDTIME" property="recordtime"
+			jdbcType="TIMESTAMP" />
+		<result column="FRECORDTYPE" property="recordtype" jdbcType="VARCHAR" />
+		<!-- 新加字段 -->
+		<result column="FREVISITRESULT" property="revisitresult" jdbcType="VARCHAR"/>
+		<result column="FCUSTSATISFY" property="custsatisfy" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 反馈退回记录表所有字段 -->
+	<sql id="feedBackReasionTableFields">
+		FID,FCOMPLAINTID,FWAILBILLNUMBER,FWAILBILLCONTENT,FRECORDMAN
+		,FRECORDPARTMENTID,FRECORDPARTMENTNAME,FRECORDTIME,FRECORDTYPE,
+		FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,
+		FREVISITRESULT,FCUSTSATISFY,FSUBTYPE 
+	</sql>
+	
+	<!-- 保存反馈退回记录 -->
+	<insert id="insertFeedBackReasion" parameterType="com.deppon.crm.module.complaint.shared.domain.FeedBackReasion">
+	<selectKey keyProperty="fid" resultType="DECIMAL" order="BEFORE">
+			SELECT SEQ_ID_FEEDBACK_REASION.nextval AS
+			fid FROM DUAL
+		</selectKey>
+		INSERT INTO
+		T_CRM_FEEDBACK_REASION (
+		<include refid="feedBackReasionTableFields" />
+		)values(
+		#{fid,jdbcType=VARCHAR},
+		#{complaintid,jdbcType=VARCHAR},
+		#{wailbillnunber,jdbcType=VARCHAR},
+		#{wailbillcontent,jdbcType=VARCHAR},
+		#{recordman,jdbcType=VARCHAR},
+		#{recordpartermentid,jdbcType=VARCHAR},
+		#{recordpartmentname,jdbcType=VARCHAR},
+		#{recordtime,jdbcType=VARCHAR},
+		#{recordtype,jdbcType=VARCHAR},
+		#{createDate,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=VARCHAR},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{revisitresult,jdbcType=VARCHAR},
+		#{custsatisfy,jdbcType=VARCHAR},
+		#{subtype,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateFeedBackReasion" parameterType="com.deppon.crm.module.complaint.shared.domain.FeedBackReasion">
+		UPDATE T_CRM_FEEDBACK_REASION 
+			SET WAILBILLCONTENT = #{wailbillcontent}
+		WHERE FID = #{fid}
+	</update>
+	
+	<select id="selectFeedBackReasionByCompId" resultMap="baseResultMap" parameterType="map" >
+		 SELECT REASON.FID AS FID,
+		        REASON.FCREATETIME AS FCREATETIME,
+		        REASON.FCREATEUSERID AS FCREATEUSERID,
+		        REASON.FLASTUPDATETIME AS FLASTUPDATETIME,
+		        REASON.FLASTMODIFYUSERID AS FLASTMODIFYUSERID,
+		        REASON.FCOMPLAINTID AS FCOMPLAINTID,
+		        REASON.FWAILBILLNUMBER AS FWAILBILLNUMBER,
+		        REASON.FWAILBILLCONTENT AS FWAILBILLCONTENT,
+		        EMPLOYEE.FEMPNAME AS FRECORDMAN,
+		        REASON.FRECORDPARTMENTID,
+		        REASON.FRECORDPARTMENTNAME,
+		        FRECORDTIME,
+		        FRECORDTYPE || FSUBTYPE FRECORDTYPE,
+		        FCUSTSATISFY,
+		        FREVISITRESULT  
+		   FROM T_CRM_FEEDBACK_REASION REASON
+		   LEFT JOIN t_org_employee EMPLOYEE on EMPLOYEE.FEMPCODE=REASON.FRECORDMAN
+		   WHERE 1 = 1 
+			   	<if test="compId != null and compId !='' ">
+			   		and FCOMPLAINTID=trim(#{compId})
+			   	</if>
+		  ORDER BY FCREATETIME, FLASTUPDATETIME
+  </select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+	<!-- 服务类 1 -->
+	<bean id="syncDepartmentTimer"
+		class="com.deppon.crm.module.scheduler.server.manager.TimerSyncDepartment">
+		<property name="syncDepartmentDao" ref="syncDepartmentDao"></property>
+	</bean>
+
+	<!-- 服务类2 -->
+	<bean id="syncEmployeeTimer"
+		class="com.deppon.crm.module.scheduler.server.manager.TimerSyncEmployee">
+		<property name="departmentDao" ref="syncDepartmentDao"></property>
+		<property name="employeeDao" ref="syncEmployeeDao"></property>
+	</bean>
+
+	<!-- 同步组织信息 -->
+	<bean id="syncDepartmentJob"
+		class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass"
+			value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="syncDepartmentTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="syncDepartment"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="syncDepartmentTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="syncDepartmentJob" />
+		<property name="cronExpression">
+			<!-- 每天执行一次，需要在状态变更任务执行后 -->
+			<value>0 0/30 * * * ?</value>
+			<!-- 测试时间 -->
+			<!-- <value>0 0 8-18 * * ?</value> -->
+		</property>
+	</bean>
+
+	<!-- 同步人员信息 -->
+	<bean id="syncEmployeeJob"
+		class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass"
+			value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="syncEmployeeTimer"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="syncEmployee"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="syncEmployeeTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="syncEmployeeJob" />
+		<property name="cronExpression">
+			<!-- 每天执行一次，需要在状态变更任务执行后 -->
+			<value>0 0/30 * * * ?</value>
+			<!-- 测试时间 -->
+<!-- 			<value>0 0 8-18 * * ?</value> -->
+		</property>
+	</bean>
+
+</beans>

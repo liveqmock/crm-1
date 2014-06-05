@@ -1,0 +1,7 @@
+workflowId,fworkflowId,NUMERIC
+workflowName,fworkflowName,VARCHAR
+applicationStatus,fapplicationStatus,VARCHAR
+deptId,fdeptId,NUMERIC
+createUser,fcreateUser,VARCHAR
+startDate,fstartDate,DATE
+endDate,fendDate,DATE

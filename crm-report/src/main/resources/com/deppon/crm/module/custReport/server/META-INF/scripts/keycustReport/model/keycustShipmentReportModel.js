@@ -1,0 +1,83 @@
+//走货量Model
+Ext.define('ShipmentAmountModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'month'//月份
+		},{name:'deliverycount'//票数
+		},{name:'weight'//重量
+		},{name:'amount'//金额
+		}
+	]
+});
+//产品货量MODEL
+Ext.define('ProductAmountModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'grouping'//月份
+		},{name:'firstMonthProductAmount'//第一个月数据
+		},{name:'secondMonthProductAmount'//第二个月数据
+		},{name:'thirdMonthProductAmount'//第三个月数据
+		}
+	]
+});
+//产品线路model
+Ext.define('RoadAmountModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'grouping'//月份
+		},{name:'firstMonthRoadAmount'//第一个月数据
+		},{name:'secondMonthRoadAmount'//第二个月数据
+		},{name:'thirdMonthRoadAmount'//第三个月数据
+		}
+	]
+});
+//走货时效Model
+Ext.define('ShipmenAgingModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'grouping'//月份
+		},{name:'firstAgingKH'//第1个月走货时效卡航
+		},{name:'secondAgingKH'//第2个月走货时效卡航
+		},{name:'thirdAgingKH'//第3个月走货时效卡航
+		},{name:'firstAgingKY'//第1个月走货时效空运
+		},{name:'secondAgingKY'//第2个月走货时效空运
+		},{name:'thirdAgingKY'//第3个月走货时效空运
+		},{name:'firstAgingQYC'//第1个月走货时效汽运长
+		},{name:'secondAgingQYC'//第2个月走货时效汽运长
+		},{name:'thirdAgingQYC'//第3个月走货时效汽运长
+		},{name:'firstAgingQYD'//第1个月走货时效汽运短
+		},{name:'secondAgingQYD'//第2个月走货时效汽运短
+		},{name:'thirdAgingQYD'//第3个月走货时效汽运短
+		},{name:'firstAgingKD'//第1个月走货时效快递
+		},{name:'secondAgingKD'//第2个月走货时效快递
+		},{name:'thirdAgingKD'//第3个月走货时效快递
+		},{name:'firstAgingCY'//第1个月走货时效城运
+		},{name:'secondAgingCY'//第2个月走货时效城运
+		},{name:'thirdAgingCY'//第3个月走货时效城运
+		},{name:'firstAgingZC'//第1个月走货时效整车
+		},{name:'secondAgingZC'//第2个月走货时效整车
+		},{name:'thirdAgingZC'//第3个月走货时效整车
+		}
+	]
+});
+//走货质量
+Ext.define('ShipmentQualityModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'grouping'//月份
+		},{name:'firstQuality'//第一个月数据
+		},{name:'secondQuality'//第二个月数据
+		},{name:'thirdQuality'//第三个月数据
+		}
+	]
+});
+//走货质量 图表专用
+Ext.define('ShipmentQualityForChartModel',{
+	extend:'Ext.data.Model',
+	fields:[{
+		name:'month'//月份
+		},{name:'abSignNormalCount'//异常签收次数
+		},{name:'recompenseCount'//理赔次数
+		}
+	]
+});

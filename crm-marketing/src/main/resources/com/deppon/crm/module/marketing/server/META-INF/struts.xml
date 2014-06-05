@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+<package name="marketing" namespace="/marketing" extends="crm-default">     
+        <!-- 跳转到主页面-->
+        <action name="index" >
+			<result name="success">index.html</result>
+	    </action>
+	    
+	    <!-- 日程新增页面-->
+        <action name="developScheduleAdd" >
+			<result name="success">developScheduleAdd.html</result>
+	    </action>
+	    <!--打印-->
+	    <action name="print" >
+			<result name="success">printMap.html</result>
+    	</action>
+	    
+	    <!-- 开发计划新增修改查询客户 -->
+		<action name="searchDevelopCustomer" class="developPlanAction" method="searchCustomerList">
+			<result name="success" type="json"></result>
+		</action>
+		<!--打印开发计划详情页面-->
+	    <action name="printPlan">
+			<result name="success">printPlan.html</result>
+    	</action>
+		
+		<!-- 查询用户所拥有部门的权限 -->
+		<action name="searchDeptCount" class="developPlanAction" method="searchDeptCount">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 开发计划新增修改查询已关联客户 -->
+		<action name="searchCustomerbyPlanId" class="developPlanAction" method="searchCustomerbyPlanId">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 制定开发 -->
+		<action name="savePlan" class="developPlanAction" method="savePlan">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 修改开发 -->
+		<action name="searchPlanById" class="developPlanAction" method="searchPlanById">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 判断是否离职-->
+		<action name="isOutOrLeave" class="developPlanAction" method="isOutOrLeave">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 开发日程新增列表-->
+		<action name="searchScheduleCustomerList" class="developScheduleAction" method="searchCustomerList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 开发日程新增、修改-->
+		<action name="saveSchedule" class="developScheduleAction" method="saveSchedule">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--查询客户详细-->
+		<action name="searchPcScDetail" class="developScheduleAction" method="searchPcScDetail">
+			<result name="success" type="json"></result>
+		</action>
+		
+	    <!-- 跳转到开发计划管理页面-->
+        <action name="developplanmanage" >
+			<result name="success">developManage.html</result>
+	    </action>
+	    
+	    <!-- 跳转到监控计划页面-->
+        <action name="monitorManage" >
+			<result name="success">monitorManage.html</result>
+	    </action>
+	    
+	    <!-- 跳转到监控维护页面-->
+        <action name="maintainpMonitorManage" >
+			<result name="success">maintainpMonitorManage.html</result>
+	    </action>
+	    
+	    <!-- 跳转到维护计划管理页面-->
+        <action name="maintainpPlanManage" >
+			<result name="success">maintainpPlanManage.html</result>
+	    </action>
+	 
+	    <!-- 跳转到维护日程新增修改页面-->
+        <action name="maintainpScheduleSave" >
+			<result name="success">maintainpScheduleSave.html</result>
+	    </action>
+	    <!-- 跳转到维护日程管理修改页面-->
+	    <action name="maintainpScheduleManage">
+	    	<result name="success">maintainSchedule.html</result>
+	    </action>
+	    
+	    <!-- 跳转到客户分组页面-->
+        <action name="customerGroup" >
+			<result name="success">customerGroup.html</result>
+	    </action>
+	    
+	    <!-- 查询客户分组列表-->
+	    <action name="serachCustomerGroupList" class="customerGroupAction" method="serachCustomerGroupList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询分配维护人-->
+	    <action name="serachPrehumanByDeptId" class="customerGroupAction" method="serachPrehumanByDeptId">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--根据分组取维护人ID-->
+	    <action name="serachCustomerGroupByPrehuman" class="customerGroupAction" method="serachCustomerGroupByPrehuman">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 根据维护人取分组ID-->
+	    <action name="searchPrehumanByGroupId" class="customerGroupAction" method="searchPrehumanByGroupId">
+			<result name="success" type="json"></result>
+		</action>
+		
+	    <!-- 添加分组列表-->
+	    <action name="saveCustomerGroup" class="customerGroupAction" method="saveCustomerGroup">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 修改分组列表-->
+	    <action name="updateCustomerGroup" class="customerGroupAction" method="updateCustomerGroup">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 删除分组列表-->
+		<action name="deleteCustomerGroup" class="customerGroupAction" method="deleteCustomerGroup">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 根据条件查询客户-->
+		<action name="queryCustomerGroupDetailListByCondition" class="customerGroupAction" method="queryCustomerGroupDetailListByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询已有分组的客户-->
+		<action name="queryCustomerGroupDetail" class="customerGroupAction" method="queryCustomerGroupDetail">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--保存分组-->
+	    <action name="saveAllCustomerGroup" class="customerGroupAction" method="saveAllCustomerGroup">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 查询监控计划-->
+		<action name="monitorList" class="monitorPlanAction" method="searchMonitorList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询监控计划searchMonitorDetail-->
+		<action name="monitorDetail" class="monitorPlanAction" method="searchMonitorDetail">
+			<result name="success" type="json"></result>
+		</action>
+	    
+	    <!-- 维护计划新增页面-->
+        <action name="searchMemberList" class="developPlanAction" method="searchMemberList">
+			<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 根据planId查询已选客户-->
+        <action name="searchMemberListByPlanId" class="developPlanAction" method="searchMemberListByPlanId">
+			<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+	    <!-- 删除客户开发计划-->
+        <action name="deleteDevelopPlane" class="developPlanAction" method="deleteDevelopPlane">
+			<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!--获取计划制定者
+        <action name="searchPlaneDraft" class="developPlanAction" method="searchPlaneDraft">
+			<result name="success" type="json"></result>
+	    </action>
+	     -->
+	     <!--获取计划制定者 -->
+        <action name="queryEmployeesByDeptId" class="developPlanAction" method="queryEmployeesByDeptId">
+			<result name="success" type="json"></result>
+	    </action>
+	    
+	       <!-- 跳转到开发计划管理页面-->
+        <action name="developschedulemanage" >
+			<result name="success">developSchedule.html</result>
+	    </action>
+	    
+	     <!-- 获取开发计划主题-->
+        <action name="searchPlaneTopic" class="developScheduleAction" method="searchPlaneTopic">
+			<result name="success" type="json"></result>
+	    </action>
+	
+		 <!-- 获取计划执行部门
+        <action name="searchExecuteDept" class="developPlanAction" method="searchExecuteDept">
+			<result name="success" type="json"></result>
+	    </action>
+	    -->
+	    <!-- 根据名称获取执行部门-->
+        <action name="queryDeptListByDeptName" class="developPlanAction" method="queryDeptListByDeptName">
+			<result name="success" type="json"></result>
+	    </action>
+	    
+	     <!-- 获取执行计划列表-->
+        <action name="searchDevelopPlane" class="developPlanAction" method="searchDevelopPlane">
+			<result name="success" type="json"></result>
+	    </action>
+	     <!-- 获取日程计划列表-->
+        <action name="searchDevelopSchedule" class="developScheduleAction" method="searchDevelopSchedule">
+			<result name="success" type="json"></result>
+	    </action>
+	     <!-- 获取日程计划列表-->
+        <action name="deleteDevelopSchedule" class="developScheduleAction" method="deleteDevelopSchedule">
+			<result name="success" type="json"></result>
+	    </action>
+	    <!-- 更新日程 -->
+	    <action name="updateDevelopSchedule" class="developScheduleAction" method="updateDevelopSchedule">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 回访页面显示-->
+	    <action name="returnVisit">
+	    	<result name="success">returnVisitView.html</result>
+	    </action>
+	    <!-- 保存回访记录 -->
+	    <action name="saveReturnVisit" class="returnVisitAction" method="saveReturnVisit">
+	    	<result name="success" type="json"></result>
+	    </action>
+	     <!-- 回访查询记录列表-->
+	    <action name="searchReturnVisitList" class="returnVisitAction" method="searchReturnVisitList">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 初始化回访录入界面 -->
+	    <action name="initCreateReturnvisitPage" class="returnVisitAction" method="initCreateReturnvisitPage">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 初始化回访录入界面（客户） -->
+	    <action name="initCreateReturnvisitPageByCust" class="returnVisitAction" method="initCreateReturnvisitPageByCust">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 双击查询回访明细 -->
+	    <action name="searchReturnVisit" class="returnVisitAction" method="searchReturnVisit">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 查询对应客户回访记录 -->
+	    <action name="searchReturnVisitLog" class="returnVisitAction" method="searchReturnVisitLog">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+		<!-- 流失预警：根据客户id查询流失预警客户信息-->
+		<action name="searchWarnLostCustInfo" class="returnVisitAction" method="searchWarnLostCustInfo">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 流失预警：用户在回访页面手动更新流失预警客户信息-->
+		<action name="updateLostWarnCustInfo" class="returnVisitAction" method="updateLostWarnCustInfo">
+			<result name="success" type="json"></result>
+		</action>
+	    
+	     <!-- 五公里地图 -->
+	    <action name="map">
+	    	<result name="success">map.html</result>
+	    </action>
+	    <!-- 查询客户信息 -->
+	    <action name="searchCustomerList" class="visualMarketingAction" method="searchCustomerList">
+	    	<result name="success" type="json"></result>
+	    </action>
+		<!-- 保存标注 -->
+	     <action name="markCustomerLocation" class="visualMarketingAction" method="markCustomerLocation">
+	    	<result name="success" type="json"></result>
+	    </action>
+		 <!-- 跳转发货周期表-->
+        <action name="deliveryCycle" >
+			<result name="success">deliveryCycle.html</result>
+	    </action>
+	     <!-- 跳转到货周期表-->
+        <action name="arrivalCycle" >
+			<result name="success">arrivalCycle.html</result>
+	    </action>
+	    <!-- 获取发货周期表数据 -->
+	    <action name="queryCycleList" class="cycleAction" method="queryCycleList">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 获取发货周期表表头 -->
+	    <action name="queryCycleListHeader" class="cycleAction" method="queryCycleListHeader">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 获取发货周期表查询金额明细的动态表头 -->
+	    <action name="queryAmountDetailHeader" class="cycleAction" method="queryAmountDetailHeader">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 查询回访记录 -->
+	     <action name="searchReturnVisitRecords" class="cycleAction" method="searchReturnVisitRecords">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 查询线路分析 -->
+	     <action name="searPathAnalysisInfos" class="cycleAction" method="searPathAnalysisInfos">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 查询已选分组数据 -->
+	   	<action name="queryCycleByGroupIdList" class="cycleAction" method="queryCycleByGroupIdList">
+	    	<result name="success" type="json"></result>
+	    </action>
+	      <!-- 获取客户分组列表 -->
+	   	<action name="searchCustomerGroupList" class="cycleAction" method="searchCustomerGroupList">
+	    	<result name="success" type="json"></result>
+	    </action>
+	         <!-- 获取客户分组列表 -->
+	   	<action name="searchDevelopPopDataList" class="cycleAction" method="searchDevelopPopDataList">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 获取客户分组列表 -->
+	   	<action name="searchSchedulePopDataList" class="cycleAction" method="searchSchedulePopDataList">
+	    	<result name="success" type="json"></result>
+	    </action>
+	     <!-- 获取当前登录部门-->
+	   	<action name="searchCurrentDept" class="developPlanAction" method="searchCurrentDept">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 获取维护计划日程-->
+	   	<action name="searchScheduleBySelf" class="developScheduleAction" method="searchScheduleBySelf">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 客户来电录入页面显示-->
+	    <action name="customerCall">
+	    	<result name="success">customerCallAdd.html</result>
+	    </action>
+	    
+	    <!-- 营销录入查询页面显示-->
+	    <action name="marketingRecord">
+	    	<result name="success">marketRecordQuery.html</result>
+	    </action>
+	    
+	    <!-- 客户来电 ：根据手机号、部门ID查询客户信息-->
+	    <action name="queryCustomerByMobile" class="marketRecordAction" method="queryCustomerByMobile">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 客户来电 ：根据固话、联系人姓名、部门ID查询客户信息-->
+	    <action name="queryCustomerByPhoneDeptIdName" class="marketRecordAction" method="queryCustomerByPhoneDeptIdName">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+	    <!-- 客户来电 ：根根据当前登录用户查找部门所在城市-->
+	    <action name="queryDepartmentWithCurrentUser" class="marketRecordAction" method="queryDepartmentWithCurrentUser">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+	    <!-- 客户来电 ：单击提交，保存营销记录信息-->
+	    <action name="saveMarketRecord" class="marketRecordAction" method="saveMarketRecord">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销历史记录查询 之客户意见列表-->
+	    <action name="queryCustomerDemands" class="marketRecordAction" method="queryCustomerDemands">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    
+	    <!-- 营销历史记录查询 之走货潜力列表-->
+	    <action name="querySendGoodsPotentials" class="marketRecordAction" method="querySendGoodsPotentials">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!--客户开发效果评估-->
+	    <action name="devEffectEvaluation" >
+			<result name="success">devEffectEvaluation.html</result>
+    	</action>
+    	
+    	<!--客户维护效果评估-->
+	    <action name="maintainEffectEvaluation" >
+			<result name="success">maintainEffectEvaluation.html</result>
+    	</action>
+    	
+    	<!-- 营销效果评估：根据登录用户权限，生成用户权限实体-->
+	    <action name="createAssessAuth" class="effectEvaluationAction" method="createAssessAuth">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销效果评估：查询组织架构-所有经营本部-->
+	    <action name="searchmanagerDept" class="effectEvaluationAction" method="searchmanagerDept">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销效果评估：根据上一级部门parentDeptId查询子级部门-->
+	    <action name="searchDeptsByParentId" class="effectEvaluationAction" method="searchDeptsByParentId">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销效果评估：根据客户开发效果的查询条件，返回查询结果-->
+	    <action name="queryDevEffectResultByCondition" class="effectEvaluationAction" method="queryDevEffectResultByCondition">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销效果评估：查询开发合计-->
+	    <action name="searchSumCustDevByAuth" class="effectEvaluationAction" method="searchSumCustDevByAuth">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销效果评估：根据客户维护效果的查询条件，返回查询结果-->
+	    <action name="queryMaintainEffectResultByCondition" class="effectEvaluationAction" method="queryMaintainEffectResultByCondition">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 营销效果评估：查询维护合计-->
+	    <action name="searchSumCustMatByAuth" class="effectEvaluationAction" method="searchSumCustMatByAuth">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 开发：导出权限下所有数据到服务器端生成一个Excel报表文件-->
+		<action name="creatDevMarketEffectReportExcel" class="effectEvaluationAction" method="creatDevMarketEffectReportExcel">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 维护：导出权限下所有数据到服务器端生成一个Excel报表文件-->
+		<action name="creatMaintainMarketEffectReportExcel" class="effectEvaluationAction" method="creatMaintainMarketEffectReportExcel">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 开发：导出当前查询条件下所有数据到服务器端生成一个Excel报表文件-->
+		<action name="creatDevReportExcelByCondition" class="effectEvaluationAction" method="creatDevReportExcelByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 维护：导出当前查询条件下所有数据到服务器端生成一个Excel报表文件-->
+		<action name="creatMaintainReportExcelByCondition" class="effectEvaluationAction" method="creatMaintainReportExcelByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+	    <!--   将成功导出的服务器端生成的excel报表文件下载到本地-->
+	    <action name="exportMarketEffectReportExcel" class="effectEvaluationAction" method="exportMarketEffectReportExcel">
+			<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="contentType">application/octet-stream</param>
+				<param name="contentDisposition">attachment;filename="${loadFileName}"</param> 
+				
+			</result>
+		</action>
+		
+		 <!--可视化营销-->
+		 <action name="visualMarketing">
+	    	<result name="success">visualMarketing.html</result>
+	    </action>
+	    <!-- 查询客户地址 -->
+	    <action name="serachCustomerAddressByCustId" class="visualMarketingAction" method="serachCustomerAddressByCustId">
+	        <result name="success" type="json"></result>
+	    </action>
+	     <!--查询客户标签-->
+	    <action name="serachCustomerlabelByDeptId" class="visualMarketingAction" method="serachCustomerlabelByDeptId">
+			<result name="success" type="json"></result>
+		</action>
+	     <!--查询部门营销区域-->
+	    <action name="findRegionPartitionListByDeptId" class="visualMarketingAction" method="findRegionPartitionListByDeptId">
+			<result name="success" type="json"></result>
+		</action>
+		 <!--查询客户信息-->
+	    <action name="searchCustomerMarketInfoList" class="visualMarketingAction" method="searchCustomerMarketInfoList">
+			<result name="success" type="json">
+				<param name="includeProperties">customerMarketInfoList,totalCount</param>
+			</result>
+		</action>
+		 <!--查询已经标注客户信息-->
+	    <action name="searchMarkCustInfoList" class="visualMarketingAction" method="searchMarkCustInfoList">
+			<result name="success" type="json">
+				<param name="includeProperties">markCustInfos</param>
+			</result>
+		</action>
+	    <!-- 跳转到区域划分页面-->
+        <action name="marketingRegionPartition" >
+			<result name="success">regionPartition.html</result>
+	    </action>
+	    <!-- 区域划分 -->
+	    <!-- 初始化区域划分页面 -->
+	     <action name="initRegionPartitionPage" class="listRegionPartitionAction" method="initRegionPartitionPage">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 保存区域划分信息 -->
+	    <action name="saveRegionPartition" class="listRegionPartitionAction" method="saveRegionPartition">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 删除区域划分信息 -->
+	    <action name="deleteRegionPartition" class="listRegionPartitionAction" method="deleteRegionPartition">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 根据部门ID查询区域划分信息 -->
+	    <action name="searchRegionByDeptId" class="listRegionPartitionAction" method="searchRegionByDeptId">
+	    	<result name="success" type="json"></result>
+	    </action>
+	      <!-- 查询权限部门 -->
+	    <action name="searchRegionDept" class="listRegionPartitionAction" method="searchRegionDept">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	    <!-- 查询单个客户的浮窗信息：包括回访信息页签、客户基本信息页签和近半年出发收入页签 -->
+	    <action name="searchCustIntegrationInfoVO" class="visualMarketingAction" method="searchCustIntegrationInfoVO">
+	    	<result name="success" type="json">
+	    		<param name="includeProperties">rvOpinionList,halfYearIncomeList,customerMarketInfo,custInteInfoVO</param>
+	    	</result>
+	    </action>
+	    
+	    <!-- 返回可以制定计划的客户信息列表和不能制定计划的客户数量-->
+	    <action name="searchCustListToCreatePlan" class="visualMarketingAction" method="searchCustListToCreatePlan">
+	    	<result name="success" type="json">
+	    		<param name="includeProperties">custIdList,totalCount</param>
+	    	</result>
+	    </action>
+	    
+	    <!--可视化营销打印功能实现-->
+	    <action name="printVisualMarket" >
+			<result name="success">printVisualMarket.html</result>
+    	</action> 
+    	
+    	<!--查询单个客户的回访信息列表-->  
+    	<action name="searchReturnVisitInfoList" class="visualMarketingAction" method="searchReturnVisitInfoList">
+	    	<result name="success" type="json"></result>
+	    </action> 
+	    
+	    <!-- 营销短信页面-->
+        <action name="marketingMessage" >
+			<result name="success">marketingMessage.html</result>
+	    </action>
+	    
+	    <!-- 保存上传的文件名、文件路径、短信内容 -->
+		<action name="saveMessageFile" class="messageSendAction" method="saveMessageFile">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询营销短信发送文件列表 -->
+		<action name="searchTaskList" class="messageSendAction" method="searchTaskList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 查询单个营销短信任务详情信息-->
+		<action name="searchPhoneList" class="messageSendAction" method="searchPhoneList">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 营销区域查询跳转 -->
+		<action name="marketingRegionSearch" >
+			<result name="success">regionSearch.html</result>
+	    </action>
+	    <!-- 营销区域查询 -->
+	    <action name="searchRegionsByDeptId" class = 'listRegionPartitionAction' method = 'searchRegionsByDeptId' >
+			<result name="success" type = 'json'></result>
+	    </action>
+		<!-- 查询发到货周期表中的月发到货金额明细-->
+		<action name="searchAmountDetailByMonthDay" class="cycleAction" method="searchAmountDetailByMonthDay">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="marketActivitiesManage">
+			<result name="success">marketActivity.html</result>
+		</action>
+
+		
+		<!-- 商机管理ACTION BEGION-->
+		<!-- 商机管理-->
+        <action name="businessOpporturnity" >
+			<result name="success">businessOpportunity.html</result>
+	    </action>
+	    <!-- 根据条件商机管理-->
+	    <action name="searchBusinessOpportunityList" class="businessOpportunityAction" method="searchBusinessOpportunityList">
+			<result name="success" type="json"></result>     
+	    </action>
+	    <!-- 保存商机信息-->
+	    <action name="createBusinessOpportunity" class="businessOpportunityAction" method="createBusinessOpportunity">
+			<result name="success" type="json"></result>     
+	    </action>
+	    <!-- 修改商机信息-->
+	    <action name="saveBusinessOpportunity" class="businessOpportunityAction" method="saveBusinessOpportunity">
+			<result name="success" type="json"></result>     
+	    </action>
+	    <!-- 根据id查询商机-->
+	    <action name="queryBusinessOpportunity" class="businessOpportunityAction" method="queryBusinessOpportunity">
+			<result name="success" type="json"></result>     
+	    </action>
+	    <!-- 商机客户查询-->
+	    <action name="searchMemberInfoListForBo" class="boCustomerAction" method="searchMemberInfoListForBo">
+			<result name="success" type="json"></result>     
+	    </action>
+	     <!-- 商机根据客户名称查询部门查询-->
+	    <action name="searchDeptByDeptName" class="boCustomerAction" method="searchDeptByDeptName">
+			<result name="success" type="json"></result>     
+	    </action>
+	     <!-- 获取部门详细信息-->
+	    <action name="queryDeptById" class="businessOpportunityAction" method="queryDeptById">
+			<result name="success" type="json"></result>     
+	    </action>
+	    <!-- 获取商机日程-->
+	    <action name="searchBusinessSchedule" class="developScheduleAction" method="searchBusinessSchedule">
+			<result name="success" type="json"></result>     
+	    </action>
+	    
+        <!-- 商机管理ACTION END-->
+        
+        
+		<!-- 问题管理：菜单跳转 -->
+		<action name ="questionManagement">
+			<result name="success">questionManage.html</result>
+		</action>
+		<!-- 问题管理：查询问题信息列表-->
+		<action name="searchQuestionsByCondition" class="questionAction" method="searchQuestionsByCondition">
+			<result name="success" type="json" ></result>
+		</action>
+		<action name="sendMail" class="questionAction" method="sendMail">
+			<result name="success" type="json" ></result>
+		</action>
+		
+		<!-- 问题管理：根据问题id删除问题 -->
+		<action name="deleteQuestion" class="questionAction" method="deleteQuestion">
+			<result name="success" type="json" ></result>
+		</action>
+		<!-- 问题管理：新增问题 -->
+		<action name="createQuestion" class="questionAction" method="createQuestion">
+			<result name="success" type="json" ></result>
+		</action>
+		<!-- 问题管理：修改问题 -->
+		<action name="updateQuestion" class="questionAction" method="updateQuestion">
+			<result name="success" type="json" ></result>
+		</action>
+		<!-- 问题管理：根据问题id查询引用该问题的问卷详情 -->
+		<action name="searchQuestionnaireByQuestionId" class="questionAction" method="searchQuestionnaireByQuestionId">
+			<result name="success" type="json" ></result>
+		</action>
+		<!-- 问卷管理页面-->
+        <action name="questionnaireManagementChild" >
+			<result name="success">questionnaireManagement.html</result>
+	    </action>
+		
+		<!-- 问卷管理：查询问卷信息列表-->
+		<action name="searchQuestionnaireInfoList" class="questionnaireAction" method="searchQuestionnaireInfoList">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 问卷管理：新增问卷信息-->
+		<action name="createQuestionnaire" class="questionnaireAction" method="createQuestionnaire">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 问卷管理：修改问卷信息-->
+		<action name="updateQuestionnaire" class="questionnaireAction" method="updateQuestionnaire">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 问卷管理：删除问卷信息-->
+		<action name="deleteQuestionnaire" class="questionnaireAction" method="deleteQuestionnaire">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 问卷管理：根据问卷id查询问题列表-->
+		<action name="searchQuestionListByQuestionnaireId" class="questionnaireAction" method="searchQuestionListByQuestionnaireId">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 问卷管理：根据问题id列表查询问题列表-->
+		<action name="searchQuestionListByQuestionIdList" class="questionnaireAction" method="searchQuestionListByQuestionIdList">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 问卷管理：统计问卷结果 -->
+		<action name="staticsQuestionnaireResultBySurveyId" class="questionnaireAction" method="staticsQuestionnaireResultBySurveyId">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 问卷管理：客户问卷列表-->
+	    <action name="queryQuestionnaireListByCustid" class="questionnaireAction" method="queryQuestionnaireListByCustid">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 问卷管理：根据回访id查询问卷答案-->
+	    <action name="viewQuestionnaireByVisitId" class="questionnaireAction" method="viewQuestionnaireByVisitId">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    <!-- 问卷管理  : 在服务器端生成导出数据 -->
+		<action name="createStaticsExcel" class="questionnaireAction" method="createStaticsExcel">   
+		  <result name="success" type="json"></result> 
+	    </action> 
+		<!-- 问卷管理  : 导出问卷统计结果 -->
+		<action name="exportStaticsByQuestionnaireId" class="questionnaireAction" method="exportStaticsExcel">   
+		  <result name="success" type="stream">   
+		     <param name="contentType">application/x-msdownload</param>    
+		     <param name="contentDisposition">attachment;filename="${fileName}"</param>       
+		     <param name="inputName">inputStream</param>         
+		     <param name="bufferSize">1024</param>   
+		  </result>  
+		  <result name="error" type="json" /> 
+	    </action> 
+	    <!-- 问卷管理  : 在服务器端生成导出明细数据 -->
+		<action name="createQuestionnaireDetailExcel" class="questionnaireAction" method="createQuestionnaireDetailExcel">   
+		  <result name="success" type="json"></result> 
+	    </action> 
+	    <!-- 问卷管理  : 回访过的客户基本信息,导出问卷详细结果详细 -->
+		<action name="exportQuestionnaireDetailExcel" class="questionnaireAction" method="exportQuestionnaireDetailExcel">   
+		  <result name="success" type="stream">   
+		     <param name="contentType">application/x-msdownload</param>    
+		     <param name="contentDisposition">attachment;filename="${fileName}"</param>       
+		     <param name="inputName">inputStream</param>         
+		     <param name="bufferSize">1024</param>   
+		  </result>  
+		  <result name="error" type="json" /> 
+	    </action>
+		<!-- 客户群菜单跳转 -->
+		<action name ="custConditionManage">
+			<result name="success">	clientBase.html</result>
+		</action>
+		
+		<!-- 客户群：查询客户群-->
+		<action name="searchClientBaseByCondition" class="cilentBaseAction" method="searchClientBase">
+			<result name="success" type="json" >
+			</result>
+		</action>
+		<!-- 客户群：校验客户群名称-->
+		<action name="checkClientBase" class="cilentBaseAction" method="checkClientBase">
+			<result name="success" type="json" >
+			</result>
+		</action>
+		<!-- 客户群：查看客户群详情-->
+		<action name="searchClientBaseById" class="cilentBaseAction" method="searchClientBaseById">
+			<result name="success" type="json" >
+			</result>
+		</action>
+		<!-- 客户群：删除客户群-->
+		<action name="deleteClientBaseById" class="cilentBaseAction" method="deleteClientBaseById">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 客户群：保存客户群-->
+		<action name="saveClientBase" class="cilentBaseAction" method="saveClientBase">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 客户群：更新客户群-->
+		<action name="updateClientBase" class="cilentBaseAction" method="updateClientBase">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 客户群：根据一级行业查找二级行业-->
+		<action name="searchSecondTradesByTradesList" class="cilentBaseAction" method="searchSecondTradesByList">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 客户群：查询详情查询二级行业-->
+		<action name="searchSecondTradesToString" class="cilentBaseAction" method="searchSecondTradesToString">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 开发阶段管理ACTION END-->
+		 <action name ="memberExtend">
+			<result name="success">memberExtend.html</result>
+		</action>
+		<!-- 查询客户扩展信息-->
+	    <action name="searchMemberExtend" class="memberExtendAction" method="searchMemberExtend">
+			<result name="success" type="json"></result>     
+	    </action>
+	    <!-- 修改客户扩展信息-->
+	    <action name="updateMemberExtend" class="memberExtendAction" method="updateMemberExtend">
+			<result name="success" type="json"></result>     
+	    </action>
+	    
+	    <!-- 开发阶段查询-->
+		<action name="searchCustomerListForMemberExtend" class="memberExtendAction" method="searchCustomerList">
+			<result name="success" type="json"></result>
+		</action>
+        <!-- 开发阶段管理ACTION END-->
+</package>
+	<!--引入市场推广活动的struts  防止SVN冲突 -->
+	<include file="com/deppon/crm/module/marketing/server/META-INF/Activity-struts.xml" /> 
+</struts>

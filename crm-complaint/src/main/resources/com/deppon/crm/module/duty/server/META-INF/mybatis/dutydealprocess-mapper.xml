@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.DutyDealProcess">
+	<resultMap id="dutyDealProcessMap"
+		type="com.deppon.crm.module.duty.shared.domain.DutyDealProcess">
+		<id column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FDUTYID" property="dutyId" jdbcType="VARCHAR" />
+		<result column="FTREATSTATUS" property="treatStates" jdbcType="VARCHAR" />
+		<result column="FTREATPROCESS" property="treatProcess" jdbcType="VARCHAR" />
+		<result column="FOPERATORID" property="operaprId" jdbcType="VARCHAR" />
+		<result column="FOPERATORNAME" property="opratorName" jdbcType="VARCHAR" />
+		<result column="FOPERATORDATE" property="operatorTime" jdbcType="TIMESTAMP" />	
+	</resultMap>
+	
+	<sql id="DutyDealProcess_Column_List" >
+      FID
+      ,FDUTYID
+      ,FTREATSTATUS
+      ,FTREATPROCESS
+      ,FOPERATORID
+      ,FOPERATORNAME
+      ,FOPERATORDATE
+    </sql>
+    <!--根据条件查询对象 -->
+	<select id="searchDutyDealProcess" parameterType="com.deppon.crm.module.duty.shared.domain.DutyDealProcess" 
+		resultMap="dutyDealProcessMap">
+		SELECT  
+    	<include refid="DutyDealProcess_Column_List" />
+    		FROM T_CUST_DUTYDEALPROCESS 
+    	<where>
+	    	<if test="id!=null">
+	    		FID = #{id}
+	    	</if>         
+	   		<if test="dutyId!=null and dutyId!=''"> 
+				AND FDUTYID  = #{dutyId}        
+	  		</if>  
+	  		<if test="treatStates!=null and treatStates!=''"> 
+				AND FTREATSTATUS  = #{treatStates}        
+	  		</if>      
+	  		<if test="treatProcess!=null and treatProcess!=''"> 
+				AND FTREATPROCESS = #{treatProcess}        
+	  		</if>  
+	  		<if test="operaprId!=null and operaprId!=''"> 
+				AND FOPERATORID = #{operaprId}        
+	  		</if>   
+	  		<if test="opratorName!=null and opratorName!=''"> 
+				AND FOPERATORNAME = #{opratorName}        
+	  		</if>   
+	  		<if test="operatorTime!=null"> 
+				AND FOPERATORDATE = #{operatorTime,jdbcType=TIMESTAMP}        
+	  		</if>             
+  		</where> 
+	</select>
+	
+   <!--查询单个对象 -->
+  <select id="selectDutyDealProcessByPrimaryKey" resultMap="dutyDealProcessMap" parameterType="java.lang.Long" >
+  	select 
+    <include refid="DutyDealProcess_Column_List" />
+    from T_CUST_DUTYDEALPROCESS
+    where FID = #{id}
+  </select>
+  
+    <!--查询单个对象 -->
+  <select id="selectMaxDutyDealProcess" resultMap="dutyDealProcessMap" parameterType="com.deppon.crm.module.duty.shared.domain.DutyDealProcess" >
+  	SELECT 
+    <include refid="DutyDealProcess_Column_List" />
+     FROM T_CUST_DUTYDEALPROCESS WHERE
+     FID = (SELECT MAX(FID) FROM T_CUST_DUTYDEALPROCESS T WHERE T.FTREATSTATUS = #{treatStates} AND T.FDUTYID = #{dutyId})
+  </select>
+  
+  <!--修改处理经过 -->
+  <update id="updateDutyDealProcess" parameterType="com.deppon.crm.module.duty.shared.domain.DutyDealProcess" >
+     update T_CUST_DUTYDEALPROCESS
+    <set>
+      <if test="dutyId != null" >
+        FDUTYID = #{dutyId},
+      </if>
+      <if test="treatStates != null" >
+        FTREATSTATUS = #{treatStates,jdbcType=VARCHAR},
+      </if>
+      <if test="treatProcess != null" >
+        FTREATPROCESS = #{treatProcess,jdbcType=VARCHAR},
+      </if>
+      <if test="operaprId != null" >
+        FOPERATORID = #{operaprId,jdbcType=VARCHAR},
+      </if>
+      <if test="opratorName != null" >
+        FOPERATORNAME = #{opratorName,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorTime != null" >
+        FOPERATORDATE = #{operatorTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where FID = #{id}
+  </update>
+  <!--插入处理经过 -->
+   <insert id="insertDutyDealProcess" parameterType="com.deppon.crm.module.duty.shared.domain.DutyDealProcess">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+				SELECT SEQ_CRM_DUTYDEALPROCESS.nextval AS
+				id FROM DUAL
+		</selectKey>
+				INSERT INTO T_CUST_DUTYDEALPROCESS
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+			  <if test="dutyId != null" >
+				FDUTYID,
+			  </if>
+			  <if test="treatStates != null" >
+				FTREATSTATUS,
+			  </if>
+			  <if test="treatProcess != null" >
+				FTREATPROCESS,
+			  </if>
+			  <if test="operaprId != null" >
+				FOPERATORID,
+			  </if>
+			  <if test="opratorName != null" >
+				FOPERATORNAME,
+			  </if>
+              <if test="operatorTime != null" >
+				FOPERATORDATE,
+			  </if>
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+				#{id},
+			  <if test="dutyId != null" >
+				#{dutyId},
+			  </if>
+			  <if test="treatStates != null" >
+				#{treatStates},
+			  </if>
+			  <if test="treatProcess != null" >
+				#{treatProcess},
+			  </if>
+			  <if test="operaprId != null" >
+				#{operaprId},
+			  </if>
+			  <if test="opratorName != null" >
+				#{opratorName},
+			  </if>
+              <if test="operatorTime != null" >
+				#{operatorTime,jdbcType=TIMESTAMP},
+			  </if>
+	    </trim>
+  </insert>
+  <!-- 批量删除方案信息 -->
+  <delete id="deleteDutyDealProcesss" parameterType="map">
+  		DELETE FROM T_CUST_DUTYDEALPROCESS
+  		<![CDATA[WHERE FID IN ]]>
+		<foreach collection="ids" open="(" close=")" separator=","
+				item="id">
+		<![CDATA[	#{id}  ]]>
+		</foreach>
+  </delete>
+  
+    <!-- 批量删除根据责任ID -->
+  <delete id="deleteDutyDealProcesssByDutyId" parameterType="map">
+  		DELETE FROM T_CUST_DUTYDEALPROCESS
+  	     where FDUTYID = #{dutyId}
+  </delete>
+</mapper>

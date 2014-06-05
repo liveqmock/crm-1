@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/uums/inteface/domain/usermanagement"
+	xmlns:tns="http://www.deppon.com/uums/inteface/domain/usermanagement" elementFormDefault="qualified">
+	
+	<complexType name="SendEmployeeRequest">
+        <annotation>
+        	<documentation>UUMS发送至业务系统的人员信息，由UUMS负责统一维护公司员工数据；</documentation></annotation>
+        <sequence>
+			<element name="employeeInfo" type="tns:EmployeeInfo" minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>人员信息</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="EmployeeInfo">
+		<sequence>
+			<element name="employeeChangeId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>人员信息变动ID</documentation>
+				</annotation>
+			</element>
+			<element name="employeeCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>工号</documentation>
+				</annotation>
+			</element>
+			<element name="employeeName" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>姓名</documentation>
+				</annotation>
+			</element>
+			<element name="gender" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>性别, 0-女， 1-男</documentation>
+				</annotation>
+			</element>
+			<element name="deptName" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>部门名称</documentation>
+				</annotation>
+			</element>
+			<element name="deptBenchmarkCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>部门标杆编码</documentation>
+				</annotation>
+			</element>
+			<element name="deptCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>部门编码</documentation>
+				</annotation>
+			</element>
+			<element name="position" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职位(中文名称)</documentation>
+				</annotation>
+			</element>
+			<element name="degree" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>职等(编码, 关联职等信息)</documentation>
+				</annotation>
+			</element>
+			<element name="docType" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>证件类型</documentation>
+				</annotation>
+			</element>
+			<element name="docNumber" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>证件号码</documentation>
+				</annotation>
+			</element>
+			<element name="withCode" type="double" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>上装码</documentation>
+				</annotation>
+			</element>
+			<element name="waistCode" type="double" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>裤腰码</documentation>
+				</annotation>
+			</element>
+			<element name="height" type="double" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>身高</documentation>
+				</annotation>
+			</element>
+			<element name="weight" type="double" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>体重</documentation>
+				</annotation>
+			</element>
+			<element name="birthday" type="dateTime" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>出生日期</documentation>
+				</annotation>
+			</element>
+			<element name="status" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>状态, 0-离职人员；1-在职人员</documentation>
+				</annotation>
+			</element>
+			<element name="entryDate" type="dateTime" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>入职日期</documentation>
+				</annotation>
+			</element>
+			<element name="departureDate" type="dateTime" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>离职日期</documentation>
+				</annotation>
+			</element>
+			<element name="officeTel" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>办公电话</documentation>
+				</annotation>
+			</element>
+			<element name="officeAddress" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>办公地址</documentation>
+				</annotation>
+			</element>
+			<element name="officeZipCode" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>办公邮编</documentation>
+				</annotation>
+			</element>
+			<element name="officeEmail" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>办公邮箱</documentation>
+				</annotation>
+			</element>
+			<element name="mobile" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>手机号码</documentation>
+				</annotation>
+			</element>
+			<element name="homeTel" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>家庭电话</documentation>
+				</annotation>
+			</element>
+			<element name="homeAddress" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>家庭地址</documentation>
+				</annotation>
+			</element>
+			<element name="homeZipCode" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>家庭邮编</documentation>
+				</annotation>
+			</element>
+			<element name="personalEmail" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>私人邮箱</documentation>
+				</annotation>
+			</element>
+			<element name="workexp" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>工作描述</documentation>
+				</annotation>
+			</element>
+			<element name="remark" type="string" maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>备注</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-删除, 4-返聘; </documentation>
+				</annotation>
+			</element>
+			<element name="changeDate" type="dateTime" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动时间 </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SendEmployeeResponse">
+		<sequence>
+			<element name="successCount" type="int" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>成功总数</documentation>
+				</annotation>
+			</element>
+			<element name="failedCount" type="int" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>失败总数</documentation>
+				</annotation>
+			</element>
+			<element name="processResult" type="tns:SendEmployeeProcessReult" minOccurs="1" maxOccurs="unbounded">
+				<annotation>
+					<documentation>处理明细</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="SendEmployeeProcessReult">
+		<sequence>
+			<element name="employeeChangeId" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>人员信息变动ID</documentation>
+				</annotation>
+			</element>
+			<element name="result" type="boolean" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>处理结果，是否成功[0: 失败, 1： 成功]</documentation>
+				</annotation>
+			</element>
+			<element name="reason" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+			
+			<element name="employeeCode" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>工号</documentation>
+				</annotation>
+			</element>
+			<element name="changeType" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>变动类型, 1-新增, 2-修改, 3-删除, 4-返聘; </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<element name="SendEmployeeRequest" type="tns:SendEmployeeRequest">
+	</element>
+
+	<element name="SendEmployeeResponse" type="tns:SendEmployeeResponse">
+	</element>
+
+</schema>

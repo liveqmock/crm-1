@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.client.shared.domain.WaitCustomerLogInfo">
+	<resultMap id="WaitCustomerLogInfoRM"
+		type="com.deppon.crm.module.client.common.domain.WaitCustomerLogInfo">
+		<result property="FID" column="ML_FID" />
+		<result property="TRANSACTION_NO" column="ML_TRANSACTION_NO" />
+		<result property="CUSTOMER_NO" column="ML_CUSTOMER_NO" />
+		<result property="CRATE_TIME" column="ML_CRATE_TIME" />
+		<result property="FINISH_TIME" column="ML_FINISH_TIME" />
+		<result property="HANDLE_TYPE" column="ML_HANDLE_TYPE" />
+		<result property="STATUS" column="ML_STATUS" />
+		<result property="TARGET" column="ML_TARGET" />
+		<result property="ERROR_CODE" column="ML_ERROR_CODE" />
+		<result property="ERR_DESC" column="ML_ERR_DESC" />
+		<result property="ERR_NUMBER" column="ML_ERR_NUMBER" />
+		<result property="ERR_TIME" column="ML_ERR_TIME" />
+		<result property="PATTERN" column="ML_PATTERN" />
+		<result property="DATA" column="ML_DATA" />
+		<result property="ERR_SYS" column="ML_ERR_SYS" />
+	</resultMap>
+	<sql id="WaitCustomerLogInfo_column">
+		<![CDATA[
+			ML.FID ML_FID,
+			ML.TRANSACTION_NO ML_TRANSACTION_NO,
+			ML.CUSTOMER_NO ML_CUSTOMER_NO,
+			ML.CRATE_TIME ML_CRATE_TIME,
+			ML.FINISH_TIME ML_FINISH_TIME,
+			ML.HANDLE_TYPE ML_HANDLE_TYPE,
+			ML.STATUS ML_STATUS,
+			ML.TARGET ML_TARGET,
+			ML.ERROR_CODE ML_ERROR_CODE,
+			ML.ERR_DESC ML_ERR_DESC,
+			ML.ERR_NUMBER ML_ERR_NUMBER,
+			ML.ERR_TIME ML_ERR_TIME,
+			ML.PATTERN ML_PATTERN,
+			ML.DATA ML_DATA,
+			ML.ERR_SYS ML_ERR_SYS
+		]]>
+	</sql>
+	<!-- 根据序列号查询信息 -->
+	<select id="queryByTransactionNo" resultMap="WaitCustomerLogInfoRM">
+		select
+		<include refid="WaitCustomerLogInfo_column" />
+		from
+		t_crm_cmdtbs ML where TRANSACTION_NO = #{number}
+	</select>
+	<update id="updateByTransactionNo"
+		parameterType="com.deppon.crm.module.client.common.domain.WaitCustomerLogInfo">
+		update t_crm_cmdtbs
+		set
+		<if test="CUSTOMER_NO != null and CUSTOMER_NO != ''">
+			CUSTOMER_NO = #{CUSTOMER_NO} ,
+		</if>
+		<if test="CRATE_TIME != null and CRATE_TIME != ''">
+			CRATE_TIME = #{CRATE_TIME} ,
+		</if>
+		<if test="FINISH_TIME != null and FINISH_TIME != ''">
+			FINISH_TIME = #{FINISH_TIME} ,
+		</if>
+		<if test="HANDLE_TYPE != null and HANDLE_TYPE != ''">
+			HANDLE_TYPE = #{HANDLE_TYPE} ,
+		</if>
+		<if test="TARGET != null and TARGET != ''">
+			TARGET = #{TARGET} ,
+		</if>
+		<if test="ERROR_CODE != null and ERROR_CODE != ''">
+			ERROR_CODE = #{ERROR_CODE} ,
+		</if>
+		<if test="ERR_DESC != null and ERR_DESC != ''">
+			ERR_DESC = #{ERR_DESC} ,
+		</if>
+		<if test="ERR_NUMBER != null and ERR_NUMBER != ''">
+			ERR_NUMBER = #{ERR_NUMBER} ,
+		</if>
+		<if test="ERR_TIME != null and ERR_TIME != ''">
+			
+		</if>
+		<if test="PATTERN != null and PATTERN != ''">
+			PATTERN = #{PATTERN} ,
+		</if>
+		<if test="DATA != null and DATA != ''">
+			DATA = #{DATA},
+		</if>
+		<if test="STATUS != null and STATUS != ''">
+			STATUS = #{STATUS},
+		</if>
+		<if test="ERR_SYS != null and ERR_SYS != ''">
+			ERR_SYS = #{ERR_SYS},
+		</if>
+		ERR_TIME = sysdate,
+		FLASTUPDATETIME = sysdate  
+		where TRANSACTION_NO = #{TRANSACTION_NO}
+	</update>
+</mapper>

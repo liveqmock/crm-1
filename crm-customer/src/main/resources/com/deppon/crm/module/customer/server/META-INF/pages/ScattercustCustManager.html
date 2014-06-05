@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+     <!-- Ext -->
+	<link rel="stylesheet" type="text/css" href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+	<link rel="stylesheet" type="text/css" href="../styles/common/deppon.css" />
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+	<!-- i18n -->
+	<script language="javascript" src="../i18n_permission_acess/customer/customer.js"></script>
+	<!-- 自定义 -->
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/config/CONFIG.js"></script> 
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/util/DpUtil.js?201307311610"></script>    
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/common/common/common.js?201307311610"></script>
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/common/common/DataDictionary.js?201307311610"></script>
+    <script type="text/javascript" charset="utf-8" src="../scripts/common/areaaddress/AreaAddressStore.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/common/areaaddress/AreaAddressView.js"></script>
+   	 <script type="text/javascript" charset="utf-8" src="../scripts/common/util/MessageUtil.js"></script>
+
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/data/MemberCustBasicData.js?201307311610"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/data/MemberCustData.js?201307311610"></script>  
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/data/ScatterCustBasicData.js?201307311610"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/data/ScatterCustData.js?201307311610"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/view/BelongDeptView.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/data/ScatterCustManagerData.js"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/view/ModifyMemberView.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/view/MemberDictionary.js"></script> 
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/view/ScatterCustAccountEdit.js?201307311610"></script> 
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/service/ScatterCustService.js?201307311610"></script> 
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/membercust/view/CustomerTrade.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/view/ScatterCustEditView.js?201307311610"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/view/ScatterCustManagerView.js?201307311610"></script> 
+	  
+	  
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/custlabel/view/CustLabelView.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/custlabel/service/CustLabelService.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/custlabel/data/LabelBasicData.js"></script>
+	
+<!-- 	<script type="text/javascript" charset="utf-8" src="../scripts/customer/scattercust/Scattercust.js"></script>  -->
+	
+	<script type="text/javascript">
+
+		/**
+		 * 得到数据字典数据
+		 */
+		var DataDictionary = {};
+	
+		DataDictionary.TRADE = [];
+		DataDictionary.BUSINESS_STATUS = [];
+		DataDictionary.COOPERATION_LOGISTICS = [];
+		DataDictionary.COOPERATION_INTENTION = [];
+		DataDictionary.CARGO_POTENTIAL = [];
+		DataDictionary.DEVELOP_STATUS = [];
+		DataDictionary.FIRM_SIZE = [];
+		DataDictionary.COMP_NATURE = [];
+		DataDictionary.CUSTOMER_NATURE = [];
+		DataDictionary.CUSTOMER_TYPE = [];
+        DataDictionary.BUSINESS_TYPE=[];
+		var loadDictionary = function(){
+			Ext.Ajax.request({
+				url:'../common/queryAllDataDictionaryByKeys.action',
+				async:false,
+				jsonData:{'dataDictionaryKeys':[
+					// 行业
+					'TRADE',
+					//业务类别
+					'BUSINESS_TYPE',
+					// 商机状态
+					'BUSINESS_STATUS',
+					// 合作物流
+					'COOPERATION_LOGISTICS',
+					// 合作意向
+					'COOPERATION_INTENTION',
+					// 货量潜力
+					'CARGO_POTENTIAL',
+					// 开发状态
+					'DEVELOP_STATUS',
+					//公司规模
+					'FIRM_SIZE',
+					//公司性质
+					'COMP_NATURE',
+					//客户属性
+					'CUSTOMER_NATURE',
+					//客户性质
+					'CUSTOMER_TYPE'
+				]},
+				success:function(response){
+					var result = Ext.decode(response.responseText);
+					DataDictionary = result.dataDictionary;
+				},
+				failure:function(response){
+					var result = Ext.decode(response.responseText);
+					alert(result.message);
+				}
+			});
+		}
+	
+	</script>
+ </head>
+
+<body onload="loadDictionary()" class="tabcontentpadding">
+
+</body>
+</html>

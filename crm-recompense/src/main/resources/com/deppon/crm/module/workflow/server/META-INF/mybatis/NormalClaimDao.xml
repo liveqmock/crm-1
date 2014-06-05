@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.workflow.server.dao.impl.NormalClaimDaoImpl">
+
+
+	<resultMap id="normalClaimMap"		type="com.deppon.crm.module.workflow.shared.domain.NormalClaim">
+		<result property="processinstId" column="FPROCESSINSTID" />
+		<result property="applyPersonCode" column="FAPPLYPERSONCODE" />
+		<result property="standardCode" column="FSTANDARDCODE" />
+		<result property="clueUserId" column="FCLUEUSERID" />
+		<result property="transportOrErrorCode" column="FTRANSPORTORERRORCODE" />
+		<result property="insuredUnits" column="FINSUREDUNITS" />
+		<result property="contactPhone" column="FCONTACTPHONE" />
+		<result property="haulType" column="FHAULTYPE" />
+		<result property="receivingDept" column="FRECEIVINGDEPT" />
+		<result property="startingStation" column="FSTARTINGSTATION" />
+		<result property="goodsName" column="FGOODSNAME" />
+		<result property="goodsAttribute" column="FGOODSATTRIBUTE" />
+		<result property="insuredAmount" column="FINSUREDAMOUNT" />
+		<result property="targetDept" column="FTARGETDEPT" />
+		<result property="sendingDate" column="FSENDINGDATE" />
+		<result property="dangerDate" column="FDANGERDATE" />
+		<result property="areaId" column="FAREAID" />
+		<result property="area" column="FAREA" />
+		<result property="claimsType" column="FCLAIMSTYPE" />
+		<result property="offsetType" column="FOFFSETTYPE" />
+		<result property="caseReporter" column="FCASEREPORTER" />
+		<result property="caseReporterName" column="FCASEREPORTERNAME" />
+		<result property="reportDept" column="FREPORTDEPT" />
+		<result property="reportDeptName" column="FREPORTDEPTNAME" />
+		<result property="reportDate" column="FREPORTDATE" />
+		<result property="handler" column="FHANDLER" />
+		<result property="handleDate" column="FHANDLEDATE" />
+		<result property="otherCost" column="FOTHERCOST" />
+		<result property="claimAmount" column="FCLAIMAMOUNT" />
+		<result property="responsibileDept" column="FRESPONSIBILEDEPT" />
+		<result property="normalAmount" column="FNORMALAMOUNT" />
+		<result property="actualClaimsAmount" column="FACTUALCLAIMSAMOUNT" />
+		<result property="toCompanyCost" column="FTOCOMPANYCOST" />
+		<result property="areaCode" column="FAREACODE" />
+		<result property="workflowNo" column="FWORKFLOWNO" />
+	</resultMap>
+	
+	<resultMap id="claimNoSuffixMap" type="com.deppon.crm.module.workflow.shared.domain.ClaimNoSuffixEntity">
+		<result property="id" column="FID" />
+		<result property="nextSuffix" column="FNextSuffix" />
+		<result property="suffixDate" column="FSuffixDate" />
+	</resultMap>
+	
+	<!-- 入部门费用resultMap -->
+	<resultMap id="DeptChargeResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.DeptCharge">
+		<result property="id" column="DC_ID" />
+		<result property="recompenseId" column="DC_RECOMPENSEID" />
+		<result property="amount" column="DC_AMOUNT" />
+		<result property="deptId" column="DC_DEPTID" />
+		<result property="deptName" column="DC_DEPTNAME" />
+	</resultMap>
+
+	<!-- 责任部门费用resultMap -->
+	<resultMap id="ResponsibleDeptResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.ResponsibleDept">
+		<result property="id" column="rd_id" />
+		<result property="recompenseId" column="RD_RECOMPENSEID" />
+		<result property="deptId" column="RD_DEPTID" />
+		<result property="deptName" column="RD_DEPTNAME" />
+	</resultMap>
+	
+	<!-- 出险项resultMap -->
+	<resultMap id="IssueItemResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.IssueItem">
+		<result property="id" column="II_ID" />
+		<result property="insurType" column="II_INSURTYPE" />
+		<result property="quality" column="II_QUALITY" />
+		<result property="description" column="II_DESCRIPTION" />
+		<result property="recompenseId" column="II_RECOMPENSEID" />
+	</resultMap>
+	
+	<!-- 奖励项resultMap -->
+	<resultMap id="AwardItemResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.AwardItem">
+		<result property="id" column="AI_ID" />
+		<result property="recompenseId" column="AI_RECOMPENSEID" />
+		<result property="awardType" column="AI_AWARDTYPE" />
+		<result property="deptId" column="AI_DEPTID" />
+		<result property="deptName" column="AI_DEPTNAME" />
+		<result property="userId" column="AI_USERID" />
+		<result property="userNumber" column="AI_USERNUMBER" />
+		<result property="amount" column="AI_AMOUNT" />
+		<result property="awardTargetType" column="AI_AWARDTARGETTYPE" />
+	</resultMap>
+	
+	<!--入部门费用select params -->
+	<sql id="select_DeptCharge">
+		DC.FID DC_ID,
+		DC.FRECOMPENSEID DC_RECOMPENSEID,
+		DC.FAMOUNT
+		DC_AMOUNT,
+		DC.FDEPTID DC_DEPTID,
+		DC.FDEPTNAME DC_DEPTNAME
+	</sql>
+
+	<!--惩罚明细select params -->
+	<sql id="select_AwardItem">
+		AI.FID AI_ID,
+		AI.FRECOMPENSEID AI_RECOMPENSEID,
+		AI.FAWARDTYPE AI_AWARDTYPE,
+		AI.FDEPTID
+		AI_DEPTID,
+		AI.FDEPTNAME
+		AI_DEPTNAME,
+		AI.FUSERID AI_USERID,
+		AI.FUSERNUMBER AI_USERNUMBER,
+		AI.FAMOUNT
+		AI_AMOUNT,
+		AI.FAWARDTARGETTYPE AI_AWARDTARGETTYPE
+	</sql>
+	
+	<!-- 出险项select params -->
+	<sql id="select_IssueItem">
+		II.FID II_ID,
+		II.FINSURTYPE II_INSURTYPE,
+		II.FQUALITY
+		II_QUALITY,
+		II.FDESCRIPTION
+		II_DESCRIPTION,
+		II.FRECOMPENSEID
+		II_RECOMPENSEID
+	</sql>
+
+	<!--责任部门select params -->
+	<sql id="select_ResponsibleDept">
+		<![CDATA[
+				RD.FID RD_ID,
+				RD.FRECOMPENSEID RD_RECOMPENSEID,
+				RD.FDEPTID RD_DEPTID,
+				RD.FDEPTNAME RD_DEPTNAME
+		]]>
+	</sql>
+
+	<!-- 保存理赔工作流信息 -->
+	<insert id="insertNormalClaim"
+		parameterType="com.deppon.crm.module.workflow.shared.domain.NormalClaim">
+		<![CDATA[ 
+			insert into t_rec_normalclaim (
+				FPROCESSINSTID,
+				FAPPLYPERSONCODE,
+				FSTANDARDCODE,
+				FCLUEUSERID,
+				FTRANSPORTORERRORCODE,
+				FINSUREDUNITS,
+				FCONTACTPHONE,
+				FHAULTYPE,
+				FRECEIVINGDEPT,
+				FSTARTINGSTATION,
+				FGOODSNAME,
+				FGOODSATTRIBUTE,
+				FINSUREDAMOUNT,
+				FTARGETDEPT,
+				FSENDINGDATE,
+				FDANGERDATE,
+				FAREAID,
+				FAREA,
+				FCLAIMSTYPE,
+				FOFFSETTYPE,
+				FCASEREPORTER,
+				FCASEREPORTERName,
+				FREPORTDEPT,
+				FREPORTDEPTName,
+				FREPORTDATE,
+				FHANDLER,
+				FHANDLEDATE,
+				FOTHERCOST,
+				FCLAIMAMOUNT,
+				FRESPONSIBILEDEPT,
+				FNORMALAMOUNT,
+				FACTUALCLAIMSAMOUNT,
+				FTOCOMPANYCOST,
+				FAREACODE,
+				FWORKFLOWNO
+			) values (
+				#{processinstId,jdbcType=VARCHAR},
+				#{applyPersonCode,jdbcType=VARCHAR},
+				#{standardCode,jdbcType=VARCHAR},
+				#{clueUserId,jdbcType=VARCHAR},
+				#{transportOrErrorCode,jdbcType=VARCHAR},
+				#{insuredUnits,jdbcType=VARCHAR},
+				#{contactPhone,jdbcType=VARCHAR},
+				#{haulType,jdbcType=VARCHAR},
+				#{receivingDept,jdbcType=VARCHAR},
+				#{startingStation,jdbcType=VARCHAR},
+				
+				#{goodsName,jdbcType=VARCHAR},
+				#{goodsAttribute,jdbcType=VARCHAR},
+				#{insuredAmount,jdbcType=NUMERIC},
+				#{targetDept,jdbcType=VARCHAR},
+				#{sendingDate,jdbcType=TIMESTAMP},
+				#{dangerDate,jdbcType=TIMESTAMP},
+				#{areaId,jdbcType=VARCHAR},
+				#{area,jdbcType=VARCHAR},
+				#{claimsType,jdbcType=VARCHAR},
+				#{offsetType,jdbcType=VARCHAR},
+				#{caseReporter,jdbcType=VARCHAR},
+				#{caseReporterName,jdbcType=VARCHAR},
+				
+				#{reportDept,jdbcType=VARCHAR},
+				#{reportDeptName,jdbcType=VARCHAR},
+				#{reportDate,jdbcType=TIMESTAMP},
+				#{handler,jdbcType=VARCHAR},
+				#{handleDate,jdbcType=TIMESTAMP},
+				#{otherCost,jdbcType=VARCHAR},
+				#{claimAmount,jdbcType=NUMERIC},
+				#{responsibileDept,jdbcType=VARCHAR},
+				#{normalAmount,jdbcType=NUMERIC},
+				#{actualClaimsAmount,jdbcType=NUMERIC},
+				#{toCompanyCost,jdbcType=NUMERIC},
+				
+				#{areaCode,jdbcType=VARCHAR},
+				#{workflowNo,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	
+	<update id="updateNormalClaim"
+		parameterType="com.deppon.crm.module.workflow.shared.domain.NormalClaim">
+		update t_rec_normalclaim
+		<set>
+			<if test="null != applyPersonCode">FAPPLYPERSONCODE=#{applyPersonCode},</if>
+			<if test="null != standardCode">FSTANDARDCODE=#{standardCode},</if>
+			<if test="null != clueUserId">FCLUEUSERID=#{clueUserId},</if>
+			<if test="null != transportOrErrorCode">FTRANSPORTORERRORCODE=#{transportOrErrorCode},</if>
+			<if test="null != insuredUnits">FINSUREDUNITS=#{insuredUnits},</if>
+			<if test="null != contactPhone">FCONTACTPHONE=#{contactPhone},</if>
+			<if test="null != haulType">FHAULTYPE=#{haulType},</if>
+			<if test="null != receivingDept">FRECEIVINGDEPT=#{receivingDept},</if>
+			<if test="null != startingStation">FSTARTINGSTATION=#{startingStation},</if>
+			<if test="null != goodsName">FGOODSNAME=#{goodsName},</if>
+			
+			<if test="null != goodsAttribute">FGOODSATTRIBUTE=#{goodsAttribute},</if>
+			<if test="null != insuredAmount">FINSUREDAMOUNT=#{insuredAmount},</if>
+			<if test="null != targetDept">FTARGETDEPT=#{targetDept},</if>
+			<if test="null != sendingDate">FSENDINGDATE=#{sendingDate},</if>
+			<if test="null != dangerDate">FDANGERDATE=#{dangerDate},</if>
+			<if test="null != areaId">FAREAID=#{areaId},</if>
+			<if test="null != area">FAREA=#{area},</if>
+			<if test="null != claimsType">FCLAIMSTYPE=#{claimsType},</if>
+			<if test="null != offsetType">FOFFSETTYPE=#{offsetType},</if>
+			<if test="null != caseReporter">FCASEREPORTER=#{caseReporter},</if>
+			
+			<if test="null != caseReporterName">FCASEREPORTERNAME=#{caseReporterName},</if>
+			<if test="null != reportDept">FREPORTDEPT=#{reportDept},</if>
+			<if test="null != reportDeptName">FREPORTDEPTNAME=#{reportDeptName},</if>
+			<if test="null != reportDate">FREPORTDATE=#{reportDate},</if>
+			<if test="null != handler">FHANDLER=#{handler},</if>
+			<if test="null != handleDate">FHANDLEDATE=#{handleDate},</if>
+			<if test="null != otherCost">FOTHERCOST=#{otherCost},</if>
+			<if test="null != claimAmount">FCLAIMAMOUNT=#{claimAmount},</if>
+			<if test="null != responsibileDept">FRESPONSIBILEDEPT=#{responsibileDept},</if>
+			<if test="null != normalAmount">FNORMALAMOUNT=#{normalAmount},</if>
+			
+			<if test="null != actualClaimsAmount">FACTUALCLAIMSAMOUNT=#{actualClaimsAmount},</if>
+			<if test="null != toCompanyCost">FTOCOMPANYCOST=#{toCompanyCost},</if>
+			<if test="null != areaCode">FAREACODE=#{areaCode},</if>
+			<if test="null != processinstId">FPROCESSINSTID=#{processinstId} </if>
+		</set>
+		<where>
+			FWORKFLOWNO=#{workflowNo}
+		</where>
+	</update>
+	
+
+
+	<select id="getNormalClaim" resultMap="normalClaimMap" parameterType="long">
+ 		select 
+			FPROCESSINSTID,
+			FAPPLYPERSONCODE,
+			FSTANDARDCODE,
+			FCLUEUSERID,
+			FTRANSPORTORERRORCODE,
+			FINSUREDUNITS,
+			FCONTACTPHONE,
+			FHAULTYPE,
+			FRECEIVINGDEPT,
+			FSTARTINGSTATION,
+			FGOODSNAME,
+			FGOODSATTRIBUTE,
+			FINSUREDAMOUNT,
+			FTARGETDEPT,
+			FSENDINGDATE,
+			FDANGERDATE,
+			FAREAID,
+			FAREA,
+			FCLAIMSTYPE,
+			FOFFSETTYPE,
+			FCASEREPORTER,
+			FCASEREPORTERName,
+			FREPORTDEPT,
+			FREPORTDEPTName,
+			FREPORTDATE,
+			FHANDLER,
+			FHANDLEDATE,
+			FOTHERCOST,
+			FCLAIMAMOUNT,
+			FRESPONSIBILEDEPT,
+			FNORMALAMOUNT,
+			FACTUALCLAIMSAMOUNT,
+			FTOCOMPANYCOST,
+			FAREACODE,
+			FWORKFLOWNO 
+		 from 
+		 	T_REC_NORMALCLAIM
+		 where 
+			 FPROCESSINSTID=#{processInstId}
+		 	
+ 	</select>
+
+	<select id="getNextSuffix" resultMap="claimNoSuffixMap">
+		select FID,FNextSuffix,FSuffixDate from T_ClaimNoSuffix
+	</select>
+
+	<insert id="insertNextSuffix" parameterType="string">
+		<![CDATA[ 
+		insert into T_ClaimNoSuffix(FNextSuffix, FSuffixDate) values (
+			#{nextSuffix},
+			sysdate
+		)
+		]]>
+	</insert>
+	
+	<update id="updateNextSuffix" parameterType="string">
+		update T_ClaimNoSuffix set FNextSuffix = #{nextSuffix}, FSuffixDate = sysdate
+	</update>
+	
+	<!-- 理赔工作流详情 -->
+	<select id="getNormalClaimByWorkflowNo" resultMap="normalClaimMap" parameterType="string">
+		select 
+			FPROCESSINSTID,
+			FAPPLYPERSONCODE,
+			FSTANDARDCODE,
+			FCLUEUSERID,
+			FTRANSPORTORERRORCODE,
+			FINSUREDUNITS,
+			FCONTACTPHONE,
+			FHAULTYPE,
+			FRECEIVINGDEPT,
+			FSTARTINGSTATION,
+			FGOODSNAME,
+			FGOODSATTRIBUTE,
+			FINSUREDAMOUNT,
+			FTARGETDEPT,
+			FSENDINGDATE,
+			FDANGERDATE,
+			FAREAID,
+			FAREA,
+			FCLAIMSTYPE,
+			FOFFSETTYPE,
+			FCASEREPORTER,
+			FCASEREPORTERName,
+			FREPORTDEPT,
+			FREPORTDEPTName,
+			FREPORTDATE,
+			FHANDLER,
+			FHANDLEDATE,
+			FOTHERCOST,
+			FCLAIMAMOUNT,
+			FRESPONSIBILEDEPT,
+			FNORMALAMOUNT,
+			FACTUALCLAIMSAMOUNT,
+			FTOCOMPANYCOST,
+			FAREACODE,
+			FWORKFLOWNO 
+		 from 
+		 	T_REC_NORMALCLAIM
+		 where 
+			 FWORKFLOWNO=#{workflowNo}
+	</select>
+	
+	<!-- 入部门费用  -->
+	<select id="getDeptChargeByProcessinstId" resultMap="DeptChargeResultMap" parameterType="string">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_DeptCharge" />
+		<![CDATA[
+		from t_rec_deptcharge DC 
+		left join t_rec_recompense rec on DC.frecompenseid = rec.fid 
+		left join t_rec_normalclaim normalclaim on normalclaim.ftransportorerrorcode = rec.fwaybillnumber 
+		where normalclaim.fprocessinstid = #{processInstId}
+		]]>
+	</select>
+	
+	<!-- 出险信息 -->
+	<select id="getIssueItemByProcessinstId" resultMap="IssueItemResultMap" parameterType="string">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_IssueItem" /> 
+		<![CDATA[
+		from t_rec_issueitem II 
+		left join t_rec_recompense rec on II.frecompenseid = rec.fid 
+		left join t_rec_normalclaim normalclaim on normalclaim.ftransportorerrorcode = rec.fwaybillnumber 
+		where normalclaim.fprocessinstid = #{processInstId}
+		]]>
+	</select>
+	
+	<!-- 奖罚明细 -->
+	<select id="getAwardItemByProcessinstId" resultMap="AwardItemResultMap" parameterType="string">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_AwardItem" />
+		<![CDATA[
+	 		from t_rec_awarditem AI 
+			left join t_rec_recompense rec on AI.frecompenseid = rec.fid 
+			left join t_rec_normalclaim normalclaim on normalclaim.ftransportorerrorcode = rec.fwaybillnumber 
+			where normalclaim.fprocessinstid = #{processInstId}
+		]]>
+	</select>
+	
+	<!-- 责任部门 -->
+	<select id="getResponsibleDeptByProcessinstId" resultMap="ResponsibleDeptResultMap" parameterType="string">
+		<![CDATA[	
+			select	
+		]]>
+		<include refid="select_ResponsibleDept" />
+		<![CDATA[
+			from t_rec_responsibledept RD 
+			left join t_rec_recompense rec on RD.frecompenseid = rec.fid 
+			left join t_rec_normalclaim normalclaim on normalclaim.ftransportorerrorcode = rec.fwaybillnumber 
+			where normalclaim.fprocessinstid = #{processInstId}
+		]]>
+	</select>
+	
+	<select id="getRoleIdByUserId" resultType="string" parameterType="string">
+		<![CDATA[	
+			select t1.froleid from t_auth_userrole t1 where t1.fuserid = #{userId}
+		]]>
+	</select>
+</mapper>

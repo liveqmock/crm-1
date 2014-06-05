@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/core
+	http://cxf.apache.org/schemas/core.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<!-- 合同工作流 -->
+	<bean id="contractApplyOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 后勤积分 -->
+	<bean id="giftApplyOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 理赔申请 -->
+	<bean id="recompenseApplyOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- ERP付款申请 -->
+	<bean id="paymentApplyOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 查询运单信息 -->
+	<bean id="waybillOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 订单操作 -->
+	<bean id="orderOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 财务 -->
+	<bean id="departmentOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- OA差错，OA投诉通知 -->
+	<bean id="oaAccidentOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 短信网关 -->
+	<bean id="smsInfoSender" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!-- 客户 -->
+	<bean id="customerOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+	<!--电子地图 -->
+	<bean id="mapOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+	<!-- 呼叫中心 -->
+	<bean id="complaintOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+	<!-- FOSS系统 -->
+	<bean id="esbToFossAsyOperate" class="com.deppon.crm.module.client.test.InterfaceClientTest" />
+
+</beans>
+

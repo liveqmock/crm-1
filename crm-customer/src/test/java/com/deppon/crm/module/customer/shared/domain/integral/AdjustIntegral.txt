@@ -1,0 +1,11 @@
+score,fscore,NUMERIC
+type,ftype,VARCHAR
+contact.id,fcontactId,VARCHAR
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid,VARCHAR
+adjustType,fadjustType,VARCHAR
+contactFrom.id,fcontactFromId,VARCHAR
+contactTo.id,fcontactToId,VARCHAR

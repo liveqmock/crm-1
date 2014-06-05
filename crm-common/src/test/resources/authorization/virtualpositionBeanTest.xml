@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="develop" />
+		<property name="password" value="develop" />
+	</bean>
+	<bean id="dataSourceTest"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="crmtest" />
+		<property name="password" value="crmtest" />
+	</bean>
+	
+	<bean id="dataSourceLog"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<property name="username" value="crmtest" />
+		<property name="password" value="crmtest" />
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<import resource="classpath*:/com/deppon/crm/module/uums/server/META-INF/spring.xml"/>
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation"
+			value="/com/deppon/crm/module/common/server/META-INF/mybatis.xml" />
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="virtualPositionDao" class="com.deppon.crm.module.authorization.server.dao.impl.VirtualPositionDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+		<bean id="roleDao" class="com.deppon.crm.module.authorization.server.dao.impl.RoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+		<!-- DAO层 -->
+	<!-- 授权用户角色与部门数据访问 -->
+	<bean id="ICompanyDao" class="com.deppon.crm.module.uums.server.dao.Imp.CompanyDaoImp">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 功能数据访问 -->
+	<bean id="IEmployeeDao" class="com.deppon.crm.module.uums.server.dao.Imp.EmployeeDaoImp">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 角色数据访问 -->
+	<bean id="IOrgDao" class="com.deppon.crm.module.uums.server.dao.Imp.OrgDaoImp">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户数据访问 -->
+	<bean id="IPositionDao" class="com.deppon.crm.module.uums.server.dao.Imp.PositionDaoImp">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户授权部门和角色数据访问 -->
+	<bean id="IUserDao" class="com.deppon.crm.module.uums.server.dao.Imp.UserDaoImp">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- SERVICE层 -->
+	<!-- 授权管理服务 -->
+	<bean id="ICompanyService" class="com.deppon.crm.module.uums.server.service.Imp.CompanyService">
+		<property name="companyDao" ref="ICompanyDao"></property>
+	</bean>
+	
+	<!-- 功能查询服务 -->
+	<bean id="IEmployeeService" class="com.deppon.crm.module.uums.server.service.Imp.EmployeeService">
+		<property name="positionDao" ref="IPositionDao"></property>
+		<property name="orgDao" ref="IOrgDao"></property>
+		<property name="employeeDao" ref="IEmployeeDao"></property>
+	</bean>
+	
+	<!-- 角色管理服务 -->
+	<bean id="IOrgService" class="com.deppon.crm.module.uums.server.service.Imp.OrgService">
+		<property name="orgDao" ref="IOrgDao"></property>	
+	</bean>
+	<bean id="IUserService" class="com.deppon.crm.module.uums.server.service.Imp.UserService">
+		<property name="userDao" ref="IUserDao"></property>
+		<property name="positionDao" ref="IPositionDao"></property>
+		<property name="orgDao" ref="IOrgDao"></property>
+	</bean>
+	<!-- 用户管理服务 -->
+	<bean id="IPositionService" class="com.deppon.crm.module.uums.server.service.Imp.PositionSerive">
+		<property name="positionDao" ref="IPositionDao"></property>
+	</bean>
+	
+	<bean id="SyncUumsCompanyInfoManager" class="com.deppon.crm.module.uums.server.manager.impl.SyncUumsCompanyInfoManager">
+		<property name="companyService" ref="ICompanyService"/>
+	</bean>
+	
+	<bean id="SyncUumsEmployeeInfoManager" class="com.deppon.crm.module.uums.server.manager.impl.SyncUumsEmployeeInfoManager">
+		<property name="employeeService" ref="IEmployeeService"/>
+	</bean>
+	
+	<bean id="SyncUumsPositionInfoManager" class="com.deppon.crm.module.uums.server.manager.impl.SyncUumsPositionInfoManager">
+		<property name="positionService" ref="IPositionService"/>
+	</bean>
+	
+	<bean id="SyncUumsOrgInfoManager" class="com.deppon.crm.module.uums.server.manager.impl.SyncUumsOrgInfoManager">
+		<property name="orgService" ref="IOrgService"/>
+	</bean>
+	
+	<bean id="SyncUumsUserInfoManager" class="com.deppon.crm.module.uums.server.manager.impl.SyncUumsUserInfoManager">
+		<property name="userService" ref="IUserService"/>
+	</bean>
+
+	<bean id="syncFacedManager" class="com.deppon.crm.module.uums.server.manager.impl.syncFacedManager">
+		<property name="companyManager" ref="SyncUumsCompanyInfoManager"/>
+		<property name="employeeManager" ref="SyncUumsEmployeeInfoManager"/>
+		<property name="orgManager" ref="SyncUumsOrgInfoManager"/>
+		<property name="positionManager" ref="SyncUumsPositionInfoManager"/>
+		<property name="userManager" ref="SyncUumsUserInfoManager"/>
+	</bean>
+</beans>

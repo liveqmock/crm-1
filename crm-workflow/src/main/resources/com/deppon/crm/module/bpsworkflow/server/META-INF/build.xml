@@ -1,0 +1,22 @@
+<project name="build" default="publish" basedir=".">
+
+	<property name="project_home"
+		location="D:\Software\eclipse-coco\eclipse-jee-indigo-SR1-win32\workspaces"></property>
+	<property name="projectName" value="crm-workflow-0228"></property>
+	<property name="localDir" value="src/main/webapp"></property>
+	<property name="moduleName" value="bpsworkflow"></property>
+	<property name="publishPath" value="${project_home}/${projectName}/${localDir}"></property>
+
+	<target name="publish">
+		<!-- <copy todir="${publishPath}/images/${moduleName}/"> <fileset dir="images"></fileset> 
+			</copy> -->
+		<copy todir="${publishPath}/scripts/${moduleName}/">
+			<fileset dir="scripts"></fileset>
+		</copy>
+		<!-- <copy todir="${publishPath}/styles/${moduleName}/"> <fileset dir="styles"></fileset> 
+			</copy> -->
+		<copy todir="${publishPath}/WEB-INF/pages/${moduleName}/">
+			<fileset dir="pages"></fileset>
+		</copy>
+	</target>
+</project>

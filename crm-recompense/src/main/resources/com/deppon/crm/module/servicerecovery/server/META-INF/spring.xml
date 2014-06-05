@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<!--服务补救 -->
+	<bean id="serviceRecoveryDao" scope="singleton"
+		class="com.deppon.crm.module.servicerecovery.server.dao.impl.ServiceRecoveryDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="serviceRecoveryService" scope="singleton"
+		class="com.deppon.crm.module.servicerecovery.server.service.impl.ServiceRecoveryService">
+		<property name="waybillOperate" ref="waybillOperate"></property>
+		<property name="recompenseApplyOperate" ref="recompenseApplyOperate" />
+		<property name="departmentOperate" ref="departmentOperate" />
+		<property name="esbToFossAsyOperate" ref="esbToFossAsyOperate" />
+		<property name="paymentApplyOperate" ref="paymentApplyOperate" />
+		<property name="serviceRecoveryDao" ref="serviceRecoveryDao"></property>
+	</bean>
+	<bean id="serviceRecoveryManager" scope="singleton"
+		class="com.deppon.crm.module.servicerecovery.server.manager.impl.ServiceRecoveryManager">
+		<property name="serviceRecoveryService" ref="serviceRecoveryService"></property>
+		<property name="recompenseManager" ref="recompenseManager"></property>
+		<property name="backFreightManager" ref="backFreightManager"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="employeeService" ref="employeeService"></property>
+		<property name="specialDayManager" ref="specialDayManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager" />
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="expressPointBusinessDeptManager" ref="expressPointBusinessDeptManager" />
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="baseDataManager" ref="baseDataManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	<bean id="serviceRecoveryAction" scope="prototype"
+		class="com.deppon.crm.module.servicerecovery.server.action.ServiceRecoveryAction">
+		<property name="serviceRecoveryManager" ref="serviceRecoveryManager"></property>
+		<property name="employeeService" ref="employeeService"></property>
+	</bean>
+	<!--查询财务部 -->
+	<bean id="financeDeptAction" scope="prototype"
+		class="com.deppon.crm.module.servicerecovery.server.action.FinanceDeptAction">
+		<property name="financeDeptManager" ref="financeDeptManager"></property>
+	</bean>
+	<bean id="financeDeptDao" scope="singleton"
+		class="com.deppon.crm.module.servicerecovery.server.dao.impl.FinanceDeptDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="financeDeptService" scope="singleton"
+		class="com.deppon.crm.module.servicerecovery.server.service.impl.FinanceDeptService">
+		<property name="financeDeptDao" ref="financeDeptDao"></property>
+	</bean>
+	<bean id="financeDeptManager" scope="singleton"
+		class="com.deppon.crm.module.servicerecovery.server.manager.impl.FinanceDeptManager">
+		<property name="financeDeptService" ref="financeDeptService"></property>
+	</bean>
+	<!--工作日计算 -->
+
+
+</beans>
+

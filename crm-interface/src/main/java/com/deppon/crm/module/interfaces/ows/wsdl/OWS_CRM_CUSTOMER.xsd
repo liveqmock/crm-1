@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/crm/remote/ows/domain/entity" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/crm/remote/ows/domain/entity">
+
+    <complexType name="CreateOwsCustomerRequest">
+    	<sequence>
+    		<element name="userName" type="string">
+    			<annotation>
+    				<documentation>用户名</documentation>
+    			</annotation>
+    		</element>
+    		<element name="mobilephone" type="string">
+    			<annotation>
+    				<documentation>手机号</documentation>
+    			</annotation>
+    		</element>
+    		<element name="telephone" type="string">
+    			<annotation>
+    				<documentation>固话</documentation>
+    			</annotation>
+    		</element>
+    		<element name="linkmanName" type="string">
+    			<annotation>
+    				<documentation>联系人姓名</documentation>
+    			</annotation>
+    		</element>
+    		<element name="provinceCode" type="string">
+    			<annotation>
+    				<documentation>省份Code</documentation>
+    			</annotation></element>
+    		<element name="cityCode" type="string">
+    			<annotation>
+    				<documentation>城市Code</documentation>
+    			</annotation></element>
+    		<element name="areaCode" type="string">
+    			<annotation>
+    				<documentation>区县Code</documentation>
+    			</annotation></element>
+    		<element name="provinceName" type="string">
+    			<annotation>
+    				<documentation>省份名称</documentation>
+    			</annotation></element>
+    		<element name="cityName" type="string">
+    			<annotation>
+    				<documentation>城市名称</documentation>
+    			</annotation></element>
+    		<element name="areaName" type="string">
+    			<annotation>
+    				<documentation>区县名称</documentation>
+    			</annotation></element>
+    		<element name="detailAddress" type="string">
+    			<annotation>
+    				<documentation>详细地址</documentation>
+    			</annotation></element>
+    		<element name="email" type="string">
+    			<annotation>
+    				<documentation>邮箱</documentation>
+    			</annotation></element>
+    		<element name="mobilephoneBU" type="string">
+    			<annotation>
+    				<documentation>修改前手机</documentation>
+    			</annotation></element>
+    		<element name="telephoneBU" type="string">
+    			<annotation>
+    				<documentation>修改前固话</documentation>
+    			</annotation></element>
+    		<element name="linkmanNameBU" type="string">
+    			<annotation>
+    				<documentation>修改前联系人姓名</documentation>
+    			</annotation></element>
+    		<element name="operateType" type="string">
+    			<annotation>
+    				<documentation>操作类型
+新增 CREATE
+修改 UPDATE</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="CreateOwsCustomerResponse">
+    	<sequence>
+    		<element name="ifSuccess" type="boolean">
+    			<annotation>
+    				<documentation>是否发送成功</documentation>
+    			</annotation></element>
+    		<element name="userName" type="string">
+    			<annotation>
+    				<documentation>用户名</documentation>
+    			</annotation></element>
+    		<element name="linkmanId" type="string">
+    			<annotation>
+    				<documentation>联系人Id</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <element name="createOwsCustomerRequest" type="tns:CreateOwsCustomerRequest"></element>
+
+    <element name="createOwsCustomerResponse" type="tns:CreateOwsCustomerResponse"></element>
+</schema>

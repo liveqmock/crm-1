@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://www.deppon.com/channel/channelService/"
+	xmlns:tns_domain="http://www.deppon.com/esb/inteface/domain/crm"
+	xmlns:tns_header="http://www.deppon.com/esb/header"
+	xmlns:tns_exception="http://www.deppon.com/crm/exception" name="ChannelService"
+	targetNamespace="http://www.deppon.com/channel/channelService/">
+	<!-- 抽象定义 -->
+	<!-- 独立于机器和语言的类型定义 -->
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://www.deppon.com/esb/inteface/domain/crm">
+			<xsd:include schemaLocation="CHANNEL_UPDATE_WAYBILLNUM.xsd" />
+		</xsd:schema>
+		<xsd:schema targetNamespace="http://www.deppon.com/esb/header">
+			<xsd:include schemaLocation="ESBHeader.xsd" />
+		</xsd:schema>
+		<xsd:schema targetNamespace="http://www.deppon.com/crm/exception">
+			<xsd:include schemaLocation="CommonException.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<!-- 包括函数参数（输入与输出的分开）或文档描述 -->
+	<wsdl:message name="channelUpdateWayBillNumRequest">
+		<wsdl:part element="tns_domain:updateWayBillNumRequest"
+			name="request">
+			<wsdl:documentation>修改CRM订单中运单号请求</wsdl:documentation>
+		</wsdl:part>
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="channelUpdateWayBillNumResponse">
+		<wsdl:part element="tns_domain:updateWayBillNumResponse"
+			name="response" />
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="CommonException">
+		<wsdl:part name="exception" element="tns_exception:commonExceptionInfo">
+		</wsdl:part>
+	</wsdl:message>
+
+	<!-- 引入消息部分中消息定义来描述函数签名（操作名、输入参数、输出参数） -->
+	<wsdl:portType name="ChannelService">
+		<wsdl:operation name="channelUpdateWayBillNum">
+			<wsdl:documentation>渠道通过渠道编号修改CRM订单中的运单号</wsdl:documentation>
+			<wsdl:input message="tns:channelUpdateWayBillNumRequest"></wsdl:input>
+			<wsdl:output message="tns:channelUpdateWayBillNumResponse" />
+			<wsdl:fault name="exception" message="tns:CommonException"></wsdl:fault>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<!-- 具体定义 -->
+	<!-- portTypes部分的每一操作在这里实现 -->
+	<wsdl:binding name="ChannelServiceSOAP" type="tns:ChannelService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="channelUpdateWayBillNum">
+			<!-- 渠道通过渠道编号修改CRM订单中的运单号 -->
+			<soap:operation
+				soapAction="http://www.example.org/ChannelService/channelUpdateWayBillNum" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:channelUpdateWayBillNumRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:channelUpdateWayBillNumResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<!-- 确定每一绑定端口的地址 -->
+	<wsdl:service name="ChannelService">
+		<wsdl:port binding="tns:ChannelServiceSOAP" name="ChannelServiceSOAP">
+			<soap:address location="http://www.example.org/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

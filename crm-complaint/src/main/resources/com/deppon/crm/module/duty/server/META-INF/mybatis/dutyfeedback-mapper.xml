@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 工单责任反馈记录 -->
+<mapper namespace="com.deppon.crm.module.duty.shared.domain.DutyFeedback">
+	<resultMap id="dutyFeedbackMap" type="com.deppon.crm.module.duty.shared.domain.DutyFeedback">
+		<id column="FID" property="feedbackId" jdbcType="VARCHAR" />
+		<result column="FDETAILID" property="detailId" jdbcType="VARCHAR" />
+		<result column="FFEEDUSERID" property="feedUserId" jdbcType="VARCHAR" />
+		<result column="FFEEDUSERNAME" property="feedUserName" jdbcType="VARCHAR" />
+		<result column="FFEEDDEPTID" property="feedDeptId" jdbcType="VARCHAR" />
+		<result column="FFEEDDEPTNAME" property="feedDeptName" jdbcType="VARCHAR" />
+		<result column="FDESCRIBE" property="describe" jdbcType="VARCHAR" />
+		<result column="FCALLCENUSERID" property="callCenUserId" jdbcType="VARCHAR" />
+		<result column="FCALLCENUSER" property="callCenUser" jdbcType="VARCHAR" />
+		<result column="FCALLCENDEPTID" property="callCenDeptId" jdbcType="VARCHAR" />
+		<result column="FCALLCENDECISION" property="callCenDescision" jdbcType="VARCHAR" />
+		<result column="FSTATUS" property="status" jdbcType="VARCHAR" />
+		<result column="FAPPSTATUS" property="appStatus" jdbcType="VARCHAR" />
+		<result column="FADDFEEDSTATUS" property="addFeedStatus" jdbcType="VARCHAR" />
+		<result column="FFEEDBACKTIME" property="feedBackTime" jdbcType="TIMESTAMP" />
+		<result column="FCALLCENTIME" property="callcenterTime" jdbcType="TIMESTAMP" />
+		<result column="FHAVEFEEDATTACH" property="haveFeedAttach" jdbcType="VARCHAR" />
+		<result column="FBUSSDEPTCODE" property="bussDeptCode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="DutyFeedback_Column_List" >
+      FB.FID
+      ,FB.FDETAILID
+      ,FB.FFEEDUSERNAME
+      ,FB.FFEEDDEPTNAME
+      ,FB.FDESCRIBE
+      ,FB.FSTATUSERNAME
+      ,FB.FSTATDECISION
+      ,FB.FCALLCENUSER
+      ,FB.FCALLCENDECISION
+      ,FB.FSTATUS
+      ,FB.FAPPSTATUS
+      ,FB.FFEEDBACKTIME
+      ,FB.FCALLCENTIME
+    </sql>
+    
+    <!--根据工单责任反馈ID查询查询工单责任状态 -->
+	<select id="searchDutyFeedbackByFeedbackId" parameterType="java.lang.String" resultMap="dutyFeedbackMap">
+		SELECT 
+		   FID              feedbackid,
+	       FDETAILID        detailid,
+	       FFEEDUSERID      feeduserid,
+	       FFEEDUSERNAME    feedusername,
+	       FFEEDDEPTID      feeddeptid,
+	       FFEEDDEPTNAME    feeddeptname,
+	       FDESCRIBE        describe,
+	       FCALLCENUSERID   callcenuserid,
+	       FCALLCENUSER     callcenuser,
+	       FCALLCENDEPTID   callcendeptid,
+	       FCALLCENDECISION callcendescision,
+	       FSTATUS          status,
+	       FAPPSTATUS       appstatus,
+	       FADDFEEDSTATUS   addfeedstatus,
+	       FFEEDBACKTIME    feedbacktime,
+	       FCALLCENTIME     callcentertime
+	    FROM T_CUST_DUTYFEEDBACK
+		WHERE FID = #{feedbackId,jdbcType=VARCHAR}
+	</select>
+	
+	    <!--根据工单责任划分ID查询查询工单责任反馈信息 -->
+	<select id="searchDutyFeedbackByDutyResultId" parameterType="java.lang.String" resultMap="dutyFeedbackMap">
+		SELECT  FID              feedbackid,
+	       FDETAILID        detailid,
+	       FFEEDUSERID      feeduserid,
+	       FFEEDUSERNAME    feedusername,
+	       FFEEDDEPTID      feeddeptid,
+	       FFEEDDEPTNAME    feeddeptname,
+	       FDESCRIBE        describe,
+	       FCALLCENUSERID   callcenuserid,
+	       FCALLCENUSER     callcenuser,
+	       FCALLCENDEPTID   callcendeptid,
+	       FCALLCENDECISION callcendescision,
+	       FSTATUS          status,
+	       FAPPSTATUS       appstatus,
+	       FADDFEEDSTATUS   addfeedstatus,
+	       FFEEDBACKTIME    feedbacktime,
+	       FCALLCENTIME     callcentertime
+	       FROM T_CUST_DUTYFEEDBACK
+		WHERE FID =
+	      (SELECT 
+		   MAX(FID)
+	    FROM T_CUST_DUTYFEEDBACK
+		WHERE FDETAILID = #{detailId,jdbcType=VARCHAR})
+	</select>
+	
+	<!--根据工单责任ID查询工单责任反馈记录结果 -->
+	<select id="searchDutyFeedbackByDutyId" parameterType="java.util.Map" resultMap="dutyFeedbackMap">
+		SELECT  
+    	<include refid="DutyFeedback_Column_List" />,
+	       CASE
+	         WHEN FA.ATTACHCOUNT > 0 THEN
+	          'Y'
+	         ELSE
+	          'N'
+	       END FHAVEFEEDATTACH
+  		FROM T_CUST_DUTYFEEDBACK FB
+  		LEFT JOIN (SELECT FFEEDID, COUNT(*) ATTACHCOUNT
+        FROM T_CUST_FEEDATTACH
+        GROUP BY FFEEDID) FA ON FB.FID = FA.FFEEDID 
+        WHERE FB.FDETAILID IN (SELECT RESULT.FID
+        FROM T_CUST_DUTYRESULT RESULT
+        WHERE RESULT.FDUTYID = #{dutyId,jdbcType=VARCHAR}) 
+	</select>
+	
+	
+	<!--工单责任审批:更新工单责任反馈记录 -->
+  	<update id="updateDutyFeedback" parameterType="com.deppon.crm.module.duty.shared.domain.DutyFeedback" >
+     	UPDATE T_CUST_DUTYFEEDBACK T
+    	<set>
+	       	<if test="status != null and status != ''" >
+	        	T.FSTATUS = #{status,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="appStatus != null and appStatus != ''" >
+	        	T.FAPPSTATUS = #{appStatus,jdbcType=VARCHAR},
+	     	</if>
+	      	<if test="callCenUserId != null and callCenUserId != ''" >
+	        	T.FCALLCENUSERID = #{callCenUserId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenUser != null and callCenUser != ''" >
+	        	T.FCALLCENUSER = #{callCenUser,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenDeptId != null and callCenDeptId != ''" >
+	        	T.FCALLCENDEPTID = #{callCenDeptId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenDescision != null and callCenDescision != ''" >
+	        	T.FCALLCENDECISION = #{callCenDescision,jdbcType=VARCHAR},
+	      	</if>
+	       	<if test="addFeedStatus != null and addFeedStatus != ''" >
+	        	T.FADDFEEDSTATUS = #{addFeedStatus,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenUserId != null and callCenUserId != ''" >
+	      			T.FCALLCENTIME = sysdate
+	      	</if>
+    	</set>
+    	where T.FID = #{feedbackId,jdbcType=VARCHAR}
+  	</update>
+  	
+  	<!--工单责任审批:根据责任划分ID，更新工单责任划分结果记录 -->
+  	<update id="updateDutyResult" parameterType="com.deppon.crm.module.duty.shared.domain.DutyFeedback" >
+     	UPDATE T_CUST_DUTYRESULT 
+    	<set>
+	      	<if test="status != null and status != ''" >
+	        	FDUTYSTATUS = #{status,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="approvalResult != null and approvalResult != ''" >
+	        	FSURVEYRESULT = #{approvalResult,jdbcType=VARCHAR}
+	      	</if>
+    	</set>
+    	where FID = #{detailId,jdbcType=VARCHAR}
+  	</update>
+  	
+  		<!--工单责任审批:更新工单责任反馈记录 全部字段-->
+  	<update id="updateDutyFeedbackAll" parameterType="com.deppon.crm.module.duty.shared.domain.DutyFeedback" >
+     	UPDATE T_CUST_DUTYFEEDBACK T
+    	<set>
+    	    <if test="detailId != null and detailId != ''" >
+	        	T.FDETAILID = #{detailId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="feedUserId != null and feedUserId != ''" >
+	        	T.FFEEDUSERID = #{feedUserId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="feedUserName != null and feedUserName != ''" >
+	        	T.FFEEDUSERNAME = #{feedUserName,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="feedDeptId != null and feedDeptId != ''" >
+	        	T.FFEEDDEPTID = #{feedDeptId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="feedDeptName != null and feedDeptName != ''" >
+	        	T.FFEEDDEPTNAME = #{feedDeptName,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="describe != null and describe != ''" >
+	        	T.FDESCRIBE = #{describe,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="feedBackTime != null" >
+	        	T.FFEEDBACKTIME = #{feedBackTime,jdbcType=TIMESTAMP},
+	      	</if>
+	      	<if test="callCenUserId != null and callCenUserId != ''" >
+	        	T.FCALLCENUSERID = #{callCenUserId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenUser != null and callCenUser != ''" >
+	        	T.FCALLCENUSER = #{callCenUser,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenDeptId != null and callCenDeptId != ''" >
+	        	T.FCALLCENDEPTID = #{callCenDeptId,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="callCenDescision != null and callCenDescision != ''" >
+	       		T.FCALLCENDECISION = #{callCenDescision,jdbcType=VARCHAR},
+	      	</if>
+	        <if test="callcenterTime != null" >
+	        	T.FCALLCENTIME = #{callcenterTime,jdbcType=TIMESTAMP},
+	      	</if>
+	       	<if test="status != null and status != ''" >
+	        	T.FSTATUS = #{status,jdbcType=VARCHAR},
+	      	</if>
+	      	<if test="appStatus != null and appStatus != ''" >
+	        	T.FAPPSTATUS = #{appStatus,jdbcType=VARCHAR},
+	     	</if>
+	       	<if test="addFeedStatus != null and addFeedStatus != ''" >
+	        	T.FADDFEEDSTATUS = #{addFeedStatus,jdbcType=VARCHAR},
+	      	</if>
+    	</set>
+    	where T.FID = #{feedbackId,jdbcType=VARCHAR}
+  	</update>
+  	
+  	<!--插入通知对象 -->
+   <insert id="insertDutyFeedback" parameterType="com.deppon.crm.module.duty.shared.domain.DutyFeedback">
+		<selectKey keyProperty="feedbackId" resultType="String" order="BEFORE">
+				SELECT SEQ_ID_CUST_DUTYFEEDBACK.nextval AS
+				feedbackId FROM DUAL
+		</selectKey>
+				INSERT INTO T_CUST_DUTYFEEDBACK
+			 <trim prefix="(" suffix=")" suffixOverrides="," >
+				FID,
+				<if test="detailId != null and detailId != ''" >
+		        	FDETAILID,
+		      	</if>
+		      	<if test="feedUserId != null and feedUserId != ''" >
+		        	FFEEDUSERID,
+		      	</if>
+		      	<if test="feedUserName != null and feedUserName != ''" >
+		        	FFEEDUSERNAME,
+		      	</if>
+		      	<if test="feedDeptId != null and feedDeptId != ''" >
+		        	FFEEDDEPTID,
+		      	</if>
+		      	<if test="feedDeptName != null and feedDeptName != ''" >
+		            FFEEDDEPTNAME,
+		      	</if>
+		      	<if test="describe != null and describe != ''" >
+		        	FDESCRIBE,
+		      	</if>
+		      	<if test="feedBackTime != null" >
+		        	FFEEDBACKTIME,
+		      	</if>
+		      	<if test="callCenUserId != null and callCenUserId != ''" >
+		        	FCALLCENUSERID,
+		      	</if>
+		      	<if test="callCenUser != null and callCenUser != ''" >
+		        	FCALLCENUSER,
+		      	</if>
+		      	<if test="callCenDeptId != null and callCenDeptId != ''" >
+		        	FCALLCENDEPTID,
+		      	</if>
+		      	<if test="callCenDescision != null and callCenDescision != ''" >
+		       		FCALLCENDECISION,
+		      	</if>
+		        <if test="callcenterTime != null" >
+		        	FCALLCENTIME,
+		      	</if>
+		       	<if test="status != null and status != ''" >
+		        	FSTATUS,
+		      	</if>
+		      	<if test="appStatus != null and appStatus != ''" >
+		        	FAPPSTATUS,
+		     	</if>
+		       	<if test="addFeedStatus != null and addFeedStatus != ''" >
+		        	FADDFEEDSTATUS,
+		      	</if>
+		      	
+			  	<if test="bussDeptCode != null and bussDeptCode != ''" >
+		        	FBUSSDEPTCODE
+		      	</if>
+		      	
+			 </trim>
+			 <trim prefix="values (" suffix=")" suffixOverrides="," >
+				#{feedbackId},
+				<if test="detailId != null and detailId != ''" >
+		        	#{detailId,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="feedUserId != null and feedUserId != ''" >
+		        	#{feedUserId,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="feedUserName != null and feedUserName != ''" >
+		        	#{feedUserName,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="feedDeptId != null and feedDeptId != ''" >
+		        	#{feedDeptId,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="feedDeptName != null and feedDeptName != ''" >
+		        	#{feedDeptName,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="describe != null and describe != ''" >
+		        	#{describe,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="feedBackTime != null" >
+		        	#{feedBackTime,jdbcType=TIMESTAMP},
+		      	</if>
+		      	<if test="callCenUserId != null and callCenUserId != ''" >
+		        	#{callCenUserId,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="callCenUser != null and callCenUser != ''" >
+		        	#{callCenUser,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="callCenDeptId != null and callCenDeptId != ''" >
+		        	#{callCenDeptId,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="callCenDescision != null and callCenDescision != ''" >
+		       		#{callCenDescision,jdbcType=VARCHAR},
+		      	</if>
+		        <if test="callcenterTime != null" >
+		        	#{callcenterTime,jdbcType=TIMESTAMP},
+		      	</if>
+		       	<if test="status != null and status != ''" >
+		        	#{status,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="appStatus != null and appStatus != ''" >
+		        	#{appStatus,jdbcType=VARCHAR},
+		     	</if>
+		       	<if test="addFeedStatus != null and addFeedStatus != ''" >
+		        	#{addFeedStatus,jdbcType=VARCHAR},
+		      	</if>
+		      	<if test="bussDeptCode != null and bussDeptCode != ''" >
+		        	#{bussDeptCode,jdbcType=VARCHAR}
+		      	</if>
+	    </trim>
+  </insert>
+  
+  <!-- 根据ID删除反馈记录-->
+  <delete id="deleteFeedbackById" parameterType="String">
+  	delete from t_cust_dutyfeedback where fid = #{feedbackId,jdbcType=NUMERIC} 
+  </delete>
+  
+    <!-- 根据划分结果ID删除反馈记录-->
+  <delete id="deleteFeedbackByDetailId" parameterType="String">
+  	delete from t_cust_dutyfeedback where FDETAILID = #{detailId,jdbcType=NUMERIC} 
+  </delete>
+  <!-- 
+      根据反馈记录ID查询统计员所属部门名称
+  <select id="searchStatDeptName" parameterType="String" resultType="String">
+  
+   select dpm.fdeptname from t_org_department dpm where dpm.fid in(
+
+      select df.FSTATDEPTID from t_cust_dutyfeedback df where df.fid = #{feedbackId,jdbcType=NUMERIC} 
+   )
+  </select> -->
+</mapper>

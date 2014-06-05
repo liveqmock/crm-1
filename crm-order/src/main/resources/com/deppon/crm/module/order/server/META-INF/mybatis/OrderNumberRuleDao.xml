@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.order.shared.domain.OrderNumberRule">
+	<resultMap type="com.deppon.crm.module.order.shared.domain.OrderNumberRule" id="OrderNumberRuleResult">
+		<result column="FID" property="id"/>
+		<result column="FNAME" property="name"/>
+		<result column="FRESOURCE" property="resource"/>
+		<result column="FTRANSPORTMODE" property="transportMode"/>
+		<result column="FSIGN" property="sign"/>
+		<result column="FSTATUS" property="status"/>
+		<result column="FREMARK" property="remark"/>
+		<result column="FCREATEUSERID" property="createUserId"/>
+		<result column="FCREATEUSEREMPNAME" property="createUserEmpName"/>
+		<result column="FCREATETIME" property="createTime"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="com.deppon.crm.module.order.shared.domain.OrderNumberRule">
+		insert into T_ORD_ORDERNUMBERRULE(FID,FNAME,FRESOURCE,FTRANSPORTMODE,FSIGN,FSTATUS,FREMARK,FCREATEUSERID,FCREATEUSEREMPNAME,FCREATETIME)
+		values(#{id},#{name},#{resource},#{transportMode},#{sign},#{status},#{remark},#{createUserId},#{createUserEmpName},#{createTime})
+	</insert>
+	
+	<select id="selectAll" resultMap="OrderNumberRuleResult">
+		select * from T_ORD_ORDERNUMBERRULE
+	</select>
+	
+	<select id="find" resultMap="OrderNumberRuleResult">
+		select * from T_ORD_ORDERNUMBERRULE		where 1 = 1
+		<if test="id != null">
+		and FID = #{id}
+		</if>
+		<if test="name != null">
+		and FNAME = #{name}
+		</if>
+		<if test="resource != null">
+		and FRESOURCE = #{resource}
+		</if>
+		<if test="transportMode != null">
+		and FTRANSPORTMODE = #{transportMode}
+		</if>
+		<if test="sign != null">
+		and FSIGN = #{sign}
+		</if>
+		<if test="remark != null">
+		and FREMARK = #{remark}
+		</if>
+		<if test="status != null">
+		and FSTATUS = #{status}
+		</if>
+	</select>
+	
+	<select id="checkSign" resultType="int">
+		select count(distinct FRESOURCE) from T_ORD_ORDERNUMBERRULE
+		where FRESOURCE != #{resource} and FSIGN = #{sign}
+		<if test="id != null">
+			and FID != #{id}
+		</if>
+	</select>
+	
+	<select id="allResources" resultMap="OrderNumberRuleResult">
+		select distinct FNAME,FRESOURCE from T_ORD_ORDERNUMBERRULE
+	</select>
+	
+	<update id="update">
+		update T_ORD_ORDERNUMBERRULE
+		<set>
+			<if test="name != null">
+			FNAME = #{name},
+			</if>
+			<if test="resource != null">
+			FRESOURCE = #{resource},
+			</if>
+			<if test="transportMode != null">
+			FTRANSPORTMODE = #{transportMode},
+			</if>
+			<if test="sign != null">
+			FSIGN = #{sign},
+			</if>
+			<if test="remark != null">
+			FREMARK = #{remark},
+			</if>
+			<if test="status != null">
+			FSTATUS = #{status},
+			</if>
+		</set>
+		where FID = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,17 @@
+<project name="build" default="publish" basedir=".">
+
+	<property name="project_home" location="D:\deppon\crm_workspace"></property>
+	<property name="projectName" value="crm-customer-new"></property>
+	<property name="localDir" value="src/main/webapp"></property>
+	<property name="moduleName" value="custrepeat"></property>
+	<property name="publishPath" value="${project_home}/${projectName}/${localDir}"></property>
+
+	<target name="publish">
+		<copy todir="${publishPath}/scripts/${moduleName}/">
+			<fileset dir="scripts"></fileset>
+		</copy>
+		<copy todir="${publishPath}/WEB-INF/pages/${moduleName}/">
+			<fileset dir="pages"></fileset>	
+		</copy>
+	</target>
+</project>

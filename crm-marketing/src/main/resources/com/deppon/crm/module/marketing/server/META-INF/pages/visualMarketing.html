@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>德邦物流-CRM系统</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link  type="text/css" rel="stylesheet" href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+	<script type="text/javascript" src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+	<script type="text/javascript" src=" http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="../styles/common/deppon.css" />
+	<link rel="stylesheet" type="text/css" href="../scripts/marketing/map/style/visualMarketing.css" />
+	<link rel="stylesheet" href="../styles/gis/map.css" />
+	<!-- 自定义 -->
+	<script type="text/javascript" charset="utf-8" src="../i18n_permission_acess/marketing/marketing.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/config/CONFIG.js"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/util/DButil.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/util/DpUtil.js?201305131714"></script>	
+	<script type="text/javascript" charset="utf-8" src="../scripts/common/common/DataDictionary.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/common/common/common.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/common/util/MessageUtil.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/common/model/CommonModel.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../scripts/marketing/common/data/CommonStore.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/common/view/CommonView.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/developplan/data/DevelopPlanData.js"></script>
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/model/visualMarketingModel.js'></script> 
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/data/MapData.js'></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/gis/mapforshow.js"></script>
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/data/visualMarketingData.js'></script> 
+	 <script type="text/javascript" charset="utf-8" src="../scripts/marketing/regionPartition/model/RegionPartitionModel.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../scripts/marketing/regionPartition/store/RegionPartitionStore.js"></script>  
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/data/SearchMemberData.js'></script> 
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/view/SearchMemberView.js'></script>
+	<!-- 查看客户详情 DATA-->
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/LabelBasicData.js?201305211702"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/PotentialCustBasicData.js?201305131650"></script>
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/PotentialCustData.js?201305131650"></script> 
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/ScatterCustBasicData.js?201305131650"></script> 
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/PotentialCustSearchData.js?201305131650"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/ScatterCustManagerData.js?201305131650"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/ScatterCustData.js?201305131650"></script> 
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/MemberCustBasicData.js?201305131650"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/MemberManagerData.js?201305131650"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/data/MemberCustData.js?201305131650"></script>
+	<!-- 查看客户详情 service-->
+	<script type="text/javascript" charset="utf-8" src="../scripts/customer/util/CustviewUtil.js?20131108.16.1"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/service/CustLabelService.js?201305211702"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/service/viewCustDetailService.js?201305131650"></script>
+	<!-- 查看客户详情 view-->
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/view/CustLabelView.js?201305211702"></script> 
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/view/PotentialCustDetailView.js?201305211702"></script> 
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/view/MemberCustEditView.js?201305211702"></script>
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/view/ModifyMemberView.js?201305211702"></script>
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/view/ScatterCustAccountEdit.js?201305211702"></script>
+ 	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/map/javascript/view/ScatterCustEditView.js?201305211702"></script>
+	<!-- 回访客户 -->
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/developplan/data/ReturnVisitData.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/marketing/developplan/view/ReturnVisitAdd.js"></script>
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/view/MakePlanView.js?2013052301'></script>
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/view/MarkCustomerDetailView.js?2013052301'></script>
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/view/VisualMarketingView.js?2013052301'></script> 
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/view/CustAddressWin.js'></script>
+	 <script type="text/javascript" charset="utf-8" src="../scripts/common/areaaddress/AreaAddressStore.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../scripts/common/areaaddress/AreaAddressView.js?2013052301"></script>  
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/view/CustAddressWin.js'></script> 
+	<script type='text/javascript' src='../scripts/marketing/map/javascript/map.js'></script>
+</head>
+<body class="tabcontentpadding">
+
+<div id = "markCustDetailPanelID" class="custBubble" style="width:450px;height:0px;"></div>
+</body>
+</html>

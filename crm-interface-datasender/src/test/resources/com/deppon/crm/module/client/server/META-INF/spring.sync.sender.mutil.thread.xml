@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/jms
+	http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+	http://www.springframework.org/schema/context     
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-autowire="byType">
+	
+	<import resource="./service-transaction-test.xml"/>
+	<!-- <import resource="./spring_OrderJob.xml"/> -->
+	<import resource="./service-client-test.xml"/>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<!-- <property name="url" value="jdbc:oracle:thin:@192.168.17.165:1521:crmtest" />
+		<property name="username" value="develop" />
+		<property name="password" value="crmtestdb" /> -->
+		
+			<property name="url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+			<property name="username" value="develop" />
+			<property name="password" value="develop" />
+		
+	</bean>
+	<!-- 接口的JMS配置 -->
+	<bean id="jmsConnectionFactory" class="com.ibm.mq.jms.MQQueueConnectionFactory">
+		<property name="transportType">
+			<util:constant static-field="com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP" />
+		</property>
+		<property name="queueManager" value="QM_APP" />
+		<property name="hostName" value="192.168.17.141" />
+		<property name="channel" value="CRM.CLIENT" />
+		<property name="port" value="1428" />
+	</bean>
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!--
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+	</bean>
+	-->
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="com/deppon/crm/module/client/server/META-INF/mybatis.xml" />
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/mybatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="WaitCustomerLogDao" class="com.deppon.crm.module.client.sync.dao.impl.WaitCustomerLogDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="SearchMemberInfosDao" class="com.deppon.crm.module.client.sync.dao.impl.SearchMemberInfosDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	<bean id="CustomerInfoSend" class="com.deppon.crm.module.client.sync.impl.CustomerInfoSendImpl">
+		<property name="esbService">
+			<ref bean="syncDataServiceWs" />
+		</property>
+	</bean>
+
+	<bean id="MemryLock" class="com.deppon.crm.module.client.jobs.impl.MemryLock">
+	</bean>
+	<bean id="CustomerBaseInfoLogProvider" class="com.deppon.crm.module.client.sync.impl.CustomerBaseInfoProvider">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+	</bean>
+	<bean id="CustomerBaseInfoSender" class="com.deppon.crm.module.client.sync.impl.CustomerBaseInfoSender">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+		<property name="searchMemberInfosDao">
+			<ref bean="SearchMemberInfosDao" />
+		</property>
+		<property name="customerInfoSend">
+			<ref bean="CustomerInfoSend" />
+		</property>
+	</bean>
+	<bean id="CustomerBaseInfoProcess" class="com.deppon.crm.module.client.sync.impl.CustomerBaseInfoProcess">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+	</bean>
+	
+	<!-- 调度控制——发送轮询——任务定义 -->
+	<bean id="CustomBaseInfoExecutorContext" class="com.deppon.crm.module.client.sync.impl.CustomBaseInfoExecutorContext">
+		<property name="lock">
+			<ref bean="MemryLock" />
+		</property>
+		<property name="provider">
+			<ref bean="CustomerBaseInfoLogProvider" />
+		</property>
+		<property name="process">
+			<ref bean="CustomerBaseInfoProcess" />
+		</property>
+		<property name="sender">
+			<ref bean="CustomerBaseInfoSender" />
+		</property>
+	</bean>
+	
+	<bean id="MemberDataSenderJob"
+		class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass"
+			value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="CustomBaseInfoExecutorContext"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="execute"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="MemberDataSenderJobTigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+            <property name="jobDetail"> 
+                <ref bean="MemberDataSenderJob"/> 
+            </property> 
+            <!-- cron表达式 --> 
+            <property name="cronExpression"> 
+                <value>0 * * * * ?</value> 
+            </property> 
+     </bean> 
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  --> 
+    <bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
+            <property name="triggers"> 
+                <list> 
+                    <ref bean="MemberDataSenderJobTigger"/> 
+                </list> 
+            </property> 
+        </bean> 
+	<context:annotation-config />
+</beans>

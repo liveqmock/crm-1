@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/esb/inteface/domain/crm"
+	xmlns:tns="http://www.deppon.com/esb/inteface/domain/crm"
+	elementFormDefault="qualified">
+	<complexType name="FossQueryAcctinfoRequest">
+		<annotation>
+			<documentation>根据客户编码与时间获取运单信息</documentation>
+		</annotation>
+		<sequence>			
+			<element name="deliveryCustomerCode" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>发货客户编码</documentation>
+				</annotation>
+			</element>
+			<element name="startDate" type="dateTime" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>开始日期</documentation>
+				</annotation>
+			</element>
+			<element name="endDate" type="dateTime" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>结束日期</documentation>
+				</annotation>
+			</element>
+			<element name="pageSize" type="int" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>分页条数</documentation>
+				</annotation>
+			</element>
+			<element name="currentPage" type="int" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>当前页</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="FossQueryAcctinfo">
+		<annotation>
+			<documentation>运单信息</documentation>
+		</annotation>
+		<sequence>
+			<element name="waybillNo" type="string" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>运单号</documentation>
+				</annotation>
+			</element>
+			<element name="receiveCustomerName" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>收货客户名称</documentation>
+				</annotation>
+			</element>
+			<element name="receiveCustomerContact" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>收货联系人</documentation>
+				</annotation>
+			</element>
+			<element name="receiveCustomerMobilephone" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>收货人手机</documentation>
+				</annotation>
+			</element>
+			<element name="receiveCustomerPhone" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>收货人电话</documentation>
+				</annotation>
+			</element>
+			<element name="receiveCustomerAddress" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>收货人地址</documentation>
+				</annotation>
+			</element>
+			<element name="productCode" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>运输性质</documentation>
+				</annotation>
+			</element>
+			<element name="customerPickupOrgCode" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>提货网点</documentation>
+				</annotation>
+			</element>
+			<element name="billTime" type="dateTime" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>开单时间</documentation>
+				</annotation>
+			</element>
+			<element name="activeName" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>活动名称</documentation>
+				</annotation>
+			</element>
+			<element name="activeType" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>活动类型</documentation>
+				</annotation>
+			</element>
+			<element name="activeCode" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>活动编码</documentation>
+				</annotation>
+			</element>
+			<element name="discountType" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>优惠方式</documentation>
+				</annotation>
+			</element>
+			<element name="activeStartTime" type="dateTime" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>活动开始时间</documentation>
+				</annotation>
+			</element>
+			<element name="activeEndTime" type="dateTime" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation>活动结束时间</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>	
+	
+	<complexType name="FossQueryAcctinfoResponse">
+		<sequence>
+			<element name="fossQueryAcctinfoList" type="tns:FossQueryAcctinfo" minOccurs="1" maxOccurs="unbounded"></element>
+			<element name="totalNum" type="int" minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>总条数</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<element name="FossQueryAcctinfoRequest" type="tns:FossQueryAcctinfoRequest"></element>
+	<element name="FossQueryAcctinfoResponse" type="tns:FossQueryAcctinfoResponse"></element>
+</schema>

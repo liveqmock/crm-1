@@ -1,0 +1,1 @@
+1 修改mybatis中的ScheduleDao.xml文件：将第1442行的编号为searchScheduleByReturnVisit的代码由ON SC.FID=TV.FSCHEDULEID AND SC.FSTATUS<30修改为ON SC.FID=TV.FSCHEDULEID AND SC.FSTATUS<'30'

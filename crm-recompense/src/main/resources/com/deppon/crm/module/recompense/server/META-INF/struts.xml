@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="recompense" namespace="/recompense" extends="crm-default">
+	    <action name="recompenseCreate" >
+	    	<result name="success">recompense.html</result>
+	    	<!--<result name="success">claim.html</result>-->
+	    </action>
+	    <action name="recompenseSearch" >
+	    	<result name="success">recompenseSearch.html</result>
+	    </action>
+	    <!--在线理赔监控-->
+	    <action name="onlineapplyMonitoring" >
+	    	<result name="success">onlineapplyMonitoring.html</result>
+	    </action>
+        <!-- 理赔打印 -->
+	    <action name="recompensePrint" >
+	    	<result name="success">recompensePrint.html</result>
+	    </action>
+	    <!-- 理赔协议打印页面 -->
+	    <action name="OnlineApplyPrintPage" >
+	    	<result name="success">OnlineApplyPrintPage.html</result>
+	    </action>
+        <!--根据运单号/差错编号查询运单信息-->
+		<action name="findWayBillByNumAndType" class="recompenseAction" method="findWayBillByNumAndType">
+			<result name="success" type="json"></result>
+		</action>
+		<!--根据客户ID获取客户信息-->
+		<action name="findCustById" class="recompenseAction" method="findCustById">
+			<result name="success" type="json"></result>
+		</action>
+		<!--初始化大区-->
+		<action name="initArea" class="recompenseAction" method="initArea">
+			<result name="success" type="json"></result>
+		</action>
+		<!--根据部门名称查大区-->
+		<action name="searchAreas" class="recompenseAction" method="searchAreas">
+			<result name="success" type="json"></result>
+		</action>
+		<!--理赔上报提交-->
+		<action name="createRecompense" class="recompenseAction" method="createRecompense">
+			<result name="success" type="json"></result>
+		</action>
+		<!--根据ID查询该理赔所有相关系信息-->
+		<action name="searchRecompenseById" class="recompenseAction" method="searchRecompenseById">
+			<result name="success" type="json"></result>
+		</action>
+		<!--根据ID查询该理赔工作流相关系信息-->
+		<action name="searchRecompenseWorkflowById" class="recompenseAction" method="searchRecompenseWorkflowById">
+			<result name="success" type="json"></result>
+		</action>
+		<!--根据ID查询该理赔所有相关系信息-->
+		<action name="searchRecompenseById" class="recompenseAction" method="searchRecompenseById">
+			<result name="success" type="json"></result>
+		</action>
+		<!--根据工号查询职员信息-->
+		<action name="searchEmployeesByEmpCode" class="recompenseAction" method="searchEmployeesByEmpCode">
+			<result name="success" type="json"></result>
+		</action>
+		<!--发送跟进信息-->
+		<action name="sendRecompenseMessage" class="recompenseAction" method="sendRecompenseMessage">
+			<result name="success" type="json"></result>
+		</action>
+		<!--工作流操作（那些只需要转一个ID就OK的）-->
+		<action name="performAction" class="recompenseAction" method="performAction">
+			<result name="success" type="json"></result>
+		</action>
+		<!--修改理赔-->
+		<action name="updateRecompense" class="recompenseAction" method="updateRecompense">
+			<result name="success" type="json"></result>
+		</action>
+		<!--初步处理保存/及处理修改-->
+		<action name="saveRecompenseProcessInfo" class="recompenseAction" method="saveRecompenseProcessInfo">
+			<result name="success" type="json"></result>
+		</action>
+		<!--取消初步处理-->
+		<action name="cancelProcess" class="recompenseAction" method="cancelProcess">
+			<result name="success" type="json"></result>
+		</action>
+		<!--金额确认-->
+		<action name="amountRecognized" class="recompenseAction" method="amountRecognized">
+			<result name="success" type="json"></result>
+		</action>
+		<!--通过在线理赔的ID获取理赔对象-->
+		<action name="handleOnlineApply" class="recompenseAction" method="handleOnlineApply">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 根据条件查询客户历史理赔统计信息-->
+		<action name="searchHistroyRecompenseAmount"  class="recompenseAction" method="searchHistroyRecompenseAmount">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- ///////////////////////潘光均////////////////////////////////// -->
+		<action name="searchRecompense" class="recompenseAction" method="searchRecompense">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="searchDeptByName" class="recompenseAction" method="searchDeptByName">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- @author rock/ recompenseAcceptance -->
+		<action name="searchOnlineApplyByWaybillNum" class="acceptanceAction" method="searchOnlineApplyByWaybillNum">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		<action name="refuseOnlineApply" class="acceptanceAction" method="refuseOnlineApply">
+			<result name="success" type="json"></result>	<!-- 拒绝理赔 -->
+		</action>
+		<action name="findUserRoleDeptRelationByUserId" class="acceptanceAction" method="findUserRoleDeptRelationByUserId">
+			<result name="success" type="json"></result>	<!-- 大区设置查询数据 -->
+		</action>
+		<action name="deleteUserRoleDeptRelationById" class="acceptanceAction" method="deleteUserRoleDeptRelationById">
+			<result name="success" type="json"></result>	<!-- 大区设置删除数据 -->
+		</action>
+		<action name="insertUserRoleDepartment" class="acceptanceAction" method="insertUserRoleDepartment">
+			<result name="success" type="json"></result>	<!-- 大区设置设置 -->
+		</action>
+		
+		<action name="searchEmployeesByName" class="acceptanceAction" method="searchEmployeesByName">
+			<result name="success" type="json"></result>	<!-- 大区设置设置 -->
+		</action>
+		<action name ="onlineApp" >							<!-- 在线理赔受理 -->
+			<result name ="success" >recompenseAcceptance.html</result >
+		</action>
+		<action name ="regionalSetting" >					<!-- 大区设置 -->
+			<result name ="success" >RegionalSettings.html</result >
+		</action>
+		<action name ="payment" >							<!-- 付款弹窗 -->
+			<result name ="success" >payment.html</result >
+		</action>
+		<!-- 理赔监控 -->
+		<action name="recompenseMonitoring">
+			<result name="success">recompenseMonitoring.html</result>
+		</action>
+		<!-- 理赔监控 查询-->
+		<action name="searchMonitorRecompense"  class="recompenseAction" method="searchMonitorRecompense">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询当前用户所拥有的大区权限-->
+		<action name="searchUserBlongArea"  class="recompenseAction" method="searchUserBlongArea">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 客户历史理赔记录 查询-->
+		<action name="searchHistroyRecompense"  class="recompenseAction" method="searchHistroyRecompense">
+			<result name="success" type="json"></result>
+		</action>
+		<!--待办-->
+		<action name="urgeProcess"  class="recompenseAction" method="urgeProcess">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询当前登录用户所属事业部-->
+		<action name="initBus"  class="recompenseAction" method="initBus">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- @author rock/ 获取在线理赔协议数据 -->
+		<action name="onlineApplyPrintDt" class="recompenseAction" method="onlineApplyPrintDt">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		<!-- 获取所有事业部 -->
+		<action name="queryAllBusiness" class="recompenseAction" method="queryAllBusiness">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		<!-- 查询理赔单的差错信息 -->
+		<action name="searchRecompenseOaAccidentInfo" class="recompenseAction" method="searchRecompenseOaAccidentInfo">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		
+		<!-- 银行信息查询  @author 邹明-->
+		<action name="searchBankListByName" class="paymentAction" method="searchBankListByName">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		
+		<!-- 支行信息查询  @author 邹明-->
+		<action name="searchBankInfoByBankView" class="paymentAction" method="searchBankInfoByBankView">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		
+		<!-- 付款申请提交  @author 邹明-->
+		<action name="paymentApply" class="paymentAction" method="paymentApply">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		
+		<!-- 查询收银员账户信息  @author 邹明-->
+		<action name="queryPaymentByEmployeeCode" class="paymentAction" method="queryPaymentByEmployeeCode">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+	
+		<!-- 查询在线理赔信息  @author 邹明-->
+		<action name="findOnlineApplyByRecompenseId" class="paymentAction" method="findOnlineApplyByRecompenseId">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		
+		<!-- 交易记录集合查询 -->
+		<!-- 	<param name="includeProperties">payRecordList</param> -->
+		<action name="searchPayRecordList" class="recompenseAction" method="searchPayRecordList">
+			<result name="success" type="json"></result>	<!-- 搜索 -->
+		</action>
+		
+		
+		<!-- 索赔相关 -->
+		 <action name="claimCreate" >
+	    	<result name="success">claim.html</result>
+	    	<!--<result name="success">claim.html</result>-->
+	    </action>
+	     <action name="claimSearch" >
+	    	<result name="success">claimsearch.html</result>
+	    </action>
+	    
+	     <!--查询运单-->
+	      <action name="getWayBillAndType" class="claimAction" method="searchWayBillAndType">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	      <!--保存索赔-->
+	      <action name="saveClaim" class="claimAction" method="saveClaim">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	      <!--按照输入条件查询索赔 -->
+	      <action name="searchClaimByCondition" class="claimAction" method="searchClaimByCondition">
+	    	<result name="success" type="json"></result>
+	      </action>
+	      <!--按照索赔ID查询索赔信息-->
+	      <action name="searchClaimById" class="claimAction" method="searchClaimById">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	   <!--免赔-->
+	      <action name="remitClaimByClaimId" class="claimAction" method="remitClaimByClaimId">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	  <!--免赔解冻-->
+	      <action name="cancelRemitClaim" class="claimAction" method="cancelRemitClaim">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	  <!--获取操作日志-->
+	      <action name="getOperationLogListByClaimId" class="claimAction" method="searchOperationLogListByClaimId">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	   <!--获取跟进信息-->
+	      <action name="getClaimMessageListByClaimId" class="claimAction" method="searchClaimMessageListByClaimId">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	   <!--发送给对方部门处理-->
+	      <action name="sendToAnotherDept" class="claimAction" method="sendToAnotherDept">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	  <!--增加跟进信息-->
+	      <action name="addFollowClaimMessage" class="claimAction" method="addFollowClaimMessage">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	  
+	   	  <!--同意受理操作-->
+	      <action name="acceptClaim" class="claimAction" method="acceptClaim">
+	    	<result name="success" type="json"></result>
+	   	  </action>
+	   	<!--理赔监控获取员工姓名和工号和短信模板-->  
+	    <action name="searchEmpAndShortMessageTemplate" class="recompenseAction" method="searchEmpAndShortMessageTemplate">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--理赔监控单条短信发送-->  
+	    <action name="oneShortMessageSend" class="recompenseAction" method="oneShortMessageSend">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--理赔监控多条短信发送-->  
+	    <action name="manyShortMessageSend" class="recompenseAction" method="manyShortMessageSend">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--理赔监控获取多人短信发送模板-->
+	   	 <action name="getSMSTemplateMore" class="recompenseAction" method="searchSMSTemplateMore">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--在线理赔监控查询-->
+	   	 <action name="searchOnlineApply" class="recompenseAction" method="searchOnlineApply">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--在线理赔监控单条短信发送获取短信发送人-->
+	   	<action name="searchOnlineApplyPerson" class="recompenseAction" method="searchOnlineApplyPerson">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--在线理赔监控单条短信发送-->
+	   	<action name="oneShortMessageSendForOnline" class="recompenseAction" method="oneShortMessageSendForOnline">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--在线理赔监控多条短信发送-->
+	   	<action name="manyShortMessageSendForOnline" class="recompenseAction" method="manyShortMessageSendForOnline">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!--在线理赔监控催促办理-->
+	   	<action name="pressDoForOnline" class="recompenseAction" method="pressDoForOnline">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	
+	   	<!--在线理赔监控查看详情-->
+	   	<action name="lookUpOnlineApplyDetail" class="recompenseAction" method="lookUpOnlineApplyDetail">
+	    	<result name="success" type="json"></result>
+	   	</action>
+	   	<!-- 理赔退回-->
+	   	<action name="recompenseBack" class="recompenseAction" method="recompenseBack">
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+</struts>

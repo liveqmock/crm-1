@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.coupon.shared.domain.Marketplan">
+	 <!-- 使用规则Map -->
+	 <resultMap id="CouponRuleMap" type="com.deppon.crm.module.coupon.shared.domain.CouponRule" >
+	 	<id 	column="FID" 			property="id" 			jdbcType="DECIMAL" /> 
+	    <result column="FBEGINTIME" 	property="begintime" 	jdbcType="TIMESTAMP" />
+	    <result column="FENDTIME" 		property="endtime" 		jdbcType="TIMESTAMP" />
+	    <result column="FMARKETPLANID" 	property="marketPlanId" jdbcType="DECIMAL" />
+	    <result column="FCOSTMODE" 		property="costMode" 	jdbcType="VARCHAR" />
+	    <result column="FCOSTTYPE" 		property="costType" 	jdbcType="VARCHAR" />
+	    <result column="FVALUE" 		property="value" 		jdbcType="VARCHAR" />
+	    <result column="FDISCOUNT" 		property="discount" 	jdbcType="VARCHAR" />
+	    <result column="FCOSTADDEDMODE" property="costAddedMode" jdbcType="VARCHAR" />
+	    <result column="FCOSTADDEDTYPE" property="costAddedType" jdbcType="VARCHAR" />
+	    <result column="FCOSTADDED" 	property="costAdded" 	jdbcType="VARCHAR" />
+	    <result column="FSMS" 			property="smsContent" 			jdbcType="VARCHAR" />
+	    <result column="FDESCRIBE" 		property="describe" 	jdbcType="VARCHAR" />
+	    <result column="USRTYPE" 		property="usrType" 		jdbcType="VARCHAR" />
+	    <!-- GoodsLine 线路区域 type=20, ruleId=id -->
+	    <collection property="goodsLines" column="{type=USRTYPE,ruleId=FID}" select="searchGoodsLine" />  
+	    <!-- ConditionType 使用条件 -->
+	    <collection property="conditionTypes" column="{type=USRTYPE,ruleId=FID}" select="searchConditionType" />  
+	 </resultMap>
+	
+	<!-- 线路区域Map -->
+	 <resultMap id="GoodsLineMap" type="com.deppon.crm.module.coupon.shared.domain.GoodsLine" >
+	 	<id 	column="FID" 			property="id" 			jdbcType="DECIMAL" /> 
+	    <result column="FRULETYPE" 		property="ruleType" 	jdbcType="VARCHAR" />
+	    <result column="FCOUPONAUTOID" 	property="couponAutoId"	jdbcType="DECIMAL" />
+	    <result column="FCOUPONRULEID" 	property="couponRuleId" jdbcType="DECIMAL" />
+	    <result column="FREGDEMAND" 	property="regdemand" 	jdbcType="VARCHAR" />
+	    <result column="FBEGINDEPTORCITYID" property="beginDeptOrCityId" jdbcType="VARCHAR" />
+	    <result column="FENDDEPTORCITYID" property="endDeptOrCityId" jdbcType="VARCHAR" />
+	     <result column="FBEGINDEPTORCITYNAME" property="beginDeptOrCityName" jdbcType="VARCHAR" />
+	    <result column="FENDDEPTORCITYNAME" property="endDeptOrCityName" jdbcType="VARCHAR" />
+	 </resultMap>
+
+	<!-- 使用条件Map -->
+	 <resultMap id="ConditionTypeMap" type="com.deppon.crm.module.coupon.shared.domain.ConditionType" >
+	 	<id 	column="FID" 			property="id" 			jdbcType="DECIMAL" /> 
+	    <result column="FRULETYPE" 		property="ruleType" 	jdbcType="VARCHAR" />
+	    <result column="FCOUPONAUTOID" 	property="couponAutoId"	jdbcType="DECIMAL" />
+	    <result column="FCOUPONRULEID" 	property="couponRuleId" jdbcType="DECIMAL" />
+	    <result column="FTYPE" 			property="type" 		jdbcType="VARCHAR" />
+	    <result column="FVALUE" 		property="value" 		jdbcType="VARCHAR" />
+	 </resultMap>
+	<!-- 营销计划 -->
+	<sql id="selectMarketPlanDetailSQL">
+			SELECT
+			M.FID id,
+	        M.FSAVETIME saveTime,
+	        M.FCREATETIME createDate,
+	        M.FCREATEUSERID createUser,
+	        M.FLASTUPDATTIME modifyDate,
+	        M.FLASTMODIFYUSERID modifyUser,
+	        M.FMODIFYUSERNAME modifyUserName,
+	        M.FPLANNUMBER planNumber,
+	        M.FPLANNAME planName,
+	        M.FSTATUS marketStatus,
+	        M.FCOUPONTYPE couponType,
+	        M.FBUSTYPE busType,
+	        M.FACTIVITID activityId,
+	        M.FDISCOUNTTYPE discountType
+	</sql>   
+	<!-- 手动发券规则 -->
+	<sql id="selectRuleCouponHandSQL">
+			SELECT
+			CPH.FID id,
+	        CPH.FMARKETPLANID marketPlanId,
+	        CPH.FTYPEID typeId,
+	        CPH.FVALUE couponValue,
+	        CPH.FQUANTITY couponQuantity
+	</sql> 
+	<!-- 自动发券规则 -->
+	<sql id="selectRuleCouponAutoSQL">
+			SELECT
+			CPA.FID id,
+	        CPA.FBEGINTIME autoBeginTime,
+	        CPA.FENDTIME autoEndTime,
+	        CPA.FMARKETPLANID marketPlanId,
+	        CPA.FTYPEID typeId
+	</sql>
+	<!-- 自动发券规则 中的使用条件信息-->
+	<sql id="selectRuleConditionTypeSQL">
+			SELECT
+			CDT.FID id,
+	        CDT.FRULETYPE ruleType,
+	        CDT.FCOUPONAUTOID couponAutoId,
+	        CDT.FCOUPONRULEID couponRuleId,
+	        CDT.FTYPE type,
+	        CDT.FVALUE value
+	</sql>
+	<!-- 自动发券规则 中的返券金额信息-->
+	<sql id="selectAutoCouponCostSQL">
+			SELECT
+			ACC.FID id,
+	        ACC.FCOUPONAUTOID couponAutoId,
+	        ACC.FCOSTTYPE costType,
+	        ACC.FCOSTDOWN costDown,
+	        ACC.FCOUPONCOST couponCost
+	</sql> 
+	<!-- 自动发券规则 中的线路要求信息-->
+	<sql id="selectGoodsLineSQL">
+			SELECT
+			GL.FID id,
+	        GL.FRULETYPE ruleType,
+	        GL.FCOUPONAUTOID couponAutoId,
+	        GL.FCOUPONRULEID couponRuleId,
+	        GL.FBEGINDEPTORCITYID beginDeptOrCityId,
+	        GL.FENDDEPTORCITYID endDeptOrCityId,
+	        GL.FBEGINDEPTORCITYNAME beginDeptOrCityName,
+	        GL.FENDDEPTORCITYNAME endDeptOrCityName,
+	        GL.FREGDEMAND regdemand
+	</sql> 
+	<!-- 新增营销计划 -->
+	<insert id="insertMarketPlan" parameterType="com.deppon.crm.module.coupon.shared.domain.Marketplan">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_MARKETPLAN.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_COU_MARKETPLAN(
+			FID,FSAVETIME,FCREATETIME,FCREATEUSERID,FLASTUPDATTIME,FLASTMODIFYUSERID,
+			FPLANNUMBER,FPLANNAME,FSTATUS,FCOUPONTYPE,FMODIFYUSERNAME,FBUSTYPE,FACTIVITID,FDISCOUNTTYPE)
+		VALUES(
+			#{id,jdbcType=NUMERIC},SYSDATE,SYSDATE,#{createUser,jdbcType=DECIMAL},
+			SYSDATE,#{modifyUser,jdbcType=DECIMAL},
+			(SELECT DECODE( FPLANNUMBER,
+                  null,
+                  'MP'||TO_CHAR(SYSDATE, 'YYYYMMDD')|| '001',
+                  DECODE(SIGN(TO_NUMBER(SUBSTR(FPLANNUMBER, 9) - 999)),
+                  0,
+                  'MP'||TO_CHAR(SYSDATE, 'YYYYMMDD') || '001',
+                   'MP'||TO_CHAR(SYSDATE, 'YYYYMMDD') ||lpad(TO_NUMBER(SUBSTR(FPLANNUMBER, 9)) + 1,3,'0')
+                  )
+                )
+	         FROM (SELECT MAX(SUBSTR(FPLANNUMBER, 3)) FPLANNUMBER FROM T_COU_MARKETPLAN
+	         WHERE FPLANNUMBER  LIKE 'MP'||TO_CHAR(SYSDATE, 'YYYYMMDD') || '%')),#{planName,jdbcType=VARCHAR},#{marketStatus,jdbcType=VARCHAR},
+			#{couponType,jdbcType=VARCHAR},#{modifyUserName,jdbcType=VARCHAR},
+			#{busType,jdbcType=VARCHAR},
+			#{activityId,jdbcType=VARCHAR},
+			#{discountType,jdbcType=VARCHAR})
+			
+		]]>
+	</insert>
+	
+	<!-- 新增 手动发券规则 -->
+	<insert id="insertRuleCouponHand" parameterType="com.deppon.crm.module.coupon.shared.domain.RuleCouponHand">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_RULECOUPONHAND.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_COU_RULECOUPONHAND(
+			FID,FMARKETPLANID,FTYPEID,FVALUE,FQUANTITY,FDEPTSTCODE,FACTIVITYTYPE)
+		VALUES(#{id,jdbcType=NUMERIC},#{marketPlanId,jdbcType=NUMERIC},#{typeId,jdbcType=VARCHAR},#{couponValue,jdbcType=VARCHAR},
+			#{couponQuantity,jdbcType=NUMERIC},#{deptStCode,jdbcType=VARCHAR},#{activityType,jdbcType=VARCHAR}
+		)
+		]]>
+	</insert>
+	
+	<!-- 新增 自动发券规则 -->
+	<insert id="insertRuleCouponAuto" parameterType="com.deppon.crm.module.coupon.shared.domain.RuleCouponAuto">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_RULECOUPONAUTO.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_COU_RULECOUPONAUTO(
+			FID,FMARKETPLANID,FTYPEID,FBEGINTIME,FENDTIME)
+		VALUES(#{id,jdbcType=NUMERIC},#{marketPlanId,jdbcType=NUMERIC},#{typeId,jdbcType=VARCHAR},#{autoBeginTime,jdbcType=TIMESTAMP},
+			#{autoEndTime,jdbcType=TIMESTAMP}
+		)
+		]]>
+	</insert>
+	
+	<!-- 新增 约束条件信息 -->
+	<insert id="insertConditionType" parameterType="com.deppon.crm.module.coupon.shared.domain.ConditionType">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CONDITIONTYPE.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_COU_CONDITIONTYPE(
+				FID,FRULETYPE,FCOUPONAUTOID,FCOUPONRULEID,FTYPE,FVALUE)
+			VALUES(#{id,jdbcType=NUMERIC},#{ruleType,jdbcType=VARCHAR},#{couponAutoId,jdbcType=NUMERIC},#{couponRuleId,jdbcType=NUMERIC},
+				#{type,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	
+	<!-- 新增 自动返券金额 -->
+	<insert id="insertAutoCouponCost" parameterType="com.deppon.crm.module.coupon.shared.domain.AutoCouponCost">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_AUTOCOUPONCOST.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_COU_AUTOCOUPONCOST(
+				FID,FCOUPONAUTOID,FCOSTTYPE,FCOSTDOWN,FCOUPONCOST)
+			VALUES(#{id,jdbcType=NUMERIC},#{couponAutoId,jdbcType=NUMERIC},#{costType,jdbcType=VARCHAR},
+				#{costDown,jdbcType=VARCHAR},#{coupoCost,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	
+	<!-- 新增 走货线路 -->
+	<insert id="insertGoodsLine" parameterType="com.deppon.crm.module.coupon.shared.domain.GoodsLine">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_GOODSLINE.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_COU_GOODSLINE(
+				FID,FRULETYPE,FCOUPONAUTOID,FCOUPONRULEID,FBEGINDEPTORCITYID,FBEGINDEPTORCITYNAME,FENDDEPTORCITYID,FENDDEPTORCITYNAME,FREGDEMAND)
+			VALUES(#{id,jdbcType=NUMERIC},#{ruleType,jdbcType=VARCHAR},#{couponAutoId,jdbcType=NUMERIC},#{couponRuleId,jdbcType=NUMERIC},
+			#{beginDeptOrCityId,jdbcType=VARCHAR},#{beginDeptOrCityName,jdbcType=VARCHAR},#{endDeptOrCityId,jdbcType=VARCHAR},#{endDeptOrCityName,jdbcType=VARCHAR},#{regdemand,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	
+	<!-- 新增 优惠券使用条件 -->
+	<insert id="insertCouponRule" parameterType="com.deppon.crm.module.coupon.shared.domain.CouponRule">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_COUPONRULE.NEXTVAL AS ID FROM　DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_COU_COUPONRULE(
+				FID,FBEGINTIME,FENDTIME,FMARKETPLANID,FCOSTMODE,FCOSTTYPE,
+				FVALUE,FDISCOUNT,FCOSTADDEDMODE,FCOSTADDEDTYPE,FCOSTADDED,FSMS,FDESCRIBE)
+			VALUES(#{id,jdbcType=NUMERIC},#{begintime,jdbcType=TIMESTAMP},#{endtime,jdbcType=TIMESTAMP},#{marketPlanId,jdbcType=NUMERIC},
+			#{costMode,jdbcType=VARCHAR},#{costType,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR},
+			#{discount,jdbcType=VARCHAR},#{costAddedMode,jdbcType=VARCHAR},#{costAddedType,jdbcType=VARCHAR},
+			#{costAdded,jdbcType=VARCHAR},#{smsContent,jdbcType=VARCHAR},#{describe,jdbcType=VARCHAR}
+			)
+		]]>
+	</insert>
+	<!-- 查询 营销计划 -->
+	<select id="selectMarketPlan" parameterType="Map"
+				resultType="com.deppon.crm.module.coupon.shared.domain.Marketplan">
+		<![CDATA[
+		SELECT /*+first_rows(${limit})*/ MK.*,
+		DECODE(MK.COUPONTYPE,
+					'HANDCOUPON',(SELECT FQUANTITY FROM T_COU_RULECOUPONHAND RCH WHERE RCH.FMARKETPLANID = MK.ID),
+					(SELECT COUNT(*) FROM  T_COU_COUPON CP WHERE CP.FMARKETPLANID = MK.ID)
+				) AS couponSendTotal,
+		(SELECT COUNT(*) FROM  T_COU_COUPON CP WHERE CP.FMARKETPLANID = MK.ID AND CP.FSTATUS = '10') couponNoSendCount,
+				(SELECT COUNT(*) FROM  T_COU_COUPON CP WHERE CP.FMARKETPLANID = MK.ID AND CP.FSTATUS = '20') couponSendCount,
+				(SELECT COUNT(*) FROM  T_COU_COUPON CP WHERE CP.FMARKETPLANID = MK.ID AND CP.FSTATUS = '30') couponUseCount,
+				(SELECT COUNT(*) FROM  T_COU_COUPON CP WHERE CP.FMARKETPLANID = MK.ID AND CP.FSTATUS = '40') couponOverdueCount
+		FROM(
+		SELECT /*+first_rows(${limit})*/ ROW_.*,ROWNUM rownum_ FROM (
+			SELECT /*+first_rows(${limit})*/ M.FID id,M.FPLANNUMBER planNumber,M.FPLANNAME planName,M.FCOUPONTYPE couponType,M.FSTATUS marketStatus,
+				M.FCREATETIME createDate,M.FLASTMODIFYUSERID modifyUser,M.FMODIFYUSERNAME modifyUserName,R.FBEGINTIME activityBeginTime,
+				R.FENDTIME activityEndTime,C.FBEGINTIME autoBeginTime,C.FENDTIME autoEndTime,M.FACTIVITID activityId
+		]]>
+			<![CDATA[
+			FROM T_COU_MARKETPLAN M 
+			LEFT JOIN T_COU_COUPONRULE C
+				ON M.FID = C.FMARKETPLANID 
+			LEFT JOIN T_COU_RULECOUPONAUTO R 
+				ON R.FMARKETPLANID = C.FMARKETPLANID			
+			LEFT JOIN T_COU_RULECOUPONHAND H
+				ON M.FID=H.FMARKETPLANID
+				]]>
+		    <![CDATA[
+			WHERE 1 = 1
+			]]>
+			<choose>  
+            <when test="marketplan.planNumber != null and marketplan.planNumber !='' ">
+	            	<![CDATA[
+	            		AND M.FPLANNUMBER = UPPER(#{marketplan.planNumber,jdbcType=VARCHAR})
+	            	]]>
+              	<if test="marketplan.marketStatus == null or marketplan.marketStatus ==''">  
+					<![CDATA[
+						AND M.FSTATUS != '10'
+					]]>
+	    		</if>
+	    	</when >
+			<otherwise>
+				<if test="marketplan.planName != null and marketplan.planName !='' ">  
+					<![CDATA[AND M.FPLANNAME like '%'||trim(#{marketplan.planName,jdbcType=VARCHAR})||'%']]>
+	    		</if>
+	    		<choose>
+	    			<when test="marketplan.couponType != null and marketplan.couponType != '' and marketplan.couponType=='HANDCOUPON'">
+		    			<![CDATA[
+		    				AND M.FCOUPONTYPE = #{marketplan.couponType,jdbcType=VARCHAR}
+		    				AND H.FACTIVITYTYPE is null
+		    			]]>
+		    		</when>
+		    		<when test="marketplan.couponType != null and marketplan.couponType != '' and marketplan.couponType=='AUTOCOUPON'">
+		    			<![CDATA[
+		    				AND M.FCOUPONTYPE = #{marketplan.couponType,jdbcType=VARCHAR}
+		    			]]>
+		    		</when>
+		    		<when test="marketplan.couponType != null and marketplan.couponType != ''">
+		    			<![CDATA[AND H.FACTIVITYTYPE = #{marketplan.couponType,jdbcType=VARCHAR}]]>
+		    		</when>
+		    	</choose>
+		    	<if test="marketplan.marketStatus != null and marketplan.marketStatus !=''">
+		    		<if test="marketplan.marketStatus == '00'">
+			    		<![CDATA[AND M.FSTATUS != '10']]>
+			    	</if>
+			    	<if test="marketplan.marketStatus != '05' and marketplan.marketStatus != '00'">
+				    		<![CDATA[AND M.FSTATUS = #{marketplan.marketStatus,jdbcType=VARCHAR}]]>
+				    </if>
+		    	</if>
+		    	<if test="marketplan.createBeginTime != null and marketplan.createBeginTime !='' and marketplan.createEndTime != null and marketplan.createEndTime !=''">
+		    		<![CDATA[AND M.FCREATETIME between trunc(#{marketplan.createBeginTime,jdbcType=TIMESTAMP}) and trunc(#{marketplan.createEndTime,jdbcType=TIMESTAMP}+1)]]>
+		   		</if>
+       	  </otherwise> 
+       	</choose> 
+       	<![CDATA[ 
+       		AND M.FBUSTYPE=#{marketplan.busType,jdbcType=VARCHAR}
+       		ORDER BY M.FCREATETIME DESC) ROW_
+       		WHERE ROWNUM <= #{start}+#{limit}
+       		) MK
+       		WHERE MK.rownum_>#{start}
+       	]]>
+    </select>
+	<!-- 更新所有(不包括已结束)状态的营销计划- 定时器-->
+	<update id="updateMarketPlanForSchedual">
+		<![CDATA[
+			UPDATE T_COU_MARKETPLAN SET FSTATUS = '40' WHERE FID IN (
+           	SELECT M.FID
+        	FROM T_COU_MARKETPLAN M
+        	JOIN T_COU_COUPONRULE R ON M.FID = R.FMARKETPLANID
+        	LEFT JOIN T_COU_RULECOUPONAUTO RA ON M.FID = RA.FMARKETPLANID
+      		WHERE M.FSTATUS = '20' AND ((M.FCOUPONTYPE = 'HANDCOUPON' AND R.FENDTIME < SYSDATE) 
+          	OR 
+          	(M.FCOUPONTYPE = 'AUTOCOUPON' AND RA.FENDTIME < SYSDATE)))
+        ]]>
+	</update>
+	<!-- 更新优惠券状态未过期- 定时器-->
+	<update id="updateCouponStatesByOverdueForSchedual">
+		<![CDATA[
+			UPDATE T_COU_COUPON SET FSTATUS = 40 WHERE FID IN (
+		       SELECT C.FID FROM T_COU_COUPON C JOIN T_COU_COUPONRULE R ON C.FUSERULEID = R.FID AND 
+		       C.FSTATUS IN ('10','20') AND R.FENDTIME < SYSDATE
+			)
+        ]]>
+	</update>
+	<!-- 查询 营销计划 条数 -->
+	<select id="selectMarketPlanCount" parameterType="com.deppon.crm.module.coupon.shared.domain.Marketplan" 
+			resultType="string">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_COU_MARKETPLAN M 
+			LEFT JOIN T_COU_RULECOUPONAUTO R 
+				ON M.FID = R.FMARKETPLANID 
+			LEFT JOIN T_COU_COUPONRULE C 
+				ON R.FMARKETPLANID = C.FMARKETPLANID
+			LEFT JOIN T_COU_RULECOUPONHAND H
+				ON M.FID=H.FMARKETPLANID	
+			WHERE 1 = 1
+		]]>
+		<choose>  
+            <when test="planNumber != null and planNumber !='' ">
+	            	<![CDATA[
+	            		AND M.FPLANNUMBER = UPPER(#{planNumber,jdbcType=VARCHAR})
+	            	]]>
+              	<if test="marketStatus == null or marketStatus ==''">  
+					<![CDATA[
+						AND M.FSTATUS != '10'
+					]]>
+	    		</if>
+	    	</when >
+			<otherwise>
+				<if test="planName != null and planName !='' ">  
+					<![CDATA[AND M.FPLANNAME like '%'||trim(#{planName,jdbcType=VARCHAR})||'%']]>
+	    		</if>
+	    		<choose>
+	    			<when test="couponType != null and couponType != '' and couponType !='NEWOPEN' and couponType=='HANDCOUPON'">
+		    			<![CDATA[
+		    				AND M.FCOUPONTYPE = #{couponType,jdbcType=VARCHAR}
+		    				AND H.FACTIVITYTYPE is null
+		    			]]>
+		    		</when>
+		    		<when test="couponType != null and couponType != '' and couponType !='NEWOPEN' and couponType=='AUTOCOUPON'">
+		    			<![CDATA[
+		    				AND M.FCOUPONTYPE = #{couponType,jdbcType=VARCHAR}
+		    			]]>
+		    		</when>
+		    		<when test="couponType != null and couponType != ''">
+		    			<![CDATA[AND H.FACTIVITYTYPE = #{couponType,jdbcType=VARCHAR}]]>
+		    		</when>
+		    	</choose>
+		    	<if test="marketStatus != null and marketStatus !=''">
+		    		<if test="marketStatus == '00'">
+			    		<![CDATA[AND M.FSTATUS != '10']]>
+			    	</if>
+			    	<if test="marketStatus != '05' and marketStatus != '00'">
+				    		<![CDATA[AND M.FSTATUS = #{marketStatus,jdbcType=VARCHAR}]]>
+				    </if>
+		    	</if>
+		    	<if test="createBeginTime != null and createBeginTime !='' and createEndTime != null and createEndTime !=''">
+		    		AND M.FCREATETIME between trunc(#{createBeginTime,jdbcType=TIMESTAMP}) and trunc(#{createEndTime,jdbcType=TIMESTAMP}+1)
+		   		</if>
+       	  </otherwise> 
+       	</choose> 
+       	<![CDATA[AND M.FBUSTYPE=#{busType,jdbcType=VARCHAR}]]>
+	</select>
+	<!-- 查询 营销计划详情 -->
+	<select id="selectMarketPlanDetail" resultType="com.deppon.crm.module.coupon.shared.domain.Marketplan">
+		<include refid="selectMarketPlanDetailSQL"/>
+		<![CDATA[
+			FROM T_COU_MARKETPLAN M
+			WHERE M.FID = #{marketplanId}
+		]]>
+	</select>
+	
+	<!-- 查询 优惠券使用规则 -->
+	<select id="searchCouponRuleByMarketPlanId" resultMap="CouponRuleMap" parameterType="String">
+		<![CDATA[
+			SELECT
+				FID,
+				FMARKETPLANID,
+				FCOSTMODE,
+				FCOSTTYPE,
+				FVALUE,
+				FDISCOUNT,
+				FCOSTADDEDMODE,
+				FCOSTADDEDTYPE,
+				FCOSTADDED,
+				FBEGINTIME,
+				FENDTIME,
+				FSMS,
+				FDESCRIBE,
+				'20' USRTYPE
+			FROM T_COU_COUPONRULE CR 
+			WHERE CR.FMARKETPLANID = #{marketPlanId,jdbcType=NUMERIC}
+		]]>
+	</select>
+	<!-- 查询线路区域-使用规则 -->
+	<select id="searchGoodsLine" 
+			resultMap="GoodsLineMap" 
+			parameterType="HashMap">
+		<![CDATA[
+			SELECT * FROM T_COU_GOODSLINE CG 
+			WHERE 1=1
+		]]>
+		<if test="type != null and type !='' ">
+    		<![CDATA[AND CG.FRULETYPE =  #{type,jdbcType=VARCHAR }]]>
+    	</if>
+		<if test="ruleId != null and ruleId !='' ">
+    		<![CDATA[AND CG.FCOUPONRULEID =  #{ruleId,jdbcType=NUMERIC} ]]>
+    	</if>
+		<if test="autoId != null and autoId !='' ">
+    		<![CDATA[AND CG.FCOUPONAUTOID =  #{autoId,jdbcType=NUMERIC} ]]>
+    	</if>
+	</select>
+	<!-- 规则类型 -->
+	<select id="searchConditionType" 
+			resultMap="ConditionTypeMap" 
+			parameterType="HashMap">
+		<![CDATA[
+			SELECT * FROM T_COU_CONDITIONTYPE CC 
+				WHERE 1=1  
+		]]>
+		<if test="type != null and type !='' ">
+    		<![CDATA[AND CC.FRULETYPE =  #{type,jdbcType=VARCHAR }]]>
+    	</if>
+		<if test="ruleId != null and ruleId !='' ">
+    		<![CDATA[AND CC.FCOUPONRULEID =  #{ruleId,jdbcType=NUMERIC} ]]>
+    	</if>
+		<if test="autoId != null and autoId !='' ">
+    		<![CDATA[AND CC.FCOUPONAUTOID =  #{autoId,jdbcType=NUMERIC} ]]>
+    	</if>
+	</select>
+	
+	<!-- 查询 手动发券规则 -->
+	<select id="selectRuleCouponHand" resultType="com.deppon.crm.module.coupon.shared.domain.RuleCouponHand">
+		<include refid="selectRuleCouponHandSQL"/>
+		<![CDATA[
+			FROM T_COU_RULECOUPONHAND CPH
+			WHERE CPH.FMARKETPLANID = #{marketplanId,jdbcType=NUMERIC}
+		]]>
+	</select>
+	<!-- 查询 自动发券规则 -->
+	<select id="selectAuleCouponAuto" resultType="com.deppon.crm.module.coupon.shared.domain.RuleCouponAuto">
+		<include refid="selectRuleCouponAutoSQL"/>
+		<![CDATA[
+			FROM T_COU_RULECOUPONAUTO CPA
+			WHERE CPA.FMARKETPLANID = #{marketplanId,jdbcType=NUMERIC}
+		]]>
+	</select>
+	<!-- 查询 自动发券规则 中的使用条件信息-->
+	<select id="selectRuleConditionType" parameterType="Map"
+		resultType="com.deppon.crm.module.coupon.shared.domain.ConditionType">
+		<include refid="selectRuleConditionTypeSQL"/>
+		<![CDATA[
+			FROM T_COU_CONDITIONTYPE CDT
+			WHERE 1 = 1
+		]]>
+		<if test="ruleCouponRuleType != null and ruleCouponRuleType !='' and ruleCouponRuleType == '10'">
+    	<![CDATA[AND CDT.FCOUPONAUTOID = #{ruleCouponAutoId,jdbcType=NUMERIC}]]>
+    	</if>
+    	<if test="ruleCouponRuleType != null and ruleCouponRuleType !='' and ruleCouponRuleType == '20'">
+    	<![CDATA[AND CDT.FCOUPONRULEID = #{ruleCouponAutoId,jdbcType=NUMERIC}]]>
+    	</if>
+	</select>
+	<!-- 查询 自动发券规则 中的返券金额信息-->
+	<select id="selectAutoCouponCost" resultType="com.deppon.crm.module.coupon.shared.domain.AutoCouponCost">
+		<include refid="selectAutoCouponCostSQL"/>
+		<![CDATA[
+			FROM T_COU_AUTOCOUPONCOST ACC
+			WHERE ACC.FCOUPONAUTOID = #{ruleCouponAutoId,jdbcType=NUMERIC}
+		]]>
+    </select>
+    <!-- 查询 自动发券规则 中的线路要求信息-->
+	<select id="selectGoodsLine" resultType="com.deppon.crm.module.coupon.shared.domain.GoodsLine">
+		<include refid="selectGoodsLineSQL"/>
+		<![CDATA[
+			FROM T_COU_GOODSLINE GL
+			WHERE 1 = 1
+		]]>
+		<if test="ruleCouponRuleType != null and ruleCouponRuleType !='' and ruleCouponRuleType == '10'">
+    	<![CDATA[AND GL.FCOUPONAUTOID = #{ruleCouponAutoId,jdbcType=NUMERIC}]]>
+    	</if>
+    	<if test="ruleCouponRuleType != null and ruleCouponRuleType !='' and ruleCouponRuleType == '20'">
+    	<![CDATA[AND GL.FCOUPONRULEID = #{ruleCouponAutoId,jdbcType=NUMERIC}]]>
+    	</if>
+    </select>
+     <!-- 查询 营销计划编码查询 优惠券发券规则-->
+	<select id="selectCouponTypeByMarketPlanId" resultType="com.deppon.crm.module.coupon.shared.domain.Marketplan">
+		<![CDATA[
+			SELECT M.FID id,M.FPLANNUMBER planNumber,M.FCOUPONTYPE couponType,M.FSTATUS marketStatus
+			FROM T_COU_MARKETPLAN M 
+			WHERE FID = #{id,jdbcType=NUMERIC}
+		]]>
+	 </select>
+	 <!-- 根据优惠券类型查询手动发券营销计划 -->
+	 <select id="searchHandMarketPlanByCouponTypeAndTypeId" parameterType="Map" resultType="com.deppon.crm.module.coupon.shared.domain.HandMarketPlan">
+	 	<include refid="selectMarketPlanDetailSQL"/>
+	 	<![CDATA[
+		   ,R.FID createRuleId,
+       	   R.FTYPEID typeId,
+           R.FVALUE value,
+           COU.FID useRuleId,
+           NVL(R.FQUANTITY,0) quantity,
+           NVL((NVL(R.FQUANTITY,0) - NVL(CCN.COUPONCREATENUM,0)),0) couponCreateNum
+            FROM T_COU_MARKETPLAN M
+            JOIN T_COU_RULECOUPONHAND R 
+            ON M.FID = R.FMARKETPLANID
+            JOIN T_COU_COUPONRULE COU
+            ON R.FMARKETPLANID = COU.FMARKETPLANID
+          	LEFT JOIN
+            (SELECT NVL(COUNT(1),0) COUPONCREATENUM,FMARKETPLANID FMARKETPLANID 
+              FROM T_COU_COUPON
+              GROUP BY FMARKETPLANID
+             )  CCN
+             ON M.FID=CCN.FMARKETPLANID
+         	WHERE M.FCOUPONTYPE = #{couponType}
+	 		AND R.FTYPEID IN ('NOCREATE','FORSCHEDUAL' )
+        	AND ROWNUM = 1
+        	AND NVL((NVL(R.FQUANTITY,0) - NVL(CCN.COUPONCREATENUM,0)),0)>0
+	 	]]>
+	 </select>
+	 <!-- 根据部门标杆编码，活动类型查询该部门现可用的营销计划ID -->
+	 <select id="searchMarketPlanByDeptStandardCodeAndActivityType" parameterType="Map" 
+	 	resultType="com.deppon.crm.module.coupon.shared.domain.Coupon">
+	 	<![CDATA[
+	 		SELECT M.FID marketPlanId ,
+	 		H.FID createruleId,
+	 		R.FID useruleId,
+	 		H.FVALUE useCouponValue
+	 	    FROM T_COU_MARKETPLAN M
+	 		JOIN T_COU_RULECOUPONHAND H
+	 		ON M.FID=H.FMARKETPLANID 
+       		LEFT JOIN T_COU_COUPONRULE R
+       		ON M.FID=R.FMARKETPLANID 
+       		WHERE M.FID = (
+	 		SELECT MAX(PL.FID)
+       		FROM T_COU_RULECOUPONHAND HAND
+       		JOIN T_COU_MARKETPLAN PL
+       		ON HAND.FMARKETPLANID=PL.FID
+      		WHERE HAND.FDEPTSTCODE = #{deptStCode}
+       		AND HAND.FACTIVITYTYPE = #{activityType}
+       		AND PL.FSTATUS ='20')
+	 	]]>
+	 </select>
+	 <!-- 根据部门标杆编码，活动类型查询待新建的营销计划名称 -->
+	 <select id="searchMPNameMarketPlanByDeptStandardCodeAndActivityType" parameterType="Map"
+	 	resultType="String">
+	 	<![CDATA[
+	 	SELECT 
+      	MAX((SELECT FCODEDESC
+             FROM T_CODE_DETAIL
+            WHERE FCODETYPE = 'COUPON_ACTIVITY_TYPE'
+              AND FCODE = #{activityType}))|| 
+        MAX(TO_CHAR(#{beginTime,jdbcType=DATE}, 'YYYYMMDD')) ||
+        MAX(DEPT.FDEPTNAME) ||
+       	MAX(TO_CHAR((SELECT COUNT(1)
+                      FROM T_COU_RULECOUPONHAND H
+                     WHERE H.FDEPTSTCODE = #{deptStCode}
+                       AND H.FACTIVITYTYPE = #{activityType}) + 1,
+                   '000'))
+  		FROM T_ORG_DEPARTMENT DEPT
+ 		WHERE DEPT.FSTANDARDCODE = #{deptStCode}
+	 	]]>
+	 </select>
+	 <!-- 更新营销计划-->
+	 <update id="updateUpdateMarketPlan" parameterType="com.deppon.crm.module.coupon.shared.domain.Marketplan">
+		UPDATE T_COU_MARKETPLAN SET 
+		<if test="planName != null and planName != '' ">
+			FPLANNAME = #{planName,jdbcType=VARCHAR},
+			FACTIVITID = #{activityId,jdbcType=VARCHAR},
+			FDISCOUNTTYPE = #{discountType,jdbcType=VARCHAR},
+		</if>
+		<if test="marketStatus != null and marketStatus != '' ">
+			FSTATUS = #{marketStatus,jdbcType=VARCHAR},
+			<if test="marketStatus == '20'">
+			FSAVETIME = SYSDATE,
+		</if>
+		</if>
+		<if test="modifyUserName != null and modifyUserName != '' ">
+			FMODIFYUSERNAME =#{modifyUserName,jdbcType=VARCHAR}, 
+		</if>
+		FLASTUPDATTIME = SYSDATE
+		WHERE 1=1
+		<if test="planNumber != null and planNumber != '' ">
+			<![CDATA[ AND FPLANNUMBER = #{planNumber,jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="id != null and id != '' ">
+			<![CDATA[ AND FID = #{id,jdbcType=NUMERIC} ]]>
+		</if>
+    </update>
+    <!-- 更新手动发券规则-->
+	 <update id="updateUpdateCouponHand" parameterType="com.deppon.crm.module.coupon.shared.domain.RuleCouponHand">
+	 <![CDATA[	UPDATE T_COU_RULECOUPONHAND ]]>
+	 <set>
+		 	<if test="typeId != null and typeId != '' ">
+		 		<![CDATA[	FTYPEID = #{typeId,jdbcType=VARCHAR},]]>
+		 	</if>
+		  	<if test="couponValue != null and couponValue != ''">
+		  	<![CDATA[		
+				FVALUE = #{couponValue,jdbcType=VARCHAR},
+			]]>
+			</if>
+			<if test="couponQuantity != null and couponQuantity != ''">
+			<![CDATA[
+				FQUANTITY = #{couponQuantity,jdbcType=NUMERIC},
+			]]>
+			</if>
+	</set>
+		<![CDATA[
+			WHERE FMARKETPLANID = #{marketPlanId,jdbcType=NUMERIC}
+		]]>
+    </update>
+     <!-- 更新自动发券规则-->
+	 <update id="updateUpdateCouponAuto" parameterType="com.deppon.crm.module.coupon.shared.domain.RuleCouponAuto">
+	 <![CDATA[UPDATE T_COU_RULECOUPONAUTO SET 
+			FBEGINTIME = #{autoBeginTime,jdbcType=TIMESTAMP},
+			FENDTIME = #{autoEndTime,jdbcType=TIMESTAMP}
+		WHERE FMARKETPLANID = #{marketPlanId,jdbcType=NUMERIC}
+	 ]]>
+    </update>
+    <!-- 更新约束条件-->
+	 <update id="updateUpdateConditionTypes" parameterType="com.deppon.crm.module.coupon.shared.domain.ConditionType">
+		<![CDATA[UPDATE T_COU_CONDITIONTYPE SET 
+			FTYPE = #{type,jdbcType=VARCHAR},
+			FVALUE = #{value,jdbcType=VARCHAR}
+		WHERE 1 = 1
+		 ]]>
+		<if test="couponAutoId != null and couponAutoId != '' ">
+			AND FCOUPONAUTOID = #{couponAutoId,jdbcType=NUMERIC}
+		</if>
+		<if test="couponRuleId != null and couponRuleId != '' ">
+			AND FCOUPONRULEID = #{couponRuleId,jdbcType=NUMERIC}
+		</if>
+    </update>
+    <!-- 更新返券金额-->
+	 <update id="updateUpdateAutoCouponCost" parameterType="com.deppon.crm.module.coupon.shared.domain.AutoCouponCost">
+		<![CDATA[UPDATE T_COU_AUTOCOUPONCOST SET 
+			FCOSTTYPE = #{costType,jdbcType=VARCHAR},
+			FCOSTDOWN = #{costDown,jdbcType=VARCHAR},
+			FCOUPONCOST = #{couponCost,jdbcType=VARCHAR}
+		WHERE FCOUPONAUTOID = #{couponAutoId,jdbcType=NUMERIC}
+		 ]]>
+    </update>
+    <!-- 更新走货线路-->
+	 <update id="updateUpdateCreateGoodsLine" parameterType="com.deppon.crm.module.coupon.shared.domain.GoodsLine">
+	 <![CDATA[	UPDATE T_COU_GOODSLINE SET 
+			FBEGINDEPTORCITYID = #{beginDeptOrCityId,jdbcType=VARCHAR},
+			FENDDEPTORCITYID = #{endDeptOrCityId,jdbcType=VARCHAR},
+			FBEGINDEPTORCITYNAME = #{beginDeptOrCityName,jdbcType=VARCHAR},
+			FENDDEPTORCITYNAME = #{endDeptOrCityName,jdbcType=VARCHAR}
+			WHERE 1 = 1 
+		]]>
+		<if test="couponAutoId != null and couponAutoId != '' ">
+			AND FCOUPONAUTOID = #{couponAutoId,jdbcType=NUMERIC}
+		</if>
+		<if test="couponRuleId != null and couponRuleId != '' ">
+			AND FCOUPONRULEID = #{couponRuleId,jdbcType=NUMERIC}
+		</if>
+    </update>
+     <!-- 更新使用规则-->
+	 <update id="updateUpdateCouponRule" parameterType="com.deppon.crm.module.coupon.shared.domain.CouponRule">
+		UPDATE T_COU_COUPONRULE SET
+		<if test="costMode != null and costMode != '' ">
+			FCOSTMODE = #{costMode,jdbcType=VARCHAR},
+		</if>
+		<if test="costType != null and costType != '' ">
+			FCOSTTYPE = #{costType,jdbcType=VARCHAR},
+		</if>
+		<if test="value != null and value != '' ">
+			FVALUE = #{value,jdbcType=VARCHAR},
+		</if>
+		<if test="discount != null and discount != '' ">
+			FDISCOUNT = #{discount,jdbcType=VARCHAR},
+		</if>
+		<if test="costAddedMode != null and costAddedMode != '' ">
+			FCOSTADDEDMODE = #{costAddedMode,jdbcType=VARCHAR},
+		</if>
+		<if test="costAddedType != null and costAddedType != '' ">
+			FCOSTADDEDTYPE = #{costAddedType,jdbcType=VARCHAR},
+		</if>
+		<if test="costAdded != null and costAdded != '' ">
+			FCOSTADDED = #{costAdded,jdbcType=VARCHAR},
+		</if>
+		<if test="begintime != null and begintime != '' ">
+			FBEGINTIME = #{begintime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="endtime != null and endtime != '' ">
+			FENDTIME = #{endtime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="smsContent != null and smsContent != '' ">
+			FSMS = #{smsContent,jdbcType=VARCHAR},
+		</if>
+		<if test="describe != null and describe != '' ">
+			FDESCRIBE = #{describe,jdbcType=VARCHAR}
+		</if>
+		WHERE FMARKETPLANID = #{marketPlanId,jdbcType=NUMERIC}
+    </update>
+    <!-- 删除 营销计划 -->
+    <delete id="deleteMarketPlan">
+		DELETE T_COU_MARKETPLAN WHERE FID = #{marketPlanId,jdbcType=NUMERIC}
+	</delete>
+	<!-- 删除 手动发券规则 -->
+	  <delete id="deleteCouponHand">
+		DELETE T_COU_RULECOUPONHAND WHERE FMARKETPLANID = #{marketPlanId,jdbcType=NUMERIC}
+	</delete>
+	<!-- 删除 自动发券规则 -->
+	  <delete id="deleteCouponAuto">
+		DELETE T_COU_RULECOUPONAUTO WHERE FMARKETPLANID = #{marketPlanId,jdbcType=NUMERIC}
+	</delete>
+	<!-- 删除 使用条件 -->
+	  <delete id="deleteConditionType" parameterType="Map">
+	  	DELETE T_COU_CONDITIONTYPE WHERE
+		  <choose>
+		  	<when test = "states != null and states != '' and states == '10'">
+		  		FCOUPONAUTOID　=　#{id,jdbcType=NUMERIC}
+		  	</when>
+		  	<when test = "states != null and states != '' and states == '20'">
+		  		FCOUPONRULEID　=　#{id,jdbcType=NUMERIC}
+		  	</when>
+		  	<otherwise>
+		  		FCOUPONAUTOID IS NULL and FCOUPONRULEID IS NULL
+		  	</otherwise>
+		  </choose>
+	</delete>
+	<!-- 删除 返券金额 -->
+	  <delete id="deleteCouponCost" parameterType="Map">
+		DELETE T_COU_AUTOCOUPONCOST　WHERE FCOUPONAUTOID = #{id,jdbcType=NUMERIC}
+	</delete>
+	<!-- 删除 走货线路 -->
+	  <delete id="deleteGoodLine" parameterType="Map">
+	  DELETE T_COU_GOODSLINE WHERE
+	  <choose>
+	  <when test = "states != null and states != '' and states == '10'">
+	  		FCOUPONAUTOID　=　#{id,jdbcType=NUMERIC}
+	  </when>
+	  <when test = "states != null and states != '' and states == '20'">
+	  		FCOUPONRULEID　=　#{id,jdbcType=NUMERIC}
+	  </when>
+	  <otherwise>
+	  		FCOUPONAUTOID IS NULL and FCOUPONRULEID IS NULL
+	  </otherwise>
+	  </choose>
+	</delete>
+	<!-- 删除 发券规则 -->
+	  <delete id="deleteCouponRule" parameterType="Map">
+		DELETE T_COU_COUPONRULE　WHERE FMARKETPLANID　＝　#{marketPlanId,jdbcType=NUMERIC}
+	</delete>
+</mapper>

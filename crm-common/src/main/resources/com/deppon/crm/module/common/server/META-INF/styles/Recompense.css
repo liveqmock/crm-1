@@ -1,0 +1,159 @@
+#operationButtons div{
+	float:left;
+}
+
+.clear{
+	clear:both;
+}
+#infoButtons div{
+	float:left;
+}
+/* 
+#main div{
+	float:left;
+} */
+
+#fastRecompense div{
+	float:left;
+}
+
+#normalRecompense div{
+	float:left;
+}
+.recompenseManWindow{
+	margin-left:0px;
+}
+.inputDivAlignLeft{
+	float:left;
+	margin-left: 20px;
+	margin-top: 20px;
+}
+.inputDivAlignLeftNoMargin{
+	float:left;
+}
+
+.inputSpan{
+	width: 100px;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: 0.1em 1em;
+    position: relative;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    background: url("images/ui-bg_glass_85_dae6f4_1x400.png") repeat-x scroll 50% 50% #DAE6F4;
+    border: 1px solid #A3B9D1;
+    color: #262626;
+    font-weight: normal;
+}
+
+.wijmo-wijgrid .wijmo-wijgrid-headerrow .wijmo-wijgrid-headertext {
+    display: block;
+    padding: 0.1em 0.1em;
+    position: relative;
+}
+
+.ui-dialog .ui-dialog-content {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    overflow: auto;
+    padding: 0 0 0 0;
+    position: relative;
+}
+
+.dpui-recompenseSimpleInfo {
+	float:left;
+	border:1px #999 solid; 
+	margin:2px auto;
+	width:460px;
+}
+.dpui-operationButtons {
+    border: 1px solid #999999;
+    float: none;
+    height: 30px;
+    margin: 0 0 5px;
+    padding: 2px 0;
+    text-align: center;
+}
+.dpui-recomExtraInfo{
+	float:right;
+	border:1px #999 solid; 
+	width:505px;
+	margin:2px auto;
+	padding: 1px;
+} 
+
+.dpui-label {
+    border-left-width: 1px;
+    height: 19px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 90px;
+    float: left;
+}
+
+.dpui-text-input {
+    width: 120px;
+}
+
+.dpui-text-input-readOnly {
+	display:none;
+    width: 120px;
+}
+
+.dpui-label-text-div {
+	float:left;
+    border-width: 1px;
+    padding: 2px;
+}
+
+.dpui-label {
+    border-left-width: 1px;
+    height: 19px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 80px;
+    float: left;
+}
+
+.dpui-text-select {
+    width: 125px;
+}
+
+.dpui-radio-label-div{
+	float: left;
+}
+
+.dpui-radio-fieldset {
+	float: left;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 442px;
+}
+
+.dpui-radio-fieldset-reComMethodDiv {
+	float: left;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+	width: 244px;
+}
+
+.dpui-radio-fieldset-claimPartyMessage {
+    float: left;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 180px;
+}
+
+.dpui-radio-fieldset-reComTable {
+    border-width: 1px;
+    float: left;
+    margin-left: 1px;
+    margin-right: 1px;
+    padding: 3px;
+    width: 490px;
+}

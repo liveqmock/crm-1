@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- DAO层 -->
+	<!-- 部门数据访问 -->
+	<bean id="departmentDao" class="com.deppon.crm.module.organization.server.dao.impl.DepartmentDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 职员数据访问 -->
+	<bean id="employeeDao" class="com.deppon.crm.module.organization.server.dao.impl.EmployeeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- SERVICE层 -->
+	<!-- 部门管理服务 -->
+	<bean id="departmentService" class="com.deppon.crm.module.organization.server.service.impl.DepartmentService">
+		<property name="departmentDao" ref="departmentDao"></property>
+	</bean>
+	
+	<!-- 职员管理服务 -->
+	<bean id="employeeService" class="com.deppon.crm.module.organization.server.service.impl.EmployeeService">
+		<property name="employeeDao" ref="employeeDao"></property>
+	</bean>
+	
+	<!-- ACTION层 -->
+	<!-- 部门管理WEB接入层 -->
+	<bean id="departmentAction" class="com.deppon.crm.module.organization.server.action.DepartmentAction" scope="prototype">
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+	
+	<!-- 功能管理WEB接入层 -->
+	<bean id="employeeAction" class="com.deppon.crm.module.organization.server.action.EmployeeAction" scope="prototype">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="employeeService" ref="employeeService"></property>
+	</bean>
+	
+	<!-- 职员部门查询功能Manager层 -->
+	<bean id="searchDeptAndEmployeeManager" scope="singleton"
+		class="com.deppon.crm.module.organization.server.manager.impl.SearchDeptAndEmployeeManagerImpl">
+		<property name="searchDeptAndEmployeeService" ref="searchDeptAndEmployeeService" />
+	</bean>
+	
+	<!-- 职员部门查询功能service层 -->
+	<bean id="searchDeptAndEmployeeService" scope="singleton"
+		class="com.deppon.crm.module.organization.server.service.impl.SearchDeptAndEmployeeServiceImpl">
+		<property name="searchDeptAndEmployeeDao" ref="searchDeptAndEmployeeDao" />
+	</bean>
+	
+	<!-- 职员部门查询功能DAO层 -->
+	<bean id="searchDeptAndEmployeeDao" scope="singleton"
+		class="com.deppon.crm.module.organization.server.dao.impl.SearchDeptAndEmployeeDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 职员部门查询功能WEB接入层 -->
+	<bean id="searchDeptAndEmployeeAction" scope="prototype"
+		class="com.deppon.crm.module.organization.server.action.SearchDeptAndEmployeeAction">
+		<property name="searchDeptAndEmployeeManager" ref="searchDeptAndEmployeeManager" />
+		<property name="messageBundle" ref="messageBundle"></property>
+	</bean>
+
+	
+</beans>

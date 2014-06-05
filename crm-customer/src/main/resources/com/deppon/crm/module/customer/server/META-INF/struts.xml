@@ -1,0 +1,1051 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="customer" namespace="/customer" extends="crm-default">
+		<interceptors>
+			<interceptor name="customerLog"
+				class="com.deppon.crm.module.customer.server.interceptor.CustomerLogInterceptor" />
+			<interceptor-stack name="customerStack">
+				<interceptor-ref name="frameworkStack" />
+				<interceptor-ref name="customerLog"/>
+			</interceptor-stack>
+		</interceptors>
+	
+		<default-interceptor-ref name="customerStack"/>
+		        
+		<!--界面跳转获得客户详情工单模块 -->
+		<action name="viewMemberDetail" >
+			<result name="success">MemberDetail.html</result>
+		</action>
+
+		
+		<!-- 批量导入潜在客户信息 -->
+		<action name="batchImportPotentialCust" class="potentialCustomerAction" method="excelInput">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--界面跳转获得散客管理主界面 -->
+		<action name="scattercustIndex" class="scatterCustomerAction">
+			<result name="success">ScattercustCustManager.html</result>
+			<result name="error">ScattercustCustManager.html</result>
+		</action>
+		<!-- 组合条件查询潜客 -->
+		<action name="searchScatterCustList" class="scatterCustomerAction"
+			method="searchScatterCustList">
+			<result name="success" type="json" >
+				<param name="includeProperties">scatterCustlist,totalCount</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!-- 修改散客信息 -->
+		<action name="updateScatterCust" class="scatterCustomerAction" method="updateScatterCustomer">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 新增散客信息 -->
+		<action name="saveScatterCust" class="scatterCustomerAction" method="saveScatterCustomer">
+			<result name="success" type="json">
+				<param name="includeProperties">workFlowId</param>
+			</result>
+		</action>
+		<!-- 转为临代散客-->
+		<action name="changeToTempCust" class="scatterCustomerAction" method="changeToTempCust">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 校验散客固话加姓名 -->
+		<action name="validateSCMobileOrTelIsExist" class="scatterCustomerAction" method="validateSCMobileOrTelIsExist">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 实时验证散客税务登记号 是否合法-->
+		<action name="validateTaxOrIdCardIsLegal" class="scatterCustomerAction" method="validateTaxOrIdCardIsLegal">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 通过散客id查询散客信息 -->
+		<action name="searchScatterCustById" class="scatterCustomerAction" method="searchScatterCustById">
+			<result name="success" type="json">
+				<param name="includeProperties">scatterCust</param>
+			</result>
+		</action>
+		<!-- 通过散客id手动删除（作废）散客 -->
+		<action name="deleteScatterCustById" class="scatterCustomerAction" method="deleteScatterCustById">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询散客交易信息 -->
+		<action name="searchTransaction" class="scatterCustomerAction" method="searchTransaction">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 散客升级列表界面 -->
+		<action name="scatterUpgradeManageIndex" class="scatterUpgradeManageAction">
+			<result name="success">ScatterUpgradeManager.html</result>
+		</action>
+		<!-- 散客升级列表查询 -->
+		<action name="searchScatterUpgradeList" class="scatterUpgradeManageAction"
+			method="searchScatterUpgradeList">
+			<result name="success" type="json">
+				<param name="includeProperties">upGradeCustlist,totalCount</param>
+			</result>
+		</action>
+		<!-- 升级散客增加备注 -->
+		<action name="addRemark2UpgradeScatter" class="scatterUpgradeManageAction"
+			method="addRemark2UpgradeScatter">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 删除升级散客 -->
+		<action name="deleteScatterUpgrade" class="scatterUpgradeManageAction"
+			method="deleteScatterUpgrade">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 通过id查询升级散客信息 -->
+		<action name="searchScatterUpgradeById" class="scatterUpgradeManageAction"
+			method="searchScatterUpgradeById">
+			<result name="success" type="json">
+				<param name="includeProperties">upGradeCust</param>
+			</result>
+		</action>
+		<!-- 会员升级列表界面 -->
+		<action name="memberUpgradeManageIndex" class="memberUpgradeManageAction">
+			<result name="success">MemberUpgradeManager.html</result>
+		</action>
+		<!-- 会员升级列表界面  查询-->
+		<action name="searchUpMemberList" class="memberUpgradeManageAction" method="searchUpMemberList">
+			<result name="success" type="json">
+				<param name="includeProperties">memberUpgradeList,totalCount</param>
+			</result>
+		</action>
+		<!-- 保存会员信息 -->
+		<action name="saveMember" class="scatterUpgradeManageAction" method="saveMember">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 修改会员信息 -->
+		<action name="alterMember" class="scatterUpgradeManageAction" method="alterMember">
+			<result name="success" type="json"></result>
+		</action>
+		<!--新增潜客保存信息-->
+		<action name="savePotentialMember" class="memberManageAction" method="createPotentialMember">
+			<result name="success" type="json"></result>
+		</action>
+		<!--散客升级-->
+		<action name="upgradeScatter" class="memberManageAction" method="upgradeScatter">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 保存特殊会员信息 -->
+		<action name="saveSpecialMember" class="scatterUpgradeManageAction" method="saveSpecialMember">
+			<result name="success" type="json">
+				<param name="includeProperties">workFlowNum</param>
+			</result>
+		</action>
+		<!-- 根据散客升级列表获取会员信息 -->
+		<action name="searchMemberFromScatter" class="scatterUpgradeManageAction" method="findMemberFromScatter">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 实时验证税务登记号唯一性 -->
+		<action name="validateTaxIsExsist" class="scatterUpgradeManageAction" method="validateTaxIsExsist">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 实时验证商业登记号唯一性 -->
+		<action name="validateHKTaxIsExist" class="scatterUpgradeManageAction" method="validateHKTaxIsExist">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 实时验证该营业网点为大陆还是香港 -->
+		<action name="chenckIsCnOrHK" class="scatterUpgradeManageAction" method="chenckIsCnOrHK">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 实时验证手机号码唯一性 -->
+		<action name="validateMobileIsExsist" class="scatterUpgradeManageAction" method="validateMobileIsExsist">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 实时验证证件号码是否合法 -->
+		<action name="validateIdNumberIsLegal" class="scatterUpgradeManageAction" method="validateIdNumberIsLegal">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 实时验证联系人编码是否重复 -->
+		<action name="validateLinkManNumberCanUse" class="scatterUpgradeManageAction" method="validateLinkManNumberCanUse">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 获得开户省 -->
+		<action name="searchBankProvince" class="scatterUpgradeManageAction" method="searchBankProvince">
+			<result name="success" type="json">
+				<param name="includeProperties">list</param>
+			</result>
+		</action>
+		<!-- 获得开户市 -->
+		<action name="searchBankCityByProvinceId" class="scatterUpgradeManageAction" method="searchBankCityByProvinceId">
+			<result name="success" type="json">
+				<param name="includeProperties">list</param>
+			</result>
+		</action>
+		<!-- 获得开户行名称 -->
+		<action name="searchBankName" class="scatterUpgradeManageAction" method="searchBankName">
+			<result name="success" type="json">
+				<param name="includeProperties">list</param>
+			</result>
+		</action>
+		<!-- 实时验证身份证号唯一性 -->
+		<action name="validateIdNumberIsExsist" class="scatterUpgradeManageAction" method="validateIdNumberIsExsist">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 实时验证固话加联系人姓名唯一性 -->
+		<action name="validateTelAndNameIsExsist" class="scatterUpgradeManageAction" method="validateTelAndNameIsExsist">
+			<result name="success" type="json">
+				<param name="includeProperties">exist</param>
+			</result>
+		</action>
+		<!-- 会员降级列表界面 -->
+		<action name="memberDownGradeManageIndex" class="memberDownGradeManageAction">
+			<result name="success">MemberDownGradeManager.html</result>
+		</action>
+		<!-- 会员降级列表界面  查询-->
+		<action name="searchDownMemberList" class="memberDownGradeManageAction" method="searchDownMemberList">
+			<result name="success" type="json">
+				<param name="includeProperties">memberDemotionList,totalCount</param>
+			</result>
+		</action>
+		<!-- 合同管理界面 -->
+		<action name="contractManageIndex">
+			<result name="success">ContractManager.html</result>
+		</action>
+		
+		<!-- 合同管理初始化查询 -->
+		<action name="searchInitContractList" class="contractManageAction" method="searchInitContractList">
+			<result name="success" type="json">
+				<param name="includeProperties">contractList,totalCount</param>
+			</result>
+		</action>
+	
+		<!-- 合同管理查询 -->
+		<action name="searchContractList" class="contractManageAction" method="searchContractList">
+			<result name="success" type="json">
+				<param name="includeProperties">contractList,totalCount</param>
+			</result>
+		</action>
+		<!--合同所属子公司的查询  -->
+		<action name="searchContractSubjectList" class="contractManageAction" method="searchContractSubjectList">
+			<result name="success" type="json">
+				<param name="includeProperties">contractSubjectList</param>
+			</result>
+		</action>
+		
+		<!-- 合同管理查询合同详情 -->
+		<action name="viewContractDetail" class="contractManageAction" method="viewContractDetail">
+			<result name="success" type="json">
+				<param name="includeProperties">contractView</param> 
+			</result>
+		</action>
+		<!-- 获得合同信息用于新签 -->
+		<action name="acquireNewContract" class="contractManageAction" method="acquireNewContract">
+			<result name="success" type="json">
+				<param name="includeProperties">contractView</param> 
+			</result>
+		</action>
+		<!-- 判断是否超过近三个月的发货金额最高月的二倍 -->
+		<action name="isNotOverMax3Amount" class="contractManageAction" method="isNotOverMax3Amount">
+			<result name="success" type="json">
+				<param name="includeProperties">checked</param> 
+			</result>
+		</action>
+		<!-- 合同管理 点击修改查询合同详情 -->
+		<action name="viewUpdateContractDetail" class="contractManageAction" method="viewUpdateContractDetail">
+			<result name="success" type="json">
+				<param name="includeProperties">contractView,member</param> 
+			</result>
+		</action>
+		<!-- 合同管理 点击修改查询月发月送合同详情 -->
+		<action name="viewUpdateMonthSendDetail" class="contractManageAction" method="viewUpdateMonthSendDetail">
+			<result name="success" type="json">
+				<param name="includeProperties">contractView,member</param> 
+			</result>
+		</action>
+		<!--检测用户选择的新建合同日期是否正确 -->
+		<action name="isAllowCreatContractDate" class="contractManageAction" method="acquireCreateDate">
+			<result name="success" type="json">
+				<param name="includeProperties">checked,contractBeginDate,contractEndDate</param> 
+			</result>
+		</action>
+		
+
+		<!-- 合同管理合同作废 -->
+		<action name="invalidContract" class="contractManageAction" method="invalidContract">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">contractList,totalCount</param> -->
+			</result>
+		</action>
+		<!-- 合同管理绑定合同 -->
+		<action name="boundContract" class="contractManageAction" method="boundContract">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">contractList,totalCount</param> -->
+			</result>
+		</action>
+		<!-- 合同管理解除合同 -->
+		<action name="relieveContract" class="contractManageAction" method="relieveContract">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">contractList,totalCount</param> -->
+			</result>
+		</action>
+		<!-- 合同管理归属部门变更 -->
+		<action name="belongDeptChange" class="contractManageAction" method="belongDeptChange">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">contractList,totalCount</param> -->
+			</result>
+		</action>
+		<!-- 合同管理合同导出 -->
+		<action name="expordContract" class="contractManageAction" method="expordContract">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">contractList,totalCount</param> -->
+			</result>
+		</action>
+		<!-- 保存合同 -->
+		<action name="saveContract" class="contractManageAction" method="saveContract">
+			<result name="success" type="json">
+				<param name="includeProperties">workFlowNum,updFlag</param>
+			</result>
+		</action>
+		<!-- 改签合同 -->
+		<action name="updateContract" class="contractManageAction" method="updateContract">
+			<result name="success" type="json">
+				<param name="includeProperties">workFlowNum,updFlag</param>
+			</result>
+		</action>
+		<!-- 修改合同 -->
+		<action name="alterContractInfo" class="contractManageAction" method="alterContractInfo">
+			<result name="success" type="json">
+				<param name="includeProperties">workFlowNum,updFlag</param>
+			</result>
+		</action>
+		<!-- 催款部门设置(大客户支持小组) -->
+		<action name="modifyDuningDept" class="contractManageAction" method="modifyDuningDept">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 价格版本时间设置(客户关系小组)  -->
+		<action name="modifyPriceVersionDate" class="contractManageAction" method="modifyPriceVersionDate">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 修改合同月结天数(特殊) -->
+		<action name="updateSpecialContractMonthEnd" class="contractManageAction" method="updateSpecialContractMonthEnd">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 修改特殊客户月发月送合同折扣信息 -->
+		<action name="modifyMonthSendRate" class="contractManageAction" method="modifyMonthSendRate">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 修改合同月结天数(通用) -->
+		<action name="updateCommonContractMonthEnd" class="contractManageAction" method="updateCommonContractMonthEnd">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 查询出通用合同月结天数 -->
+		<action name="searchAllCommonContractDeptDays" class="contractManageAction" method="searchAllCommonContractDeptDays">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 初始化合同月结天数（通用） -->
+		<action name="initMonthEndDay" class="contractManageAction" method="initMonthEndDay">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 校验合同是否在审批中 -->
+		<action name="contractIsAuditing" class="contractManageAction" method="contractIsAuditing">
+			<result name="success" type="json">
+				<param name="includeProperties">checked</param>
+			</result>
+		</action>
+		<!-- 校验合同月结天数按钮是否在可操作时间范围内 -->
+		<action name="monthEndBtnIsAble" class="contractManageAction" method="monthEndBtnIsAble">
+			<result name="success" type="json">
+				<param name="includeProperties">checked</param>
+			</result>
+		</action>
+		<!-- 会员管理界面 -->
+		<action name="memberIndex">
+			<result name="success">MemberManager.html</result>
+		</action>
+		<!-- 会员管理界面 -->
+		<action name="searchMemberList" class="memberManageAction" method="searchMemberList">
+			<result name="success" type="json">
+				<param name="includeProperties">memberResultList,totalCount</param>
+			</result>
+		</action>
+		<action name="searchMember4OrderList" class="memberManageAction" method="searchMember4OrderList">
+			<result name="success" type="json">
+				<param name="includeProperties">memberResultList,totalCount</param>
+			</result>
+		</action>
+		<!-- 会员详情修改记录查询 -->
+		<action name="searchApproveDataByLogId" class="memberManageAction" method="searchApproveDataByLogId">
+			<result name="success" type="json">
+				<param name="includeProperties">approveDataList</param>
+			</result>
+		</action>
+		<!-- 通过会员id获得会员信息 会员查看详情 -->
+		<action name="acquireMemberById" class="memberManageAction" method="acquireMemberById">
+			<result name="success" type="json">
+				<param name="includeProperties">member</param>
+			</result>
+		</action>
+		<!-- 通过会员id获得作废会员信息 会员修改 -->
+		<action name="acquireInvalidMemberById" class="memberManageAction" method="acquireInvalidMemberById">
+			<result name="success" type="json">
+				<param name="includeProperties">member</param>
+			</result>
+		</action>
+		<!-- 通过会员id获得会员信息 会员修改 -->
+		<action name="acquireMember4UpdateById" class="memberManageAction" method="acquireMember4UpdateById">
+			<result name="success" type="json">
+				<param name="includeProperties">member</param>
+			</result>
+		</action>
+		<!-- 会员归属部门变更 -->
+		<action name="changeMemberDept" class="memberManageAction" method="changeMemberDept">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 会员删除（作废） -->
+		<action name="deleteMember" class="memberManageAction" method="deleteMember">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 信用较差客户配置信息获取 -->
+		<action name="searchCustCredit" class="custCreditManageAction" method="searchCustCredit">
+			<result name="success" type="json"></result>
+			<param name="includeProperties">custCreditInfo</param>
+		</action>
+		
+		<!-- 更新信用较差客户配置信息 -->
+		<action name="updateCustCredit" class="custCreditManageAction" method="updateCustCredit">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 实时创建会员界面 -->
+		<action name="createRealTimeMemberIndex">
+			<result name="success">CreateRealTimeMember.html</result>
+		</action>
+		<!-- 实时创建会员检查是否是会员 -->
+		<action name="checkIsExistMember" class="realTimeMemberCreateAction"
+			method="checkIsExistMember">
+			<result name="success" type="json">
+			<param name="includeProperties">ischecked</param>
+			</result>
+		</action>
+		<!-- 实时创建会员 检验返回 会员信息结果-->
+		<action name="acquireImplementMemberView" class="realTimeMemberCreateAction"
+			method="acquireImplementMemberView">
+			<result name="success" type="json">
+			<param name="includeProperties">implementMemberView</param>
+			</result>
+		</action>
+		<!-- 特殊会员界面 -->
+		<action name="createSpecialMemberIndex">
+			<result name="success">CreateSpecialMember.html</result>
+		</action>
+		<!-- 我的工作流界面 -->
+		<action name="workFlowManagerIndex">
+			<result name="success">WorkFlowManager.html</result>
+		</action>
+		<!-- 我的工作流查询 修改会员信息 -->
+		<action name="viewModifyMemberExaminView" class="workFlowManagerAction" method="viewModifyMemberExaminView">
+			<result name="success" type="json">
+				<param name="includeProperties">memberExaminView</param>
+			</result>
+		</action>
+		<!-- 我的工作流查询 特殊会员信息 -->
+		<action name="viewSepMemberExaminView" class="workFlowManagerAction" method="viewSepMemberExaminView">
+			<result name="success" type="json">
+				<param name="includeProperties">memberExaminView</param>
+			</result>
+		</action>
+		<!-- 我的工作流查询 -->
+		<action name="searchWorkFLow" class="workFlowManagerAction" method="searchWorkFLow">
+			<result name="success" type="json">
+				<param name="includeProperties">workFlowList,totalCount</param>
+			</result>
+		</action>
+		<!-- 查看我的工作流 变更联系人 -->
+		<action name="viewContactVary" class="workFlowManagerAction" method="viewContactVary">
+			<result name="success" type="json">
+				<param name="includeProperties">contactVaryExaminView</param>
+			</result>
+		</action>
+		<!-- 查看我的工作流  会员归属部门变更 -->
+		<action name="viewChangeMemberDept" class="workFlowManagerAction" method="viewChangeMemberDept">
+			<result name="success" type="json">
+				<param name="includeProperties">changeMemberDeptView</param>
+			</result>
+		</action>
+		<!-- 查看我的工作流  合同新增 -->
+		<action name="viewContractAddExamin" class="workFlowManagerAction" method="viewContractAddExamin">
+			<result name="success" type="json">
+				<param name="includeProperties">contractExaminView</param>
+			</result>
+		</action>
+		<!-- 处理工作流信息  从后台调数据到前端 -->
+		<action name="viewScatterAccountExamin" class="workFlowManagerAction" method="viewLoadScatterAccount">
+			<result name="success" type="json">
+				<param name="includeProperties">scatterCustomerView</param>
+			</result>
+		</action>
+		<!-- F7 弹出框查询会员信息 -->
+		<action name="searchMemberInfoList" class="searchMemberAction"
+			method="searchMemberInfoList">
+			<result name="success" type="json">
+				<param name="includeProperties">memberResultList</param>
+			</result>
+		</action>
+		<!-- F7 弹出框查询会员信息提供给360 -->
+		<action name="searchMemberInfoListFor360" class="searchMemberAction"
+			method="searchMemberInfoListFor360">
+			<result name="success" type="json">
+				<param name="includeProperties">memberResultList</param>
+			</result>
+		</action>
+		<!-- F7 弹出框查询本部门会员信息供给合同 -->
+		<action name="searchMemberInfoListWithAuth" class="searchMemberAction"
+			method="searchMemberInfoListWithAuth">
+			<result name="success" type="json">
+				<param name="includeProperties">memberResultList</param>
+			</result>
+		</action>
+		<!-- 联系人地址查询-->
+		<action name="searchAddressInfoList" class="searchMemberAction"
+			method="searchAddressInfoList">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 我要处理的工作流界面 -->
+		<action name="myWorkFlowDealManagerIndex">
+			<result name="success">MyWorkFlowDealManager.html</result>
+		</action>
+		<!-- 我要处理的工作流查询 -->
+		<action name="searchWorkflowList" class="myWorkFlowDealManagerAction" method="searchWorkflowList">
+			<result name="success" type="json">
+				<param name="includeProperties">workflowSearchResult,totalCount</param>
+			</result>
+		</action>
+		<!-- 查看工作流信息 特殊会员 进行审批 -->
+		<action name="acquireSepMemberExaminView" class="myWorkFlowDealManagerAction" method="acquireSepMemberExaminView">
+			<result name="success" type="json">
+				<param name="includeProperties">memberExaminView</param>
+			</result>
+		</action>
+		<!-- 查看工作流信息 会员信息维护 进行审批 -->
+		<action name="acquireModifyMemberExaminView" class="myWorkFlowDealManagerAction" method="acquireModifyMemberExaminView">
+			<result name="success" type="json">
+				<param name="includeProperties">memberExaminView</param>
+			</result>
+		</action>
+		
+		<!-- 查看工作流信息 会员信息维护 进行审批 -->
+		<action name="acquireContactVary" class="myWorkFlowDealManagerAction" method="acquireContactVary">
+			<result name="success" type="json">
+				<param name="includeProperties">contactVaryExaminView</param>
+			</result>
+		</action>
+		<!-- 查看工作流信息 会员部门变更  进行审批 -->
+		<action name="acquireChangeMemberDept" class="myWorkFlowDealManagerAction" method="acquireChangeMemberDept">
+			<result name="success" type="json">
+				<param name="includeProperties">changeMemberDeptView</param>
+			</result>
+		</action>
+		<!-- 查看工作流信息 合同新增   进行审批 -->
+		<action name="acquireContractAdd" class="myWorkFlowDealManagerAction" method="acquireContractAdd">
+			<result name="success" type="json">
+				<param name="includeProperties">contractExaminView</param>
+			</result>
+		</action>
+		<!-- 处理工作流信息  从后台调数据到前端 -->
+		<action name="viewLoadScatterAccount" class="myWorkFlowDealManagerAction" method="viewLoadScatterAccount">
+			<result name="success" type="json">
+				<param name="includeProperties">scatterCustomerView</param>
+			</result>
+		</action>
+		
+		<!-- 工作流进行审批 创建特殊会员 -->
+		<action name="commitSepCreateMemberExamin" class="myWorkFlowDealManagerAction" method="commitSepCreateMemberExamin">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 工作流进行审批 修改会员信息 -->
+		<action name="commitModifyMemberExamin" class="myWorkFlowDealManagerAction" method="commitModifyMemberExamin">
+			<result name="success" type="json"></result>
+		</action>
+		<action name="commitMemberContactRalationExamin" class="myWorkFlowDealManagerAction" method="commitMemberContactRalationExamin">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 工作流进行审批 会员部门变更 -->
+		<action name="commitChangeMemberDeptExamin" class="myWorkFlowDealManagerAction" method="commitChangeMemberDeptExamin">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 工作流进行审批 合同新增 -->
+		<action name="commitContractAddExamin" class="myWorkFlowDealManagerAction" method="commitContractAddExamin">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 工作流进行审批 合同新增 -->
+		<action name="commitSCAccountAlterExamin" class="myWorkFlowDealManagerAction" method="commitSCAccountAlterExamin">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 我已处理的工作流界面 -->
+		<action name="myWorkFlowApprovedManagerIndex">
+			<result name="success">MyWorkFlowApprovedManager.html</result>
+		</action>
+		
+		
+		
+		
+		
+		
+		<!-- 积分模块 -->
+		
+		<!-- 积分查询 -->
+		<action name="recordSearchIndex">
+			<result name="success">IntegralRecordSearch.html</result>
+		</action>
+		<!-- 奖励规则管理界面 -->
+		<action name="rewardRuleManagerIndex" >
+			<result name="success">RewardRuleManager.html</result>
+		</action>
+		<!-- 奖励规则管理 查询 -->
+		<action name="searchRewardIntegRuleList" class="rewardRuleManagerAction" method="searchRewardIntegRuleList">
+			<result name="success" type="json">
+				<param name="includeProperties">rewardIntegRuleList,totalCount</param>
+			</result>
+		</action>
+		<!-- 奖励规则管理 新增 -->
+		<action name="saveRewardIntegRule" class="rewardRuleManagerAction" method="createRewardIntegRule">
+			<result name="success" type="json">
+				<param name="includeProperties">rewardIntegRule</param>
+			</result>
+		</action>
+		<!-- 奖励规则管理 修改 -->
+		<action name="updateRewardIntegRule" class="rewardRuleManagerAction" method="updateRewardIntegRule">
+			<result name="success" type="json">
+				<param name="includeProperties">rewardIntegRule</param>
+			</result>
+		</action>
+		<!-- 积分兑换界面 -->
+		<action name="recordExchange">
+			<result name="success">RecordExchangeManagement.html</result>
+		</action>
+		<!-- 积分规则管理界面 -->
+		<action name="recordRuleManagement">
+			<result name="success">RecordRuleManagement.html</result>
+		</action>
+		<!-- 查询积分 -->
+		<action name="searchRecordList" class="integralRecordAction" method="searchRecordList">
+			<result name="success" type="json">
+				<param name="includeProperties">ingegralList,totalCount</param>
+			</result>
+		</action>
+		<!-- 查询联系人积分 -->
+		<action name="searchContactRecordList" class="integralRecordAction" method="searchContactRecordList">
+			<result name="success" type="json">
+			<param name="includeProperties">contactRecordList,totalCount</param>
+			</result>
+			</action>
+		<!-- 查询礼品申请 -->
+		<action name="searchPresentApplyList" class="integralRecordAction" method="searchPresentApplyList">
+			<result name="success" type="json">
+				<param name="includeProperties">presentApplyList,totalCount</param>
+			</result>
+			</action>
+		<!-- 查询奖励积分 -->
+		<action name="searchAwardRecordList" class="integralRecordAction" method="searchAwardRecordList">
+			<result name="success" type="json">
+			<param name="includeProperties">awardRecordList,totalCount</param>
+			</result>
+			</action>
+		<!-- 查询调整积分 -->
+		<action name="searchAdjustRecordList" class="integralRecordAction" method="searchAdjustRecordList">
+			<result name="success" type="json">
+			<param name="includeProperties">adjustRecordList,totalCount</param>
+			</result>
+		</action>
+		<!-- 查询积分运单 -->
+		<action name="searchWaybillRecordList" class="integralRecordAction" method="searchWaybillRecordList">
+			<result name="success" type="json">
+				<param name="includeProperties">waybillRecordList,totalCount</param>
+			</result>
+		</action>
+		
+				<!-- 查询联系人积分信息 并且带出所属客户积分信息-->
+		<action name="searchContactRecordInfo" class="integralRecordAction" method="searchContactRecordInfo">
+			<result name="success" type="json">
+			<param name="includeProperties">ingegralList,contactRecordList</param>
+			</result>
+		</action>
+		
+		
+		<!-- 查询产品规则 -->
+		<action name="searchProductRuleList" class="integralRuleAction" method="searchProductRuleList">
+			<result name="success" type="json">
+			<param name="includeProperties">productRuleList,totalCount</param>
+			</result>
+		</action>
+		<!-- 查询渠道规则 -->
+		<action name="searchChannelRuleList" class="integralRuleAction" method="searchChannelRuleList">
+			<result name="success" type="json">
+			<param name="includeProperties">channelRuleList,totalCount</param>
+			</result>
+		</action>
+		<!-- 根据id删除积分规则 -->
+		<action name="deleteRecordRuleById" class="integralRuleAction" method="deleteRecordRuleById">
+			<result name="success" type="json">
+			<param name="includeProperties">wayRuleList,totalCount</param>
+			</result>
+		</action>
+		<!-- 根据编码查询积分规则 -->
+		<action name="getRecordRuleByNumber" class="integralRuleAction" method="searchRecordRuleByNumber">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 创建积分规则 -->
+		<action name="createRecordRule" class="integralRuleAction" method="createRecordRule">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 修改积分规则 -->
+		<action name="modifyRecordRule" class="integralRuleAction" method="modifyRecordRule">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 查询客户礼品-->
+		<action name="searchCustGiftLists" class="giftManageAction" method="searchCustGifts">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 发放礼品-->
+		<action name="confirmSendGift" class="giftManageAction" method="confirmSendGift">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 恢复库存-->
+		<action name="revertStoreGift" class="giftManageAction" method="revertStoreGift">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 恢复库存-->
+		<action name="searchGiftChooseList" class="giftManageAction" method="searchGiftChooseList">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 暂存礼品清单-->
+		<action name="temporarySaveGiftBill" class="giftManageAction" method="temporarySaveGiftBill">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 校验礼品清单是否可以生成-->
+		<action name="checkGiftBillAviable" class="giftManageAction" method="checkGiftBillAviable">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 生成礼品清单-->
+		<action name="saveGiftBill" class="giftManageAction" method="saveGiftBill">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 查询暂存礼品清单-->
+		<action name="searchTemporaryGiftBill" class="giftManageAction" method="searchTemporaryGiftBill">
+			<result name="success" type="json">
+			</result>
+		</action>
+		
+		
+		
+		
+		<!-- 查询路线规则 -->
+		<action name="searchWayRuleList" class="integralRuleAction" method="searchWayRuleList">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 手动奖励积分 界面 -->
+		<action name="manualRewardIntegralManagerIndex" >
+			<result name="success">ManualRewardIntegralManager.html</result>
+		</action>
+		<!-- 手动奖励积分 查询 -->
+		<action name="searchHandRewardIntegralList" class="manualRewardIntegralManagerAction" method="searchHandRewardIntegralList">
+			<result name="success" type="json">
+				<param name="includeProperties">handRewardIntegralList,totalCount</param>
+			</result>
+		</action>
+		<!-- 手动奖励积分 奖励对象查询  查询 -->
+		<action name="searchRewardContact" class="manualRewardIntegralManagerAction" method="searchRewardContact">
+			<result name="success" type="json">
+				<param name="includeProperties">contactList</param>
+			</result>
+		</action>
+		<!-- 手动奖励积分 添加奖励 -->
+		<action name="createHandRewardIntegrals" class="manualRewardIntegralManagerAction" method="createHandRewardIntegrals">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">contactList</param> -->
+			</result>
+		</action>
+		<!-- 积分兑换规则管理 界面 -->
+		<action name="recordExchangeRuleManagerIndex" >
+			<result name="success">RecordExchangeRuleManager.html</result>
+		</action>
+		<!-- 积分兑换规则管理 查询 -->
+		<action name="searchGiftList" class="recordExchangeRuleManagerAction" method="searchGiftList">
+			<result name="success" type="json">
+				<param name="includeProperties">giftList,totalCount</param>
+			</result>
+		</action>
+		<!-- 积分兑换规则管理 新增规则 -->
+		<action name="saveRecordExchangeRule" class="recordExchangeRuleManagerAction" method="saveRecordExchangeRule">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 积分兑换规则管理 修改规则-->
+		<action name="updateRecordExchangeRule" class="recordExchangeRuleManagerAction" method="updateRecordExchangeRule">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 积分兑换规则管理 删除规则-->
+		<action name="deleteRecordExchangeRule" class="recordExchangeRuleManagerAction" method="deleteRecordExchangeRule">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 积分兑换规则管理 启用兑换设置 -->
+		<action name="startExchangeSet" class="recordExchangeRuleManagerAction" method="startExchangeSet">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<!-- 变更联系人挂靠关系 界面 -->
+		<action name="changeContactAffiliatedRelationIndex" >
+			<result name="success">ChangeContactAffiliatedRelation.html</result>
+		</action>
+		<!-- 变更联系人挂靠关系 查询 -->
+		<action name="searchMember"  class="changeContactAffiliatedRelationAction" method="searchMember">
+			<result name="success" type="json">
+				<param name="includeProperties">memberIntegral</param>
+			</result>
+		</action>
+		<!-- 变更联系人挂靠关系 合并 -->
+		<action name="mergeContact"  class="changeContactAffiliatedRelationAction" method="mergeContact">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">member</param> -->
+			</result>
+		</action>
+		
+		<action name="importPentent" class="potentialCustomerAction"
+			method="importPentent">
+			<result name="success" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+			<result name="error" type="json">
+				<param name="contentType">text/html</param>
+			</result>
+		</action>
+		<!-- <action name="excelDownload" class="excelDownloadAction"> -->
+		<action name="excelDownload" class="excelDownloadAction"
+			method="downLoad">
+	            <result name="success" type="stream">
+	                <param name="contentType">application/vnd.ms-excel</param>
+	                <param name="contentDisposition">attachment;filename="all.xls"</param>
+	                <param name="inputName">excelFile</param>
+	            </result>
+        </action>
+        
+        <action name="searchMyDataAuth" class="dataAuthAction" method="searchMyDataAuth">
+			<result name="success" type="json">
+				<param name="contentType">text/html</param>
+			</result>   
+		</action>
+		
+		<action name="searchAllDepartments" class="dataAuthAction" method="searchAllDepartments">
+			<result name="success" type="json">
+				<param name="includeProperties">currentUserDeptList,total</param>
+			</result>   
+		</action>
+		<!-- 合同签署公司查询方法 -->
+		<action name="searchAllSignCompany" class="dataAuthAction" method="searchAllSignCompany">
+			<result name="success" type="json">
+				<param name="includeProperties">signCompanyList,total</param>
+			</result>   
+		</action>
+		<action name="ContractMonth_End" >
+			<result name="success">ContractMonth_End.html</result>   
+		</action>
+		<action name="monthSendRateManage" >
+			<result name="success">MonthSendRateManage.html</result>   
+		</action>
+		<action name="monthRabateRateManage" >
+			<result name="success">MonthRebateRateManage.html</result>   
+		</action>
+		<!-- 信用较差客户配置界面 -->
+		<action name="memberCreditManage" >
+			<result name="success">MemberCreditManage.html</result>   
+		</action>
+		<action name="savePrefrentialDeal" class="prefrentialDealAction" method="savePrefrentialDeal">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="updatePrefrentialDeal" class="prefrentialDealAction" method="updatePrefrentialDeal">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="deletePrefrentialDeal" class="prefrentialDealAction" method="deletePrefrentialDeal">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="activePrefrentialDeal" class="prefrentialDealAction" method="activePrefrentialDeal">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="viewPrefrentialDeal" class="prefrentialDealAction" method="viewPrefrentialDeal">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="searchAllPrefrentialDeal" class="prefrentialDealAction" method="searchAllPrefrentialDeal">
+			<result name="success" type="json">
+			</result>
+		</action>
+		
+		<action name="secodeTradeIndex">
+			<result name="success">SecondTrade.html</result>
+		</action>
+		
+		<action name="searchDictionary" class="dictionaryAction" method="searchDictionary">
+			<result name="success" type="json">
+			<param name="includeProperties">tradeView</param>
+			
+			</result>
+		</action>
+		<action name="searchSecondTradeByParentId" class="dictionaryAction" method="searchSecondTradeByParentId">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="searchMonthValidSecondTrade" class="dictionaryAction" method="searchMonthValidSecondTrade">
+			<result name="success" type="json">
+			</result>
+		</action>
+		<action name="saveSecondTrade" class="dictionaryAction" method="saveSecondTrade">
+			<result name="success" type="json">
+			</result>
+		</action>
+			<!--客户标签管理主界面 -->
+		<action name="custLabelIndex" class="custLabelIndexAction">
+			<result name="success">CustLabelManager.html</result>
+			<result name="error">CustLabelManager.html</result>
+		</action>
+		
+			<!-- 查询客户标签 -->
+		<action name="searchLabel" class="custLabelIndexAction" method="searchLabel">
+			<result name="success" type="json">
+				<param name="includeProperties">labelList,labelCount</param>
+			</result>
+		</action>
+		<!-- 保存客户标签 -->
+		<action name="saveLabel" class="custLabelIndexAction" method="saveLabel">
+			<result name="success" type="json">
+				<param name="includeProperties">labelId</param>
+			</result>
+		</action>
+		
+			<!-- 修改客户标签 -->
+		<action name="updateCustLabel" class="custLabelIndexAction" method="updateCustLabel">
+			<result name="success" type="json">
+			</result>
+		</action>
+			<!-- 删除客户标签 -->
+		<action name="deleteCustLabel" class="custLabelIndexAction" method="deleteCustLabel">
+			<result name="success" type="json">
+			</result>
+		</action>
+		
+			<!-- 修改客户地址 -->
+		<action name="updateCustAddress" class="custLabelIndexAction" method="updateCustAddress">
+			<result name="success" type="json">
+			</result>
+		</action>
+		
+		<!-- 我要处理的工作流界面 -->
+		<action name="toApprovedContractWorkFlowIndex">
+			<result name="success">ToApprovedWorkFlow.html</result>
+		</action>
+		<!-- 我的工作流界面 -->
+		<action name="contractWorkFlowSearchIndex">
+			<result name="success">ContractWorkFlowSearch.html</result>
+		</action>
+		<!-- 我已处理的工作流界面 -->
+		<action name="handledContractWorkFlowIndex">
+			<result name="success">HandledWorkFlow.html</result>
+		</action>
+		
+		
+			<action name="findBpsWorkflow"  class="contractWorkflowAction" method="findBpsWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action> 
+	       
+	     <!--未处理的工作流列表-->
+	   	<action name="findToHandleBpsWorkflow"  class="contractWorkflowAction" method="findToHandleBpsWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action>    
+	    
+	     <!--已处理的工作流列表-->
+	   	<action name="findHandledBpsWorkflow"  class="contractWorkflowAction" method="findHandledBpsWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action> 
+	      <!--工作流审批记录列表-->
+	   	<action name="queryApprovalInfo"  class="contractWorkflowAction" method="queryApprovalInfo">
+	    	<result name="success" type="json"></result>
+	    </action>  
+	      <!--获得当前审批人-->
+	   	<action name="findCurrentApproval"  class="contractWorkflowAction" method="findCurrentApproval">
+	    	<result name="success" type="json"></result>
+	    </action>   
+	      <!--根据工作流号查询合同信息-->
+	   	<action name="findContractWorkflowInfoByWorkNo"  class="contractWorkflowAction" method="findContractWorkflowInfoByWorkNo">
+	    	<result name="success" type="json"></result>
+	    </action>   
+	    
+	     <!--工作流详情页面-->
+	   	<action name="showDetailWorkflow" >
+	    	<result name="success">DetailContractWorkflow.html</result>
+	    </action>
+	     <!--(理赔)工作流审批页面-->
+	   	<action name="doApproveWorkflow" >
+	    	<result name="success">approveContractWorkflow.html</result>
+	    </action>
+	    
+	     <!--工作流程图-->
+	   	<action name="generateWorkflowImage"  class="contractWorkflowAction" method="generateWorkflowImage">
+	    	<result name="success">workflowImage.jsp</result>
+	    </action>
+	    
+	     <!--工作流审批-->
+	   	<action name="workflowApprove"  class="contractWorkflowAction" method="workflowApprove">
+	    	<result name="success" type="json"></result>
+	    </action>
+ 
+	    <!-- 行业品名映射管理 -->
+	    
+	    <action name="goodTradeMapping" >
+	    	<result name="success">GoodTradeMappingManager.html</result>
+	    </action>
+	   	<action name="searchGoodTradeMapping"  class="goodTradeMappingAction" method="searchGoodTradeMapping">
+	    	<result name="success" type="json"></result>
+	    </action>
+	   	<action name="updateGoodTradeMapping"  class="goodTradeMappingAction" method="updateGoodTradeMapping">
+	    	<result name="success" type="json"></result>
+	    </action>
+	    
+	</package>
+</struts>

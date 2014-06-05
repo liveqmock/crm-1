@@ -1,0 +1,830 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<a  name="orderStatus">
+<fieldset>
+<legend>工单状态图</legend>
+<img alt="" src="doc-files/work-order-status.jpg">
+</fieldset>
+</a>
+<a  name="orderClass">
+<fieldset>
+<legend>工单模型</legend>
+<img alt="" src="doc-files/work-order-class.jpg">
+</fieldset>
+</a>
+<a  name="PotentialMgr">
+<fieldset>
+<legend>工单管理</legend>
+<table border="1">
+  <tr>
+    <td colspan="2" align="center">工单管理--工单上报</td>
+    <td width="214"><a href="#complaint-report">complaint-report序列图设计</a></td>
+  </tr>
+  <tr>
+    <td width="106">RULE-A1</td>
+    <td>
+    <ol>
+      <li>进入投诉上报界面，上面界面所有内容为空，可编辑，列表显示最新上报投诉；</li>     
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>
+       <li>接入电话自动填充为投诉人的联系电话，系统根据接入号码自动搜索目标客户，填充至投诉人及投诉客户，二者都可手动修改 </li>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td><ol>
+      <li>根据上报单号及联系方式，列表实时显示已投诉的同单号或同联系方式的投诉；</li>
+    </ol>
+      </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>
+        重复投诉码：
+	<ol>
+      <li>点击列表中投诉人，则显示投诉详细信息，首次点击列表中处理编号，则当前上报投诉根据选择处理编号自动生成重复投诉码，生成规则为：TS+选择的处理编号日期后的流水号，如点击处理编号为201212120007的处理编号，则生成重复投诉码为：TS0007，表示当前上报投诉与列表点选的处理编号投诉为重复投诉，实现两者的系统绑定，上报提交后列表显示重复投诉码；</li>
+      <li>点击列表中其他处理编号时，点选处理编号已为重复投诉，则自动读取其重复投诉码，实现三者的绑定；点选处理编号不为重复投诉，则根据生成规则，自动更换重复投诉码，实现两者的绑定；</li>
+      <li>重复投诉码可以手动删除； </li>
+      <li>点击列表重复投诉码，则弹出新窗口显示所有关联的上报投诉； </li>
+      <li>上报类型为异常的投诉，不能生成重复投诉码； </li>
+      <li>上报类型为投诉的投诉，不能选择同单号上报类型为异常的投诉生成重复投诉码，也不能选择不同单号的投诉生成重复投诉码； </li>
+    </ol></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>
+    <ol>
+      <li>录入单号后，选择投诉人为发货方，则相应的投诉客户为发货客户，相关客户为收货客户，选择投诉人为收货方，则相应收货客户为投诉客户，发货客户为相关客户； </li>
+      <li>投诉客户与相关客户可进入客户360度视图查询选择；</li>
+      <li>客户类型及客户级别自动读取，非会员客户则为空，不可编辑；</li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td><ol>
+      <li>上报类型为投诉的投诉，系统根据用户接入需求流入该用户的投诉处理列表界面（权限用户除外）； </li>
+      <li>上报类型为异常的投诉，系统根据用户接入需求流入异常处理列表界面（权限用户除外）； </li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td><ol>
+      <li>优先级别为优先的投诉信息，优先分配流入投诉处理人投诉处理列表；</li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td><ol>
+      <li>处理编号生成规则：上报年月日加上报条数的流水号，如：2012121200001；当日上报条数超过99999条，可自动进位为6位数编号； </li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td><ol>
+      <li>上报人为当前系统验证通过用户，系统自动默认；</li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td><ol>
+      <li>上报时间为投诉信息提交时间，未提交的显示时间可默认为当前服务器时间，不可编辑； </li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A11</td>
+    <td>
+          最终反馈
+    <ol>            
+      <li>勾选最终反馈提交则表示该投诉前台已处理，处理状态为前台已处理，解决状态为已解决，该投诉单为关闭状态，不再进行其他操作；</li>
+	  <li>未勾选最终反馈提交，则投诉处理状态为待处理，解决状态为未解决，流入后台；</li></ol>    
+    </td>
+    <td>&nbsp;</td>
+  </tr> 
+  
+  <tr>
+    <td colspan="2" align="center">工单管理--上报退回处理</td>
+    <td><a href="#complaint-report_return_process">complaint-report_return_process序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td><ol>
+      <li>列表只流入显示为当前用户上报，被异常、投诉处理人退回的投诉； </li>
+     </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td><ol>
+      <li>点击列表退回投诉，在下方显示退回投诉详细信息及退回原因，修改键可用，提交键不可用；</li>
+      </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>点击修改，显示信息进入可编辑状态，提交键可用；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td><ol>
+      <li>退回原因显示规则：退回原因录入（退回类型/退回人/退回人部门/退回时间）如：客户表示非投诉，上报类型有误（上报退回/戴海斌/投诉处理组/2012-12-12 12:00）</li>
+	  <li>退回原因显示在其他界面的记录栏，如投诉处理、待办投诉、部门投诉管理；</li>
+	  <li>无退回原因录入的界面，只显示记录栏；如客户投诉查询、投诉回访管理；</li></ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>修改后的上报时间覆盖之前上报时间；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td><ol>
+      <li>上报退回的投诉除上报人可查看、编辑，其他用户只可查看，不能编辑； </li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td><ol>
+      <li>其他业务规则同投诉上报； </li>
+    </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+   
+  <tr>
+    <td colspan="2" align="center">工单管理--工单处理</td>
+    <td><a href="#complaint-process">complaint-process序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>投诉处理组用户界面显示为投诉处理，列表界面功能按钮为：查询、接入投诉、进行处理，处理界面功能按钮为：退回上报人、提交审批、投诉升级、完成处理；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>异常处理组用户界面显示为异常处理，列表界面功能按钮为：查询、接入异常、进行处理，处理界面功能按钮为：退回上报人、完成处理；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>投诉处理组用户界面列表只流入上报类型为投诉的投诉，异常处理组用户界面列表只流入上报类型为异常的投诉；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>待处理投诉/异常（）：实时显示已上报待处理的系统未分配的投诉或异常条数；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td><ol>
+      <li>点击接入投诉（异常），系统后台根据上报先后顺序及优先级别流入三条投诉（异常），未满三条增加到三条上限为止，点击进入处理，则进入投诉（异常）处理界面；
+      <li>流入规则：系统根据在线用户接入要求，优先流入上报优先级别为优先的投诉；</li></ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td>投诉处理组经理（权限用户）列表界面显示所有上报待处理投诉，有查询按钮、查询条件，无接入投诉按钮；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td>异常处理组经理（权限用户）列表界面显示所有上报待处理异常，有查询按钮，查询条件，无接入异常按钮；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td>选择投诉范围、投诉类型，处理结果自动读取处理结果基础资料，自动跳出处理事项、反馈时限、处理时限； 
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td>反馈时限为反馈部门第一次反馈时间要求，单位为分钟，根据投诉范围及类型读取处理结果基础资料，可更改；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td>处理时限，为反馈部门处理该条投诉时间限期，从投诉处理完成开始倒计时，单位为小时，根据投诉范围及类型读取处理结果基础资料，可更改；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A11</td>
+    <td>点击重复投诉码，跳出与之相绑定的所有投诉列表界面；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A12</td>
+    <td>点击处理结果+，添加一行处理意见，点击-，删除最新一行处理意见，或者点击Ｘ，删除目标行，处理结果最多添加10行处理意见，超限添加按钮不可用；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A13</td>
+    <td>任务部门与任务属性：
+    <ol>
+      <li>任务部门为责任反馈人时，OA系统收到投诉（异常）通知，投诉通知流入责任人反馈人部门的部门投诉管理界面，可录入回访； </li>
+      <li>任务部门为责任人时OA系统收到投诉通知，投诉通知流入责任人部门的部门投诉管理界面，可查看投诉，无录入反馈权限； </li>
+      <li>任务部门为反馈人时，OA系统收到投诉, 投诉通知流入反馈人部门的部门投诉管理界面，可查看投诉，可录入反馈； </li>
+     </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A14</td>
+    <td>通知对象：
+    <ol>
+      <li>通知对象默认为任务部门所有成员，读取OA组织架构基础资料，可更改，处理投诉的上报类型为投诉时，通知对象在OA组织架构中有录入规范手机号码将收到投诉通知短信；</li>
+      <li>通知短信格式：您好，XXX，您有一条投诉待处理，投诉编号：XXX,单号：XXX，投诉客户：XXX,反馈时限XX分钟，处理时限XX小时，请及时处理；</li>
+     </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A15</td>
+    <td><ol>    
+      <li>最终反馈勾选，为当前用户已解决投诉，必须录入反馈结果，且解决情况必须为已解决，否则不能完成处理；</li>
+      <li>反馈结果显示在反馈记录，显示格式：反馈结果录入文本（解决情况/反馈人/所属组织/反馈时间），如：客户答应自提（已解决/戴海斌/投诉处理组/2012-12-12 12:00）</li>
+      <li>最终反馈勾选，则“指定部门反馈结果”变为呼叫中心回访核实，输入框红色标示；</li>
+     </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A16</td>
+    <td>投诉退回上报人，必须填写退回原因，流入上报人的上报退回处理界面，处理状态为已退回；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A17</td>
+    <td>投诉升级时，处理界面内容为默认状态，无任何编辑录入信息；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A18</td>
+    <td>
+    <table border="1" cellspacing="0" cellpadding="0" width="633">
+      <tr>
+        <td width="113" valign="top"><p align="center"></p></td>
+        <td width="113" valign="top"><p align="center">操作 </p></td>
+        <td width="293" valign="top"><p align="center">投诉处理状态 </p></td>
+        <td width="227" valign="top"><p align="center">异常处理状态 </p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">1</p></td>
+        <td width="293" valign="top"><p>上报提交最终反馈 </p></td>
+        <td width="227" valign="top"><p>前台已处理</p></td>
+        <td width="227" valign="top"><p>前台已处理</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">3</p></td>
+        <td width="293" valign="top">审批退回提交人</td>
+        <td width="227" valign="top"><p>待处理</p></td>
+        <td width="227" valign="top"><p>无</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">4</p></td>
+        <td width="293" valign="top">升级退回</td>
+        <td width="227" valign="top"><p>待处理</p></td>
+        <td width="227" valign="top"><p>无</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">5</p></td>
+        <td width="293" valign="top">退回处理人</td>
+        <td width="227" valign="top"><p>待处理</p></td>
+        <td width="227" valign="top"><p>待处理</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">6</p></td>
+        <td width="293" valign="top">退回上报人</td>
+        <td width="227" valign="top"><p>已退回</p></td>
+        <td width="227" valign="top"><p>已退回</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">7</p></td>
+        <td width="293" valign="top">提交审批</td>
+        <td width="227" valign="top"><p>待审批</p></td>
+        <td width="227" valign="top"><p>无</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">8</p></td>
+        <td width="293" valign="top">投诉升级</td>
+        <td width="227" valign="top"><p>已升级</p></td>
+        <td width="227" valign="top"><p>无</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">9</p></td>
+        <td width="293" valign="top">完成处理最终反馈</td>
+        <td width="227" valign="top"><p>后台已处理</p></td>
+        <td width="227" valign="top"><p>后台已处理</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">10</p></td>
+        <td width="293" valign="top">完成处理</td>
+        <td width="227" valign="top"><p>待反馈</p></td>
+        <td width="227" valign="top"><p>待反馈</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">11</p></td>
+        <td width="293" valign="top">反馈登记未解决</td>
+        <td width="227" valign="top"><p>反馈未解决</p></td>
+        <td width="227" valign="top"><p>反馈未解决</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">12</p></td>
+        <td width="293" valign="top">反馈登记已解决</td>
+        <td width="227" valign="top"><p>反馈已解决</p></td>
+        <td width="227" valign="top"><p>反馈已解决</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">13</p></td>
+        <td width="293" valign="top">回访核实</td>
+        <td width="227" valign="top"><p>已核实</p></td>
+        <td width="227" valign="top"><p>无</p></td>
+      </tr>
+      <tr>
+        <td width="113"><p align="center">14</p></td>
+        <td width="293" valign="top">超出处理期限未解决或者未反馈</td>
+        <td width="227" valign="top"><p>已到期</p></td>
+        <td width="227" valign="top"><p>无</p></td>
+      </tr>      
+    </table></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A19</td>
+    <td>上报类型为异常时，对应处理界面为异常范围、异常类型、异常级别；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A20</td>
+    <td>退回原因显示规则同上报退回处理业务规则RULE-A4：
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A21</td>
+    <td>接入有单号的异常，已有同单号上报的投诉（上报类型为投诉），则异常在列表字段以红色显示；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td colspan="2" align="center">工单管理--待办工单</td>
+    <td><a href="#complaint-workbench">complaint-workbench序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>待办投诉列表只显示当前用户权限可处理的六类投诉:
+    <ol>
+      <li>投诉审批申请（待审批）：流入审批人（投诉处理组经理）的待办投诉界面；</li>
+      <li>投诉升级（已升级）：流入品牌公关部的待办投诉界面；</li>
+      <li>投诉审批退回（待处理）：流入投诉处理提交人的待办投诉界面；</li>
+      <li>升级投诉处理部门退回（待处理）：流入升级提交人的待办投诉界面；</li>
+      <li>任务部门退回（待处理）：流入该投诉处理人的待办投诉界面；</li>
+   	  <li>任务部门申请延长投诉处理时间（反馈未解决）：流入该投诉处理人的待办投诉界面；</li>
+   	</ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>待审批投诉，审批退回提交人，必须输入退回原因，审批退回投诉处理界面有退回记录；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>待审批投诉，审批同意时，直接流入任务部门的部门投诉管理；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>待审批投诉，审批同意时，直接流入任务部门的部门投诉管理；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>已退回投诉，投诉处理界面不可编辑，点击修改后才可修改相应内容；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>升级退回、审批退回的投诉，投诉界面不可编辑，点击修改后可编辑相应内容，点击升级投诉，继续提交品牌公关部审批；</td>
+    <td>&nbsp;</td>
+  </tr>  
+  <tr>
+    <td>RULE-A6</td>
+    <td>待办投诉类型对应功能按钮：
+    <ol>
+      <li>待审批：退回提交人、同意；</li>
+      <li>待处理（任务部门退回）：修改、提交审批、投诉升级、处理完成；</li>
+      <li>待处理（审批退回）：修改、提交审批、投诉升级、处理完成；</li>
+      <li>待处理（升级退回）：修改、提交审批、投诉升级、处理完成；</li>
+      <li>已升级（升级投诉）：退回提交人、处理完成；</li>
+   	  <li>反馈未解决（延时申请）：退回提交人、同意；</li>
+   	</ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td>退回原因对应状态：
+    <ol>
+      <li>待审批，退回原因为空，可编辑；</li>
+      <li>已升级（升级投诉），退回原因为空，可编辑；</li>
+      <li>反馈未解决（延时申请），退回原因为空，可编辑；</li>
+      <li>待处理（任务部门退回）退回原因显示格式：原因（退回人/部门/退回时间），不可编辑；</li>
+      <li>待处理（审批退回），退回原因显示格式：原因（退回人/部门/退回时间），不可编辑；</li>
+   	  <li>待处理（升级退回），退回原因显示格式：原因（退回人/部门/退回时间）；不可编辑；</li>
+   	</ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td>延时申请的待办投诉处理界面，延时申请为红色不可选择状态，延时申请记录显示在反馈记录（参考部门投诉管理用例业务规则）
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td>其他业务规则同投诉处理业务规则</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td>退回原因显示规则同上报退回处理业务规则RULE-A4：</td>
+    <td>&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td colspan="2" align="center">工单管理--部门工单管理</td>
+    <td><a href="#complaint-task">complaint-task序列图设计</a></td>
+    <td width="6">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>退回处理人时，退回原因必填，且只能退回一次，退回后处理人拒绝，则退回处理人按钮不可用；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>任务部门可退回操作：
+    <ol>
+      <li>处理结果大于等于两个部门时，任一部门可退回处理人核实，不影响其他任务部门操作；</li>
+      <li>其他任务部门操作，产生反馈记录，新修改任务部门可见；</li>
+      <li>任一任务部门操作，产生反馈记录，其他任务部门均可见；</li>
+      </ol>
+                例如：投诉处理任务部门为A、B、C三个部门，A部门退回处理人，B部门反馈，C部门可见处理结果记录及反馈记录结果，重新更改A部门为D部门，D部门可见B部门或者C部门的反馈记录及处理结果；
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>每次反馈结果登记后，显示在反馈记录中，显示格式为：反馈结果录入文本（解决情况/反馈人/所属组织/反馈时间），
+                     如：客户答应自提（已解决/戴海斌/天健营业部/2012-12-12 12:00）</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>解决情况默认为空，每次反馈必填；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>勾选最终反馈，则本次登记后，反馈结果界面关闭，不可编辑；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td>申请延时：
+    <ol>
+      <li>必须在反馈结果界面录入延时原因，延时申请必填，申请记录显示在反馈记录，显示格式如：延时原因（解决情况/延时申请/反馈人/所属组织/反馈时间），
+                   如：此投诉需客户来部门当面沟通，客户延迟几日（待跟进/延时申请/戴海斌/天健营业部/2012-12-12 12:00） </li>
+      <li>同一投诉多个任务部门可在处理时限内同时进行延时申请；</li>
+      </ol>
+    </td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td>处理结果显示格式：责任反馈人/责任人/反馈人：某某部门或个人；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td>处理记录显示格式：投诉处理人于某年某月某日某时处理，如：戴海斌于2012-12-12 12:00处理；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td>超过反馈时限未录入反馈，则反馈时限为0，解决情况为未解决；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td>超过处理时限，关闭反馈人部门的反馈结果录入区域，解决状态为最后一次反馈结果；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A11</td>
+    <td>按时录入反馈结果，则处理状态为反馈已解决或反馈未解决，反馈时限为0；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A12</td>
+    <td>投诉上报类型为异常时，申请延时功能按钮不可用；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A13</td>
+    <td>退回原因显示规则同上报退回处理业务规则RULE-A4：</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A14</td>
+    <td>
+    <ol>
+      <li>多个反馈部门时，反馈结果按先后顺序显示在反馈记录上，整体处理状态根据反馈结果的解决情况作相应的变更；</li>
+      <li>如投诉反馈为已解决，流入回访管理界面后待回访核实，而另一反馈部门反馈未解决，则处理状态为反馈未解决，从回访管理界面消除；如已回访核实，则回访后状态为整体状态；
+      </li>
+    </ol>
+    </td>
+	<td>&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td colspan="2" align="center">工单管理--客户投诉查询</td>
+    <td><a href="#customer-complaint-inquiry">customer-complaint-inquiry序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>处理结果显示格式：责任反馈人/责任人/反馈人：某某部门或个人；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="121">RULE-A2</td>
+    <td>处理记录显示格式：投诉处理人于某年某月某日某时处理，如：戴海斌于2012-12-12 12:00处理；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>查看界面所有内容，不可编辑；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>点击打印，打印当前信息界面；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>点击关闭，关闭当前信息界面；</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td>退回原因显示规则同上报退回处理业务规则RULE-A4：</td>
+    <td>&nbsp;</td>
+  </tr>  
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">工单管理--投诉回访管理</td>
+    <td><a href="#complaint-verify_task">complaint-verify_task序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>列表默认显示当前用户处理的反馈已解决或已到期未回访的投诉（三天内），可查询其他所有投诉；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>投诉处理组在执行此操作时，最终反馈在此界面默认勾选，提交后不可再回访，可更改不勾选提交，则后续可以继续录入回访；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>回访登记后投诉处理状态为已核实，解决情况为最终解决情况，替换任务部门最后反馈的解决情况；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>回访登记后，任务反馈部门不可再录入反馈结果；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>任务部门在反馈时限内反馈，是否超时为否，相反则为是，处理时限已完结，则是否到期为是，相反则为否；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td>退回原因显示规则同上报退回处理业务规则RULE-A4：</td>
+	<td>&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td colspan="2" align="center">工单管理--处理结果基础资料</td>
+    <td><a href="#results-foundation-data">results-foundation-data序列图设计</a></td>
+  </tr>
+  <tr>
+    <td>RULE-A1</td>
+    <td>列表默认显示所有已保存的信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A2</td>
+    <td>点击树状层级内容，进行相应的修改、删除操作；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A3</td>
+    <td>一级信息为投诉（异常）范围，二级信息为投诉类型，三级信息为处理语言、反馈时限、处理时限；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A4</td>
+    <td>点击一级信息进行修改，录入界面默认显示其所属的最后修改的二级信息及以下三级信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A5</td>
+    <td>点击一级信息进行删除，则跳出提示，确认后删除包含的所有二级信息及三级信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A6</td>
+    <td>点击二级信息进行修改，录入界面默认显示其所属的最后修改的三级信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A7</td>
+    <td>点击二级信息进行删除，则跳出提示，确认后删除包含的所有三级信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A8</td>
+    <td>点击三级信息进行修改，录入界面一同显示其所属的二级信息及二级信息所属的三级信息；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A9</td>
+    <td>点击树状层级内容，进行相应的修改、删除操作；</td></td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A10</td>
+    <td>所有操作必须点击树状结构层级信息才能有效操作；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A11</td>
+    <td>投诉处理组经理或主管用户进入编辑，默认上报类型为投诉，异常处理组经理或主管进入编辑，默认上报类型为异常；</td>
+	<td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>RULE-A12</td>
+    <td>选择上报类型为异常时，对应为异常范围及异常类型；</td>
+	<td>&nbsp;</td>
+  </tr>    
+  
+</table>
+</fieldset>
+</a>
+<div id="complaint-report">
+<fieldset>
+<legend>工单上报序列图</legend>
+<img alt="" src="doc-files/complaint-report.jpg">
+</fieldset>
+<fieldset>
+<legend>工单上报界面</legend>
+<img alt="" src="doc-files/complaint-report-ui.jpg">
+</fieldset>
+</div>
+<div id="complaint-report_return_process">
+<fieldset>
+<legend>工单上报退回处理序列图</legend>
+<img alt="" src="doc-files/complaint-report_return_process.jpg">
+</fieldset>
+<fieldset>
+<legend>工单上报退回处理界面</legend>
+<img alt="" src="doc-files/complaint-report_return_process-ui.jpg">
+</fieldset>
+</div>
+<div id="complaint-process">
+<fieldset>
+<legend>工单处理序列图</legend>
+<img alt="" src="doc-files/complaint-process.jpg">
+</fieldset>
+<fieldset>
+<legend>工单处理界面</legend>
+<img alt="" src="doc-files/complaint-process-ui.jpg">
+</fieldset>
+</div>
+<div id="complaint-workbench">
+<fieldset>
+<legend>待办工单序列图</legend>
+<img alt="" src="doc-files/complaint-workbench.jpg">
+</fieldset>
+<fieldset>
+<legend>待办工单界面</legend>
+<img alt="" src="doc-files/complaint-workbench-ui.jpg">
+</fieldset>
+</div>
+<div id="complaint-task">
+<fieldset>
+<legend>部门工单管理序列图</legend>
+<img alt="" src="doc-files/complaint-task.jpg">
+<img alt="" src="doc-files/complaint-task-workflow.jpg">
+</fieldset>
+<fieldset>
+<legend>部门工单管理界面</legend>
+<img alt="" src="doc-files/complaint-task-ui.jpg">
+</fieldset>
+</div>
+<div id="customer-complaint-inquiry">
+<fieldset>
+<legend>客户投诉查询序列图</legend>
+<img alt="" src="doc-files/customer-complaint-inquiry.jpg">
+</fieldset>
+<fieldset>
+<legend>客户投诉查询界面</legend>
+<img alt="" src="doc-files/customer-complaint-inquiry-ui.jpg">
+</fieldset>
+</div>
+<div id="complaint-verify_task">
+<fieldset>
+<legend>投诉回访管理序列图</legend>
+<img alt="" src="doc-files/complaint-verify_task.jpg">
+</fieldset>
+<fieldset>
+<legend>投诉回访管理界面</legend>
+<img alt="" src="doc-files/complaint-verify_task-ui.jpg">
+</fieldset>
+</div>
+<div id="results-foundation-data">
+<fieldset>
+<legend>处理结果基础资料序列图</legend>
+<img alt="" src="doc-files/results-foundation-data.jpg">
+</fieldset>
+<fieldset>
+<legend>处理结果基础资料界面</legend>
+<img alt="" src="doc-files/results-foundation-data-ui.jpg">
+</fieldset>
+</div>
+
+
+<div id="domain">
+<fieldset>
+<legend>domain说明</legend>
+<table>
+<tr>
+</table>
+</fieldset>
+</div>
+</body>
+</html>

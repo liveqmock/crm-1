@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.Contact">
+	<update id="updateContact" parameterType="com.deppon.crm.module.customer.shared.domain.Contact">
+		UPDATE
+	    T_CUST_CUSTLINKMAN
+		SET FLASTUPDATETIME = sysdate 
+		,
+		FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[,FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" number != null  and number != ''  ">
+		<![CDATA[,FNUMBER=#{number,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" name != null  and name != ''  ">
+		<![CDATA[,FNAME=#{name,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" idCard != null  and idCard != ''  ">
+		<![CDATA[,FIDCARD=#{idCard,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkmanType != null  and linkmanType != ''  ">
+		<![CDATA[,FLINKMANTYPE=#{linkmanType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isMainLinkMan != null  and isMainLinkMan != ''  ">
+		<![CDATA[,FISMAINLINKMAN=#{isMainLinkMan,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" sex != null  and sex != ''  ">
+		<![CDATA[,FSEX=#{sex,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" telPhone != null  and telPhone != ''  ">
+		<![CDATA[,FTELPHONE=#{telPhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" mobilePhone != null  and mobilePhone != ''  ">
+		<![CDATA[,FMOBILEPHONE=#{mobilePhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" duty != null  and duty != ''  ">
+		<![CDATA[,FDUTY=#{duty,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" dutyDept != null  and dutyDept != ''  ">
+		<![CDATA[,FDUTYDEPT=#{dutyDept,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bornDate != null  and bornDate != ''  ">
+		<![CDATA[,FBORNDATE=#{bornDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" gainave != null  and gainave != ''  ">
+		<![CDATA[,FGAINAVE=#{gainave,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" decisionRight != null  and decisionRight != ''  ">
+		<![CDATA[,FDECISIONRIGHT=#{decisionRight,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" nativePlace != null  and nativePlace != ''  ">
+		<![CDATA[,FNATIVEPLACE=#{nativePlace,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" personLove != null  and personLove != ''  ">
+		<![CDATA[,FPERSONLOVE=#{personLove,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" folk != null  and folk != ''  ">
+		<![CDATA[,FFOLK=#{folk,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" email != null  and email != ''  ">
+		<![CDATA[,FEMAIL=#{email,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" qqNumber != null  and qqNumber != ''  ">
+		<![CDATA[,FQQNUMBER=#{qqNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" msn != null  and msn != ''  ">
+		<![CDATA[,FMSN=#{msn,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ww != null  and ww != ''  ">
+		<![CDATA[,FWW=#{ww,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" acceptDeptid != null  and acceptDeptid != ''  ">
+		<![CDATA[,FACCEPTDEPTID=#{acceptDeptid,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" status != null  and status != ''  ">
+		<![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" defaultId != null  and defaultId != ''  ">
+		<![CDATA[,FDEFAULTID=#{defaultId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" versionId != null  and versionId != ''  ">
+		<![CDATA[,FVERSIONID=#{versionId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custId != null  and custId != ''  ">
+		<![CDATA[,FCUSTID=#{custId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" cardTypeCon != null  and cardTypeCon != ''  ">
+		<![CDATA[,fIdType=#{cardTypeCon,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ffax != null  and ffax != ''  ">
+		<![CDATA[,ffax=#{ffax,jdbcType=VARCHAR}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+	
+	<select id="getContactByIdCard" resultType="int" parameterType="string">
+		select count(*) from t_cust_custlinkman where t_cust_custlinkman.fidCard = #{idCard}
+		and t_cust_custlinkman.fstatus != 2
+	</select>
+	
+	<select id="getContactCountByPhone" resultType="int" parameterType="string">
+		select count(*) from t_cust_custlinkman where t_cust_custlinkman.fmobiletel = #{phone}
+		and t_cust_custlinkman.fstatus != 2
+	</select>
+	
+	<select id="getContactCountByTelAndName" resultType="int" parameterType="map">
+		select count(*) from t_cust_custlinkman where t_cust_custlinkman.foffertel = #{tel}
+		and t_cust_custlinkman.fname = #{name} and t_cust_custlinkman.fstatus != 2
+	</select>
+	
+	<select id="getContactIdByMemberId" parameterType="string" resultType="string">
+		select fid from t_cust_custlinkman where FCUSTID = #{memberId}
+		and t_cust_custlinkman.fstatus != 2
+	</select>
+	
+	<delete id="deleteContactByMemberId" parameterType="string">
+		delete from t_cust_custlinkman where FCUSTID = #{memberId}
+	</delete>
+	
+	<insert id="insertContact" parameterType="com.deppon.crm.module.customer.shared.domain.Contact" >
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+		select SEQ_ID_custlinkman.nextval as id from dual
+		</selectKey>
+		<![CDATA[
+		insert into t_cust_custlinkman(
+		FID,FCREATEDATE,FCREATEUSER,
+		FNUMBER,FNAME,FIDCARD,FLINKMANTYPE,
+		FISMAINLINKMAN,FSEX,FTELPHONE,FMOBILEPHONE,
+		FDUTY,FDUTYDEPT,FBORNDATE,FGAINAVE,
+		FDECISIONRIGHT,FNATIVEPLACE,FPERSONLOVE,FFOLK,
+		FEMAIL,FQQNUMBER,FMSN,FWW,
+		FACCEPTDEPTID,FSTATUS,FDEFAULTID,
+		FVERSIONID,FCUSTID,fIdType,FFAX)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{number,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},
+		#{idCard,jdbcType=VARCHAR},#{linkmanType,jdbcType=VARCHAR},
+		#{isMainLinkMan,jdbcType=NUMERIC},#{sex,jdbcType=VARCHAR},
+		#{telPhone,jdbcType=VARCHAR},#{mobilePhone,jdbcType=VARCHAR},
+		#{duty,jdbcType=VARCHAR},#{dutyDept,jdbcType=VARCHAR},
+		#{bornDate,jdbcType=DATE},#{gainave,jdbcType=VARCHAR},
+		#{decisionRight,jdbcType=VARCHAR},#{nativePlace,jdbcType=VARCHAR},
+		#{personLove,jdbcType=VARCHAR},#{folk,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},#{qqNumber,jdbcType=VARCHAR},
+		#{msn,jdbcType=VARCHAR},#{ww,jdbcType=VARCHAR},
+		#{acceptDeptid,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},#{defaultId,jdbcType=VARCHAR},
+		#{versionId,jdbcType=VARCHAR},#{custId,jdbcType=VARCHAR},
+		#{cardTypeCon,jdbcType=VARCHAR},
+		#{ffax,jdbcType=VARCHAR}
+		)
+		]]>
+	</insert>
+	
+	<insert id="insertRandomPhone" parameterType="com.deppon.crm.module.customer.shared.domain.RandomNumber">
+		<selectKey  keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_CRM_RANDOM.nextval as id FROM DUAL
+		</selectKey>
+		<![CDATA[
+		INSERT INTO T_CUST_RANDOMNUMBER
+		(
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FMOBILE,
+		FRADOMNUMBER,
+		FEFFECTTIME
+		)
+		 values
+		(
+		#{id,jdbcType=VARCHAR},
+		sysdate,
+		#{createUser,jdbcType=VARCHAR},
+		#{modifyDate,jdbcType=DATE},
+		#{modifyUser,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{radomnumber,jdbcType=VARCHAR},
+		sysdate+1
+		)
+		]]>
+	</insert>
+
+	<delete id="deleteRandomCodeByMobile" parameterType="string">
+		DELETE T_CUST_RANDOMNUMBER WHERE FMOBILE=#{conPhone}
+	</delete>
+	<select id="getContactByNumber" resultMap="ContactViewRM">
+		<![CDATA[
+				SELECT CB.FCUSTNAME,CB.FDEGREE,CB.FCUSTNUMBER,
+		]]>
+		<include refid="Contact_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CUSTLINKMAN CL 
+				LEFT JOIN
+					T_CUST_CUSTBASEDATA CB 
+				ON 
+					CL.FCUSTID = CB.FID
+				WHERE
+					CL.FNUMBER = #{number}
+					and CL.fstatus <> 2
+		]]>
+	</select>
+
+	
+	<select id="getRandomNumberByPhone" resultMap="RandomNumberRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="RandomNumber_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_RANDOMNUMBER 
+				WHERE
+					FMOBILE = #{phone}
+		]]>
+	</select>
+	
+	<!-- 查询订单_根据订单号 -->
+	<select id="queryOrderByNum" resultMap="OrderRusultMap" parameterType="com.deppon.crm.module.customer.shared.domain.Order">
+		SELECT
+		<include refid="orderTableFields" />
+		FROM
+		T_ORD_ORDER RD
+		WHERE RD.FORDERNUMBER
+		= #{orderNumber,jdbcType=VARCHAR}
+	</select>
+
+	<resultMap type="com.deppon.crm.module.client.customer.domain.RegisterInfo"
+		id="RegisterInfoRusultMap">
+		<result column="UC_FID" property="id"/>
+		<result column="UC_FCREATETIME" property="createDate"/>
+		<result column="UC_FCREATEUSERID" property="createUser"/>
+		<result column="UC_FLASTUPDATETIME" property="modifyDate"/>
+		<result column="UC_FLASTMODIFYUSERID" property="modifyUser"/>
+		<result column="UC_FUSERNAME" property="userName"/>
+		<result column="UC_FCONTACTID" property="cusCode"/>
+<!-- 		<result column="UC_FOPERATETYPE" property=""/> -->
+		<result column="UC_FORDERSOURCE" property="custsource"/>
+		<result column="UC_FLINKMANNAME" property="realName"/>
+		<result column="UC_FMOBILEPHONE" property="telephone"/>
+		<result column="UC_FTELEPHONE" property="fixedPhone"/>
+		<result column="UC_FADDRESS" property="address"/>
+		</resultMap>
+	
+	<!-- 根据渠道单号查询订单信息 -->
+	<select id="queryRegisterInfo" resultMap="RegisterInfoRusultMap">
+		<![CDATA[
+		  SELECT 
+		  UC.FID               UC_FID,
+		  UC.FCREATETIME       UC_FCREATETIME,
+		  UC.FCREATEUSERID     UC_FCREATEUSERID,
+		  UC.FLASTUPDATETIME   UC_FLASTUPDATETIME,
+		  UC.FLASTMODIFYUSERID UC_FLASTMODIFYUSERID,
+		  UC.FUSERNAME         UC_FUSERNAME,
+		  UC.FCONTACTID        UC_FCONTACTID,
+		  UC.FOPERATETYPE      UC_FOPERATETYPE,
+		  UC.FORDERSOURCE      UC_FORDERSOURCE,
+		  UC.FLINKMANNAME      UC_FLINKMANNAME,
+		  UC.FMOBILEPHONE      UC_FMOBILEPHONE,
+		  UC.FTELEPHONE        UC_FTELEPHONE,
+		  UC.FADDRESS          UC_FADDRESS
+		  FROM T_USER_CONTACTBIND UC 
+		]]>
+		<where>
+			<if test=" id != null  and id != ''  ">
+				<![CDATA[AND FID=#{id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" cusCode != null  and cusCode != ''  ">
+				<![CDATA[AND FCONTACTID=#{cusCode,jdbcType=VARCHAR}]]>
+			</if>
+
+			<if test=" userName != null  and userName != ''  ">
+				<![CDATA[AND FUSERNAME=#{userName,jdbcType=VARCHAR}]]>
+			</if>
+
+			<if test=" custsource != null  and custsource != ''  ">
+				<![CDATA[AND FORDERSOURCE=#{custsource,jdbcType=VARCHAR}]]>
+			</if>
+
+		</where>
+	</select>
+	
+	<!-- 根据渠道单号查询订单信息 -->
+	<select id="queryOrderByChannelNumber" resultMap="OrderRusultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="orderTableFields" />
+		<![CDATA[
+			FROM 
+				T_ORD_ORDER RD 
+			WHERE 
+				RD.FCHANNELNUMBER = #{channelNumber} AND ROWNUM =1
+		]]>
+	</select>
+	
+	<!-- 根据联系人id查询官网用户名 -->
+	<select id="getOnlineBusinessId" resultType="string" parameterType="string">
+			SELECT 
+			FCONTACTID
+			FROM 
+				T_USER_CONTACTBIND RD 
+			WHERE 
+				RD.FUSERNAME = #{linkManId} AND FOPERATETYPE =1
+	</select>
+	
+	<!-- 新增联系人绑定关系 -->
+	<insert id="insertContactOnlineNum" parameterType="map">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_CONTACTBIND.NEXTVAL AS id FROM DUAL
+		</selectKey>
+			INSERT INTO T_USER_CONTACTBIND 
+			(FID,FCREATEUSERID,FCREATETIME,FLASTMODIFYUSERID,
+			FLASTUPDATETIME,FCONTACTID,FUSERNAME,FOPERATETYPE,
+			FORDERSOURCE,FLINKMANNAME，FMOBILEPHONE，FTELEPHONE，FADDRESS)
+			VALUES (#{id},#{createUser,jdbcType=NUMERIC},
+			SYSDATE,NULL,NULL,#{cusCode,jdbcType=VARCHAR},
+			#{userName,jdbcType=VARCHAR},1,#{custsource,jdbcType=VARCHAR},
+			#{realName,jdbcType=VARCHAR},#{telephone,jdbcType=VARCHAR},
+			#{fixedPhone,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 修改联系人绑定关系 -->
+	<update id="updateContactOnlineNum" parameterType="map">
+			UPDATE T_USER_CONTACTBIND 
+			SET FCONTACTID=#{cusCode,jdbcType=VARCHAR},
+				<if test="null!= fixedPhone and ''!= fixedPhone">
+					FLINKMANNAME=#{realName,jdbcType=VARCHAR},
+				</if>	
+				<if test="null!= fixedPhone and ''!= fixedPhone">
+					FTELEPHONE=#{fixedPhone,jdbcType=VARCHAR},
+				</if>
+				<if test="null!=address and ''!= address">
+					FADDRESS=#{address,jdbcType=VARCHAR},
+				</if>
+				<if test="null!= telephone and ''!= telephone">
+					FMOBILEPHONE=#{telephone,jdbcType=VARCHAR},
+				</if>
+				FLASTMODIFYUSERID=#{modifyUser,jdbcType=NUMERIC},
+				FLASTUPDATETIME=SYSDATE
+			WHERE FUSERNAME=#{userName,jdbcType=VARCHAR}
+			AND FORDERSOURCE=#{custsource,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 删除联系人绑定关系 -->
+	<update id="unboundContactOnlineNum"
+		parameterType="com.deppon.crm.module.client.customer.domain.RegisterInfo">
+		UPDATE T_USER_CONTACTBIND
+		SET FCONTACTID=NULL,
+			FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR},
+			FLASTUPDATETIME=SYSDATE
+		WHERE FUSERNAME=#{userName,jdbcType=VARCHAR}
+		AND FORDERSOURCE=#{custsource,jdbcType=VARCHAR}
+	</update>
+	<!-- 删除联系人绑定关系 -->
+	<update id="unboundContactByContactId"
+		parameterType="string">
+		UPDATE T_USER_CONTACTBIND
+		SET FCONTACTID=NULL,
+			FLASTMODIFYUSERID=86301,
+			FLASTUPDATETIME=SYSDATE
+		WHERE FCONTACTID=#{contactId,jdbcType=VARCHAR}
+	</update>
+	<!-- 删除联系人绑定关系 -->
+	<update id="changeContactOnlineNum"
+		parameterType="com.deppon.crm.module.client.customer.domain.RegisterInfo">
+		UPDATE T_CUST_CUSTLINKMAN
+		SET FLASTUPDATETIME=SYSDATE,
+		FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}
+		WHERE FID=#{cusCode,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<sql id="Contact_column_noalias">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTUPDATEUSERID,
+		FNUMBER,
+		FNAME,
+		FIDCARD,
+		FLINKMANTYPE,
+		FISMAINLINKMAN,
+		FSEX,
+		FOFFERTEL,
+		FMOBILETEL,
+		FDUTY,
+		FDUTYDEPT,
+		FBORNDATE,
+		FGAINAVE,
+		FDECISIONRIGHT,
+		FNATIVEPLACE,
+		FPERSONLOVE,
+		FFOLK,
+		FEMAIL,
+		FQQNUMBER,
+		FMSN,
+		FWW,
+		FACCEPTDEPTID,
+		FSTATUS,
+		FDEFAULTID,
+		FVERSIONID,
+		FCUSTID,
+		FIDTYPE,
+		FFAX
+	</sql>
+	
+	<sql id="Contact_column">
+		CL.FID,
+		CL.FCREATETIME,
+		CL.FCREATEUSERID,
+		CL.FLASTUPDATETIME,
+		CL.FLASTUPDATEUSERID,
+		CL.FNUMBER,
+		CL.FNAME,
+		CL.FIDCARD,
+		CL.FLINKMANTYPE,
+		CL.FISMAINLINKMAN,
+		CL.FSEX,
+		CL.FOFFERTEL,
+		CL.FMOBILETEL,
+		CL.FDUTY,
+		CL.FDUTYDEPT,
+		CL.FBORNDATE,
+		CL.FGAINAVE,
+		CL.FDECISIONRIGHT,
+		CL.FNATIVEPLACE,
+		CL.FPERSONLOVE,
+		CL.FFOLK,
+		CL.FEMAIL,
+		CL.FQQNUMBER,
+		CL.FMSN,
+		CL.FWW,
+		CL.FACCEPTDEPTID,
+		CL.FSTATUS,
+		CL.FDEFAULTID,
+		CL.FVERSIONID,
+		CL.FCUSTID,
+		CL.FIDTYPE,
+		CL.FFAX
+	</sql>
+	
+	<sql id="RandomNumber_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FMOBILE,
+		FRADOMNUMBER,
+		FEFFECTTIME
+	</sql>
+	
+	<!-- 订单表所有字段 -->
+	<sql id="orderTableFields">
+	<![CDATA[
+		RD.FID FID,RD.FLINKMANID FLINKMANID, RD.FHASTENCOUNT FHASTENCOUNT,
+		RD.FLASTHASTENTIME FLASTHASTENTIME,RD.FSHIPPERID FSHIPPERID,
+		RD.FSHIPPERNUMBER FSHIPPERNUMBER,RD.FSHIPPERNAME FSHIPPERNAME,
+		RD.FCONTACTNAME FCONTACTNAME,RD.FCONTACTMOBILE FCONTACTMOBILE,
+		RD.FCONTACTPHONE FCONTACTPHONE,	RD.FCONTACTPROVINCE FCONTACTPROVINCE, 
+		RD.FCONTACTCITY FCONTACTCITY,	RD.FCONTACTAREA FCONTACTAREA,	
+		RD.FCONTACTADDRESS FCONTACTADDRESS,	RD.FISRECEIVEGOOD FISRECEIVEGOOD,
+		RD.FBEGINACCEPTIME FBEGINACCEPTIME,RD.FENDACCPTIME FENDACCPTIME,
+		RD.FRECEIVEID FRECEIVEID, RD.FRECEIVENUMBER FRECEIVENUMBER,
+		RD.FCOMPANY FCOMPANY,	RD.FRECEIVENAME FRECEIVENAME,	
+		RD.FRECEIVEMOBILE FRECEIVEMOBILE,	RD.FRECEIVEPHONE FRECEIVEPHONE, 
+		RD.FPROVINCE FPROVINCE, RD.FCITY FCITY,RD.FAREA FAREA,RD.FADDRESS  FADDRESS,
+		RD.FISSENDMS  FISSENDMS,RD.FTRANSPORTMODE FTRANSPORTMODE, 
+		RD.FGOODSNAME FGOODSNAME,RD.FPACKING FPACKING,RD.FGOODSTYPE  FGOODSTYPE,
+		RD.FTOTALPIECE	FTOTALPIECE,	RD.FTOTALWEIGHT FTOTALWEIGHT, 
+		RD.FTOTALVOLUME FTOTALVOLUME,RD.FPAYMENTTYPE FPAYMENTTYPE, 
+		RD.FCHANNELTYPE FCHANNELTYPE, RD.FCHANNELCUSTID FCHANNELCUSTID,
+		RD.FDELIVERYMODE FDELIVERYMODE,RD.FDSHKTYPE FDSHKTYPE,RD.FDSHK FDSHK, 
+		RD.FBJSMJZ FBJSMJZ,RD.FORDERTIME  FORDERTIME,RD.FDEPARTUREID 	FDEPARTUREID,
+		RD.FACCEPTDEPTID	FACCEPTDEPTID,	RD.FACCEPTDEPTNAME FACCEPTDEPTNAME,
+		RD.FORDERSTATUS FORDERSTATUS,	RD.FACCEPTER FACCEPTER,	RD.FACCEPTTIME  FACCEPTTIME, 
+		RD.FACCEPTERNAME FACCEPTERNAME,RD.FACCEPTERMOBILE	FACCEPTERMOBILE,
+		RD.FWAYBILLNUMBER FWAYBILLNUMBER,	RD.FRESOURCE FRESOURCE, 
+		RD.FTRANSNOTE FTRANSNOTE,	RD.FRETURNBILLTYPE FRETURNBILLTYPE,
+		RD.FORDERNUMBER FORDERNUMBER,RD.FCHANNELNUMBER FCHANNELNUMBER,
+		RD.FRECEIVINGTOPOINTID FRECEIVINGTOPOINTID,RD.FORDERPERSON FORDERPERSON,
+		RD.FFEEDBACKINFO FFEEDBACKINFO,	RD.FCREATETIME FCREATETIME,
+		RD.FCREATEUSERID FCREATEUSERID,RD.FLASTUPDATETIME FLASTUPDATETIME,RD.FLASTMODIFYUSERID FLASTMODIFYUSERID
+		]]>
+	</sql>
+	
+	<!-- 映射 -->
+	<resultMap id="OrderRusultMap" type="com.deppon.crm.module.customer.shared.domain.Order">
+		<result column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FLINKMANID" property="contactManId" jdbcType="NUMERIC" />
+		<result column="FHASTENCOUNT" property="hastenCount" jdbcType="NUMERIC" />
+		<result column="FLASTHASTENTIME" property="lastHastenTime" jdbcType="TIMESTAMP" />
+		<result column="FSHIPPERID" property="shipperId" jdbcType="VARCHAR" />
+		<result column="FSHIPPERNUMBER" property="shipperNumber" jdbcType="VARCHAR" />
+		<result column="FSHIPPERNAME" property="shipperName" jdbcType="VARCHAR" />
+		<result column="FCONTACTNAME" property="contactName" jdbcType="VARCHAR" />
+		<result column="FCONTACTMOBILE" property="contactMobile" jdbcType="VARCHAR" />
+		<result column="FCONTACTPHONE" property="contactPhone" jdbcType="VARCHAR" />
+		<result column="FCONTACTPROVINCE" property="contactProvince" jdbcType="VARCHAR" />
+		<result column="FCONTACTCITY" property="contactCity" jdbcType="VARCHAR" />
+		<result column="FCONTACTAREA" property="contactArea" jdbcType="VARCHAR" />
+		<result column="FCONTACTADDRESS" property="contactAddress" jdbcType="VARCHAR" />
+		<result column="FISRECEIVEGOOD" property="isReceiveGoods" jdbcType="NUMERIC" />
+		<result column="FBEGINACCEPTIME" property="beginAcceptTime" jdbcType="TIMESTAMP" />
+		<result column="FENDACCPTIME" property="endAcceptTime" jdbcType="TIMESTAMP" />
+		<!-- <result column="FISSAME" property="isSameName" jdbcType="VARCHAR" /> -->
+		<result column="FRECEIVEID" property="receiverCustId" jdbcType="VARCHAR" />
+		<result column="FRECEIVENUMBER" property="receiverCustNumber" jdbcType="VARCHAR" />
+		<result column="FCOMPANY" property="receiverCustcompany" jdbcType="VARCHAR" />
+		<result column="FRECEIVENAME" property="receiverCustName" jdbcType="VARCHAR" />
+		<result column="FRECEIVEMOBILE" property="receiverCustMobile" jdbcType="VARCHAR" />
+		<result column="FRECEIVEPHONE" property="receiverCustPhone" jdbcType="VARCHAR" />
+		<result column="FPROVINCE" property="receiverCustProvince" jdbcType="VARCHAR" />
+		<result column="FCITY" property="receiverCustCity" jdbcType="VARCHAR" />
+		<result column="FAREA" property="receiverCustArea" jdbcType="VARCHAR" />
+		<result column="FADDRESS" property="receiverCustAddress" jdbcType="VARCHAR" />
+		<result column="FISSENDMS" property="isSendmessage" jdbcType="NUMERIC" />
+		<result column="FTRANSPORTMODE" property="transportMode" jdbcType="VARCHAR" />
+		<result column="FGOODSNAME" property="goodsName" jdbcType="VARCHAR" />
+		<result column="FPACKING" property="packing" jdbcType="VARCHAR" />
+		<result column="FGOODSTYPE" property="goodsType" jdbcType="VARCHAR" />
+		<result column="FTOTALPIECE" property="goodsNumber" jdbcType="NUMERIC" />
+		<result column="FTOTALWEIGHT" property="totalWeight" jdbcType="DOUBLE" />
+		<result column="FTOTALVOLUME" property="totalVolume" jdbcType="DOUBLE" />
+		<result column="FPAYMENTTYPE" property="paymentType" jdbcType="VARCHAR" />
+		<result column="FCHANNELTYPE" property="channelType" jdbcType="VARCHAR" />
+		<result column="FCHANNELCUSTID" property="channelCustId" jdbcType="VARCHAR" />
+		<result column="FDELIVERYMODE" property="deliveryMode" jdbcType="VARCHAR" />
+		<result column="FDSHKTYPE" property="reciveLoanType" jdbcType="VARCHAR" />
+		<result column="FDSHK" property="reviceMoneyAmount" jdbcType="NUMERIC" />
+		<result column="FBJSMJZ" property="insuredAmount" jdbcType="DOUBLE" />
+		<result column="FORDERTIME" property="orderTime" jdbcType="TIMESTAMP" />
+		<result column="FDEPARTUREID" property="startStation" jdbcType="VARCHAR" />
+		<result column="FSTARTSTATIONNAME" property="startStationName" jdbcType="VARCHAR" />
+		<result column="FACCEPTDEPTID" property="acceptDept" jdbcType="VARCHAR" />
+		<result column="FACCEPTDEPTNAME" property="acceptDeptName" jdbcType="VARCHAR" />
+		<result column="FORDERSTATUS" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="FACCEPTER" property="dealPerson" jdbcType="VARCHAR" />
+		<result column="FACCEPTTIME" property="orderAcceptTime" jdbcType="TIMESTAMP" />
+		<result column="FACCEPTERNAME" property="receiver" jdbcType="VARCHAR" />
+		<result column="FACCEPTERMOBILE" property="accepterPersonMobile" jdbcType="VARCHAR" />
+		<result column="FWAYBILLNUMBER" property="waybillNumber" jdbcType="VARCHAR" />
+		<result column="FACCEPTTIME" property="orderAcceptTime" jdbcType="TIMESTAMP" />
+		<result column="FACCEPTERNAME" property="receiver" jdbcType="VARCHAR" />
+		<result column="FACCEPTERMOBILE" property="accepterPersonMobile" jdbcType="VARCHAR" />
+		<result column="FWAYBILLNUMBER" property="waybillNumber" jdbcType="VARCHAR" />
+		<result column="FRESOURCE" property="resource" jdbcType="VARCHAR" />
+		<result column="FORDERNUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="FRETURNBILLTYPE" property="returnBillType" jdbcType="VARCHAR" />
+		<result column="FTRANSNOTE" property="transNote" jdbcType="VARCHAR" />
+		<result column="FRECEIVINGTOPOINTID" property="receivingToPoint" jdbcType="VARCHAR" />
+		<result column="FORDERPERSON" property="orderPerson" jdbcType="VARCHAR" />
+		<result column="FFEEDBACKINFO" property="feedbackInfo" jdbcType="VARCHAR" />
+		<result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="FCREATEUSERID" property="createUser" jdbcType="VARCHAR" />
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="VARCHAR" />
+		<result column="FonlineName" property="channelNumber" />
+	</resultMap>
+	
+	
+	<resultMap id="ContactRM"
+		 type="com.deppon.crm.module.customer.shared.domain.Contact">
+		<result property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTUPDATEUSERID" jdbcType = "VARCHAR" />
+		<result property="number" column="FNUMBER" jdbcType = "VARCHAR" />
+		<result property="name" column="FNAME" jdbcType = "VARCHAR" />
+		<result property="idCard" column="FIDCARD" jdbcType = "VARCHAR" />
+		<result property="linkmanType" column="FLINKMANTYPE" jdbcType = "VARCHAR" />
+		<result property="isMainLinkMan" column="FISMAINLINKMAN" jdbcType = "NUMERIC" />
+		<result property="sex" column="FSEX" jdbcType = "VARCHAR" />
+		<result property="telPhone" column="FOFFERTEL" jdbcType = "VARCHAR" />
+		<result property="mobilePhone" column="FMOBILETEL" jdbcType = "VARCHAR" />
+		<result property="duty" column="FDUTY" jdbcType = "VARCHAR" />
+		<result property="dutyDept" column="FDUTYDEPT" jdbcType = "VARCHAR" />
+		<result property="bornDate" column="FBORNDATE" jdbcType = "DATE" />
+		<result property="gainave" column="FGAINAVE" jdbcType = "VARCHAR" />
+		<result property="decisionRight" column="FDECISIONRIGHT" jdbcType = "VARCHAR" />
+		<result property="nativePlace" column="FNATIVEPLACE" jdbcType = "VARCHAR" />
+		<result property="personLove" column="FPERSONLOVE" jdbcType = "VARCHAR" />
+		<result property="folk" column="FFOLK" jdbcType = "VARCHAR" />
+		<result property="email" column="FEMAIL" jdbcType = "VARCHAR" />
+		<result property="qqNumber" column="FQQNUMBER" jdbcType = "VARCHAR" />
+		<result property="msn" column="FMSN" jdbcType = "VARCHAR" />
+		<result property="ww" column="FWW" jdbcType = "VARCHAR" />
+		<result property="acceptDeptid" column="FACCEPTDEPTID" jdbcType = "VARCHAR" />
+		<result property="status" column="FSTATUS" jdbcType = "VARCHAR" />
+		<result property="defaultId" column="FDEFAULTID" jdbcType = "VARCHAR" />
+		<result property="versionId" column="FVERSIONID" jdbcType = "VARCHAR" />
+		<result property="custId" column="FCUSTID" jdbcType = "VARCHAR" />
+		<result property="cardTypeCon" column="FIDTYPE" jdbcType="VARCHAR"/>
+		<result property="ffax" column="FFAX" jdbcType="VARCHAR"/>
+			<association property="member" column="FCUSTID"
+			select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryMemberById"></association>
+	</resultMap>
+	
+	<resultMap id="RandomNumberRM"
+		 type="com.deppon.crm.module.customer.shared.domain.RandomNumber">
+		<result property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTUPDATEUSERID" jdbcType = "VARCHAR" />
+		<result property="mobile" column="FMOBILE" jdbcType = "VARCHAR" />
+		<result property="radomnumber" column="FRADOMNUMBER" jdbcType = "VARCHAR" />
+		<result property="effecttime" column="FEFFECTTIME" jdbcType = "DATE" />
+	</resultMap>
+	
+	<!-- 联系人查询view信息 -->
+	<resultMap id="ContactViewRM"
+		type="com.deppon.crm.module.customer.shared.domain.ContactView">
+		<result property="custName" column="FCUSTNAME" />	
+		<result property="degree" column="FDEGREE" />
+		<result property="custNumber" column="FCUSTNUMBER"/>		
+		<collection property="contact"  resultMap="ContactRM"/>	
+	</resultMap>
+	
+	
+	<select id="searchContacts" parameterType="com.deppon.crm.module.customer.shared.domain.Contact" resultMap="ContactRM">
+		SELECT
+		<include refid="Contact_column_noalias"/>
+		FROM T_CUST_CUSTLINKMAN
+		<where>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTUPDATEUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" number != null  and number != ''  ">
+		<![CDATA[and FNUMBER=#{number,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" name != null  and name != ''  ">
+		<![CDATA[and FNAME=#{name,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" idCard != null  and idCard != ''  ">
+		<![CDATA[and FIDCARD=#{idCard,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" linkmanType != null  and linkmanType != ''  ">
+		<![CDATA[and FLINKMANTYPE=#{linkmanType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" isMainLinkMan != null  and isMainLinkMan != ''  ">
+		<![CDATA[and FISMAINLINKMAN=#{isMainLinkMan,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" sex != null  and sex != ''  ">
+		<![CDATA[and FSEX=#{sex,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" telPhone != null  and telPhone != ''  ">
+		<![CDATA[and FOFFERTEL=#{telPhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" mobilePhone != null  and mobilePhone != ''  ">
+		<![CDATA[and FMOBILETEL=#{mobilePhone,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" duty != null  and duty != ''  ">
+		<![CDATA[and FDUTY=#{duty,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" dutyDept != null  and dutyDept != ''  ">
+		<![CDATA[and FDUTYDEPT=#{dutyDept,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" bornDate != null  and bornDate != ''  ">
+		<![CDATA[and FBORNDATE=#{bornDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" gainave != null  and gainave != ''  ">
+		<![CDATA[and FGAINAVE=#{gainave,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" decisionRight != null  and decisionRight != ''  ">
+		<![CDATA[and FDECISIONRIGHT=#{decisionRight,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" nativePlace != null  and nativePlace != ''  ">
+		<![CDATA[and FNATIVEPLACE=#{nativePlace,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" personLove != null  and personLove != ''  ">
+		<![CDATA[and FPERSONLOVE=#{personLove,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" folk != null  and folk != ''  ">
+		<![CDATA[and FFOLK=#{folk,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" email != null  and email != ''  ">
+		<![CDATA[and FEMAIL=#{email,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" qqNumber != null  and qqNumber != ''  ">
+		<![CDATA[and FQQNUMBER=#{qqNumber,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" msn != null  and msn != ''  ">
+		<![CDATA[and FMSN=#{msn,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ww != null  and ww != ''  ">
+		<![CDATA[and FWW=#{ww,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" acceptDeptid != null  and acceptDeptid != ''  ">
+		<![CDATA[and FACCEPTDEPTID=#{acceptDeptid,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" status != null  and status != ''  ">
+		<![CDATA[and FSTATUS=#{status,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" defaultId != null  and defaultId != ''  ">
+		<![CDATA[and FDEFAULTID=#{defaultId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" versionId != null  and versionId != ''  ">
+		<![CDATA[and FVERSIONID=#{versionId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" custId != null  and custId != ''  ">
+		<![CDATA[and FCUSTID=#{custId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" cardTypeCon != null  and cardTypeCon != ''  ">
+		<![CDATA[and fIdType=#{cardTypeCon,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" ffax != null  and ffax != ''  ">
+		<![CDATA[and FFAX=#{ffax,jdbcType=VARCHAR}]]>
+		</if>
+		</where>
+	</select>
+	
+	<select id="searchContactByCondition"  parameterType="com.deppon.crm.module.customer.shared.domain.ContactCondition" resultMap="ContactRM">
+		SELECT
+		<include refid="Contact_column"/>
+		FROM 
+			T_CUST_CUSTLINKMAN CL 
+		LEFT JOIN
+			T_CUST_CUSTBASEDATA CB 
+		ON 
+			CL.FCUSTID = CB.FID
+		<where>
+			<if test=" memberNum != null  and memberNum != ''  ">
+			<![CDATA[and CB.FCUSTNUMBER=#{memberNum,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" memberName != null  and memberName != ''  ">
+			<![CDATA[and CB.FCUSTNAME like #{memberName,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactNum != null  and contactNum != ''  ">
+			<![CDATA[and CL.FNUMBER=#{contactNum,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactName != null  and contactName != ''  ">
+			<![CDATA[and CL.FNAME like #{contactName,jdbcType=VARCHAR} ]]>
+			</if>
+		</where>
+	</select>
+	<select id="queryContactList"  parameterType="com.deppon.crm.module.customer.shared.domain.Contact" resultMap="ContactRM">
+		SELECT
+		<include refid="Contact_column"/>
+		FROM 
+			T_CUST_CUSTLINKMAN CL
+			where CL.FSTATUS != 2
+			<if test=" name != null  and name != ''  ">
+			<![CDATA[and CL.FNAME like #{name,jdbcType=VARCHAR} ]]>
+			</if>
+			<if test=" telPhone != null  and telPhone != ''  ">
+			<![CDATA[and CL.FOFFERTEL=#{telPhone,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" mobilePhone != null  and mobilePhone != ''  ">
+			<![CDATA[and CL.FMOBILETEL=#{mobilePhone,jdbcType=VARCHAR}]]>
+			</if>
+	</select>
+	
+</mapper>

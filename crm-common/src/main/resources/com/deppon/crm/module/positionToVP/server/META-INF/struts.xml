@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="positionToVP" namespace="/authorityDeploy" extends="crm-default">
+	   <!--岗位管理主页面-->
+       <action name="positionToVP" >
+           <result name="success">/WEB-INF/pages/positionToVP/positionToVP.html</result>
+       </action>
+       
+       <!--查询所有虚拟岗位-->
+       <action name="searchAllVPosition" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="searchAllVPosition">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!--查询未分配岗位-->
+       <action name="staPositionWaitToMapWithVP" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="staPositionWaitToMapWithVP">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!--查询已分配岗位-->
+       <action name="staPositionHaveMappedWithVP" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="staPositionHaveMappedWithVP">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!--新增虚拟岗位-->
+       <action name="addVirtualPosition" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="addVirtualPosition">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!--修改虚拟岗位-->
+       <action name="updateVirtualPosition" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="updateVirtualPosition">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!--删除虚拟岗位信息-->
+       <action name="deleteVirtualPositionById" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="deleteVirtualPositionById">
+           <result name="success" type="json"></result>
+       </action>
+       
+       <!--判断是否可以删除虚拟岗位-->
+       <action name="canDeleteVirtualPosition" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="canDeleteVirtualPosition">
+           <result name="success" type="json"></result>
+       </action>
+       
+        <!--虚拟职位名称是否重复-->
+       <action name="isExistVirtualPositionName" class="com.deppon.crm.module.authorization.server.action.PositionoToVPAction" method="isExistVirtualPositionName">
+           <result name="success" type="json"></result>
+       </action>
+	</package>
+</struts>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	 
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<!-- dao 配置 begin -->
+	<!-- hpf - 责任管理 -->
+	<bean id="dutyDao"  class="com.deppon.crm.module.duty.server.dao.impl.DutyDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 基础层级 -->
+	<bean id="basicLevelDaoDuty" class="com.deppon.crm.module.duty.server.dao.impl.BasicLevelDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- hpf - 基础类型-->
+	<bean id="procResultDaoDuty" class="com.deppon.crm.module.duty.server.dao.impl.ProcResultDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- hpf - 工单责任划分结果-->
+	<bean id="dutyResultDao" class="com.deppon.crm.module.duty.server.dao.impl.DutyResultDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- hpf - 通知对象-->
+	<bean id="informUserDao" class="com.deppon.crm.module.duty.server.dao.impl.InformUserDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- hpf - 附件-->
+	<bean id="feedAttachDao" class="com.deppon.crm.module.duty.server.dao.impl.FeedAttachDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- hpf - 处理经过-->
+	<bean id="dutyDealProcessDao" class="com.deppon.crm.module.duty.server.dao.impl.DutyDealProcessDao" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- XHY 工单责任反馈记录 -->
+	<bean id="dutyFeedbackDao" class="com.deppon.crm.module.duty.server.dao.impl.DutyFeedbackDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- LiuY -工单责任特殊部门  -->
+	<bean id="dutydeptdao" class="com.deppon.crm.module.duty.server.dao.impl.DutyDeptDaoImpl" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- dao 配置 end -->
+	
+	
+	<!-- service 配置 begin-->
+	<!-- hpf - 责任管理 -->
+	<bean id="dutyService"  class="com.deppon.crm.module.duty.server.service.impl.DutyService">
+		<property name="dutyDao" ref="dutyDao"></property>
+	</bean>
+	<!-- 基础资料处理结果-->
+    <bean id="procResultServiceDuty" class="com.deppon.crm.module.duty.server.service.impl.ProcResultServiceImpl" >
+		<property name="procResultDaoDuty" ref="procResultDaoDuty"></property>
+	</bean>
+	<!-- 基础层级 -->
+	<bean id="basicLevelServiceDuty" class="com.deppon.crm.module.duty.server.service.impl.BasicLevelServiceImpl" >
+		<property name="basicLevelDaoDuty" ref="basicLevelDaoDuty"></property>
+	</bean>
+	<!-- hpf - 工单责任划分结果-->
+	<bean id="dutyResultService" class="com.deppon.crm.module.duty.server.service.impl.DutyResultServiceImpl" >
+		<property name="dutyResultDao" ref="dutyResultDao"></property>
+	</bean>
+	<!-- hpf - 通知对象-->
+	<bean id="informUserService" class="com.deppon.crm.module.duty.server.service.impl.InformUserServiceImpl" >
+		<property name="informUserDao" ref="informUserDao"></property>
+	</bean>
+	<!-- hpf - 附件-->
+	<bean id="feedAttachService" class="com.deppon.crm.module.duty.server.service.impl.FeedAttachServiceImpl" >
+		<property name="feedAttachDao" ref="feedAttachDao"></property>
+	</bean>
+	<!-- hpf - 处理经过 -->
+	<bean id="dutyDealProcessService" class="com.deppon.crm.module.duty.server.service.impl.DutyDealProcessServiceImpl" >
+		<property name="dutyDealProcessDao" ref="dutyDealProcessDao"></property>
+	</bean>
+	<!-- hpf - 基础类型-->
+	
+	<!-- xhy - 责任反馈记录-->
+	<bean id="dutyFeedbackService" class="com.deppon.crm.module.duty.server.service.impl.DutyFeedbackServiceImpl" >
+		<property name="dutyFeedbackDao" ref="dutyFeedbackDao"></property>
+	</bean>
+	
+	<!-- LiuY - 工单责任特殊部门 -->
+	<bean id="dutyDeptService" class="com.deppon.crm.module.duty.server.service.impl.DutyDeptServiceImpl">
+		<property name="dutydeptdao" ref="dutydeptdao"></property>
+	</bean>
+	<!-- service 配置 end -->
+	
+	
+	
+	<!-- manager 配置 begin -->
+	<!-- hpf - 责任管理 -->
+	<bean id="dutyManager"  class="com.deppon.crm.module.duty.server.manager.impl.DutyManager">
+		<property name="dutyService" ref="dutyService"></property>
+		<property name="dutyFeedbackService" ref="dutyFeedbackService"></property>
+		<property name="dutyResultService" ref="dutyResultService"></property>
+		<property name="informUserService" ref="informUserService"></property>
+		<property name="dutyDealProcessService" ref="dutyDealProcessService"></property>
+		<property name="cellphoneMessageInfoService" ref="cellphoneMessageInfoService"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="specialDayManager" ref="specialDayManager"/>
+		<property name="feedAttachService" ref="feedAttachService"></property>
+		<property name="dutyDeptService" ref="dutyDeptService"></property>
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+	<bean id="basalTypeManagerDuty" class="com.deppon.crm.module.duty.server.manager.impl.BasalTypeManager">
+		<property name="procResultServiceDuty" ref="procResultServiceDuty"></property>
+		<property name="basicLevelServiceDuty" ref="basicLevelServiceDuty"></property>
+	</bean>
+	<!-- hpf - 基础类型-->
+	
+	<!-- manager 配置 end -->
+	
+	<!-- action 配置 begin -->
+	<!-- hpf - 责任管理 -->
+	<bean id="dutyAction" scope="prototype" class="com.deppon.crm.module.duty.server.action.DutyAction">
+		<property name="dutyManager" ref="dutyManager"></property>
+		<property name="complaintManager" ref="complaintManager"></property>
+	</bean>
+	<!-- hpf - 责任管理 -->
+	<bean id="listDutyAction" scope="prototype" class="com.deppon.crm.module.duty.server.action.ListDutyAction">
+		<property name="dutyManager" ref="dutyManager"></property>
+	</bean>
+	
+	<!-- hpf - 责任管理-基础资料 -->
+	<bean id="basalTypeAction" scope="prototype" class="com.deppon.crm.module.duty.server.action.BasalTypeAction">
+		<property name="basalTypeManager" ref="basalTypeManagerDuty"></property>
+	</bean>
+	<!-- action 配置 end -->
+</beans>
+

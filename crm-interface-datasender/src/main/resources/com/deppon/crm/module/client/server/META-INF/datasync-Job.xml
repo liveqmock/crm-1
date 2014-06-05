@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+	default-autowire="byType">
+	
+	<bean id="WaitCustomerLogDao" class="com.deppon.crm.module.client.sync.dao.impl.WaitCustomerLogDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="SearchMemberInfosDao" class="com.deppon.crm.module.client.sync.dao.impl.SearchMemberInfosDaoImpl">
+		<property name="sqlSessionFactory">
+			<ref bean="sqlSessionFactory" />
+		</property>
+	</bean>
+
+	<bean id="MemryLock" class="com.deppon.crm.module.client.jobs.impl.MemryLock">
+	</bean>
+	<bean id="CustomerBaseInfoLogProvider" class="com.deppon.crm.module.client.sync.impl.CustomerBaseInfoProvider">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+	</bean>
+	<bean id="CustomerBaseInfoSender" class="com.deppon.crm.module.client.sync.impl.CustomerBaseInfoSender">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+		<property name="searchMemberInfosDao">
+			<ref bean="SearchMemberInfosDao" />
+		</property>
+		<property name="customerInfoCcSender"  ref="customerInfoCcSend" />
+		<property name="customerInfoFossSender"  ref="customerInfoFossSend" />
+	    <property name="customerBaseInfoWdghSender" ref="customerBaseInfoWdghSender" />
+
+	</bean>
+	<bean id="CustomerBaseInfoProcess" class="com.deppon.crm.module.client.sync.impl.CustomerBaseInfoProcess">
+		<property name="waitCustomerLogDao">
+			<ref bean="WaitCustomerLogDao" />
+		</property>
+	</bean>
+	
+	<!-- 调度控制——发送轮询——任务定义 -->
+	<bean id="CustomBaseInfoExecutorContext" class="com.deppon.crm.module.client.sync.impl.CustomBaseInfoExecutorContext">
+		<property name="lock">
+			<ref bean="MemryLock" />
+		</property>
+		<property name="provider">
+			<ref bean="CustomerBaseInfoLogProvider" />
+		</property>
+		<property name="process">
+			<ref bean="CustomerBaseInfoProcess" />
+		</property>
+		<property name="sender">
+			<ref bean="CustomerBaseInfoSender" />
+		</property>
+	</bean>
+	
+	<bean id="MemberDataSenderJob"
+		class="com.deppon.foss.framework.server.components.scheduling.LocalJobDetail">
+		<!-- repeate属性表示该任务执行时再次被触发是否可以再次执行 -->
+		<property name="repeate" value="false"></property>
+		<!-- multiNodeExecute属性表示该任务是否可以同时在多个节点执行 -->
+		<property name="multiNodeExecute" value="false"></property>
+		
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- JobClass统一使用CommonJob -->
+		<property name="jobClass"
+			value="com.deppon.foss.framework.server.components.scheduling.CommonJob"></property>
+		<property name="jobDataAsMap">
+			<map>
+				<!-- 任务中需要调用的服务类 -->
+				<entry key="serviceBean" value-ref="CustomBaseInfoExecutorContext"></entry>
+				<!-- 任务中需要调用的服务方法 -->
+				<entry key="methodName" value="execute"></entry>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器，定义job触发的时间，还可以配置CronTriggerBean -->
+	<bean id="MyMemberDataSenderJobTigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+            <property name="jobDetail"> 
+                <ref bean="MemberDataSenderJob"/> 
+            </property> 
+            <!-- cron表达式 --> 
+            <property name="cronExpression"> 
+                <value>0 0/1 * * * ?</value> 
+            </property> 
+     </bean> 
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  --> 
+    <bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> 
+            <property name="triggers"> 
+                <list> 
+                    <ref bean="MyMemberDataSenderJobTigger"/> 
+                </list> 
+            </property> 
+        </bean> 
+	<context:annotation-config />
+</beans>

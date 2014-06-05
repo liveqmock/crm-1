@@ -1,0 +1,37 @@
+<propertysets>
+	<propertyset name="memory"
+		class="com.opensymphony.module.propertyset.memory.MemoryPropertySet" />
+
+	<!-- 自定义数据源配置 -->
+	<propertyset name="jdbc"
+		class="com.deppon.crm.module.common.server.workflow.JdbcPropertySet">
+		<arg name="jdbc.driverClassName" value="oracle.jdbc.OracleDriver" />
+		<arg name="jdbc.url" value="jdbc:oracle:thin:@192.168.17.161:1521:depcrm" />
+		<arg name="jdbc.username" value="develop" />
+		<arg name="jdbc.password" value="develop" />
+		<arg name="table.name" value="OS_PROPERTYENTRY" />
+		<arg name="col.globalKey" value="GLOBAL_KEY" />
+		<arg name="col.itemKey" value="ITEM_KEY" />
+		<arg name="col.itemType" value="ITEM_TYPE" />
+		<arg name="col.string" value="STRING_VALUE" />
+		<arg name="col.date" value="DATE_VALUE" />
+		<arg name="col.data" value="DATA_VALUE" />
+		<arg name="col.float" value="FLOAT_VALUE" />
+		<arg name="col.number" value="NUMBER_VALUE" />
+	</propertyset>
+
+	<!-- 使用JNDI配置数据源访问 -->
+	<!-- <propertyset name="jdbc" -->
+	<!-- class="com.opensymphony.module.propertyset.database.JDBCPropertySet"> -->
+	<!-- <arg name="datasource" value="jdbc/crmdb" /> -->
+	<!-- <arg name="table.name" value="OS_PROPERTYENTRY" /> -->
+	<!-- <arg name="col.globalKey" value="GLOBAL_KEY" /> -->
+	<!-- <arg name="col.itemKey" value="ITEM_KEY" /> -->
+	<!-- <arg name="col.itemType" value="ITEM_TYPE" /> -->
+	<!-- <arg name="col.string" value="STRING_VALUE" /> -->
+	<!-- <arg name="col.date" value="DATE_VALUE" /> -->
+	<!-- <arg name="col.data" value="DATA_VALUE" /> -->
+	<!-- <arg name="col.float" value="FLOAT_VALUE" /> -->
+	<!-- <arg name="col.number" value="NUMBER_VALUE" /> -->
+	<!-- </propertyset> -->
+</propertysets>

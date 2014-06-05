@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.report.shared.domain.KeycustDelivery">
+	<!-- 大客户报表信息 -->
+	<resultMap id="keycustDeliveryRM"
+		type="com.deppon.crm.module.report.shared.domain.KeycustDelivery">
+		<result property="id" column="FID" />
+		<result property="customer" column="FCUSTNUMBER" />
+		<result property="analysebyDate" column="FANALYSEBYDATE" />
+		<result property="weight" column="FWEIGHT" />
+		<result property="deliveryCount" column="FDELIVERYCOUNT" />
+		<result property="amount" column="FAMOUNT" />
+		<result property="weightRate" column="FWEIGHTRATE" />
+		<result property="time" column="FTIME" />
+		<result property="deliveryCityCode" column="FDELIVERYCITYCODE" />
+		<result property="receiverCityCode" column="FRECEIVERCITYCODE" />
+		<result property="transport" column="FTRANSPORT" />
+		<result property="transportName" column="FTRANSPORTNAME" />
+		<result property="createTime" column="FCREATETIME" />
+	</resultMap>
+	<!-- 单月走货量 -->
+	<resultMap id="singleShipmentAmountRM"
+		type="com.deppon.crm.module.report.shared.domain.ShipmentAmount">
+		<result property="month" column="FMONTH" />
+		<result property="deliverycount" column="FDELIVERYCOUNT" />
+		<result property="weight" column="FWEIGHT" />
+		<result property="amount" column="FAMOUNT" />
+	</resultMap>
+	<!-- 单月走货量 -->
+	<resultMap id="singleProductAmountRM"
+		type="com.deppon.crm.module.report.shared.domain.SingleProductAmount">
+		<result property="month" column="FMONTH" />
+		<result property="deliverycount" column="FDELIVERYCOUNT" />
+		<result property="weight" column="FWEIGHT" />
+		<result property="amount" column="FAMOUNT" />
+		<result property="weightRate" column="FWEIGHTRATE" />
+		<result property="grouping" column="FGROUPING" />
+	</resultMap>
+	<!-- 线路货量 -->
+	<resultMap id="singleRoadAmountRM"
+		type="com.deppon.crm.module.report.shared.domain.SingleRoadAmount">
+		<result property="month" column="FMONTH" />
+		<result property="deliverycount" column="FDELIVERYCOUNT" />
+		<result property="weight" column="FWEIGHT" />
+		<result property="amount" column="FAMOUNT" />
+		<result property="weightRate" column="FWEIGHTRATE" />
+		<result property="grouping" column="FGROUPING" />
+	</resultMap>
+	<!-- 走货时效 -->
+	<resultMap id="singleShipmentAgingRM"
+		type="com.deppon.crm.module.report.shared.domain.SingleShipmentAging">
+		<result property="grouping" column="FGROUPING" />
+		<result property="transport" column="FTRANSPORT" />
+		<result property="month" column="FMONTH" />
+		<result property="time" column="FTIME" />
+	</resultMap>
+	<!-- 走货质量 -->
+	<resultMap id="singleShipmentQualityRM"
+		type="com.deppon.crm.module.report.shared.domain.SingleShipmentQuality">
+		<result property="grouping" column="FGROUPING" />
+		<result property="month" column="FMONTH" />
+		<result property="count" column="FCOUNT" />
+	</resultMap>
+	<!-- 查询走货数量 -->
+	<select id="selectShipmentAmount" resultMap="singleShipmentAmountRM"
+		parameterType="string">
+		<![CDATA[  
+	    	SELECT SUM(NVL(T.FFPREPAYAMOUNT, 0)) + SUM(NVL(T.FARRIVEDAOUNT, 0)) -
+			       SUM(NVL(T.FREFUNDRABATE, 0)) - SUM(NVL(T.FAGENTRECEIVEPAY, 0)) as FAMOUNT,
+			       sum(NVL(T.Fairvote, 0)) + sum(NVL(T.Fshortvote, 0)) +
+			       sum(NVL(T.Flongvote, 0)) + sum(NVL(T.FAIRCARDVOTE, 0)) +
+			       sum(NVL(T.Fcitytranvote, 0)) as FDELIVERYCOUNT,
+			       sum(t.fweight) as FWEIGHT,
+			       T.FMONTH as FMONTH
+			  FROM T_CRM_CUSTANALYSEBYDAY T
+			 WHERE T.FCANALYSETYPE = 1
+			   AND T.FANALYSEDAY BETWEEN trunc(add_months(sysdate, -3), 'mm') AND
+			       trunc(add_months(sysdate, -1), 'mm')
+			   AND T.Fcustnumber = #{custNum}
+			 GROUP BY T.FYEAR, T.FMONTH
+			 ORDER BY T.FYEAR, T.FMONTH
+		]]>
+	</select>
+	<!-- 查询产品货量 -->
+	<select id="selectProductAmount" resultMap="singleProductAmountRM"
+		parameterType="string">
+		<![CDATA[
+	    	select sum(kd.fdeliverycount) as FDELIVERYCOUNT,
+			       sum(kd.fweight) as FWEIGHT,
+			       sum(kd.famount) as FAMOUNT,
+			       sum(kd.fweightrate) as FWEIGHTRATE,
+			       max(kd.ftransportname) as FGROUPING,
+			       EXTRACT(MONTH FROM kd.fanalysebydate) as FMONTH
+			  from t_crm_keycustomerdelivery kd
+			 where kd.fcustnumber = #{custNum}
+			   and kd.fanalysebydate in (trunc(add_months(sysdate, -1), 'mm'),
+			        trunc(add_months(sysdate, -2), 'mm'),
+			        trunc(add_months(sysdate, -3), 'mm'))
+			 group by kd.ftransport, kd.fanalysebydate
+		]]>
+	</select>
+	<!-- 查询线路货量 -->
+	<select id="selectRoadAmount" resultMap="singleRoadAmountRM"
+		parameterType="string">
+		<![CDATA[
+	    	select t.del as FDELIVERYCOUNT,
+			       t.wei as FWEIGHT,
+			       t.amo as FAMOUNT,
+			       t.mo as FMONTH,
+			       t.wr as FWEIGHTRATE,
+			       c1.fname || '->' || c2.fname as FGROUPING
+			  from (select sum(kd.fdeliverycount) del,
+			               sum(kd.fweight) wei,
+			               sum(kd.famount) amo,
+			               kd.fdeliverycitycode delic,
+			               sum(kd.fweightrate) wr,
+			               kd.freceivercitycode rec,
+			               EXTRACT(MONTH FROM kd.fanalysebydate) mo
+			          from t_crm_keycustomerdelivery kd
+			         where kd.fcustnumber = #{custNum}
+			           and kd.fanalysebydate in (trunc(add_months(sysdate, -1), 'mm'),
+			                trunc(add_months(sysdate, -2), 'mm'),
+			                trunc(add_months(sysdate, -3), 'mm'))
+			         group by kd.fdeliverycitycode,
+			                  kd.freceivercitycode,
+			                  kd.fanalysebydate) t
+			  left join t_crm_city c1 on t.delic = c1.fnumber
+			  left join t_crm_city c2 on t.rec = c2.fnumber
+		]]>
+	</select>
+	<!-- 查询走货时效 -->
+	<select id="selectShipmentAging" resultMap="singleShipmentAgingRM"
+		parameterType="string">
+		<![CDATA[
+	    	select t.tra as FTRANSPORT,
+			       t.fmonth as FMONTH,
+			       c1.fname || '->' || c2.fname as FGROUPING,
+			       t.tim as FTIME
+			  from (select kd.ftransport tra,
+			               avg(kd.ftime) tim,
+			               EXTRACT(MONTH FROM kd.fanalysebydate) as FMONTH,
+			               kd.fdeliverycitycode del,
+			               kd.freceivercitycode rec
+			          from t_crm_keycustomerdelivery kd
+			         where kd.fcustnumber = #{custNum}
+			           and kd.fanalysebydate in (trunc(add_months(sysdate, -1), 'mm'),
+			                trunc(add_months(sysdate, -2), 'mm'),
+			                trunc(add_months(sysdate, -3), 'mm'))
+			         group by kd.ftransport,
+			                  kd.fdeliverycitycode,
+			                  kd.freceivercitycode,
+			                  kd.fanalysebydate) t
+			  left join t_crm_city c1 on t.del = c1.fnumber
+			  left join t_crm_city c2 on c2.fnumber = t.rec
+		]]>
+	</select>
+	<!-- 查询走货质量 -->
+	<select id="selectShipmentQuality" resultMap="singleShipmentQualityRM"
+		parameterType="map">
+		<![CDATA[
+	    	select #{abSignNormalCount} as FGROUPING,
+			       sum(kd.fabsigncount) as FCOUNT,
+			       EXTRACT(MONTH FROM kd.fanalysebydate) as FMONTH
+			  from t_crm_keycustomerdelivery kd
+			 where  kd.fcustnumber = #{custNum} and
+			 		kd.fanalysebydate in (trunc(add_months(sysdate, -1), 'mm'),
+			        trunc(add_months(sysdate, -2), 'mm'),
+			        trunc(add_months(sysdate, -3), 'mm'))
+			 group by kd.fanalysebydate
+			union
+			select #{recompenseCount} as FGROUPING,
+			       count(*) as FCOUNT,
+			       EXTRACT(MONTH FROM r.fcreatetime) as FMONTH
+			  from t_cust_custbasedata cb
+			 inner join t_rec_recompense r on cb.fid = r.fcustomerid
+			 where cb.fcustnumber = #{custNum}
+			   and r.fcreatetime > = trunc(add_months(sysdate, -3), 'mm')
+			   and r.fcreatetime < trunc(sysdate, 'mm')
+			   and r.fstatus not in ('Exempted', 'Rejected', 'Invalid')
+			 group by EXTRACT(MONTH FROM r.fcreatetime)
+		]]>
+	</select>
+</mapper>

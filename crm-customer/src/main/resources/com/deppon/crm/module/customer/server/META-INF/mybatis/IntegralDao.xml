@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.Integral">
+	
+	<insert id="insertIntegral" parameterType="map" >
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+		select SEQ_ID_integ.nextval as id from dual
+		</selectKey>
+		insert into t_cust_integ(
+		FID,FCREATETIME,FCREATEUSERID,
+		FSCORE,FTYPE,FCONTACTID,FGIFTID,
+		FCONVERTNUMBER,FCONVERTIDCARD,FWORKFLOWID,FCONVERTTIME,
+		FSENDTIME,FISSEND,FREWARDINTEGRALID,FINTEGRALBASICNUMBER,
+		FADJUSTTYPE,FCONTACTFROMID,FCONTACTTOID,FREWARDDATE,fsendStatus,fdeptId)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{score,jdbcType=NUMERIC},#{type,jdbcType=VARCHAR},
+		#{contact.id,jdbcType=VARCHAR},#{gift.id,jdbcType=VARCHAR},
+		#{convertNumber,jdbcType=NUMERIC},#{convertIdCard,jdbcType=VARCHAR},
+		#{workFlowId,jdbcType=VARCHAR},sysdate,
+		#{sendTime,jdbcType=DATE},#{isSend,jdbcType=NUMERIC},
+		#{rewardIntegral.id,jdbcType=VARCHAR},#{integralBasicNumber,jdbcType=NUMERIC},
+		#{adjustType,jdbcType=VARCHAR},#{contactFrom.id,jdbcType=VARCHAR},
+		#{contactTo.id,jdbcType=VARCHAR},#{rewardDate,jdbcType=VARCHAR},
+		#{sendStatus,jdbcType=VARCHAR},#{deptId,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateIntegral" parameterType="map">
+		UPDATE
+	    T_CUST_INTEG
+		SET FLASTUPDATETIME = sysdate 
+		,FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[,FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" score != null  and score != ''  ">
+		<![CDATA[,FSCORE=#{score,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" type != null  and type != ''  ">
+		<![CDATA[,FTYPE=#{type,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="contact != null and contact.id != null  and contact.id != ''  ">
+		<![CDATA[,FCONTACTID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="gift != null and  gift.id != null  and gift.id != ''  ">
+		<![CDATA[,FGIFTID=#{gift.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" convertNumber != null  and convertNumber != ''  ">
+		<![CDATA[,FCONVERTNUMBER=#{convertNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" convertIdCard != null  and convertIdCard != ''  ">
+		<![CDATA[,FCONVERTIDCARD=#{convertIdCard,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workFlowId != null  and workFlowId != ''  ">
+		<![CDATA[,FWORKFLOWID=#{workFlowId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" convertTime != null  and convertTime != ''  ">
+		<![CDATA[,FCONVERTTIME=#{convertTime,jdbcType=DATE}]]>
+		</if>
+		<if test=" sendTime != null  and sendTime != ''  ">
+		<![CDATA[,FSENDTIME=#{sendTime,jdbcType=DATE}]]>
+		</if>
+		<if test=" isSend != null  and isSend != ''  ">
+		<![CDATA[,FISSEND=#{isSend,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" rewardIntegral != null and rewardIntegral.id != null  and rewardIntegral.id != ''  ">
+		<![CDATA[,FREWARDINTEGRALID=#{rewardIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" integralBasicNumber != null  and integralBasicNumber != ''  ">
+		<![CDATA[,FINTEGRALBASICNUMBER=#{integralBasicNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" adjustType != null  and adjustType != ''  ">
+		<![CDATA[,FADJUSTTYPE=#{adjustType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactFrom != null and contactFrom.id != null  and contactFrom.id != ''  ">
+		<![CDATA[,FCONTACTFROMID=#{contactFrom.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactTo != null and contactTo.id != null  and contactTo.id != ''  ">
+		<![CDATA[,FCONTACTTOID=#{contactTo.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" rewardDate != null  and rewardDate != ''  ">
+		<![CDATA[,FREWARDDATE=#{rewardDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" sendStatus != null  and sendStatus != ''  ">
+		<![CDATA[,fsendStatus=#{sendStatus,jdbcType=VARCHAR}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+	
+	<delete id="deleteIntegral" parameterType="String">
+	  delete t_cust_integ where fid = #{id}
+	</delete>
+	
+	<sql id="Integral_column_dept_cname">
+		A.FID,
+		A.FCREATETIME,
+		A.FCREATEUSERID,
+		A.FLASTUPDATETIME,
+		A.FLASTMODIFYUSERID,
+		A.FSCORE,
+		A.FTYPE,
+		A.FCONTACTID,
+		A.FGIFTID,
+		A.FCONVERTNUMBER,
+		A.FCONVERTIDCARD,
+		A.FWORKFLOWID,
+		A.FCONVERTTIME,
+		A.FSENDTIME,
+		A.FISSEND,
+		A.FREWARDINTEGRALID,
+		A.FINTEGRALBASICNUMBER,
+		A.FADJUSTTYPE,
+		A.FCONTACTFROMID,
+		A.FCONTACTTOID,
+		A.FREWARDDATE,
+		A.fsendStatus,
+		B.FEMPNAME createName,
+		C.FDEPTNAME deptName
+	</sql>
+	
+	<sql id="Integral_column">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FSCORE,
+		FTYPE,
+		FCONTACTID,
+		FGIFTID,
+		FCONVERTNUMBER,
+		FCONVERTIDCARD,
+		FWORKFLOWID,
+		FCONVERTTIME,
+		FSENDTIME,
+		FISSEND,
+		FREWARDINTEGRALID,
+		FINTEGRALBASICNUMBER,
+		FADJUSTTYPE,
+		FCONTACTFROMID,
+		FCONTACTTOID,
+		FREWARDDATE,
+		fsendStatus,
+		FdeptId
+	</sql>
+	
+	<sql id="Integral_temp">
+		FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCONTACTID ,
+		FGIFTID,
+		FDEPTID ,
+		FCONVERTNUMBER
+	</sql>
+	
+	<resultMap id="IntegralConvertGiftRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.IntegralConvertGift">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="score" column="FSCORE" jdbcType = "NUMERIC" />
+		<result property="type" column="FTYPE" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="convertNumber" column="FCONVERTNUMBER" jdbcType = "NUMERIC" />
+		<result property="convertIdCard" column="FCONVERTIDCARD" jdbcType = "VARCHAR" />
+		<result property="workFlowId" column="FWORKFLOWID" jdbcType = "VARCHAR" />
+		<result property="convertTime" column="FCONVERTTIME" jdbcType = "DATE" />
+		<result property="sendTime" column="FSENDTIME" jdbcType = "DATE" />
+		<result property="isSend" column="FISSEND" jdbcType = "NUMERIC" />
+		<result property="sendStatus" column="fsendStatus" jdbcType = "NUMERIC" />
+		<result property="deptId" column="fdeptId" jdbcType = "VARCHAR" />
+		<association property="gift" column="FGIFTID" javaType="com.deppon.crm.module.customer.shared.domain.integral.Gift" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.integral.Gift.getGiftById"></association>
+		<association property="contact" column="FCONTACTID" javaType="com.deppon.crm.module.customer.shared.domain.Contact" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+	</resultMap>
+	
+	<select id="countSearchIntegralConvertGiftForContactId" parameterType="map" resultType="long">
+		<![CDATA[
+				SELECT count(*)
+		]]>
+		<include refid="searchIntegralConvertGiftForContactIdCondition"/>
+	</select>
+	
+	<select id="searchIntegralConvertGiftForContactId" parameterType="map" resultMap="IntegralConvertGiftRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Integral_column"/>
+		<include refid="searchIntegralConvertGiftForContactIdCondition"/>
+	</select>
+	
+	<sql id="searchIntegralConvertGiftForContactIdCondition">
+		FROM T_CUST_INTEG
+		<where>
+			FTYPE = 'IntegralConvertGift'
+			<if test="contactIdList != null and contactIdList != ''">
+				<![CDATA[ AND FCONTACTID in (${contactIdList})]]>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="countSearchIntegralConvertGifts" parameterType="com.deppon.crm.module.customer.shared.domain.integral.IntegralConvertGift" resultType="long">
+		SELECT
+		count(*)
+		<include refid="searchIntegralConvertGiftsCondition"/>
+	</select>
+	
+	<select id="searchIntegralConvertGifts" parameterType="com.deppon.crm.module.customer.shared.domain.integral.IntegralConvertGift" resultMap="IntegralConvertGiftRM">
+		SELECT
+		<include refid="Integral_column"/>
+		<include refid="searchIntegralConvertGiftsCondition"/>
+	</select>
+	
+	<sql id="searchIntegralConvertGiftsCondition">
+		FROM T_CUST_INTEG
+		<where>
+		FTYPE = 'IntegralConvertGift'
+		<if test=" score != null  and score != ''  ">
+		<![CDATA[and FSCORE=#{score,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contact!= null and contact.id != null  and contact.id != ''  ">
+		<![CDATA[and FCONTACTID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" gift != null and  gift.id != null  and gift.id != ''  ">
+		<![CDATA[and FGIFTID=#{gift.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" convertNumber != null  and convertNumber != ''  ">
+		<![CDATA[and FCONVERTNUMBER=#{convertNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" convertIdCard != null  and convertIdCard != ''  ">
+		<![CDATA[and FCONVERTIDCARD=#{convertIdCard,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" workFlowId != null  and workFlowId != ''  ">
+		<![CDATA[and FWORKFLOWID=#{workFlowId,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" convertTime != null  and convertTime != ''  ">
+		<![CDATA[and FCONVERTTIME=#{convertTime,jdbcType=DATE}]]>
+		</if>
+		<if test=" sendTime != null  and sendTime != ''  ">
+		<![CDATA[and FSENDTIME=#{sendTime,jdbcType=DATE}]]>
+		</if>
+		<if test=" isSend != null  and isSend != ''  ">
+		<![CDATA[and FISSEND=#{isSend,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" sendStatus != null  and sendStatus != ''  ">
+		<![CDATA[and fsendStatus=#{sendStatus,jdbcType=NUMERIC}]]>
+		</if>
+		</where>
+	</sql>
+	
+	<select id="getIntegralConvertGiftById" parameterType="string" resultMap="IntegralConvertGiftRM">
+		SELECT
+		<include refid="Integral_column"/>
+		FROM T_CUST_INTEG
+		WHERE FID = #{id}
+		AND FTYPE = 'IntegralConvertGift'
+	</select>
+	
+	<resultMap id="AdjustIntegralRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.AdjustIntegral">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="score" column="FSCORE" jdbcType = "NUMERIC" />
+		<result property="type" column="FTYPE" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="adjustType" column="FADJUSTTYPE" jdbcType = "VARCHAR" />
+		<association property="contact" column="FCONTACTID" javaType="com.deppon.crm.module.customer.shared.domain.Contact" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+		<association property="contactFrom" column="FCONTACTFROMID" javaType="com.deppon.crm.module.customer.shared.domain.Contact"  jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+		<association property="contactTo" column="FCONTACTTOID" javaType="com.deppon.crm.module.customer.shared.domain.Contact" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+	</resultMap>
+	
+	<select id="countSearchAdjustIntegralForContactId" parameterType="map" resultType="long">
+		<![CDATA[
+				SELECT count(*)
+		]]>
+		<include refid="searchAdjustIntegralForContactIdCondition"/>
+	</select>
+	
+	<select id="searchAdjustIntegralForContactId" parameterType="map" resultMap="AdjustIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Integral_column"/>
+		<include refid="searchAdjustIntegralForContactIdCondition"/>
+	</select>
+	
+	<sql id="searchAdjustIntegralForContactIdCondition">
+		FROM T_CUST_INTEG
+		<where>
+			FTYPE = 'AdjustIntegral'
+			<if test="contactIdList != null and contactIdList != ''">
+				<![CDATA[ AND FCONTACTID in (${contactIdList})]]>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="countSearchAdjustIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.AdjustIntegral" resultType="long">
+		SELECT
+		count(*)
+		<include refid="searchAdjustIntegralsCondition"/>
+	</select>
+	
+	<select id="searchAdjustIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.AdjustIntegral" resultMap="AdjustIntegralRM">
+		SELECT
+		<include refid="Integral_column"/>
+		<include refid="searchAdjustIntegralsCondition"/>
+	</select>
+	
+	<sql id="searchAdjustIntegralsCondition">
+		FROM T_CUST_INTEG
+		<where>
+		FTYPE = 'AdjustIntegral'
+		<if test=" score != null  and score != ''  ">
+		<![CDATA[and FSCORE=#{score,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contact != null and contact.id != null  and contact.id != ''  ">
+		<![CDATA[and FCONTACTID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" adjustType != null  and adjustType != ''  ">
+		<![CDATA[and FADJUSTTYPE=#{adjustType,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactFrom != null and contactFrom.id != null  and contactFrom.id != ''  ">
+		<![CDATA[and FCONTACTFROMID=#{contactFrom.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" contactTo != null and contactTo.id != null  and contactTo.id != ''  ">
+		<![CDATA[and FCONTACTTOID=#{contactTo.id,jdbcType=VARCHAR}]]>
+		</if>
+		</where>
+	</sql>
+
+	<select id="getAdjustIntegralById" parameterType="string" resultMap="AdjustIntegralRM">
+		SELECT
+		<include refid="Integral_column"/>
+		FROM T_CUST_INTEG
+		WHERE FID = #{id}
+		AND FTYPE = 'AdjustIntegral'
+	</select>
+	
+	<resultMap id="HandRewardIntegralRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.HandRewardIntegral">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="score" column="FSCORE" jdbcType = "NUMERIC" />
+		<result property="type" column="FTYPE" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="integralBasicNumber" column="FINTEGRALBASICNUMBER" jdbcType = "NUMERIC" />
+		<result property="rewardDate" column="FREWARDDATE" jdbcType = "VARCHAR" />
+		<result property="createName" column="createName" jdbcType = "VARCHAR" />
+		<result property="deptName" column="deptName" jdbcType = "VARCHAR" />
+		<association property="rewardIntegral" column="FREWARDINTEGRALID" javaType="com.deppon.crm.module.customer.shared.domain.integral.RewardIntegRule" select="com.deppon.crm.module.customer.shared.domain.integral.RewardIntegRule.getRewardIntegRuleById"/>
+		<association property="contact" column="FCONTACTID" javaType="com.deppon.crm.module.customer.shared.domain.Contact" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+	</resultMap>
+	
+	<select id="countSearchHandRewardIntegralForContactId" parameterType="map" resultType="long">
+		<![CDATA[
+				SELECT count(*)
+		]]>
+		<include refid="searchHandRewardIntegralForContactIdCondition"/>
+	</select>
+	
+	<select id="searchHandRewardIntegralForContactId" parameterType="map" resultMap="HandRewardIntegralRM">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="Integral_column"/>
+		<include refid="searchHandRewardIntegralForContactIdCondition"/>
+	</select>
+	
+	<sql id="searchHandRewardIntegralForContactIdCondition">
+		FROM T_CUST_INTEG
+		<where>
+			FTYPE = 'HandRewardIntegral'
+			<if test="contactIdList != null and contactIdList != ''">
+				<![CDATA[ AND FCONTACTID in (${contactIdList})]]>
+			</if>
+		</where>
+	</sql>
+	
+	
+	<select id="countSearchHandRewardIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.HandRewardIntegral" resultType="long">
+		SELECT
+		count(*)
+		<include refid="searchHandRewardIntegralsCondition_dept_cname"/>
+	</select>
+	
+	<select id="searchHandRewardIntegrals" parameterType="com.deppon.crm.module.customer.shared.domain.integral.HandRewardIntegral" resultMap="HandRewardIntegralRM">
+		SELECT
+		<include refid="Integral_column_dept_cname"/>
+		<include refid="searchHandRewardIntegralsCondition_dept_cname"/>
+	</select>
+	<sql id="searchHandRewardIntegralsCondition_dept_cname">
+		FROM T_CUST_INTEG A LEFT JOIN T_ORG_EMPLOYEE B ON A.FCREATEUSERID = B.FID 
+		                         LEFT JOIN T_ORG_DEPARTMENT C ON B.FDEPTID=C.FID
+		<where>
+		A.FTYPE = 'HandRewardIntegral'
+		<if test=" score != null  and score != ''  ">
+		<![CDATA[and A.FSCORE=#{score,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contact!=null and contact.id != null  and contact.id != ''  ">
+		<![CDATA[and A.FCONTACTID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and A.FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and A.FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and A.FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and A.FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and A.FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" rewardIntegral != null and rewardIntegral.id != null  and rewardIntegral.id != ''  ">
+		<![CDATA[and A.FREWARDINTEGRALID=#{rewardIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" integralBasicNumber != null  and integralBasicNumber != ''  ">
+		<![CDATA[and A.FINTEGRALBASICNUMBER=#{integralBasicNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" rewardDate != null  and rewardDate != ''  ">
+		<![CDATA[and A.FREWARDDATE=#{rewardDate,jdbcType=NUMERIC}]]>
+		</if>
+		</where>
+	</sql>
+	
+	<sql id="searchHandRewardIntegralsCondition">
+		FROM T_CUST_INTEG
+		<where>
+		FTYPE = 'HandRewardIntegral'
+		<if test=" score != null  and score != ''  ">
+		<![CDATA[and FSCORE=#{score,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" contact!=null and contact.id != null  and contact.id != ''  ">
+		<![CDATA[and FCONTACTID=#{contact.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+		</if>
+		<if test=" modifyUser != null  and modifyUser != ''  ">
+		<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" rewardIntegral != null and rewardIntegral.id != null  and rewardIntegral.id != ''  ">
+		<![CDATA[and FREWARDINTEGRALID=#{rewardIntegral.id,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" integralBasicNumber != null  and integralBasicNumber != ''  ">
+		<![CDATA[and FINTEGRALBASICNUMBER=#{integralBasicNumber,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" rewardDate != null  and rewardDate != ''  ">
+		<![CDATA[and FREWARDDATE=#{rewardDate,jdbcType=NUMERIC}]]>
+		</if>
+		</where>
+	</sql>
+	
+	<select id="getHandRewardIntegralById" parameterType="string" resultMap="HandRewardIntegralRM">
+		SELECT
+		<include refid="Integral_column"/>
+		FROM T_CUST_INTEG
+		WHERE FID = #{id}
+		AND FTYPE = 'HandRewardIntegral'
+	</select>
+	
+	<select id="searchIntegralConvertGiftWithJoin" parameterType="com.deppon.crm.module.customer.shared.domain.integral.IntegralConvertGiftCondition" resultMap="IntegralConvertGiftRM">
+		SELECT
+		<include refid="Integral_column_alias"/>
+		<include refid="searchIntegralConvertGiftWithJoinCondition"/>
+	</select>
+	
+	<delete id="batchDeleteTemporaryGiftBillByDeptId" parameterType="string">
+		DELETE T_CUST_GIFTCONVERTHOLDRECODE 
+		WHERE FDEPTID = #{deptId}
+	</delete>
+	
+	<delete id="batchDeleteTemporaryGiftBill" parameterType="list">
+		DELETE T_CUST_INTEG 
+		WHERE  FID IN
+		<if test=" list != null and list.size>0">
+			<foreach collection="list" open="(" close=")" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	<resultMap id="TempConvertGiftRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.GiftConvertHoldRecode">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="convertNumber" column="FCONVERTNUMBER" jdbcType = "NUMERIC" />
+		<result property="createDept" column="FDEPTID" jdbcType = "VARCHAR" />
+		<association property="gift" column="FGIFTID" javaType="com.deppon.crm.module.customer.shared.domain.integral.Gift" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.integral.Gift.getGiftById"></association>
+		<association property="contact" column="FCONTACTID" javaType="com.deppon.crm.module.customer.shared.domain.Contact" jdbcType = "VARCHAR" select="com.deppon.crm.module.customer.shared.domain.AlterMember.queryContactById"></association>
+	</resultMap>
+	
+	
+	<insert id="addTemporaryGift" parameterType="com.deppon.crm.module.customer.shared.domain.integral.GiftConvertHoldRecode">
+	<selectKey keyProperty="id" order="BEFORE" resultType="String">
+		select seq_id_giftconvertHoldRecode.nextval as id from dual
+		</selectKey>
+		insert into T_CUST_GIFTCONVERTHOLDRECODE 
+		(FID,
+		FCREATETIME,
+		FCREATEUSERID,
+		FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCONTACTID ,
+		FGIFTID,
+		FDEPTID ,
+		FCONVERTNUMBER)
+		values(
+				#{id},
+				#{createDate,jdbcType=TIMESTAMP},
+				#{createUser,jdbcType=NUMERIC},
+				#{modifyDate,jdbcType=TIMESTAMP},
+				#{modifyUser,jdbcType=NUMERIC},
+				#{contact.id,jdbcType=NUMERIC},
+				#{gift.id,jdbcType=NUMERIC},
+				#{createDept.id,jdbcType=NUMERIC},
+				#{convertNumber,jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	<select id="searchTemporaryGiftBill" parameterType="string" resultMap="TempConvertGiftRM">
+		SELECT
+		<include refid="Integral_temp"/>
+		FROM T_CUST_GIFTCONVERTHOLDRECODE
+		where FDEPTID =#{deptId}
+	</select>
+	
+	<select id="countSearchIntegralConvertGiftWithJoin" parameterType="com.deppon.crm.module.customer.shared.domain.integral.IntegralConvertGiftCondition" resultType="long">
+		SELECT
+		count(*)
+		<include refid="searchIntegralConvertGiftWithJoinCondition"/>
+	</select>
+	
+	<sql id="searchIntegralConvertGiftWithJoinCondition">
+		FROM T_CUST_INTEG IG
+		left join t_cust_custlinkman CL on IG.Fcontactid = CL.FID
+		left join t_cust_custbasedata CB on CL.fcustid = CB.FID
+		<where>
+			IG.FTYPE = 'IntegralConvertGift'
+			<if test=" contactNum != null  and contactNum != ''  ">
+				<![CDATA[and CL.fnumber=#{contactNum,jdbcType=NUMERIC}]]>
+			</if>
+			<if test=" memberNum != null  and memberNum != ''  ">
+				<![CDATA[and CB.fcustnumber = #{memberNum,jdbcType=NUMERIC}]]>
+			</if>
+			<if test=" sendStatus != null  and sendStatus != ''  ">
+				<![CDATA[and IG.fsendStatus = #{sendStatus,jdbcType=NUMERIC}]]>
+			</if>
+			 <if test="deptIds != null and deptIds.size > 0">
+					<![CDATA[AND  IG.FDEPTID in ]]>
+					<foreach collection="deptIds" open="(" close=")" separator=","
+						item="dept">
+					<![CDATA[	${dept}  ]]>
+					</foreach>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="Integral_column_alias">
+		IG.FID,
+		IG.FCREATETIME,
+		IG.FCREATEUSERID,
+		IG.FLASTUPDATETIME,
+		IG.FLASTMODIFYUSERID,
+		IG.FSCORE,
+		IG.FTYPE,
+		IG.FCONTACTID,
+		IG.FGIFTID,
+		IG.FCONVERTNUMBER,
+		IG.FCONVERTIDCARD,
+		IG.FWORKFLOWID,
+		IG.FCONVERTTIME,
+		IG.FSENDTIME,
+		IG.FISSEND,
+		IG.FREWARDINTEGRALID,
+		IG.FINTEGRALBASICNUMBER,
+		IG.FADJUSTTYPE,
+		IG.FCONTACTFROMID,
+		IG.FCONTACTTOID,
+		IG.FREWARDDATE,
+		IG.fsendStatus
+	</sql>
+	
+</mapper>

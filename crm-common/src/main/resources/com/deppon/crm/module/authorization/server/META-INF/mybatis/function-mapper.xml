@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.Function">
+
+    <!-- function表返回的结果集，多表联查，查询其父节点 -->
+	<resultMap id="functionResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.Function">
+		<id property="id" column="MASTER_ID" />
+		<result property="functionCode" column="MASTER_FUNCTIONCODE" />
+		<result property="functionName" column="MASTER_FUNCTIONNAME" />
+		<result property="uri" column="MASTER_URI" />
+		<result property="functionLevel" column="MASTER_FUNCTIONLEVEL" />
+		<result property="validFlag" column="MASTER_VALIDFLAG" />
+		<result property="invalidDate" column="MASTER_INVALIDDATE" />
+		<result property="validDate" column="MASTER_VALIDDATE" />
+		<result property="displayOrder" column="MASTER_DISPLAYORDER" />
+		<result property="check" column="MASTER_ISCHECK" />
+		<result property="functionType" column="MASTER_FUNCTIONTYPE" />
+		<result property="functionDesc" column="MASTER_FUNCTIONDESC" />
+		<result property="functionSeq" column="MASTER_FUNCTIONSEQ" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<association property="parentCode" column="ENTRY_0_FUNCTIONCODE"
+			javaType="com.deppon.crm.module.authorization.shared.domain.Function">
+			<id property="id" column="ENTRY_0_ID" />
+			<result property="functionCode" column="ENTRY_0_FUNCTIONCODE" />
+			<result property="functionName" column="ENTRY_0_FUNCTIONNAME" />
+			<result property="uri" column="ENTRY_0_URI" />
+			<result property="functionLevel" column="ENTRY_0_FUNCTIONLEVEL" />
+			<result property="parentCode" column="ENTRY_0_PARENTCODE" />
+			<result property="validFlag" column="ENTRY_0_VALIDFLAG" />
+			<result property="invalidDate" column="ENTRY_0_INVALIDDATE" />
+			<result property="validDate" column="ENTRY_0_VALIDDATE" />
+			<result property="displayOrder" column="ENTRY_0_DISPLAYORDER" />
+			<result property="check" column="ENTRY_0_ISCHECK" />
+			<result property="functionType" column="ENTRY_0_FUNCTIONTYPE" />
+			<result property="functionDesc" column="ENTRY_0_FUNCTIONDESC" />
+			<result property="functionSeq" column="ENTRY_0_FUNCTIONSEQ" />
+			<result property="createUser" column="ENTRY_0_CREATEUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="createDate" column="ENTRY_0_CREATEDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+			<result property="modifyUser" column="ENTRY_0_MODIFYUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="modifyDate" column="ENTRY_0_MODIFYDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+		</association>
+	</resultMap>
+
+     <!-- function表返回查询字段 -->
+	<sql id="select_param">
+		MASTER.FID AS MASTER_ID,
+		MASTER.FFUNCTIONCODE AS
+		MASTER_FUNCTIONCODE,
+		MASTER.FFUNCTIONNAME AS MASTER_FUNCTIONNAME,
+		MASTER.FURI AS MASTER_URI,
+		MASTER.FFUNCTIONLEVEL AS MASTER_FUNCTIONLEVEL,
+		ENTRY_0.FID AS ENTRY_0_ID,
+		ENTRY_0.FFUNCTIONCODE AS ENTRY_0_FUNCTIONCODE,
+		ENTRY_0.FFUNCTIONNAME AS ENTRY_0_FUNCTIONNAME,
+		ENTRY_0.FURI AS
+		ENTRY_0_URI,
+		ENTRY_0.FFUNCTIONLEVEL AS ENTRY_0_FUNCTIONLEVEL,
+		ENTRY_0.FPARENTCODE AS ENTRY_0_PARENTCODE,
+		ENTRY_0.FVALIDFLAG AS
+		ENTRY_0_VALIDFLAG,
+		ENTRY_0.FINVALIDDATE AS ENTRY_0_INVALIDDATE,
+		ENTRY_0.FVALIDDATE AS ENTRY_0_VALIDDATE,
+		ENTRY_0.FDISPLAYORDER AS
+		ENTRY_0_DISPLAYORDER,
+		ENTRY_0.FISCHECK AS ENTRY_0_ISCHECK,
+		ENTRY_0.FFUNCTIONTYPE AS ENTRY_0_FUNCTIONTYPE,
+		ENTRY_0.FFUNCTIONDESC AS
+		ENTRY_0_FUNCTIONDESC,
+		ENTRY_0.FFUNCTIONSEQ AS ENTRY_0_FUNCTIONSEQ,
+		ENTRY_0.FCREATEUSERID AS ENTRY_0_CREATEUSER,
+		ENTRY_0.FCREATETIME AS
+		ENTRY_0_CREATEDATE,
+		ENTRY_0.FLASTMODIFYUSERID AS ENTRY_0_MODIFYUSER,
+		ENTRY_0.FLASTUPDATETIME AS ENTRY_0_MODIFYDATE,
+		MASTER.FVALIDFLAG AS
+		MASTER_VALIDFLAG,
+		MASTER.FINVALIDDATE AS MASTER_INVALIDDATE,
+		MASTER.FVALIDDATE AS MASTER_VALIDDATE,
+		MASTER.FDISPLAYORDER AS
+		MASTER_DISPLAYORDER,
+		MASTER.FISCHECK AS MASTER_ISCHECK,
+		MASTER.FFUNCTIONTYPE AS MASTER_FUNCTIONTYPE,
+		MASTER.FFUNCTIONDESC AS
+		MASTER_FUNCTIONDESC,
+		MASTER.FFUNCTIONSEQ AS MASTER_FUNCTIONSEQ,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS
+		MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE
+	</sql>
+
+     <!-- function表返回的结果集，单表查询-->
+	<resultMap id="functionSimpleResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.Function">
+		<id property="id" column="ID" />
+		<result property="functionCode" column="FUNCTIONCODE" />
+		<result property="functionName" column="FUNCTIONNAME" />
+		<result property="uri" column="URI" />
+		<result property="functionLevel" column="FUNCTIONLEVEL" />
+		<result property="validFlag" column="VALIDFLAG" />
+		<result property="invalidDate" column="INVALIDDATE" />
+		<result property="validDate" column="VALIDDATE" />
+		<result property="displayOrder" column="DISPLAYORDER" />
+		<result property="check" column="ISCHECK" />
+		<result property="functionType" column="FUNCTIONTYPE" />
+		<result property="functionDesc" column="FUNCTIONDESC" />
+		<result property="functionSeq" column="FUNCTIONSEQ" />
+		<result property="createUser" column="CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<association property="parentCode" column="PARENTCODE"
+			javaType="com.deppon.crm.module.authorization.shared.domain.Function">
+			<result property="functionCode" column="PARENTCODE" />
+		</association>
+	</resultMap>
+
+    <!-- 单表查询 -->
+	<sql id="select_simple_param">
+		FID AS ID,
+		FFUNCTIONCODE AS FUNCTIONCODE,
+		FFUNCTIONNAME AS FUNCTIONNAME,
+		FURI AS URI,
+		FFUNCTIONLEVEL AS FUNCTIONLEVEL,
+		FVALIDFLAG AS VALIDFLAG,
+		FINVALIDDATE AS INVALIDDATE,
+		FVALIDDATE AS VALIDDATE,
+		FDISPLAYORDER AS DISPLAYORDER,
+		FISCHECK AS ISCHECK,
+		FFUNCTIONTYPE AS FUNCTIONTYPE,
+		FFUNCTIONDESC AS FUNCTIONDESC,
+		FFUNCTIONSEQ AS FUNCTIONSEQ,
+		FPARENTCODE AS PARENTCODE,
+		FCREATEUSERID AS CREATEUSER,
+		FCREATETIME AS CREATEDATE,
+		FLASTMODIFYUSERID AS MODIFYUSER,
+		FLASTUPDATETIME AS MODIFYDATE
+	</sql>
+
+    <!-- function表返回查询字段 ，单表-->
+	<sql id="insert_param">
+		FID ,
+		FFUNCTIONCODE,
+		FFUNCTIONNAME,
+		FURI,
+		FFUNCTIONLEVEL,
+		FVALIDFLAG,
+		FINVALIDDATE,
+		FVALIDDATE,
+		FDISPLAYORDER,
+		FISCHECK,
+		FFUNCTIONTYPE,
+		FFUNCTIONDESC,
+		FFUNCTIONSEQ,
+		FPARENTCODE,
+		FCREATEUSERID,
+		FCREATETIME,
+		FLASTMODIFYUSERID,
+		FLASTUPDATETIME
+	</sql>
+
+     <!-- 自增长，回去一个新的ID-->
+	<select id="getNewId" resultType="string">
+		SELECT FUNCTION_SEQ.NEXTVAL AS
+		id  FROM DUAL
+	</select>
+
+    <!--插入一条数据-->
+	<insert id="insert"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Function">
+		<![CDATA[
+			INSERT INTO T_AUTH_FUNCTION(
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) VALUES (
+		]]>
+		#{id},
+		<choose>
+			<when test="functionCode != null">
+				#{functionCode},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="functionName != null">
+				#{functionName},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="uri != null">
+				#{uri},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="functionLevel != null">
+				#{functionLevel},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="validFlag != null">
+				#{validFlag},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="invalidDate != null">
+				#{invalidDate},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="validDate != null">
+				#{validDate},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="displayOrder != null">
+				#{displayOrder},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="check != null">
+				#{check},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="functionType != null">
+				#{functionType},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="functionDesc != null">
+				#{functionDesc},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="functionSeq != null">
+				#{functionSeq},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="parentCode!=null and parentCode.functionCode !=null">
+				#{parentCode.functionCode},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="createUser !=null and createUser !=''">
+				#{createUser},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		sysdate,
+		<choose>
+			<when test="modifyUser !=null and modifyUser !=''">
+				#{modifyUser},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		sysdate 
+		)
+	</insert>
+
+     <!-- 修改指定的一条数据-->
+	<update id="update">
+		<![CDATA[
+			UPDATE T_AUTH_FUNCTION
+		]]>
+		<set>
+			<if test="functionCode != null">
+				FFUNCTIONCODE = #{functionCode},
+        	</if>
+			<if test="functionName != null">
+				FFUNCTIONNAME = #{functionName},
+        	</if>
+			<if test="uri != null">
+				FURI = #{uri},
+        	</if>
+			<if test="functionLevel != null">
+				FFUNCTIONLEVEL = #{functionLevel},
+        	</if>
+			<if test="validFlag != null">
+				FVALIDFLAG = #{validFlag},
+        	</if>
+    	<choose>
+			<when test="invalidDate!=null">
+				FINVALIDDATE =sysdate,
+			</when>
+			<otherwise>
+				FINVALIDDATE = null,
+			</otherwise>
+		</choose>
+	    <choose>
+			<when test="validDate!=null">
+				FVALIDDATE =sysdate,
+			</when>
+			<otherwise>
+				FVALIDDATE = null,
+			</otherwise>
+		</choose>
+			<if test="displayOrder != null">
+				FDISPLAYORDER = #{displayOrder},
+        	</if>
+			<if test="check != null">
+				FISCHECK = #{check},
+        	</if>
+			<if test="functionType != null">
+				FFUNCTIONTYPE = #{functionType},
+        	</if>
+			<if test="functionDesc != null">
+				FFUNCTIONDESC = #{functionDesc},
+        	</if>
+			<if test="functionSeq != null">
+				FFUNCTIONSEQ = #{functionSeq},
+        	</if>
+        	<if test="parentCode!=null and parentCode.functionCode!=null">
+				FPARENTCODE = #{parentCode.functionCode},
+			</if>
+			<if test="modifyUser != null and modifyUser != '' ">
+				FLASTMODIFYUSERID = #{modifyUser},
+        	</if>
+			FLASTUPDATETIME = sysdate
+		</set>
+		WHERE FID = #{id}
+	</update>
+
+
+ <!-- 禁用该节点下的子节点-->
+	<update id="updateChild">
+		<![CDATA[
+			UPDATE T_AUTH_FUNCTION
+		]]>
+		<set>
+			<if test="validFlag != null">
+				FVALIDFLAG = #{validFlag},
+        	</if>
+    	<choose>
+			<when test="invalidDate!=null">
+				FINVALIDDATE =sysdate,
+			</when>
+			<otherwise>
+				FINVALIDDATE = null,
+			</otherwise>
+		</choose>
+	    <choose>
+			<when test="validDate!=null">
+				FVALIDDATE =sysdate,
+			</when>
+			<otherwise>
+				FVALIDDATE = null,
+			</otherwise>
+		</choose>
+			<if test="modifyUser != null and modifyUser != '' ">
+				FLASTMODIFYUSERID = #{modifyUser},
+        	</if>
+			FLASTUPDATETIME = sysdate
+		</set>
+		WHERE FID IN (
+		   	SELECT FID
+				FROM T_AUTH_FUNCTION MASTER
+				CONNECT BY PRIOR MASTER.FFUNCTIONCODE = MASTER.FPARENTCODE
+				START WITH MASTER.FID=#{parentCode.id}
+		)
+	</update>
+	
+	
+    <!-- 删除一条数据-->
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_FUNCTION WHERE ID = #{id}
+		]]>
+	</delete>
+    
+    <!--递归删除该节点下所有子节点-->
+	<delete id="deleteByParentId" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_AUTH_FUNCTION WHERE FID IN (
+				SELECT FID
+				FROM T_AUTH_FUNCTION MASTER
+				CONNECT BY PRIOR MASTER.FFUNCTIONCODE = MASTER.FPARENTCODE
+				START WITH MASTER.FID=#{parentId}
+			)
+		]]>
+	</delete>
+
+    <!--删除所有节点-->
+	<delete id="deleteByIds" parameterType="list">
+		<![CDATA[
+			DELETE FROM T_AUTH_FUNCTION WHERE ID IN
+		]]>
+		<foreach collection="list" item="functionIds" open="(" close=")"
+			separator=",">
+			#{functionIds}
+		</foreach>
+	</delete>
+
+    <!-- 通过ID ,获取该节点的所有子节点-->
+	<select id="getAllChildFunctionById" resultMap="functionResultMap"
+		resultType="string">
+		
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTION ENTRY_0
+			ON MASTER.FPARENTCODE = ENTRY_0.fFUNCTIONCODE
+			CONNECT BY PRIOR MASTER.FFUNCTIONCODE = MASTER.FPARENTCODE
+			START WITH MASTER.FID=#{id}
+		]]>
+	</select>
+
+     <!-- 通过functionCode递归获取该节点的所有子节点-->
+	<select id="getAllChildFunctionByCode" resultMap="functionResultMap"
+		resultType="string">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTION ENTRY_0
+			ON MASTER.fPARENTCODE = ENTRY_0.fFUNCTIONCODE
+			CONNECT BY PRIOR MASTER.fFUNCTIONCODE = MASTER.fPARENTCODE
+			START WITH MASTER.fFUNCTIONCODE=#{functionCode}
+			
+		]]> 
+	</select>
+
+    <!-- 通过URI递归获取该节点的所有功能-->
+	<select id="getAllChildFunctionByURI" resultMap="functionResultMap"
+		resultType="string">			
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTION ENTRY_0
+			ON MASTER.fPARENTCODE = ENTRY_0.fFUNCTIONCODE
+			CONNECT BY PRIOR MASTER.fFUNCTIONCODE = MASTER.fPARENTCODE
+			START WITH MASTER.fURI=#{uri}
+		]]>	
+	</select>
+
+   <!-- 该节点下的所有页面元素个数 -->
+	<select id="count" resultType="Long"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Function">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTION ENTRY_0
+			ON MASTER.fPARENTCODE = ENTRY_0.fFUNCTIONCODE
+		]]>
+		<where>
+			<if test="id!=null">
+				MASTER.FID like #{id}
+		 	</if>
+			<if test="functionCode!=null and functionCode!=''">
+				AND MASTER.FFUNCTIONCODE LIKE #{functionCode}
+			</if>
+			<if test="functionName!=null and functionName!=''">
+				AND MASTER.FFUNCTIONNAME LIKE #{functionName}
+			</if>
+			<if test="uri!=null and uri!=''">
+				AND MASTER.FURI LIKE #{uri}
+			</if>
+			<if test="functionLevel!=null">
+				AND MASTER.FFUNCTIONLEVEL = #{functionLevel}
+		    </if>
+			<if test="parentCode!=null and parentCode.functionCode!=null">
+				AND MASTER.FPARENTCODE = #{parentCode.functionCode}
+			</if>
+			<if test="validFlag!=null">
+				AND MASTER.FVALIDFLAG = #{validFlag}
+			</if>
+			<if test="invalidDate!=null">
+				AND MASTER.FINVALIDDATE = #{invalidDate}
+		    </if>
+			<if test="validDate!=null">
+				AND MASTER.FVALIDDATE = #{validDate}
+		    </if>
+			<if test="displayOrder!=null">
+				AND MASTER.FDISPLAYORDER = #{displayOrder}
+		    </if>
+			<if test="check!=null">
+				AND MASTER.FISCHECK = #{check}
+		    </if>
+			<if test="functionType!=null">
+				AND MASTER.FFUNCTIONTYPE = #{functionType}
+		    </if>
+			<if test="functionDesc!=null and functionDesc!=''">
+				AND MASTER.FFUNCTIONDESC LIKE #{functionDesc}
+			</if>
+			<if test="functionSeq!=null and functionSeq!=''">
+				AND MASTER.FFUNCTIONSEQ LIKE #{functionSeq}
+			</if>
+		</where>
+	</select>
+
+     <!-- 获取当前节点下的所有节点-->
+	<select id="getDirectChildFunctions" resultMap="functionResultMap"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Function">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTION ENTRY_0
+            	ON MASTER.fPARENTCODE = ENTRY_0.fFUNCTIONCODE
+		]]>
+		<where>
+			<if test="parentCode!=null and parentCode.functionCode!=null">
+				MASTER.FPARENTCODE = #{parentCode.functionCode}
+			</if>
+			<if test="functionName!=null and functionName!=''">
+				AND MASTER.FFUNCTIONNAME LIKE #{functionName}
+			</if>
+			<if test="functionType!=null">
+				AND MASTER.FFUNCTIONTYPE != #{functionType}
+		    </if>
+		    <if test="validFlag!=null">
+				AND MASTER.FVALIDFLAG = #{validFlag}
+			</if>
+			<if test="check!=null">
+				AND MASTER.FISCHECK = #{check}
+		    </if>
+		</where>
+		<![CDATA[
+		ORDER BY MASTER.FDISPLAYORDER
+		]]>
+	</select>
+
+    <!-- 根据条件查询符合条件的节点或页面元素 -->
+	<select id="getAll" resultMap="functionResultMap"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.Function">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTION ENTRY_0
+            	ON MASTER.fPARENTCODE = ENTRY_0.fFUNCTIONCODE
+		]]>
+		<where>
+			<if test="id!=null">
+				MASTER.FID like #{id}
+		 	</if>
+			<if test="functionCode!=null and functionCode!=''">
+				AND MASTER.FFUNCTIONCODE LIKE #{functionCode}
+			</if>
+			<if test="functionName!=null and functionName!=''">
+				AND MASTER.FFUNCTIONNAME LIKE #{functionName}
+			</if>
+			<if test="uri!=null and uri!=''">
+				AND MASTER.FURI LIKE #{uri}
+			</if>
+			<if test="functionLevel!=null">
+				AND MASTER.FFUNCTIONLEVEL = #{functionLevel}
+		    </if>
+			<if test="parentCode!=null and parentCode.functionCode!=null">
+				AND MASTER.FPARENTCODE = #{parentCode.functionCode}
+			</if>
+			<if test="validFlag!=null">
+				AND MASTER.FVALIDFLAG = #{validFlag}
+			</if>
+			<if test="invalidDate!=null">
+				AND MASTER.FINVALIDDATE = #{invalidDate}
+		    </if>
+			<if test="validDate!=null">
+				AND MASTER.FVALIDDATE = #{validDate}
+		    </if>
+			<if test="displayOrder!=null">
+				AND MASTER.FDISPLAYORDER = #{displayOrder}
+		    </if>
+			<if test="check!=null">
+				AND MASTER.FISCHECK = #{check}
+		    </if>
+			<if test="functionType!=null">
+				AND MASTER.FFUNCTIONTYPE = #{functionType}
+		    </if>
+			<if test="functionDesc!=null and functionDesc!=''">
+				AND MASTER.FFUNCTIONDESC LIKE #{functionDesc}
+			</if>
+			<if test="functionSeq!=null and functionSeq!=''">
+				AND MASTER.FFUNCTIONSEQ LIKE #{functionSeq}
+			</if>
+		</where>
+		
+	</select>
+
+     <!-- 获取最新的修改时间 -->
+	<select id="getLastModifyTime" resultType="date">
+		<![CDATA[
+			SELECT MAX(FLASTUPDATETIME) FROM T_AUTH_FUNCTION
+		]]>
+	</select>
+    
+    <!-- 查询该节点下FUNCTIONCODE最大的function对象 -->
+	<select id="getMaxCodeFunctionByParentCode" resultMap="functionSimpleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			WHERE MASTER.fFUNCTIONCODE = 
+			(
+				SELECT MAX(fFUNCTIONCODE)
+				FROM T_AUTH_FUNCTION MASTER
+				WHERE MASTER.fPARENTCODE = #{parentCode}
+			)
+		]]>
+	</select>
+
+    <!-- 查询ID对应的function数据-->
+	<select id="getById" resultMap="functionSimpleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION WHERE ID=#{id}
+		]]>
+	</select>
+	
+	 <!-- 查询functionCode对应的function数据 -->
+	<select id="getByCode" resultMap="functionSimpleResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION WHERE fFUNCTIONCODE=#{functionCode}
+		]]>
+	</select>
+	
+    <!-- 查询ID对应的function数据 -->
+	<select id="getByIds" resultMap="functionSimpleResultMap"
+		parameterType="list">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION WHERE ID IN
+		]]>
+		<foreach collection="list" item="functionIds" open="(" close=")"
+			separator=",">
+			#{functionIds}
+		</foreach>
+	</select>
+
+    <!-- 获取根节点 -->
+	<select id="getRoot" resultMap="functionSimpleResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION WHERE fFUNCTIONCODE IS NULL
+		]]>
+	</select>
+	
+	<!-- 通过角色ID查询功能对象ID集合的結果集 -->
+	<resultMap id="functionAssociationSimpleResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.Function">
+		<id property="id" column="MASTER_ID" />
+		<result property="functionCode" column="MASTER_FUNCTIONCODE" />
+		<result property="functionName" column="MASTER_FUNCTIONNAME" />
+		<result property="uri" column="MASTER_URI" />
+		<result property="functionLevel" column="MASTER_FUNCTIONLEVEL" />
+		<result property="validFlag" column="MASTER_VALIDFLAG" />
+		<result property="invalidDate" column="MASTER_INVALIDDATE" />
+		<result property="validDate" column="MASTER_VALIDDATE" />
+		<result property="displayOrder" column="MASTER_DISPLAYORDER" />
+		<result property="check" column="MASTER_ISCHECK" />
+		<result property="functionType" column="MASTER_FUNCTIONTYPE" />
+		<result property="functionDesc" column="MASTER_FUNCTIONDESC" />
+		<result property="functionSeq" column="MASTER_FUNCTIONSEQ" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<association property="parentCode" column="MASTER_PARENTCODE"
+			javaType="com.deppon.crm.module.authorization.shared.domain.Function">
+			<result property="functionCode" column="MASTER_PARENTCODE" />
+		</association>
+	</resultMap>
+
+    <!--  通过角色ID查询功能对象ID集合的查詢字段 -->
+	<sql id="function_association_param">
+			MASTER.FID            AS MASTER_ID,
+			MASTER.FFUNCTIONCODE  AS MASTER_FUNCTIONCODE,
+			MASTER.FFUNCTIONNAME  AS MASTER_FUNCTIONNAME,
+			MASTER.FURI           AS MASTER_URI,
+			MASTER.FFUNCTIONLEVEL AS MASTER_FUNCTIONLEVEL,
+			MASTER.FVALIDFLAG     AS MASTER_VALIDFLAG,
+			MASTER.FINVALIDDATE   AS MASTER_INVALIDDATE,
+			MASTER.FVALIDDATE     AS MASTER_VALIDDATE,
+			MASTER.FDISPLAYORDER  AS MASTER_DISPLAYORDER,
+			MASTER.FISCHECK       AS MASTER_ISCHECK,
+			MASTER.FFUNCTIONTYPE  AS MASTER_FUNCTIONTYPE,
+			MASTER.FFUNCTIONDESC  AS MASTER_FUNCTIONDESC,
+			MASTER.FFUNCTIONSEQ   AS MASTER_FUNCTIONSEQ,
+			MASTER.FPARENTCODE    AS MASTER_PARENTCODE,
+			MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+			MASTER.FCREATETIME    AS MASTER_CREATEDATE,
+			MASTER.FLASTMODIFYUSERID    AS MASTER_MODIFYUSER,
+			MASTER.FLASTUPDATETIME    AS MASTER_MODIFYDATE
+	</sql>
+	
+	<!-- 通过角色ID查询功能对象ID集合 -->
+	<select id="getAllByRoleId" resultMap="functionAssociationSimpleResultMap" parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="function_association_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION MASTER
+			LEFT JOIN T_AUTH_FUNCTIONROLE ENTRY_0
+			ON MASTER.FID = ENTRY_0.FFUNCID
+			LEFT JOIN T_AUTH_ROLE ENTRY_1
+			ON ENTRY_0.FROLEID = ENTRY_1.FID
+			WHERE FENTRY_1.FID = #{roleId} ORDER BY MASTER.FDISPLAYORDER
+		]]>
+	</select>
+	
+	    <!-- 查询ID对应的function数据 -->
+	<select id="getFunctionByParentCode" resultMap="functionSimpleResultMap"
+		parameterType="list">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_FUNCTION WHERE fparentcode=#{functionIds}
+		]]>
+	</select>
+	
+</mapper>

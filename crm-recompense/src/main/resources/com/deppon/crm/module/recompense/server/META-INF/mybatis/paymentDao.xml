@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.recompense.domain.impl.PaymentDao">
+	
+	<resultMap  id="accountBankMap" type="com.deppon.crm.module.common.shared.domain.AccountBank">
+		<id property="fId" column="FID" javaType="int" jdbcType="INTEGER"/>
+		<result property="name" column="FNAME" jdbcType="VARCHAR" javaType="String"/>
+		<result property="code" column="FCODE" jdbcType="VARCHAR" javaType="String"/>
+		<result property="createTime" column="FCREATETIME"
+			jdbcType="TIMESTAMP" javaType="Date"/>
+		<result property="lastUpdateTime" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="lastModifyUserId" column="FLASTMODIFYUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="createUserId" column="FCREATEUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+	</resultMap>
+ 	<!--<select id="getAcountBank" parameterType="String" resultMap="accountBankMap">
+		select fid,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID,FNAME,FCODE from T_CRM_ACCOUNTBANK
+	</select>-->
+	<select id="searchBankListByName" resultMap="accountBankMap" parameterType="String">
+ 		select t.fid "id",t.fname "name" from t_crm_accountbank t 
+ 			where t.fname like '%'||#{name,jdbcType=VARCHAR}||'%' and t.fcancel=0
+ 	</select>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="businessOpportunityDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.BusinessOpportunityDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="businessOpportunityService"
+		class="com.deppon.crm.module.marketing.server.service.impl.BusinessOpportunityService">
+		<property name="businessOpportunityDao" ref="businessOpportunityDao" />
+	</bean>
+	<!-- Manager配置 -->
+	<bean id="businessOpportunityManager"
+		class="com.deppon.crm.module.marketing.server.manager.impl.BusinessOpportunityManager">
+		<property name="businessOpportunityService" ref="businessOpportunityService"></property>
+		<property name="boCustomerManager" ref="boCustomerManager" />
+		<property name="messageManager" ref="messageManager" />
+		<property name="userService" ref="userService" />
+		<property name="scheduleManager" ref="scheduleManager" />
+	</bean>
+
+
+	<!-- dao层配置 -->
+	<bean id="boCustomerDao"
+		class="com.deppon.crm.module.marketing.server.dao.impl.BoCustomerDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="boCustomerService"
+		class="com.deppon.crm.module.marketing.server.service.impl.BoCustomerService">
+		<property name="boCustomerDao" ref="boCustomerDao" />
+	</bean>
+	<!-- Manager配置 -->
+	<bean id="boCustomerManager"
+		class="com.deppon.crm.module.marketing.server.manager.impl.BoCustomerManager">
+		<property name="boCustomerService" ref="boCustomerService"></property>
+	</bean>
+</beans>

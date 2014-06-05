@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 	<!-- 文件导出到excel组件 -->
+    <bean id="exporter" class="com.deppon.foss.framework.server.components.export.excel.ExcelExporter">
+    </bean> 
+	<!-- 问卷管理 DAO -->
+	 <bean id="questionnaireDaoImpl" 
+	 	class="com.deppon.crm.module.marketing.server.dao.impl.QuestionnaireDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean> 
+	<!-- 问卷管理 service -->
+	 <bean id="questionnaireServiceImpl" 
+		class="com.deppon.crm.module.marketing.server.service.impl.QuestionnaireServiceImpl">
+		<property name="questionnaireDao" ref="questionnaireDaoImpl"></property>
+	</bean>
+	<!-- 问卷管理 manager -->
+    <bean id="questionnaireManagerImpl" 
+    	class="com.deppon.crm.module.marketing.server.manager.impl.QuestionnaireManagerImpl">
+    	<property name="questionnaireService" ref="questionnaireServiceImpl"></property>
+    	<property name="questionService" ref="questionServiceImpl"></property>
+    	<property name="exporter" ref="exporter"></property>
+    </bean>
+    <!-- 问卷管理 action -->
+     <bean id="questionnaireAction" 
+    	class="com.deppon.crm.module.marketing.server.action.QuestionnaireAction" scope="prototype">
+    	<property name="questionnaireManager" ref="questionnaireManagerImpl"></property>
+    </bean>
+   
+</beans>

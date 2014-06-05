@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>客户关系管理系统</title>
+<!-- Ext必需的js/css文件  -->
+<link rel="stylesheet" type="text/css"
+	href="http://static.deppon.com/ext-4.0.7/resources/css/ext-all-gray.css" />
+<!--自定义CSS文件 -->
+<!--<link href="../styles/common/loading.css" rel="stylesheet" type="text/css" />-->
+<link href="../styles/common/deppon.css?2012081110.0.1" rel="stylesheet"
+	type="text/css" />
+<style>
+body {
+	background-color: #373c64;
+	background-image: url(../images/login/bg_login.gif);
+	margin: 0 auto
+}
+
+.login {
+	width: 1003px;
+	height: 100%;
+	margin: 0 auto
+}
+
+.top {
+	width: 1003px;
+	height: 187px
+}
+
+.contant {
+	width: 583px;
+	height: 323px;
+	margin: 0 auto
+}
+
+.fl {
+	float: left
+}
+
+.contant_top {
+	width: 583px;
+	height: 89px;
+	padding-top:13px;
+	background-image: url(../images/login/login_03.gif);
+}
+
+.contant_left {
+	width: 215px;
+	height: 234px;
+	background-image: url(../images/login/login_05.gif);
+}
+
+.contant_right {
+	width: 368px;
+	height: 125px;
+	background-image: url(../images/login/login_06.gif)
+}
+
+.contant_name {
+	height: 25px;
+	margin: 59px 0 0 122px;
+	*margin: 59px 0 0 61px;
+}
+
+.contant_name_input {
+	border: 0;
+	width: 176px;
+	height: 24px;
+	line-height:24px\9;
+	background-image: url(../images/login/bg_input.gif)
+}
+
+.contant_password {
+	height: 25px;
+	margin: 14px 0 0 122px;
+	*margin: 14px 0 0 61px;
+}
+
+.contant_password_input {
+	border: 0;
+	width: 176px;
+	line-height:24px\9;
+	height: 24px;
+	background-image: url(../images/login/bg_input.gif)
+}
+
+.contant_tip {
+	width: 368px;
+	height: 30px;
+	background-image: url(../images/login/login_07.gif);
+	font-size: 12px;
+	font-weight: bold;
+	color: #F00;
+}
+
+.contant_tipper {
+	width: 265px;
+	height: 17px;
+	margin: 0px 0 0 35px;
+}
+.picture_show{
+	width: 42px;
+	height:30px;
+	margin-right:5px;
+	display:none;
+	float:left;
+}
+#markmes{
+	font-size:13px;
+	padding-top:10px;
+	font-weight:normal;
+	float:left;
+	margin-left:125px;
+}
+.remark{
+	color:red;
+	font-size:13px;
+	margin-left:5px;
+	margin-bottom:2px;
+}
+.discr{
+	margin-left:10px;
+	font-size:13px;
+	text-decoration:none;
+	
+}
+.warningstyle{
+	margin-left:15px;
+	width:16px;
+	height:16px;
+}
+</style>
+<script type="text/javascript"
+	src="http://static.deppon.com/ext-4.0.7/bootstrap.js"></script>
+<script type="text/javascript"
+	src="http://static.deppon.com/ext-4.0.7/locale/ext-lang-zh_CN.js"></script>
+<!--自定义JS文件 -->
+<script language="javascript"
+	src="../i18n_permission_acess/login/login.js?2012081110.0.1"></script>
+<script language="javascript" src="../scripts/login/Login.js?2012081110.0.1"></script>
+<script language="javascript">
+	if(top!=self){
+	    if(top.location != self.location)
+	         top.location=self.location; 
+	}
+	function reset(){
+		document.getElementById("loginName").value="";
+		document.getElementById("pwd").value="";
+		document.getElementById("markmes").innerHTML="";
+		document.getElementById("loginName").focus();
+	}
+	
+	function setBrowser(){
+		var Sys = {};
+	    var ua = navigator.userAgent.toLowerCase();
+	    var s;
+	    (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+	    (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] : 0;
+	    if (Sys.firefox){
+	    	var num=(Sys.firefox).split(".")[0];
+	    	if(parseInt(num)>=14){
+	    		document.getElementById("versionDiv").innerHTML="";
+	    	}else{
+	    		document.getElementById("version").innerHTML=Sys.firefox;
+	    		document.getElementById("tqversion").innerHTML="14.0.1";	
+	    	}
+	    }
+        if (Sys.chrome){
+        	var num=(Sys.chrome).split(".")[0];
+        	if(parseInt(num)>=17){
+        		document.getElementById("versionDiv").innerHTML="";
+        	}else{
+        		document.getElementById("version").innerHTML=Sys.chrome;
+        		document.getElementById("tqversion").innerHTML="17.0.0.0";	
+        	}
+        }
+	}
+</script>
+</head>
+<body onLoad="setBrowser();">
+	<div class="login">
+		<div class="top"></div>
+		<div class="contant">
+			<div class="contant_top fl" id="versionDiv"><img src="../images/login/warning.png" class="warningstyle"/><span class="remark">您的浏览器版本
+			<span id="version">
+			</span>
+			低于推荐版本<span id="tqversion"></span>，您可将其更新</span><a class="discr" target="_blank" href="../login/updateBrowser.action">如何更新>></a></div>
+			<div class="contant_left fl"></div>
+			<div class="contant_right fl">
+				<div class="contant_name">
+					<input id="loginName" name="loginName" type="text"
+						class="contant_name_input" onfocus="eraseUsername()" />
+				</div>
+				<div class="contant_password">
+					<input id="pwd" name="password" type="password" id="pwd"
+						class="contant_password_input" onfocus="erasepwd()" onkeypress="javascript:if(event.keyCode==13){_submit();} "/>
+				</div>
+			</div>
+			<div class="contant_tip fl">
+				<div class="contant_tipper" id="markmes"></div>
+			</div>
+			<div>
+				<img src="../images/login/login_08.gif" width="368" height="79"
+					border="0" usemap="#Map" />
+				<map name="Map" id="Map">
+					<area shape="rect" coords="56,2,160,35" onclick="_submit();" href="javascript:void(0);"/>
+					<area shape="rect" coords="177,2,280,34" onclick="reset();" href="javascript:void(0);"/>
+				</map>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

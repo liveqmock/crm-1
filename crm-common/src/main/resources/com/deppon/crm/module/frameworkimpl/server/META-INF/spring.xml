@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- 缓存数据提供者 -->
+	<!-- 功能权限缓存数据提供者 -->
+	<bean id="functionCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.FunctionCacheProvider">
+		<property name="functionDao" ref="functionDao"></property>
+	</bean>
+	
+	<!-- 角色缓存数据提供者 -->
+	<bean id="roleCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.RoleCacheProvider">
+		<property name="roleDao" ref="roleDao" />
+		<property name="userDao" ref="userDao" />
+		
+	</bean>
+	
+	<!-- 数据字典缓存提供者 -->
+	<bean id="dataDictionaryCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.DataDictionaryCacheProvider">
+		<property name="headDao" ref="headDao"></property>
+		 <property name="detailDao" ref="detailDao"></property> 
+	</bean>
+	
+	<!-- 用户数据缓存提供者 -->
+	<bean id="userCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.UserCacheProvider">
+		<property name="userDao" ref="userDao"></property>
+		<property name="functionDao" ref="functionDao"></property>
+	</bean>
+	<!-- 消息缓存数据提供者 -->
+	<bean id="messageCacheProviderC" class="com.deppon.crm.module.frameworkimpl.server.cache.MessageCacheProviderC">
+		<property name="messageDao" ref="messageDao"></property>
+	</bean>
+	<!-- 缓存 -->
+	<!-- 功能权限缓存 -->
+	<bean id="functionCache" class="com.deppon.crm.module.frameworkimpl.server.cache.FunctionCache">
+		<property name="cacheProvider" ref="functionCacheProvider"></property>
+		<property name="cacheStorage" ref="redisCacheStorage"/>
+	</bean>
+	
+	<!-- 角色缓存 -->
+	<bean id="roleCache" class="com.deppon.crm.module.frameworkimpl.server.cache.RoleCache">
+		<property name="cacheProvider" ref="roleCacheProvider"></property>
+		<property name="cacheStorage" ref="redisCacheStorage"/>
+		
+		<!-- 缓存更新时间 -->
+		<property name="interval" value="120"></property>
+	</bean>
+	
+	<!-- 数据字典缓存 -->
+	<bean id="dataDictionaryCache" class="com.deppon.crm.module.frameworkimpl.server.cache.DataDictionaryCache">
+		<property name="cacheProvider" ref="dataDictionaryCacheProvider"></property>
+	    <property name="cacheStorage" ref="redisCacheStorage"/>
+	    
+	</bean>
+	
+	<!-- 用户缓存 -->
+	<bean id="userCache" class="com.deppon.crm.module.frameworkimpl.server.cache.UserCache">
+		<property name="cacheProvider" ref="userCacheProvider"></property>
+		<property name="cacheStorage" ref="redisCacheStorage"/>
+	</bean>
+	<!-- 代办消息缓存 -->
+	<bean id="messageCacheC" class="com.deppon.crm.module.frameworkimpl.server.cache.MessageCacheC">
+			<property name="cacheStorage" ref="redisCacheStorage"></property>
+			<property name="cacheProvider" ref="messageCacheProviderC"></property>
+			<!-- 缓存更新时间 3分钟-->
+			<property name="interval" value="180"></property>	
+	</bean>
+	<!-- 令牌数据访问 -->
+	<bean id="tokenDao" class="com.deppon.crm.module.frameworkimpl.server.dao.impl.TokenDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 令牌处理服务层 -->
+	<bean id="tokenService" class="com.deppon.crm.module.frameworkimpl.server.service.impl.TokenService">
+		<property name="tokenDao" ref="tokenDao"></property>
+	</bean>
+	
+    <!-- 硬件信息缓存提供者配置 -->
+    <bean id="hardWareCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.HardWareCacheProvider">
+        <property name="checkHardWareDao" ref="checkHardWareDao" />
+    </bean>
+    
+    <!-- 硬件信息缓存配置 -->
+    <bean id="hardWareCache" class="com.deppon.crm.module.frameworkimpl.server.cache.HardWareCache">
+        <property name="cacheProvider" ref="hardWareCacheProvider" />
+        <property name="cacheStorage" ref="redisCacheStorage"/>
+        <!-- 缓存更新时间2小时 -->
+        <property name="interval" value="7200"></property>
+    </bean>
+	
+	<!-- 硬件信息Token缓存配置 -->
+    <bean id="hardWareTokenCache" class="com.deppon.crm.module.frameworkimpl.server.cache.HardWareTokenCache">
+        <property name="cacheStorage" ref="redisCacheStorage"/>
+        <property name="tokenDao" ref="tokenDao"></property>
+        <!-- 缓存过期时间5分钟 -->
+        <property name="expire" value="300"></property>
+    </bean>
+    
+    
+    <bean id="serverParameterCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.ServerParameterCacheProvider">
+		<property name="serverParameterDao" ref="serverParameterDao"></property>
+	</bean>
+	<bean id="serverParameterCache" class="com.deppon.crm.module.frameworkimpl.server.cache.ServerParameterCache">
+		<property name="cacheProvider" ref="serverParameterCacheProvider"></property>
+	    <property name="cacheStorage" ref="redisCacheStorage"/>
+	</bean>
+    <bean id="departmentCacheProvider" class="com.deppon.crm.module.frameworkimpl.server.cache.DepartmentCacheProvider">
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+	<bean id="departmentCache" class="com.deppon.crm.module.frameworkimpl.server.cache.DepartmentCache">
+		<property name="cacheProvider" ref="departmentCacheProvider"></property>
+	    <property name="cacheStorage" ref="redisCacheStorage"/>
+	</bean>
+</beans>

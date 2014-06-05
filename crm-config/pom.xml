@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+    <artifactId>crm-parent</artifactId>
+    <groupId>com.deppon.crm</groupId>
+    <version>3.1.1-SNAPSHOT</version>
+    <relativePath>../crm-parent</relativePath>
+  </parent>
+	
+	<groupId>com.deppon.crm</groupId>
+	<artifactId>crm-config</artifactId>
+	<version>3.1.1-SNAPSHOT</version>
+
+	<properties>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+		<new_date>${maven.build.timestamp}</new_date>
+	</properties>
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}-${environment}</finalName>
+		<resources>
+			<resource>
+				<directory>config/${environment}</directory>
+				<filtering>true</filtering>
+			</resource>
+
+		</resources>
+	</build>
+	<profiles>
+		<profile>
+			<!--开发环境-->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<id>dev</id>
+			<properties>
+				<environment>dev</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 培训环境 -->
+			<id>sit</id>
+			<properties>
+				<environment>sit</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 练习环境 -->
+			<id>lx</id>
+			<properties>
+				<environment>lx</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 数据收集环境 -->
+			<id>collect</id>
+			<properties>
+				<environment>collect</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 数据割接环境 -->
+			<id>migrate</id>
+			<properties>
+				<environment>migrate</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- UAT环境 -->
+			<id>uat</id>
+			<properties>
+				<environment>uat</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 试点环境1 -->
+			<id>sd1</id>
+			<properties>
+				<environment>sd1</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 试点环境2 -->
+			<id>sd2</id>
+			<properties>
+				<environment>sd2</environment>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 生产环境 -->
+			<id>prd</id>
+			<properties>
+				<environment>prd</environment>
+			</properties>
+		</profile>
+	</profiles>
+</project>

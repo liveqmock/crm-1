@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.crm.module.gis.shared.domain.TaskEntity">
+	<!-- 区域坐标信息 -->
+	<resultMap type="com.deppon.crm.module.gis.shared.domain.TaskEntity"
+		id="taskMap">
+		<result property="id" column="ID" /><!--主键id -->
+		<result property="taskType" column="TASKTYPE" />
+		<result property="taskParameter" column="TASKPARAMETER" />
+		<result property="taskStatus" column="TASKSTATUS" />
+	</resultMap>
+
+	<insert id="saveTask" parameterType="com.deppon.crm.module.gis.shared.domain.TaskEntity">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SYS_GUID() FROM DUAL
+		</selectKey>
+		insert into t_crm_map_task (
+		id
+		,taskType
+		,taskParameter
+		,taskStatus
+		,createtime
+		,modifytime
+		)values(
+		#{id}
+		,#{taskType}
+		,#{taskParameter}
+		,1
+		,sysdate
+		,sysdate
+		)
+	</insert>
+	<update id="updateTaskById" parameterType="String">
+		update
+		t_crm_map_task
+		set taskstatus = 0,
+			modifytime = sysdate
+		where id =#{id}
+	</update>
+
+	<delete id="deleteTaskByStatus">
+		delete from
+		t_crm_map_task where taskStatus = 0
+	</delete>
+
+	<select id="queryTaskByType" parameterType="String" resultMap="taskMap">
+		select id
+		,taskType
+		,taskParameter
+		,taskStatus
+		from t_crm_map_task
+		where tasktype = #{taskType} and taskstatus = 1
+	</select>
+
+
+	<select id="queryAllUnDoTask" resultMap="taskMap">
+		select id
+		,taskType
+		,taskParameter
+		,taskStatus
+		from t_crm_map_task
+		where taskStatus = 1
+		order by createtime
+	</select>
+</mapper>

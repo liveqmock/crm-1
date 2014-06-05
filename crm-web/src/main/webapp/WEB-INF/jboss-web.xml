@@ -1,0 +1,26 @@
+<?xml version="1.0"?>                                                                                                                             
+<!DOCTYPE jboss-web PUBLIC
+        "-//JBoss//DTD Web Application 5.0//EN"
+        "http://www.jboss.org/j2ee/dtd/jboss-web_5_0.dtd">
+<jboss-web>
+    <class-loading java2ClassLoadingCompliance="true">
+      <loader-repository>
+         com.deppon.crm:archive=crm-web.war
+         <loader-repository-config>java2ParentDelegation=true</loader-repository-config>
+      </loader-repository>
+   </class-loading>
+	<context-root>/crm-web</context-root>
+	<resource-ref>
+		<res-ref-name>jdbc/crmdb</res-ref-name>
+		<jndi-name>java:jdbc/crmdb</jndi-name>
+	</resource-ref>
+	
+	<resource-ref>
+		<res-ref-name>jdbc/crmdb_log</res-ref-name>
+		<jndi-name>java:jdbc/crmdb_log</jndi-name>
+	</resource-ref>
+	<resource-ref>
+		<res-ref-name>jms/crmQueueConnection</res-ref-name>
+		<jndi-name>java:jms/crmQueueConnection</jndi-name>
+	</resource-ref>
+</jboss-web>

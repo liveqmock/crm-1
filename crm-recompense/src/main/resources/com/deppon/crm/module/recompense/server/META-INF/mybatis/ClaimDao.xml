@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.recompense.shared.domain.Claim">
+	<!-- 索赔消息表映射 -->
+	<resultMap id="claimResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.Claim">
+		<id property="id" column="fid" />
+		<result property="createDate" column="FCREATEDATE" />
+		<result property="createUser" column="FCREATEUSER" />
+		<result property="modifyDate" column="FMODIFYDATE" />
+		<result property="modifyUser" column="FMODIFYUSER" />
+		<result property="waybillNumber" column="FWAYBILLNUMBER" />
+		<result property="claimer" column="FCLAIMER" />
+		<result property="linkMan" column="FLINKMAN" />
+		<result property="linkMobile" column="FLINKMOBILE" />
+		<result property="claimAmount" column="FCLAIMAMOUNT" />
+		<result property="insuranceValue" column="FINSURANCEVALUE" />
+		<result property="claimPerson" column="FCLAIMPERSON" />
+		<result property="tranferCount" column="FTRANFERCOUNT" />
+		<result property="firstRefuseTime" column="FFIRSTREFUSETIME" />
+		<result property="claimStatus" column="FCLAIMSTATUS" />
+		<result property="reportDept" column="FREPORTDEPT" />
+		<result property="reportDept" column="FREPORTDEPT" />
+		<result property="reportDeptName" column="RD_FDEPTNAME" />
+		<result property="reporter" column="FREPORTER" />
+		<result property="reporterName" column="E_FEMPNAME" />
+		<result property="processDept" column="FPROCESSDEPT" />
+		<result property="processDeptName" column="PD_FDEPTNAME" />
+		<result property="claimRequire" column="FCLAIMREQUIRE" />
+		<result property="statusSeq" column="FSTATUSSEQ" />
+		<result property="processor" column="FPROCESSOR" />
+		<result property="processorName" column="P_FEMPNAME" />
+		<result property="recompenseMethod" column="FRECOMPENSEMETHOD" />
+		<result property="receiveDept" column="FRECEIVINGDEPT" />
+		<result property="arrivedDept" column="FARRIVEDDEPT" />
+		<result property="shipper" column="FSHIPPER" />
+		<result property="shipperPhone" column="FSHIPPERPHONE" />
+		<result property="consignee" column="FCONSIGNEE" />
+		<result property="consigneePhone" column="FCONSIGNEEPHONE" />
+		<result property="claimTime" column="FCLAIMTIME" />
+		<result property="transType" column="FTRANSTYPE" />
+		
+	</resultMap>
+
+
+	<resultMap id="claimOperationLogResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.ClaimOperationLog">
+		<id property="id" column="fid" />
+		<result property="createDate" column="FCREATEDATE" />
+		<result property="createUser" column="FCREATEUSER" />
+		<result property="modifyDate" column="FUPDATETIME" />
+		<result property="modifyUser" column="FMODIFYUSER" />
+		<result property="operatorContent" column="FOPERATORCONTENT" />
+		<result property="operatorTime" column="FOPERATORTIME" />
+		<result property="operator" column="FOPERATOROR" />
+		<result property="operatorName" column="E_FEMPNAME" />
+		<result property="operatorDept" column="FOPERATORDEPT" />
+		<result property="operatorDeptName" column="D_FDEPTNAME" />
+		<result property="claimId" column="FCLAIMID" />
+	</resultMap>
+	<resultMap id="claimMessageResultMap"
+		type="com.deppon.crm.module.recompense.shared.domain.ClaimMessage">
+		<id property="id" column="fid" />
+		<result property="followUserId" column="FUSERID" />
+		<result property="content" column="FCONTENT" />
+		<result property="createTime" column="FCREATETIME" />
+		<result property="claimId" column="FCLAIMID" />
+		<result property="followUser" column="E_FEMPNAME" />
+		<result property="followDept" column="FFOLLOWDEPT" />
+		<result property="followDeptName" column="D_FDEPTNAME" />
+	</resultMap>
+
+	<sql id="select_claim">
+		C.FID FID,
+		FCREATEDATE,
+		FCREATEUSER,
+		FMODIFYDATE,
+		FMODIFYUSER,
+		FWAYBILLNUMBER,
+		FCLAIMER,
+		FLINKMAN,
+		FLINKMOBILE,
+		FINSURANCEVALUE,
+		FCLAIMPERSON,
+		FCLAIMAMOUNT,
+		FTRANFERCOUNT,
+		FFIRSTREFUSETIME,
+		FCLAIMSTATUS,
+		FREPORTDEPT,
+		RD.FDEPTNAME RD_FDEPTNAME,
+		FREPORTER,
+		E.FEMPNAME  E_FEMPNAME,
+		FPROCESSDEPT,
+		PD.FDEPTNAME PD_FDEPTNAME,
+		FCLAIMREQUIRE,
+		FSTATUSSEQ,
+		FPROCESSOR,
+		P.FEMPNAME P_FEMPNAME,
+		FRECOMPENSEMETHOD,
+		FRECEIVINGDEPT,
+		FARRIVEDDEPT,
+		FSHIPPER,
+		FSHIPPERPHONE,
+		FCONSIGNEE,
+		FCONSIGNEEPHONE,
+		FCLAIMTIME,
+		FTRANSTYPE
+
+
+
+	</sql>
+
+	<sql id="select_claimOperationLog">
+		co.FID FID,
+		co.FCREATETIME FCREATETIME,
+		co.FCREATEUSER FCREATEUSER,
+		co.FUPDATETIME FUPDATETIME,
+		co.FMODIFYUSER FMODIFYUSER,
+		FOPERATORCONTENT,
+		FOPERATORTIME,
+		FOPERATOR,
+		FOPERATORDEPT,
+		FCLAIMID,
+		D.FDEPTNAME D_FDEPTNAME,
+		E.FEMPNAME E_FEMPNAME
+	</sql>
+	<sql id="select_claimMessage">
+		cm.FID FID,
+		FUSERID,
+		FCONTENT,
+		cm.FCREATETIME FCREATETIME,
+		FCLAIMID,
+		FFOLLOWUSER,
+		FFOLLOWDEPT,
+		D.FDEPTNAME D_FDEPTNAME,
+		E.FEMPNAME E_FEMPNAME
+	</sql>
+
+	<sql id="conditionSql">
+		<where>
+			<if test="null != processDepts and '' != processDepts">
+				c.FPROCESSDEPT in
+				<foreach collection="processDepts" item="dept" open="("
+					close=")" separator=",">
+					#{dept}
+				</foreach>
+			</if>
+
+			<if test="null != waybillNumber and '' != waybillNumber">
+				c.FWAYBILLNUMBER=#{waybillNumber}
+			</if>
+			<if test="null != claimStatus and '' != claimStatus">
+				AND c.FCLAIMSTATUS = #{claimStatus}
+			</if>
+			<if test="null != startTime and '' != startTime">
+				AND trunc(c.FCREATEDATE) >= #{startTime}
+			</if>
+			<if test="null != endTime and '' != endTime">
+				AND trunc(c.FCREATEDATE) &lt;= #{endTime}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 保存索赔录入 -->
+	<insert id="insertClaim"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Claim">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+		<![CDATA[ 
+			 select	SEQ_ID_CLAIM.nextval id	 from 	dual 
+		]]>
+		</selectKey>
+	<![CDATA[ 
+			insert into t_rec_claim
+				(FID,
+				FCREATEDATE,
+				FCREATEUSER,
+				FMODIFYDATE,
+				FMODIFYUSER,
+				FWAYBILLNUMBER,
+				FCLAIMER,
+				FLINKMAN,
+				FLINKMOBILE,
+				FINSURANCEVALUE,
+				FCLAIMPERSON,
+				FCLAIMAMOUNT,
+				FTRANFERCOUNT,
+				FFIRSTREFUSETIME,
+				FCLAIMSTATUS,
+				FREPORTER,
+				FREPORTDEPT,
+				FPROCESSDEPT,
+				FCLAIMREQUIRE,
+				FSTATUSSEQ,
+				FPROCESSOR,
+				FRECOMPENSEMETHOD,
+				FRECEIVINGDEPT,
+				FARRIVEDDEPT,
+				FSHIPPER,
+				FSHIPPERPHONE,
+				FCONSIGNEE,
+				FCONSIGNEEPHONE,
+				FCLAIMTIME,
+				FTRANSTYPE
+				)
+	
+		values 
+				(#{id},
+				#{createDate,jdbcType=TIMESTAMP},
+				#{createUser,jdbcType=VARCHAR},
+				#{modifyDate,jdbcType=TIMESTAMP},
+				#{modifyUser,jdbcType=VARCHAR},
+				#{waybillNumber,jdbcType=VARCHAR}, 
+				#{claimer,jdbcType=VARCHAR},
+				 #{linkMan,jdbcType=VARCHAR},
+				 #{linkMobile,jdbcType=VARCHAR},
+				 #{insuranceValue,jdbcType=NUMERIC},
+				 #{claimPerson,jdbcType=VARCHAR},
+				 #{claimAmount,jdbcType=NUMERIC},
+				 #{tranferCount,jdbcType=NUMERIC},
+				 #{firstRefuseTime,jdbcType=TIMESTAMP},
+				 #{claimStatus,jdbcType=VARCHAR},
+				 #{reporter,jdbcType=VARCHAR},
+				 #{reportDept,jdbcType=VARCHAR},
+				 #{processDept,jdbcType=VARCHAR},
+				 #{claimRequire,jdbcType=VARCHAR},
+				 #{statusSeq,jdbcType=VARCHAR},
+				 #{processor,jdbcType=VARCHAR},
+				 #{recompenseMethod,jdbcType=VARCHAR},
+				 #{receiveDept,jdbcType=VARCHAR},
+				 #{arrivedDept,jdbcType=VARCHAR},
+				 #{shipper,jdbcType=VARCHAR},
+				 #{shipperPhone,jdbcType=VARCHAR},
+				 #{consignee,jdbcType=VARCHAR},
+				 #{consigneePhone,jdbcType=VARCHAR},
+				 #{claimTime,jdbcType=TIMESTAMP},
+				 #{transType,jdbcType=VARCHAR}
+				 
+				 )
+	]]>
+	</insert>
+
+
+	<update id="updateClaim"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.Claim">
+		update t_rec_claim
+		<set>
+			FMODIFYDATE = sysdate,
+			<if test="null != modifyUser">FMODIFYUSER=#{modifyUser,jdbcType=VARCHAR},</if>
+			<if test="null != waybillNumber">FWAYBILLNUMBER=#{waybillNumber,jdbcType=VARCHAR},</if>
+			<if test="null != claimer">FCLAIMER=#{claimer,jdbcType=VARCHAR},</if>
+			<if test="null != linkMan">FLINKMAN=#{linkMan,jdbcType=VARCHAR},</if>
+			<if test="null != linkMobile">FLINKMOBILE=#{linkMobile,jdbcType=VARCHAR},</if>
+			<if test="null != insuranceValue">FINSURANCEVALUE=#{insuranceValue,jdbcType=NUMERIC},</if>
+			<if test="null != claimPerson">FCLAIMPERSON=#{claimPerson,jdbcType=VARCHAR},</if>
+			<if test="null != claimAmount">FCLAIMAMOUNT=#{claimAmount,jdbcType=NUMERIC},</if>
+			<if test="null != tranferCount">FTRANFERCOUNT=#{tranferCount,jdbcType=VARCHAR},</if>
+			<if test="null != firstRefuseTime">FFIRSTREFUSETIME=#{firstRefuseTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="null != claimStatus">FCLAIMSTATUS=#{claimStatus,jdbcType=VARCHAR},</if>
+			<if test="null != reportDept">FREPORTDEPT=#{reportDept,jdbcType=VARCHAR},</if>
+			<if test="null != reporter">FREPORTER=#{reporter,jdbcType=VARCHAR},</if>
+			<if test="null != processDept">FPROCESSDEPT=#{processDept,jdbcType=VARCHAR},</if>
+			<if test="null != claimRequire">FCLAIMREQUIRE=#{claimRequire,jdbcType=VARCHAR},</if>
+			<if test="null != statusSeq">FSTATUSSEQ=#{statusSeq,jdbcType=VARCHAR},</if>
+			<if test="null != processor">FPROCESSOR=#{processor,jdbcType=VARCHAR},</if>
+			<if test="null != claimTime">FCLAIMTIME=#{claimTime,jdbcType=TIMESTAMP}</if>
+
+		</set>
+		<where>
+			FID=#{id}
+		</where>
+	</update>
+
+	<!-- 删除索赔 -->
+	<delete id="deleteClaimById" parameterType="string"> 
+		<![CDATA[ 
+			DELETE T_REC_CLAIM WHERE FID = #{id} 
+ 		]]>
+	</delete>
+	<!-- 根据索赔ID查询索赔项 -->
+	<select id="getClaimById" resultMap="claimResultMap"
+		parameterType="string">
+	<![CDATA[ 	select ]]>
+		<include refid="select_claim" />
+		<![CDATA[ 
+		from t_rec_claim c
+		left join t_org_department rd on
+		c.FREPORTDEPT=rd.fid
+		left join
+		t_org_department pd on
+		c.FPROCESSDEPT=pd.fid
+		left join t_org_employee e
+		on c.freporter=e.fid
+		left join t_org_employee p
+		on c.fprocessor=p.fid
+			where  c.fid=#{id} 
+		]]>
+	</select>
+	<!-- 根据凭证号查询索赔项 -->
+	<select id="getClaimByWaybillNumber" resultMap="claimResultMap"
+		parameterType="string">
+	<![CDATA[ 	select ]]>
+		<include refid="select_claim" />
+		<![CDATA[ 
+		from t_rec_claim c
+		left join t_org_department rd on
+		c.FREPORTDEPT=rd.fid
+		left join
+		t_org_department pd on
+		c.FPROCESSDEPT=pd.fid
+		left join t_org_employee e
+		on c.freporter=e.fid
+		left join t_org_employee p
+		on c.fprocessor=p.fid
+			where  c.fwaybillnumber=#{num} 
+		]]>
+	</select>
+
+
+	<!-- 统计索赔条数 -->
+	<select id="countClaimByCondition"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.ClaimSearchCondition"
+		resultType="int">
+		select count('x') from t_rec_claim c
+		<include refid="conditionSql" />
+	</select>
+	<!-- 根据条件查询索赔 -->
+	<select id="searchClaimByCondition"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.ClaimSearchCondition"
+		resultMap="claimResultMap">
+		select
+		<include refid="select_claim" />
+		from t_rec_claim c
+		left join t_org_department rd on
+		c.FREPORTDEPT=rd.fid
+		left join
+		t_org_department pd on
+		c.FPROCESSDEPT=pd.fid
+		left join t_org_employee e
+		on c.freporter=e.fid
+		left join t_org_employee p
+		on c.fprocessor=p.fid
+
+		<include refid="conditionSql" />
+		order by c.FSTATUSSEQ asc,c.FCREATEDATE desc
+	</select>
+	<!--增加索赔操作记录 -->
+	<insert id="insertOperationLog"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.ClaimOperationLog">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+		<![CDATA[ 
+			 select	SEQ_ID_CLAIMOPERATIONLOG.nextval id	 from 	dual 
+		]]>
+		</selectKey>
+	<![CDATA[ 
+			insert into T_REC_CLAIMOPERATIONLOG
+				(FID,
+				FCREATETIME,
+				FCREATEUSER,
+				FUPDATETIME,
+				FMODIFYUSER,
+				FOPERATORCONTENT,
+				FOPERATORTIME,
+				FOPERATOR,
+				FOPERATORDEPT,
+				FCLAIMID
+				)               
+			values 
+				(#{id},
+				#{createDate,jdbcType=TIMESTAMP},
+				#{createUser,jdbcType=VARCHAR},
+				#{modifyDate,jdbcType=TIMESTAMP},
+				#{modifyUser,jdbcType=VARCHAR},
+				#{operatorContent,jdbcType=VARCHAR}, 
+				#{operatorTime,jdbcType=TIMESTAMP},
+				#{operator,jdbcType=VARCHAR},
+				#{operatorDept,jdbcType=VARCHAR},
+				#{claimId,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	<!-- 增加跟进信息 -->
+	<insert id="insertClaimMessage"
+		parameterType="com.deppon.crm.module.recompense.shared.domain.ClaimMessage">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+		<![CDATA[ 
+			 select	SEQ_ID_CLAIMMESSAGE.nextval id	 from 	dual 
+		]]>
+		</selectKey>
+	<![CDATA[ 
+			insert into T_REC_CLAIMMESSAGE
+				(FID,
+				FUSERID,
+				FCONTENT,
+				FCREATETIME,
+				FCLAIMID,
+				FFOLLOWUSER,
+				FFOLLOWDEPT
+				)               
+			values 
+				(#{id},
+				#{followUserId,jdbcType=VARCHAR},
+				#{content,jdbcType=VARCHAR},
+				#{createTime,jdbcType=TIMESTAMP},
+				#{claimId,jdbcType=VARCHAR},
+				#{followUser,jdbcType=VARCHAR},
+				#{followDept,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	<!--根据索赔id查询操作记录 -->
+	<select id="searchClaimOperationLogByClaimId" parameterType="string"
+		resultMap="claimOperationLogResultMap">
+		select
+		<include refid="select_claimOperationLog" />
+		from t_rec_claimOperationLog  co
+		left join t_org_department d 
+		on CO.FOPERATORDEPT=d.fid
+		left join t_org_employee e
+		on CO.FOPERATOR=e.fid
+		 where FCLAIMID=#{id}
+		 	order by CO.FCREATETIME desc
+		 
+	</select>
+	<!--根据索赔id查询跟进消息 -->
+	<select id="searchClaimMessageByClaimId" parameterType="string"
+		resultMap="claimMessageResultMap">
+		select
+		<include refid="select_claimMessage" />
+		from t_rec_claimMessage cm
+		left join t_org_department d 
+		on cm.FFOLLOWDEPT=d.fid
+		left join t_org_employee e
+		on cm.FUSERID=e.fid
+		 where FCLAIMID=#{id}
+		 order by cm.FCREATETIME desc
+	</select>
+
+
+
+
+
+
+
+
+</mapper>

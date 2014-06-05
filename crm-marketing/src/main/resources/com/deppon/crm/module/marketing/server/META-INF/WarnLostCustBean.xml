@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- 流失预警客户DAO-->
+	 <bean id="warnLostCustDao" class="com.deppon.crm.module.marketing.server.dao.impl.WarnLostCustDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean> 
+	 <bean id="warnLostCustSerivceImp" class="com.deppon.crm.module.marketing.server.service.impl.WarnLostCustSerivceImp">
+		<property name="warnLostCustDao" ref="warnLostCustDao"></property>
+	</bean> 
+	 <bean id="warnLostCustManagerImp" class="com.deppon.crm.module.marketing.server.manager.impl.WarnLostCustManagerImp">
+		<property name="warnLostCustSerivce" ref="warnLostCustSerivceImp"></property>
+		<property name="velocityEngine" ref="velocityEngine"></property>
+		<property name="mailSenderService" ref="mailSenderService"></property>
+		<property name="fileManager" ref="fileManager"></property>
+	</bean> 
+		<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">
+			<props>
+				<prop key="resource.loader">class</prop>
+				<prop key="class.resource.loader.class">
+					org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+				</prop>
+				<prop key="velocimacro.library"></prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="mailSenderService"
+		class="com.deppon.foss.framework.server.adapter.mail.MailSenderService">
+		<property name="host" value="smtp.deppon.com" />
+		<property name="userName" value="CRM@deppon.com" />
+		<property name="password" value="dp31350606" />
+	</bean>
+</beans>

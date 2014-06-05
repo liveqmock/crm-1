@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.deppon.com/esb/inteface/domain/crm" xmlns:tns="http://www.deppon.com/esb/inteface/domain/crm" elementFormDefault="qualified">
+
+    <complexType name="CreateScatterRequest">
+    	<sequence>
+    		<element name="scatterInfos" type="tns:ScatterInfo" minOccurs="0" maxOccurs="unbounded">
+    			<annotation>
+    				<documentation>散客信息</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="CreateScatterResponse">
+    	<sequence>
+    		<element name="successCount" type="int">
+    			<annotation>
+    				<documentation>成功条数</documentation>
+    			</annotation>
+    		</element>
+    		<element name="failCount" type="int">
+    			<annotation>
+    				<documentation>失败条数</documentation>
+    			</annotation>
+    		</element>
+    		<element name="DealingResult" type="tns:DealingResult" minOccurs="0" maxOccurs="unbounded"></element>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="ScatterInfo">
+    	<sequence>
+    		<element name="fossId" type="string">
+    			<annotation>
+    				<documentation>散客ID</documentation>
+    			</annotation>
+    		</element>
+    		<element name="custName" type="string">
+    			<annotation>
+    				<documentation>客户名称</documentation>
+    			</annotation>
+    		</element>
+    		<element name="custNumber" type="string">
+    			<annotation>
+    				<documentation>客户编码</documentation>
+    			</annotation>
+    		</element>
+    		<element name="linkmanName" type="string">
+    			<annotation>
+    				<documentation>联系人名称</documentation>
+    			</annotation>
+    		</element>
+    		<element name="mobilephone" type="string">
+    			<annotation>
+    				<documentation>手机号</documentation>
+    			</annotation>
+    		</element>
+    		<element name="telephone" type="string">
+    			<annotation>
+    				<documentation>电话</documentation>
+    			</annotation></element>
+    		<element name="linkmanAdress" type="string">
+    			<annotation>
+    				<documentation>联系人地址</documentation>
+    			</annotation>
+    		</element>
+    		<element name="custAttribute" type="string">
+    			<annotation>
+    				<documentation>客户属性
+LEAVE_CUSTOMER	出发客户
+ARRIVE_CUSTOMER	到达客户
+</documentation>
+    			</annotation>
+    		</element>
+    		<element name="createUser" type="string">
+    			<annotation>
+    				<documentation>创建人</documentation>
+    			</annotation>
+    		</element>
+    		<element name="createTime" type="dateTime">
+    			<annotation>
+    				<documentation>创建时间</documentation>
+    			</annotation></element>
+    		<element name="businessType" type="string">
+    			<annotation>
+    				<documentation>业务类别：
+零担：LTT
+快递：EXPRESS</documentation>
+    			</annotation></element>
+    		<element name="standardCode" type="string">
+    			<annotation>
+    				<documentation>所属部门标杆编码</documentation>
+    			</annotation></element>
+    		<element name="provinceCode" type="string">
+    			<annotation>
+    				<documentation>省份编码</documentation>
+    			</annotation></element>
+    		<element name="cityCode" type="string">
+    			<annotation>
+    				<documentation>市编码</documentation>
+    			</annotation></element>
+    		<element name="areaCode" type="string">
+    			<annotation>
+    				<documentation>区/县编码</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="DealingResult">
+    	<sequence>
+    		<element name="fossId" type="string" minOccurs="1">
+    			<annotation>
+    				<documentation>散客ID</documentation>
+    			</annotation></element>
+    		<element name="ifSuccess" type="boolean">
+    			<annotation>
+    				<documentation>是否发送成功</documentation>
+    			</annotation></element>
+    		<element name="failResean" type="string">
+    			<annotation>
+    				<documentation>失败原因</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <element name="createScatterRequest" type="tns:CreateScatterRequest"></element>
+
+    <element name="createScatterResponse" type="tns:CreateScatterResponse"></element>
+</schema>

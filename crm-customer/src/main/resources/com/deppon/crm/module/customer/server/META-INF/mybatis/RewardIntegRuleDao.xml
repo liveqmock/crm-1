@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.integral.RewardIntegRule">
+	
+	
+	<insert id="saveRewardIntegRule" parameterType="map">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_integrule.nextval as id FROM DUAL
+		</selectKey>
+		insert into t_cust_integrule(
+		FID,FCREATETIME,FCREATEUSERID,
+		FFRACTION,FPOINTVALUE,
+		FPOINTTYPE,FRULENAME,FPOINTDESC,FPOINTBEGINTIME,
+		FPOINTENDTIME,FMEMLEVELREST,FLIMITPERSON,FLIMITFREQUENCY,
+		FLIMITFREUNIT,FLIMITTIMES,FLIMITRESTFREQ,FLIMITTIMEUNIT,
+		FRULETYPE,FINTEGTYPE)
+		 values(
+		#{id,jdbcType=VARCHAR},
+		sysdate,#{createUser,jdbcType=VARCHAR},
+		#{fraction,jdbcType=VARCHAR},#{pointvalue,jdbcType=NUMERIC},
+		#{pointtype,jdbcType=VARCHAR},#{rulename,jdbcType=VARCHAR},
+		#{pointdesc,jdbcType=VARCHAR},#{pointbegintime,jdbcType=DATE},
+		#{pointendtime,jdbcType=DATE},#{memlevelrest,jdbcType=VARCHAR},
+		#{limitperson,jdbcType=VARCHAR},#{limitfrequency,jdbcType=VARCHAR},
+		#{limitfreunit,jdbcType=VARCHAR},#{limittimes,jdbcType=VARCHAR},
+		#{limitrestfreq,jdbcType=VARCHAR},#{limittimeunit,jdbcType=VARCHAR},
+		#{ruletype,jdbcType=VARCHAR},#{integType,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateRewardIntegRule" parameterType="com.deppon.crm.module.customer.shared.domain.integral.RewardIntegRule">
+		UPDATE
+	    T_CUST_INTEGRULE
+		SET FLASTUPDATETIME=sysdate 
+		 ,FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR}
+		<if test=" fraction != null  and fraction != ''  ">
+		<![CDATA[,FFRACTION=#{fraction,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" pointvalue != null  and pointvalue != ''  ">
+		<![CDATA[,FPOINTVALUE=#{pointvalue,jdbcType=NUMERIC}]]>
+		</if>
+		<if test=" ruletype != null  and ruletype != ''  ">
+		<![CDATA[,Fruletype=#{ruletype,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" rulename != null  and rulename != ''  ">
+		<![CDATA[,FRULENAME=#{rulename,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" pointdesc != null  and pointdesc != ''  ">
+		<![CDATA[,FPOINTDESC=#{pointdesc,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" pointbegintime != null  and pointbegintime != ''  ">
+		<![CDATA[,FPOINTBEGINTIME=#{pointbegintime,jdbcType=DATE}]]>
+		</if>
+		<if test=" pointendtime != null  and pointendtime != ''  ">
+		<![CDATA[,FPOINTENDTIME=#{pointendtime,jdbcType=DATE}]]>
+		</if>
+		<if test=" memlevelrest != null  and memlevelrest != ''  ">
+		<![CDATA[,FMEMLEVELREST=#{memlevelrest,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" limitperson != null  and limitperson != ''  ">
+		<![CDATA[,FLIMITPERSON=#{limitperson,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" limitfrequency != null  and limitfrequency != ''  ">
+		<![CDATA[,FLIMITFREQUENCY=#{limitfrequency,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" limitfreunit != null  and limitfreunit != ''  ">
+		<![CDATA[,FLIMITFREUNIT=#{limitfreunit,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" limittimes != null  and limittimes != ''  ">
+		<![CDATA[,FLIMITTIMES=#{limittimes,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" limitrestfreq != null  and limitrestfreq != ''  ">
+		<![CDATA[,FLIMITRESTFREQ=#{limitrestfreq,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" limittimeunit != null  and limittimeunit != ''  ">
+		<![CDATA[,FLIMITTIMEUNIT=#{limittimeunit,jdbcType=VARCHAR}]]>
+		</if>
+		<if test=" integType != null  and integType != ''  ">
+		<![CDATA[,FINTEGTYPE=#{integType,jdbcType=VARCHAR}]]>
+		</if>
+		WHERE FID = #{id}
+	</update>
+	
+	
+	<select id="getRewardIntegRuleById" resultMap="RewardIntegRuleRM" parameterType="string">
+		select <include refid="RewardIntegRule_column"/>
+		from t_cust_integrule A LEFT JOIN T_ORG_EMPLOYEE B ON A.FCREATEUSERID = B.FID
+		                        LEFT JOIN T_ORG_EMPLOYEE C ON A.FLASTMODIFYUSERID = C.FID
+		where A.FID = #{id}
+		and A.FPOINTTYPE = 'RewardIntegRule'
+	</select>
+	
+	<select id="getRewardIntegRules" resultMap="RewardIntegRuleRM" parameterType="map">
+		select <include refid="RewardIntegRule_column"/>
+		<include refid="getRewardIntegRulesSql"/>
+	</select>
+		
+	<select id="countRewardIntegRules" resultType="int" parameterType="map">
+		select count(*) 
+		<include refid="getRewardIntegRulesSql"/>
+	</select>
+	
+	<sql id="getRewardIntegRulesSql">
+		from t_cust_integrule A LEFT JOIN T_ORG_EMPLOYEE B ON A.FCREATEUSERID = B.FID
+		                        LEFT JOIN T_ORG_EMPLOYEE C ON A.FLASTMODIFYUSERID = C.FID
+		where A.FPOINTTYPE = #{pointtype}
+	</sql>
+	
+	<resultMap id="RewardIntegRuleRM"
+	 type="com.deppon.crm.module.customer.shared.domain.integral.RewardIntegRule">
+		<id property="id" column="FID" jdbcType = "VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType = "DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType = "VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME" jdbcType = "DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" jdbcType = "VARCHAR" />
+		<result property="fraction" column="FFRACTION" jdbcType = "VARCHAR" />
+		<result property="pointvalue" column="FPOINTVALUE" jdbcType = "NUMERIC" />
+		<result property="pointtype" column="FPOINTTYPE" jdbcType = "VARCHAR" />
+		<result property="rulename" column="FRULENAME" jdbcType = "VARCHAR" />
+		<result property="pointdesc" column="FPOINTDESC" jdbcType = "VARCHAR" />
+		<result property="pointbegintime" column="FPOINTBEGINTIME" jdbcType = "DATE" />
+		<result property="pointendtime" column="FPOINTENDTIME" jdbcType = "DATE" />
+		<result property="memlevelrest" column="FMEMLEVELREST" jdbcType = "VARCHAR" />
+		<result property="limitperson" column="FLIMITPERSON" jdbcType = "VARCHAR" />
+		<result property="limitfrequency" column="FLIMITFREQUENCY" jdbcType = "VARCHAR" />
+		<result property="limitfreunit" column="FLIMITFREUNIT" jdbcType = "VARCHAR" />
+		<result property="limittimes" column="FLIMITTIMES" jdbcType = "VARCHAR" />
+		<result property="limitrestfreq" column="FLIMITRESTFREQ" jdbcType = "VARCHAR" />
+		<result property="limittimeunit" column="FLIMITTIMEUNIT" jdbcType = "VARCHAR" />
+		<result property="integType" column="FINTEGTYPE" jdbcType = "VARCHAR" />
+		<result property="ruletype" column="fruletype" jdbcType = "VARCHAR" />
+		<result property="cname" column="CNAME" jdbcType = "VARCHAR" />
+		<result property="mname" column="MNAME" jdbcType = "VARCHAR" />
+	</resultMap>
+	
+	<sql id="RewardIntegRule_column">
+		A.FID,
+		A.FCREATETIME,
+		A.FCREATEUSERID,
+		A.FLASTUPDATETIME,
+		A.FLASTMODIFYUSERID,
+		A.FFRACTION,
+		A.FPOINTVALUE,
+		A.fruletype,
+		A.FRULENAME,
+		A.FPOINTDESC,
+		A.FPOINTBEGINTIME,
+		A.FPOINTENDTIME,
+		A.FMEMLEVELREST,
+		A.FLIMITPERSON,
+		A.FLIMITFREQUENCY,
+		A.FLIMITFREUNIT,
+		A.FLIMITTIMES,
+		A.FLIMITRESTFREQ,
+		A.FLIMITTIMEUNIT,
+		A.FINTEGTYPE,
+		B.FEMPNAME CNAME,
+		C.FEMPNAME MNAME
+	</sql>
+</mapper>

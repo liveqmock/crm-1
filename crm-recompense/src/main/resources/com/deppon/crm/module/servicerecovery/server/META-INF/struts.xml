@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="servicerecovery" namespace="/servicerecovery"
+		extends="crm-default">
+
+		<!--1. 服务补救新增页面 -->
+		<action name="addServiceRecovery">
+			<result name="success">addServiceRecovery.html</result>
+		</action>
+
+		<!--2. 服务补救查询页面 -->
+		<action name="queryServiceRecovery">
+			<result name="success">queryServiceRecovery.html</result>
+		</action>
+
+		<!--3. 根据运单号查询运单信息 -->
+		<action name="searchWayBillByNum" class="serviceRecoveryAction"
+			method="searchWayBillByNum">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!--4. 新增服务补救提交 -->
+		<action name="addServiceRecoverySubmit" class="serviceRecoveryAction"
+			method="addServiceRecoverySubmit">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!--5. 服务补救查询 -->
+		<action name="searchServiceRecoveryByCondition" class="serviceRecoveryAction"
+			method="searchServiceRecoveryByCondition">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!--6. 服务补救查看 -->
+		<action name="findServiceRecoveryById" class="serviceRecoveryAction"
+			method="findServiceRecoveryById">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 7.文件导出 -->
+		<action name="exportServiceRecoveryByCondition" class="serviceRecoveryAction"
+			method="exportServiceRecoveryByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--8.财务部门查询-->
+		<action name="searchFinanceDept" class="financeDeptAction"
+			method="searchFinanceDept">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--8.工作日维护-->
+		<action name="specialDay">
+			<result name="success">specialDay.html</result>
+		</action>
+		
+		<!--9.根据输入条件查询-->
+		<action name="searchSpecialDayByCondition" class="specialDayAction"
+			method="searchSpecialDayByCondition">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--10.新增-->
+		<action name="submitSpecialDay" class="specialDayAction"
+			method="submitSpecialDay">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--11.根据ID查询-->
+		<action name="getSpecialDayById" class="specialDayAction"
+			method="getSpecialDayById">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--12.修改-->
+		<action name="updateSpecialDay" class="specialDayAction"
+			method="updateSpecialDay">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--13.删除-->
+		<action name="deleteSpecialDayByIdArray" class="specialDayAction"
+			method="deleteSpecialDayByIdArray">
+			<result name="success" type="json"></result>
+		</action>
+		<!--14.查询权限部门-->
+		<action name="searchMyDataAuth" class="serviceRecoveryAction"
+			method="searchMyDataAuth">
+			<result name="success" type="json"></result>
+		</action>
+		
+	</package>
+
+</struts>

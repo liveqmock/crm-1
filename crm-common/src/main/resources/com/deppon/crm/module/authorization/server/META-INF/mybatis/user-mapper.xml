@@ -1,0 +1,899 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.authorization.shared.domain.User">
+	<resultMap id="userResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.User">
+		<id property="id" column="MASTER_ID" />
+		<result property="loginName" column="MASTER_LOGINNAME" />
+		<result property="password" column="MASTER_PASSWORD" />
+		<result property="lastLogin" column="MASTER_LASTLOGIN" />
+		<result property="status" column="MASTER_STATUS" />
+		<result property="invalidDate" column="MASTER_INVALIDDATE" />
+		<result property="validDate" column="MASTER_VALIDDATE" />
+		<result property="createUser" column="MASTER_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="MASTER_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MASTER_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MASTER_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<association property="empCode" column="ENTRY_0_EMPCODE"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<id property="id" column="ENTRY_0_ID" />
+			<result property="deptId" column="ENTRY_0_DEPTID" />
+			<result property="empCode" column="ENTRY_0_EMPCODE" />
+			<result property="empName" column="ENTRY_0_EMPNAME" />
+			<result property="gender" column="ENTRY_0_GENDER" />
+			<result property="birthdate" column="ENTRY_0_BIRTHDATE" />
+			<result property="status" column="ENTRY_0_STATUS" />
+			<result property="inDate" column="ENTRY_0_INDATE" />
+			<result property="outDate" column="ENTRY_0_OUTDATE" />
+			<result property="offerTel" column="ENTRY_0_OTEL" />
+			<result property="offerAddress" column="ENTRY_0_OADDRESS" />
+			<result property="offerZipCode" column="ENTRY_0_OZIPCODE" />
+			<result property="offerEmail" column="ENTRY_0_OEMAIL" />
+			<result property="mobileNumber" column="ENTRY_0_MOBILENO" />
+			<result property="homeTel" column="ENTRY_0_HTEL" />
+			<result property="homeAddress" column="ENTRY_0_HADDRESS" />
+			<result property="homeZipCode" column="ENTRY_0_HZIPCODE" />
+			<result property="personEmail" column="ENTRY_0_PEMAIL" />
+			<result property="workExp" column="ENTRY_0_WORKEXP" />
+			<result property="remark" column="ENTRY_0_REMARK" />
+			<result property="createUser" column="ENTRY_0_CREATEUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="createDate" column="ENTRY_0_CREATEDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+			<result property="modifyUser" column="ENTRY_0_MODIFYUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="modifyDate" column="ENTRY_0_MODIFYDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+		    <result property="position" column="ENTRY_0_POSITION" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+
+	<resultMap id="userSimplResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.User">
+		<id property="id" column="ID" />
+		<result property="loginName" column="LOGINNAME" />
+		<!--<result property="empCode" column="EMPCODE" /> -->
+		<result property="password" column="PASSWORD" />
+		<result property="lastLogin" column="LASTLOGIN" />
+		<result property="status" column="STATUS" />
+		<result property="invalidDate" column="INVALIDDATE" />
+		<result property="validDate" column="VALIDDATE" />
+		<result property="createUser" column="CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<association property="empCode" column="EMPCODE"
+			select="com.deppon.crm.module.organization.shared.domain.Employee.getEmployeesByCode" />
+	</resultMap>
+
+	<sql id="select_param">
+		MASTER.FID AS MASTER_ID,
+		ENTRY_0.FID AS ENTRY_0_ID,
+		<!-- ENTRY_0.DEPTCODE AS ENTRY_0_DEPTID, -->
+		ENTRY_0.FDEPTID AS ENTRY_0_DEPTID,
+		ENTRY_0.FEMPCODE AS ENTRY_0_EMPCODE,
+		ENTRY_0.FEMPNAME AS ENTRY_0_EMPNAME,
+		ENTRY_0.FGENDER AS ENTRY_0_GENDER,
+		ENTRY_0.FBIRTHDATE AS
+		ENTRY_0_BIRTHDATE,
+		ENTRY_0.FSTATUS AS ENTRY_0_STATUS,
+		ENTRY_0.FINDATE AS
+		ENTRY_0_INDATE,
+		ENTRY_0.FOUTDATE AS ENTRY_0_OUTDATE,
+		ENTRY_0.FOTEL AS
+		ENTRY_0_OTEL,
+		ENTRY_0.FOADDRESS AS ENTRY_0_OADDRESS,
+		ENTRY_0.FOZIPCODE
+		AS ENTRY_0_OZIPCODE,
+		ENTRY_0.FOEMAIL AS ENTRY_0_OEMAIL,
+		ENTRY_0.FMOBILENO AS ENTRY_0_MOBILENO,
+		ENTRY_0.FHTEL AS ENTRY_0_HTEL,
+		ENTRY_0.FHADDRESS AS ENTRY_0_HADDRESS,
+		ENTRY_0.FHZIPCODE AS
+		ENTRY_0_HZIPCODE,
+		ENTRY_0.FPEMAIL AS ENTRY_0_PEMAIL,
+		ENTRY_0.FWORKEXP AS
+		ENTRY_0_WORKEXP,
+		ENTRY_0.FREMARK AS ENTRY_0_REMARK,
+		ENTRY_0.FCREATEUSERID AS ENTRY_0_CREATEUSER,
+		ENTRY_0.FCREATETIME AS
+		ENTRY_0_CREATEDATE,
+		ENTRY_0.FLASTMODIFYUSERID AS ENTRY_0_MODIFYUSER,
+		ENTRY_0.FLASTUPDATETIME AS
+		ENTRY_0_MODIFYDATE,
+		ENTRY_0.FPOSITION AS ENTRY_0_POSITION,
+		MASTER.FLOGINNAME AS
+		MASTER_LOGINNAME,
+		MASTER.FPASSWORD AS MASTER_PASSWORD,
+		MASTER.FLASTLOGIN AS MASTER_LASTLOGIN,
+		MASTER.FSTATUS AS MASTER_STATUS,
+		MASTER.FINVALIDDATE AS MASTER_INVALIDDATE,
+		MASTER.FVALIDDATE AS
+		MASTER_VALIDDATE,
+		MASTER.FCREATEUSERID AS MASTER_CREATEUSER,
+		MASTER.FCREATETIME AS MASTER_CREATEDATE,
+		MASTER.FLASTMODIFYUSERID AS
+		MASTER_MODIFYUSER,
+		MASTER.FLASTUPDATETIME AS MASTER_MODIFYDATE
+	</sql>
+
+	<sql id="select_simple_param">
+		FID AS ID,
+		FEMPCODE AS EMPCODE,
+		FLOGINNAME AS LOGINNAME,
+		FLASTLOGIN AS LASTLOGIN,
+		FPASSWORD AS PASSWORD,
+		FSTATUS AS STATUS,
+		FINVALIDDATE AS INVALIDDATE,
+		FVALIDDATE AS VALIDDATE,
+		FCREATEUSERID AS
+		CREATEUSER,
+		FCREATETIME AS CREATEDATE,
+		FLASTMODIFYUSERID AS MODIFYUSER,
+		FLASTUPDATETIME AS MODIFYDATE
+	</sql>
+
+	<sql id="insert_param">
+		FID,
+		FEMPCODE,
+		FLOGINNAME,
+		FLASTLOGIN,
+		FPASSWORD,
+		FSTATUS,
+		FINVALIDDATE,
+		FVALIDDATE,
+		FCREATEUSERID,
+		FCREATETIME,
+		FLASTMODIFYUSERID,
+		FLASTUPDATETIME
+	</sql>
+
+	<select id="getById" parameterType="string" resultMap="userSimplResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_USER
+			WHERE FID=#{ID}
+		]]>
+	</select>
+	<select id="getAll" resultMap="userResultMap"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+				ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+		]]>
+		<where>
+			<if test="id!=null and id!=''">
+				MASTER.FID LIKE #{id}
+			</if>
+			<if test="empCode!=null and empCode.empCode!=null and empCode.empCode!=''">
+				AND MASTER.FEMPCODE = #{empCode.empCode}
+			</if>
+			<if test="empCode!=null and empCode.empName!=null and empCode.empName!=''">
+				AND ENTRY_0.FEMPNAME LIKE #{empCode.empName}
+			</if>
+			<if test="loginName!=null and loginName!=''">
+				AND MASTER.FLOGINNAME LIKE #{loginName}
+			</if>
+			<if test="password!=null and password!=''">
+				AND MASTER.FPASSWORD LIKE #{password}
+			</if>
+			<if test="lastLogin!=null">
+				AND MASTER.FLASTLOGIN = #{lastLogin}
+		    </if>
+			<if test="status!=null">
+				AND MASTER.FSTATUS = #{status}
+		    </if>
+			<if test="invalidDate!=null">
+				AND MASTER.FINVALIDDATE = #{invalidDate}
+		    </if>
+			<if test="validDate!=null">
+				AND MASTER.FvalidDate = #{validDate}
+		    </if>
+		</where>
+		<![CDATA[
+			ORDER BY  MASTER.FLASTUPDATETIME
+		]]>
+	</select>
+
+
+	<!-- .............................按照deptId查询USER......................... -->
+	<select id="getAllBydeptId" resultMap="userResultMap"
+		parameterType="string">
+		<!-- <![CDATA[ SELECT ]]> <include refid="select_param" /> <![CDATA[ FROM 
+			T_AUTH_USER MASTER LEFT JOIN T_ORG_EMPLOYEE ENTRY_0 ON MASTER.EMPCODE = ENTRY_0.EMPCODE 
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1 ON ENTRY_0.DEPTCODE = ENTRY_1.DEPTCODE 
+			WHERE ENTRY_1.ID = #{deptId} ]]> -->
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+				ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+			WHERE ENTRY_0.FDEPTID = #{deptId}
+		]]>
+	</select>
+
+
+	<!-- .............................按照deptId查询USER数量......................... -->
+	<select id="countBydeptId" resultType="Long" parameterType="string">
+		<!-- <![CDATA[ SELECT count(*) FROM T_AUTH_USER MASTER LEFT JOIN T_ORG_EMPLOYEE 
+			ENTRY_0 ON MASTER.EMPCODE = ENTRY_0.EMPCODE LEFT JOIN T_ORG_DEPARTMENT ENTRY_1 
+			ON ENTRY_0.DEPTCODE = ENTRY_1.DEPTCODE WHERE ENTRY_1.ID = #{deptId} ]]> -->
+		<![CDATA[
+		SELECT count(*)
+			FROM T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+				ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+			WHERE ENTRY_0.FDEPTID = #{deptId} 
+		]]>
+	</select>
+
+
+
+
+	<select id="count" resultType="Long"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+		<![CDATA[
+			SELECT count(*)
+			FROM T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+				ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+		]]>
+		<where>
+			<if test="id!=null and id!=''">
+				MASTER.FID LIKE #{id}
+			</if>
+			<if test="empCode!=null and empCode.empCode!=null and empCode.empCode!=''">
+				AND MASTER.FEMPCODE = #{empCode.empCode}
+			</if>
+			<if test="empCode!=null and empCode.empName!=null and empCode.empName!=''">
+				AND ENTRY_0.FEMPNAME LIKE #{empCode.empName}
+			</if>
+			<if test="loginName!=null and loginName!=''">
+				AND MASTER.FLOGINNAME LIKE #{loginName}
+			</if>
+			<if test="password!=null and password!=''">
+				AND MASTER.FPASSWORD LIKE #{password}
+			</if>
+			<if test="lastLogin!=null">
+				AND MASTER.FLASTLOGIN = #{lastLogin}
+		    </if>
+			<if test="status!=null">
+				AND MASTER.FSTATUS = #{status}
+		    </if>
+			<if test="invalidDate!=null">
+				AND MASTER.FINVALIDDATE = #{invalidDate}
+		    </if>
+			<if test="validDate!=null">
+				AND MASTER.FVALIDDATE = #{validDate}
+		    </if>
+		</where>
+	</select>
+	<insert id="insertByUU" parameterType="string">
+	 insert into t_auth_user  ( 
+	    FID,
+	    FEMPCODE,
+	    FLOGINNAME,
+	    FPASSWORD,
+	    FSTATUS,
+	    FINVALIDDATE,
+	    FVALIDDATE,
+	    FCREATETIME,
+	    FLASTMODIFYUSERID,
+	    FLASTUPDATETIME
+	    ) 
+	    select pk_sysuser,
+	    empcode,
+      	loginname,
+     	md5password,
+     	1,
+        invaliddate,
+     	validdate,
+        createdate,
+        MODIFYUSER,
+        modifydate
+        from  T_UUMS_SYSUSER  where empcode=#{empCode}
+	</insert>
+	<insert id="updateByUU" parameterType="string">
+	   update t_auth_user set ( 
+	    FLOGINNAME,
+	    FSTATUS,
+	    FINVALIDDATE,
+	    FVALIDDATE,
+	    FCREATETIME,
+	    FLASTMODIFYUSERID,
+	    FLASTUPDATETIME
+	    ) =(
+		    select
+		    loginname,
+		    1,
+		    invaliddate,
+		    validdate,
+		    createdate,
+            MODIFYUSER,
+		    modifydate
+		    from  T_UUMS_SYSUSER  where empcode=#{empCode}
+	    ) where FEMPCODE=#{empCode}
+	</insert>
+	<insert id="insert"
+		parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+		<selectKey keyProperty="id" resultType="string" order="BEFORE">
+			SELECT USER_SEQ.NEXTVAL AS
+			id FROM DUAL
+		</selectKey>
+		<![CDATA[
+			insert into T_AUTH_USER( 
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) values (
+				#{id},
+		]]>
+		<choose>
+			<when test="empCode!=null">
+				#{empCode.empCode},  		
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="loginName!=null">
+				#{loginName},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		null,
+		<choose>
+			<when test="password!=null">
+				#{password},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="status!=null">
+				#{status},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="invalidDate!=null">
+				sysdate,
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="validDate!=null">
+				sysdate,
+			</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="createUser!=null">
+				#{createUser,jdbcType=VARCHAR},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		sysdate,
+		<choose>
+			<when test="modifyUser!=null">
+				#{modifyUser,jdbcType=VARCHAR},
+				</when>
+			<otherwise>
+				null,
+			</otherwise>
+		</choose>
+		sysdate
+		)
+
+	</insert>
+
+	<update id="updatePassword">
+		UPDATE T_AUTH_USER
+		SET FPASSWORD=#{password}
+		WHERE FID=#{id}
+	</update>
+
+	<!-- 更新用户更后登录时间 -->
+	<update id="updateLastLoginDate" parameterType="string">
+		UPDATE
+		T_AUTH_USER
+		SET FLASTLOGIN = sysdate
+		WHERE FID = #{id}
+	</update>
+
+	<update id="update">
+		UPDATE T_AUTH_USER
+		<set>
+			<if test="empCode!=null and empCode.empCode!=null">
+				FEMPCODE = #{empCode.empCode},
+		    </if>
+			<if test="loginName!=null and loginName!=''">
+				FLOGINNAME = #{loginName},
+	    	</if>
+			<if test="password!=null and password!=''">
+				FPASSWORD = #{password},
+	    	</if>
+			<if test="lastLogin!=null">
+				FLASTLOGIN = #{lastLogin},
+	    	</if>
+			<if test="status!=null">
+				FSTATUS = #{status},
+	    	</if>
+			<choose>
+				<when test="invalidDate!=null">
+					FINVALIDDATE = sysdate,
+			</when>
+				<otherwise>
+					FINVALIDDATE = null,
+			</otherwise>
+			</choose>
+			<choose>
+				<when test="validDate!=null">
+					FVALIDDATE = sysdate,
+			</when>
+				<otherwise>
+					FVALIDDATE = null,
+			</otherwise>
+			</choose>
+			<if test="modifyUser != '' and modifyUser != '' ">
+				FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR},
+        	</if>
+			FLASTUPDATETIME = sysdate
+		</set>
+		WHERE FID = #{id}
+	</update>
+	<update id="updateByCode" parameterType="com.deppon.crm.module.authorization.shared.domain.User">
+		UPDATE T_AUTH_USER
+		<set>
+			<if test="loginName!=null and loginName!=''">
+				FLOGINNAME = #{loginName},
+	    	</if>
+			<if test="password!=null and password!=''">
+				FPASSWORD = #{password},
+	    	</if>
+			<if test="lastLogin!=null">
+				FLASTLOGIN = #{lastLogin},
+	    	</if>
+			<if test="status!=null">
+				FSTATUS = #{status},
+	    	</if>
+			<choose>
+				<when test="invalidDate!=null">
+					FINVALIDDATE = sysdate,
+			</when>
+				<otherwise>
+					FINVALIDDATE = null,
+			</otherwise>
+			</choose>
+			<choose>
+				<when test="validDate!=null">
+					FVALIDDATE = sysdate,
+			</when>
+				<otherwise>
+					FVALIDDATE = null,
+			</otherwise>
+			</choose>
+			<if test="modifyUser != '' and modifyUser != '' ">
+				FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR},
+        	</if>
+			FLASTUPDATETIME = sysdate
+		</set>
+		WHERE FEMPCODE = #{empCode.empCode}
+	</update>
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+			UPDATE  T_AUTH_USER SET FSTATUS=2,Fvalidate=sysdate WHERE FID = #{id}
+		]]>
+	</delete>
+	<delete id="deleteByCode" parameterType="string">
+		<![CDATA[
+			UPDATE  T_AUTH_USER SET FSTATUS=0,FVALIDDATE=sysdate WHERE FEMPCODE = #{empCode,jdbcType=VARCHAR}
+		]]>
+	</delete>
+	<select id="selectByCode" parameterType="string" resultMap="userSimplResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_USER
+			WHERE FEMPCODE=#{empCode}
+		]]>
+	</select>
+	<!-- 缓存加载用户信息方法 -->
+	<!-- ############################################################################################### -->
+	<resultMap id="detailUserMap"
+		type="com.deppon.crm.module.authorization.shared.domain.User">
+		<id property="id" column="ID" />
+		<result property="loginName" column="LOGINNAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="lastLogin" column="LASTLOGIN" />
+		<result property="status" column="STATUS" />
+		<result property="invalidDate" column="INVALIDDATE" />
+		<result property="validDate" column="VALIDDATE" />
+		<result property="createUser" column="CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<association property="empCode" column="ENTRY_0_EMPCODE"
+			javaType="com.deppon.crm.module.organization.shared.domain.Employee">
+			<id property="id" column="ENTRY_0_ID" />
+			<result property="empCode" column="ENTRY_0_EMPCODE" />
+			<result property="empName" column="ENTRY_0_EMPNAME" />
+			<result property="gender" column="ENTRY_0_GENDER" />
+			<result property="birthdate" column="ENTRY_0_BIRTHDATE" />
+			<result property="status" column="ENTRY_0_STATUS" />
+			<result property="inDate" column="ENTRY_0_INDATE" />
+			<result property="outDate" column="ENTRY_0_OUTDATE" />
+			<result property="offerTel" column="ENTRY_0_OTEL" />
+			<result property="offerAddress" column="ENTRY_0_OADDRESS" />
+			<result property="offerZipCode" column="ENTRY_0_OZIPCODE" />
+			<result property="offerEmail" column="ENTRY_0_OEMAIL" />
+			<result property="mobileNumber" column="ENTRY_0_MOBILENO" />
+			<result property="homeTel" column="ENTRY_0_HTEL" />
+			<result property="homeAddress" column="ENTRY_0_HADDRESS" />
+			<result property="homeZipCode" column="ENTRY_0_HZIPCODE" />
+			<result property="personEmail" column="ENTRY_0_PEMAIL" />
+			<result property="workExp" column="ENTRY_0_WORKEXP" />
+			<result property="remark" column="ENTRY_0_REMARK" />
+			<result property="position" column="ENTRY_0_POSITION"/>
+			<result property="createUser" column="ENTRY_0_CREATEUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="createDate" column="ENTRY_0_CREATEDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+			<result property="modifyUser" column="ENTRY_0_MODIFYUSER"
+				javaType="String" jdbcType="VARCHAR" />
+			<result property="modifyDate" column="ENTRY_0_MODIFYDATE"
+				javaType="Date" jdbcType="TIMESTAMP" />
+			<association property="deptId" column="ENTRY_1_ID"
+				javaType="com.deppon.crm.module.organization.shared.domain.Department">
+				<id property="id" column="ENTRY_1_ID" />
+				<result property="deptCode" column="ENTRY_1_DEPTCODE" />
+				<result property="deptName" column="ENTRY_1_DEPTNAME" />
+				<result property="standardCode" column="ENTRY_1_STANDARDCODE" />
+				<result property="principal" column="ENTRY_1_PRINCIPAL" />
+				<result property="phone" column="ENTRY_1_PHONE" />
+				<result property="fax" column="ENTRY_1_FAX" />
+				<result property="parentCode" column="ENTRY_1_PARENTCODE" />
+				<result property="companyCode" column="ENTRY_1_COMPANYCODE" />
+				<result property="zipCode" column="ENTRY_1_ZIPCODE" />
+				<result property="address" column="ENTRY_1_ADDRESS" />
+				<result property="address" column="ENTRY_1_ADDRESS" />
+				<result property="status" column="ENTRY_1_STATUS" />
+				<result property="validDate" column="ENTRY_1_VALIDDATE" />
+				<result property="invalidDate" column="ENTRY_1_INVALIDDATE" />
+				<result property="displayOrder" column="ENTRY_1_DISPLAYORDER" />
+				<result property="deptLevel" column="ENTRY_1_DEPTLEVEL" />
+				<result property="deptDesc" column="ENTRY_1_DEPTDESC" />
+				<result property="deptSeq" column="ENTRY_1_DEPTSEQ" />
+				<result property="createUser" column="ENTRY_1_CREATEUSER"
+					javaType="String" jdbcType="VARCHAR" />
+				<result property="createDate" column="ENTRY_1_CREATEDATE"
+					javaType="Date" jdbcType="TIMESTAMP" />
+				<result property="modifyUser" column="ENTRY_1_MODIFYUSER"
+					javaType="String" jdbcType="VARCHAR" />
+				<result property="modifyDate" column="ENTRY_1_MODIFYDATE"
+					javaType="Date" jdbcType="TIMESTAMP" />
+			</association>
+		</association>
+		<collection property="roleids" column="ROLEID" ofType="String">
+			<result column="ROLEID" />
+		</collection>
+		<collection property="deptids" column="DEPTID" ofType="String">
+			<result column="DEPTID" />
+		</collection>
+	</resultMap>
+
+	<!-- 
+	修改时间 :2012-03-21 09:12:00 
+	修改人：ztjie 
+	修改说明：把用户关联权限的连接查询删除，因为用户的权限是通过角色进行关联的
+			所以之后对权限的信息加载，都是通过用户角色进行加载。 
+	修改时间 :2012-05-03 17:48:00 
+	修改人：ztjie 
+	修改说明：增加职员ID的映射。 
+	-->
+	<sql id="user_roleId_functionCode_deptId_sql">
+		<![CDATA[
+			SELECT
+				USER1.FID          	AS ID,
+		        USER1.FLOGINNAME 	AS LOGINNAME,
+		        USER1.FPASSWORD      AS PASSWORD,
+		        USER1.FLASTLOGIN    	AS LASTLOGIN,
+		        USER1.FSTATUS        AS STATUS,
+		        USER1.FINVALIDDATE   AS INVALIDDATE,
+		        USER1.FVALIDDATE     AS VALIDDATE,
+		        USER1.FCREATEUSERID    AS CREATEUSER,
+		        USER1.FCREATETIME    AS CREATEDATE,
+		        USER1.FLASTMODIFYUSERID    AS MODIFYUSER,
+		        USER1.FLASTUPDATETIME    AS MODIFYDATE,
+		    	ENTRY_1.FID 			AS ENTRY_1_ID,
+				ENTRY_1.FDEPTCODE 	AS ENTRY_1_DEPTCODE,
+			    ENTRY_1.FSTANDARDCODE   AS ENTRY_1_STANDARDCODE,
+				ENTRY_1.FDEPTNAME 	AS ENTRY_1_DEPTNAME,
+				ENTRY_1.FPRINCIPAL AS ENTRY_1_PRINCIPAL,
+				ENTRY_1.FCOMPANYNAME AS ENTRY_1_COMPANYNAME,
+				ENTRY_1.FPHONE 		AS ENTRY_1_PHONE,
+				ENTRY_1.FFAX 		AS ENTRY_1_FAX,
+				ENTRY_1.FZIPCODE 	AS ENTRY_1_ZIPCODE,
+				ENTRY_1.FADDRESS 	AS ENTRY_1_ADDRESS,
+				ENTRY_1.FSTATUS 		AS ENTRY_1_STATUS,
+				ENTRY_1.FVALIDDATE 	AS ENTRY_1_VALIDDATE,
+				ENTRY_1.FINVALIDDATE AS ENTRY_1_INVALIDDATE,
+				ENTRY_1.FDISPLAYORDER AS ENTRY_1_DISPLAYORDER,
+				ENTRY_1.FDEPTLEVEL 	AS ENTRY_1_DEPTLEVEL,
+				ENTRY_1.FDEPTDESC 	AS ENTRY_1_DEPTDESC,
+				ENTRY_1.FDEPTSEQ 	AS ENTRY_1_DEPTSEQ,
+				ENTRY_1.FCREATEUSERID 	AS ENTRY_1_CREATEUSER,
+				ENTRY_1.FCREATETIME 	AS ENTRY_1_CREATEDATE,
+				ENTRY_1.FLASTMODIFYUSERID 	AS ENTRY_1_MODIFYUSER,
+				ENTRY_1.FLASTUPDATETIME 	AS ENTRY_1_MODIFYDATE,
+				ENTRY_0.FID   AS ENTRY_0_ID,
+				ENTRY_0.FEMPCODE 	AS ENTRY_0_EMPCODE,
+				ENTRY_0.FEMPNAME 	AS ENTRY_0_EMPNAME,
+				ENTRY_0.FGENDER 		AS ENTRY_0_GENDER,
+				ENTRY_0.FBIRTHDATE 	AS ENTRY_0_BIRTHDATE,
+				ENTRY_0.FSTATUS 		AS ENTRY_0_STATUS,
+				ENTRY_0.FINDATE 		AS ENTRY_0_INDATE,
+				ENTRY_0.FOUTDATE 	AS ENTRY_0_OUTDATE,
+				ENTRY_0.FOTEL 		AS ENTRY_0_OTEL,
+				ENTRY_0.FOADDRESS 	AS ENTRY_0_OADDRESS,
+				ENTRY_0.FOZIPCODE 	AS ENTRY_0_OZIPCODE,
+				ENTRY_0.FOEMAIL 		AS ENTRY_0_OEMAIL,
+				ENTRY_0.FMOBILENO 	AS ENTRY_0_MOBILENO,
+				ENTRY_0.FHTEL 		AS ENTRY_0_HTEL,
+				ENTRY_0.FHADDRESS 	AS ENTRY_0_HADDRESS,
+				ENTRY_0.FHZIPCODE 	AS ENTRY_0_HZIPCODE,
+				ENTRY_0.FPEMAIL 		AS ENTRY_0_PEMAIL,
+				ENTRY_0.FWORKEXP 	AS ENTRY_0_WORKEXP,
+				ENTRY_0.FREMARK 		AS ENTRY_0_REMARK,
+				ENTRY_0.FPOSITION      AS ENTRY_0_POSITION,
+				ENTRY_0.FCREATEUSERID 	AS ENTRY_0_CREATEUSER,
+				ENTRY_0.FCREATETIME 	AS ENTRY_0_CREATEDATE,
+				ENTRY_0.FLASTMODIFYUSERID 	AS ENTRY_0_MODIFYUSER,
+				ENTRY_0.FLASTUPDATETIME 	AS ENTRY_0_MODIFYDATE,
+				USERROLE.FROLEID			AS ROLEID,
+				USERDEPT.FDEPTID			AS DEPTID
+		  	FROM T_AUTH_USER USER1
+		        LEFT JOIN T_ORG_EMPLOYEE ENTRY_0 ON USER1.FEMPCODE=ENTRY_0.FEMPCODE
+		        LEFT JOIN T_ORG_DEPARTMENT ENTRY_1 ON ENTRY_1.FID=ENTRY_0.FDEPTID
+		    ]]>
+		    <![CDATA[
+				LEFT JOIN T_AUTH_USERROLE USERROLE ON USER1.FID = USERROLE.FUSERID
+				LEFT JOIN T_AUTH_USERDEPARTMENT USERDEPT ON USER1.FID = USERDEPT.FUSERID
+		    WHERE 
+		    	USER1.FSTATUS=1
+	    ]]>
+	</sql>
+
+	<select id="getUserRoleFunDeptById" parameterType="string"
+		resultMap="detailUserMap">
+		<include refid="user_roleId_functionCode_deptId_sql" />
+		<![CDATA[
+		    AND USER1.FID=#{userId}
+		]]>
+	</select>
+
+	<select id="getLastModifyTime" resultType="date">
+		<![CDATA[
+			SELECT MAX(FLASTUPDATETIME)
+			FROM T_AUTH_USER
+		]]>
+	</select>
+
+	<!-- 修改时间 :2012-02-07 14:38:00 修改人：ztjie 修改说明：把FLASTUPDATETIME = #{lastModifyDate}改为USER1.FLASTUPDATETIME 
+		> (#{lastModifyDate} - 1/2800) 由于更新时间与最后提交时间是有差距的，所以要把更新时间向后减少30秒 -->
+	<select id="getByLastModifyDate" parameterType="date" resultMap="detailUserMap">
+		<include refid="user_roleId_functionCode_deptId_sql" />
+		<![CDATA[
+			AND USER1.FLASTUPDATETIME > (#{lastModifyDate} - 1/2800)
+		]]>
+	</select>
+
+	<!-- 登录加载用户方法 -->
+	<!-- ############################################################################################### -->
+	<resultMap id="loginUserResultMap"
+		type="com.deppon.crm.module.authorization.shared.domain.User">
+		<id property="id" column="ID" />
+		<result property="loginName" column="LOGINNAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="lastLogin" column="LASTLOGIN" />
+		<result property="status" column="STATUS" />
+		<result property="invalidDate" column="INVALIDDATE" />
+		<result property="validDate" column="validDate" />
+		<result property="createUser" column="CREATEUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createDate" column="CREATEDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="MODIFYUSER" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="modifyDate" column="MODIFYDATE" javaType="Date"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<select id="getByLoginName" resultMap="loginUserResultMap"
+		parameterType="string">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="select_simple_param" />
+		<![CDATA[
+			FROM T_AUTH_USER
+			WHERE FLOGINNAME = #{loginName}
+		]]>
+	</select>
+	
+	<select id="getManagerUserIdByDeptId" resultType="string" parameterType="string">
+		<![CDATA[	
+			SELECT USER1.FID FROM T_AUTH_USER USER1
+			LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT ON DEPARTMENT.FPRINCIPAL = USER1.FEMPCODE
+			WHERE DEPARTMENT.FID = #{deptId}
+		]]>
+	</select>
+	
+	<select id="getManagerEmployeeIdByDeptId" resultType="string" parameterType="string">
+	<![CDATA[
+		SELECT E.FID
+		  FROM T_AUTH_USER U
+		  INNER JOIN T_ORG_EMPLOYEE E ON U.FEMPCODE = E.FEMPCODE
+		  LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT ON DEPARTMENT.FPRINCIPAL = U.FEMPCODE
+		 WHERE  DEPARTMENT.FID = #{deptId}
+		]]>
+	</select>
+	
+	<select id="getUsersByDeptIds" resultMap="userResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+				ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+			LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT 
+				ON DEPARTMENT.FID=ENTRY_0.FDEPTID
+			WHERE ENTRY_0.FSTATUS = 1 AND DEPARTMENT.FID IN
+		]]>
+		<foreach collection="list" item="deptIds" open="(" separator="," close=")">
+			#{deptIds}
+		</foreach>
+	</select>
+
+	<select id="queryUsersByDeptAndRole" resultMap="userResultMap">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			FROM T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+				ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+			LEFT JOIN T_ORG_DEPARTMENT DEPARTMENT 
+				ON DEPARTMENT.FID=ENTRY_0.FDEPTID
+			WHERE DEPARTMENT.FID =#{deptId} and MASTER.fid in (select fuserid from T_AUTH_USERROLE t where froleid=#{roleId})
+		]]>
+	</select>
+
+
+	<resultMap id="rearchResultUserMap"
+		type="com.deppon.crm.module.login.server.action.UserInfo">
+		<id property="userId" column="ID" />
+		<result property="loginName" column="LOGINNAME" />
+		<result property="empCode" column="ENTRY_0_EMPCODE" />
+		<result property="empName" column="ENTRY_0_EMPNAME" />
+		<result property="mobilePhone" column="ENTRY_0_MOBILENO" />
+		<result property="position" column="ENTRY_0_POSITION" />
+		<result property="empId" column="ENTRY_0_ID" />
+		<result property="deptId" column="ENTRY_1_ID" />
+		<result property="deptName" column="ENTRY_1_DEPTNAME" />
+		<result property="deptCode" column="ENTRY_1_DEPTCODE" />
+		<result property="standardCode" column="ENTRY_1_STANDARDCODE" />
+	</resultMap>
+	<sql id="search_select_sql_param">
+		<![CDATA[
+				MASTER.FID          	AS ID,
+		        MASTER.FLOGINNAME 	AS LOGINNAME,
+		    	ENTRY_1.FID 			AS ENTRY_1_ID,
+				ENTRY_1.FDEPTCODE 	AS ENTRY_1_DEPTCODE,
+			    ENTRY_1.FSTANDARDCODE   AS ENTRY_1_STANDARDCODE,
+				ENTRY_1.FDEPTNAME 	AS ENTRY_1_DEPTNAME,
+				ENTRY_0.FID   AS ENTRY_0_ID,
+				ENTRY_0.FEMPCODE 	AS ENTRY_0_EMPCODE,
+				ENTRY_0.FEMPNAME 	AS ENTRY_0_EMPNAME,
+				ENTRY_0.FPOSITION   AS ENTRY_0_POSITION,
+				ENTRY_0.FMOBILENO 	AS ENTRY_0_MOBILENO	
+	    ]]>
+	</sql>
+	<!-- 根据查询条件查询员工信息 -->
+	 <select id="searchEmpByCondition" resultMap="rearchResultUserMap"
+		parameterType="com.deppon.crm.module.organization.shared.domain.SearchEmpAndDeptCondition">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="search_select_sql_param" />
+		<![CDATA[
+			FROM  T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+			    ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+			    ON ENTRY_0.FDEPTID = ENTRY_1.FID
+		]]> 
+		<where>
+		    <if test="empCode!=null and empCode!=''">
+				AND ENTRY_0.FEMPCODE LIKE #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND ENTRY_0.FEMPNAME LIKE #{empName}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				AND ENTRY_1.FDEPTNAME LIKE #{deptName}
+			</if>
+			AND ENTRY_0.FSTATUS = 1
+		</where>
+	</select>
+	<!-- 根据查询条件查询员工信个数-->
+	<select id="countEmpByCondition" resultType="Long"
+		parameterType="com.deppon.crm.module.organization.shared.domain.SearchEmpAndDeptCondition">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM  T_AUTH_USER MASTER
+			LEFT JOIN T_ORG_EMPLOYEE ENTRY_0
+			    ON MASTER.FEMPCODE = ENTRY_0.FEMPCODE
+			LEFT JOIN T_ORG_DEPARTMENT ENTRY_1
+			    ON ENTRY_0.FDEPTID = ENTRY_1.FID
+		]]> 
+		<where>
+		     <if test="empCode!=null and empCode!=''">
+				AND ENTRY_0.FEMPCODE LIKE #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND ENTRY_0.FEMPNAME LIKE #{empName}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				AND ENTRY_1.FDEPTNAME LIKE #{deptName}
+			</if>
+			AND ENTRY_0.FSTATUS = 1
+		</where>
+	</select>
+	<!-- 账号同步-->
+	<select id="syncUser" parameterType="map">
+	  {call syncUser.syncUserP(#{empCode,mode=IN,jdbcType=VARCHAR},#{changeType,mode=IN,jdbcType=VARCHAR},#{position,mode=IN,jdbcType=VARCHAR},#{orgId,mode=IN,jdbcType=VARCHAR})}  
+	</select>	
+</mapper>

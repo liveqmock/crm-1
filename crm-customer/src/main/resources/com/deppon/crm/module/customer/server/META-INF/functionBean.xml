@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+<!-- function -->	
+	<bean id = "initUseOwner" class = "com.deppon.crm.module.customer.workflow.InitUseOwner">
+		<property name="baseDataManager" ref="baseDataManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+	</bean>
+	<bean id ="memberModifyToDoWorkOwnerFunction" class="com.deppon.crm.module.customer.workflow.MemberModifyToDoWorkOwnerFunction">
+	</bean>
+	
+	<bean id = "initStepUser" class = "com.deppon.crm.module.customer.workflow.InitStepUser">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	
+	<bean id = "norMalToDoWorkOwnerFunction" class="com.deppon.crm.module.customer.workflow.NorMalToDoWorkOwnerFunction">
+	
+	</bean>
+	
+	<bean id ="initChangeMemberDeptOnwer" class="com.deppon.crm.module.customer.workflow.InitChangeMemberDeptOnwer">
+	</bean>
+	
+	<bean id ="examineChangeMemberDeptFinishFunction" class="com.deppon.crm.module.customer.workflow.ExamineChangeMemberDeptFinishFunction">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	<!-- 删除客户标签 -->
+	<bean id="deleteCustLabelsFunction" class="com.deppon.crm.module.customer.workflow.DeleteCustLabelsFunction">
+		<property name="custLabelManager" ref="custLabelManager"></property>
+	</bean>
+	<bean id = "cleanPropertySetSetFunction" class = "com.deppon.crm.module.customer.workflow.CleanPropertySetSetFunction">
+		
+	</bean>
+	
+	<bean id = "writeExaminRecordFunction" class="com.deppon.crm.module.customer.workflow.WriteExaminRecordFunction">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	
+	<bean id = "examineFinishFuntion" class="com.deppon.crm.module.customer.workflow.ExamineFinishFuntion">
+		<property name="alterMemberManager" ref = "alterMemberManager"></property>
+	</bean>
+	
+	<bean id = "toDoWorkFunction" class= "com.deppon.crm.module.customer.workflow.ToDoWorkFunction">
+		<property name="todoWorkflowManager" ref="todoWorkflowManager"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="messageManager" ref ="messageManager"></property>
+	</bean>
+	
+	<bean id = "examineCreateSMFinishFuntion" class="com.deppon.crm.module.customer.workflow.ExamineCreateSMFinishFuntion">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	<bean id ="examineContactVaryFinishFunction" class="com.deppon.crm.module.customer.workflow.ExamineContactVaryFinishFunction">
+		<property name="integralManager" ref="integralManager"></property>
+	</bean>
+	
+	<bean id ="initContactVaryOnwer" class="com.deppon.crm.module.customer.workflow.InitContactVaryOnwer">
+		<property name="baseDataManager" ref="baseDataManager"></property>
+	</bean>
+<!-- condition -->	
+	
+	<bean id = "dateTypeCondition" class = "com.deppon.crm.module.customer.workflow.DateTypeCondition">
+	</bean>
+	<bean id = "roleOnlyCondition" class = "com.deppon.crm.module.customer.workflow.RoleOnlyCondition">
+	</bean>
+	
+	<bean id = "createWorkFlowFunction" class = "com.deppon.crm.module.customer.workflow.CreateWorkFlowFunction">
+		<property name="workFLowManager" ref="workFLowManager"></property>
+	</bean>
+	
+	<bean id = "updateWorkFLowFunction" class = "com.deppon.crm.module.customer.workflow.UpdateWorkFLowFunction">
+		<property name="workFLowManager" ref= "workFLowManager"></property>
+	</bean>
+</beans>

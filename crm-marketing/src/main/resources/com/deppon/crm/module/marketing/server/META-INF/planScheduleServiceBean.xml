@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- Manager配置 -->	
+	<bean id="planManager" class="com.deppon.crm.module.marketing.server.manager.impl.PlanManager">
+		<property name="planService" ref="planService"></property>
+		<property name="scheduleManager" ref="scheduleManager"></property>
+		<property name="scheduleService" ref="scheduleService"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<!-- 引用会员,投诉和用户的bean给定时器使用 -->
+		<property name="complaintManager" ref="complaintManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>		
+		<property name="userService" ref="userService"></property>
+		<property name="questionnaireManager" ref="questionnaireManagerImpl"/>
+		<property name="repeatedCustManager" ref="repeatedCustManager"/>
+		<property name="businessOpportunityManager" ref="businessOpportunityManager"/>
+		<property name="messageBundle" ref="messageBundle"/>
+		<property name="month">
+			<value>0</value>
+		</property>
+		<property name="authorizeService" ref="authorizeService"/>
+	</bean>
+	
+	<bean id="scheduleManager" class="com.deppon.crm.module.marketing.server.manager.impl.ScheduleManager">
+		<property name="scheduleService" ref="scheduleService"></property>
+		<!-- 引用潜客散客的ManagerBean-->
+<!-- 		 <property name="pcManager" ref="potentialCustomerManager"></property> -->
+<!-- 		 <property name="scManager" ref="scatterCustomerManager"></property>  -->
+		<property name="planManager" ref="planManager"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="businessOpportunityManager" ref="businessOpportunityManager"/>
+		<property name="repeatedCustManager" ref="repeatedCustManager"/>
+	</bean>
+	
+	<bean id="returnVisitManager" class="com.deppon.crm.module.marketing.server.manager.impl.ReturnVisitManager">
+		<property name="rvService" ref="returnVisitService"></property>
+		<property name="planManager" ref="planManager"></property>
+		<property name="scheduleManager" ref="scheduleManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="questionnaireManagerImpl" ref="questionnaireManagerImpl"></property>
+		<property name="warnLostCustManagerImp" ref="warnLostCustManagerImp"></property>
+		<property name="repeatedCustManager" ref="repeatedCustManager"/>
+		<property name="businessOpportunityManager" ref="businessOpportunityManager"/>
+	</bean>
+		
+	<bean id="mapManager" class="com.deppon.crm.module.marketing.server.manager.impl.MapManager">
+		<property name="mapService" ref="mapService"></property>
+	</bean>
+
+	<bean id="customerGroupManager" class="com.deppon.crm.module.marketing.server.manager.impl.CustomerGroupManager">
+		<property name="customerGroupService" ref="customerGroupService"></property>
+	</bean>
+	
+	<bean id="monitorPlanManager" 
+		class="com.deppon.crm.module.marketing.server.manager.impl.MonitorPlanManager">
+		<property name="monitorPlanService" ref="monitorPlanService"></property>
+		<property name="planManager" ref="planManager"></property>
+	</bean>
+	
+	<bean id="cycleManager" class="com.deppon.crm.module.marketing.server.manager.impl.CycleManager">
+		<property name="cycleService" ref="cycleService"/>
+		<property name="customerGroupManager" ref="customerGroupManager"/>
+		<property name="planManager" ref="planManager"/>
+<!-- 		<property name="customerOperate" ref="customerOperate"></property> -->
+	</bean>
+	
+	<bean id="userManager" class="com.deppon.crm.module.marketing.server.manager.impl.UserManager">
+		<property name="userService" ref="userService"/>
+		<property name="employeeService" ref="employeeService"></property>
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="authorizeService" ref="authorizeService"></property>
+		<property name="ladingstationDepartmentService" ref="ladingstationDepartmentService"></property>
+	</bean>
+	
+	<bean id = "providerFor360Manager" class="com.deppon.crm.module.marketing.server.manager.impl.ProviderFor360Manager">
+		<property name="providerFor360Service" ref="providerFor360Service"></property>
+	</bean>
+
+	<!--来电录入 manager-->
+	<bean id="customerCallManager" 
+		class="com.deppon.crm.module.marketing.server.manager.impl.CustomerCallManager">
+<!-- 		<property name="potentialScatterManager" ref="potentialScatterManager"></property> -->
+		<property name="memberManager" ref="memberManager"/>
+		<property name="ladDeptManager" ref="ladingstationDepartmentManager"/>
+<!-- 		<property name="potentialCustomerManager" ref="potentialCustomerManager"></property> -->
+		<property name="returnVisitManager" ref="returnVisitManager"/>
+		<property name="departmentService" ref="departmentService"/>
+		<property name="employeeService" ref="employeeService"/>
+		<property name="userService" ref="userService"/>
+		<property name="returnVisitService" ref="returnVisitService"/>
+		<property name="planManager" ref="planManager"/>
+		<property name="questionnaireManager" ref="questionnaireManagerImpl"/>
+	</bean>
+    
+	<!-- service层配置 -->
+	<bean id="planService"
+		class="com.deppon.crm.module.marketing.server.service.impl.PlanService">
+		<property name="planDao" ref="planDao"/>
+	</bean>
+	
+	<bean id="scheduleService" class="com.deppon.crm.module.marketing.server.service.impl.ScheduleService">
+		<property name="scheduleDao" ref="scheduleDao"/>
+	</bean>
+
+	<bean id="returnVisitService" class="com.deppon.crm.module.marketing.server.service.impl.ReturnVisitService">
+		<property name="returnVisitDao" ref="returnVisitDao"/>
+	</bean>
+	
+	<bean id="mapService" class="com.deppon.crm.module.marketing.server.service.impl.MapService">
+		<property name="mapDao" ref="mapDao"/>
+	</bean>
+
+	<bean id="customerGroupService" class="com.deppon.crm.module.marketing.server.service.impl.CustomerGroupService">
+		<property name="customerGroupDao" ref="customerGroupDao"/>
+	</bean>
+	
+	<bean id="monitorPlanService" 
+		class="com.deppon.crm.module.marketing.server.service.impl.MonitorPlanService">
+		<property name="monitorPlanDao" ref="monitorPlanDao"/>
+	</bean>
+	
+	<bean id="cycleService" class="com.deppon.crm.module.marketing.server.service.impl.CycleService">
+		<property name="cycleDao" ref="cycleDao"/>
+	</bean>
+	
+	<bean id = "providerFor360Service" class ="com.deppon.crm.module.marketing.server.service.impl.ProviderFor360Service">
+		<property name="providerFor360Dao" ref="providerFor360Dao"></property>
+	</bean>
+</beans>

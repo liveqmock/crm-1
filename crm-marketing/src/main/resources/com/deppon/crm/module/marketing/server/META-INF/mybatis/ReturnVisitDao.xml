@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+	<resultMap type="com.deppon.crm.module.marketing.shared.domain.Schedule" id="Schedule">
+		<id column="fid" property="id" jdbcType="VARCHAR" />
+		<result column="fcreatetime" property="createTime" jdbcType="DATE" />
+		<result column="fcreateuserid" property="createUserId" jdbcType="VARCHAR" />
+		<result column="fcusttype" property="custType" jdbcType="VARCHAR" />
+		<result column="ftime" property="time" jdbcType="DATE" />
+		<result column="ftype" property="type" jdbcType="VARCHAR" />
+		<result column="fstatus" property="status" jdbcType="VARCHAR" />
+		<result column="fplanid" property="planId" jdbcType="NUMERIC" />
+		<result column="fexecuserid" property="exeManId" jdbcType="VARCHAR" />
+		<result column="fexecdeptid" property="exeDeptId" jdbcType="VARCHAR" />
+		<result column="fcustid" property="custId" jdbcType="VARCHAR" />
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="FLASTMODIFYUSERID" property="modifyUser" jdbcType="NUMERIC" />
+		<result column="FCONTACTID" property="contactId" jdbcType="NUMERIC" />
+	</resultMap>
+	<resultMap id="ReturnVisit"
+		type="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+		<id property="id" column="fid" />
+		<result property="planId" column="fplanid"/>
+		<result property="surveyId" column="fsurveyid"/>
+		<result property="scheduleId" column="fscheduleid" />
+		<result property="memberId" column="fcustid"/>
+		<result property="linkManId" column="flinkmanid"/>
+		<result property="linkName" column="flinkmanname"/>
+		<result property="according" column="fbasis"/>
+		<result property="way" column="fway"/>
+		<result property="linkManMobile" column="flinkmanmobile"/>
+		<result property="linkManPhone" column="flinkmanphone"/>
+		<result property="executorTime" column="fdate"/>
+		<result property="executeDeptId" column="fexecdeptid"/>
+		<result property="executorId" column="fexecuserid"/>
+		<result property="needType" column="fneedtype"/>
+		<result property="theme" column="ftopic"/>
+		<result property="returnVisitType" column="ftype"/>
+		<result property="createDate" column="fcreatetime"/>
+		<result property="createUser" column="fcreateuserid"/>
+		<result property="modifyDate" column="flastupdatetime"/>
+		<result property="modifyUser" column="flastmodifyuserid"/>		
+		<result property="departName" column="FDEPARTNAME"/>
+		<result property="memberName" column="FMEMBERNAME"/>
+		<result property="problem" column="FPROBLEM"/>
+		<result property="solution" column="FSOLUTION"/>
+	</resultMap>
+	<resultMap id="ReturnVisitOpinion" 
+		type="com.deppon.crm.module.marketing.shared.domain.ReturnVisitOpinion" >
+		<id property="id" column="fid"/>
+		<result property="returnVisitId" column="fparentid"/>
+		<result property="opinionType" column="fneedtype"/>
+		<result property="problem" column="fquestion"/>
+		<result property="solution" column="fsolve"/>
+	</resultMap>
+	
+	<resultMap  id="ReturnVisitVolumePotential" type="com.deppon.crm.module.marketing.shared.domain.ReturnVisitVolumePotential">
+		<id property="id" column="fid"/>
+		<result property="returnVisitId" column="fparentid"/>
+		<result property="comeFromCity" column="fleacityid"/>
+		<result property="comeToCity" column="farrcityid"/>
+		<result property="volumePotential" column="fvolumpoten"/>
+		<result property="companyId" column="fcoopcompany"/>
+		<result property="remark" column="fremark"/>
+		<result property="cooperate" column="fcooperate"/>
+		<result property="accord" column="fisaccord"/>
+	</resultMap>
+
+
+	<sql id="ReturnVisit_column">
+		<![CDATA[
+	      T.FID       		ID,
+	      T.FPLANID     	PLANID,
+	      T.FSCHEDULEID   	SCHEDULEID,
+	      T.FCUSTID     	MEMBERID,
+	      T.FLINKMANID   	LINKMANID,
+          PS.FCUSTNAME      PSCUSTOMERNAME,
+          T.FLINKMANNAME    LINKNAME,
+	      TACCORD.FCODEDESC ACCORDINGDESC,
+	      T.FWAY 			WAY,
+	      T.FLINKMANMOBILE 	LINKMANMOBILE,
+	      T.FLINKMANPHONE 	LINKMANPHONE,
+	      T.FDATE   	    EXECUTORTIME,
+	      T.FEXECDEPTID   	EXECUTEDEPTID,
+	      T.FEXECUSERID   	EXECUTORID,
+          D.FTOPIC 			THEME,
+	      T.FTYPE 			TYPE
+		]]>
+	</sql>
+	<sql id="ReturnVisitList_column">
+		<![CDATA[
+			T.FID               FID,
+			T.FLINKMANNAME      FLINKMANNAME,
+			T.FLINKMANMOBILE    FLINKMANMOBILE,
+			T.FLINKMANPHONE     FLINKMANPHONE,
+			MAX(O.FNEEDTYPE)    FNEEDTYPE,
+			T.FWAY              FWAY,
+			T.FDATE             FDATE,
+			P.FTOPIC            FTOPIC,
+			P.FSURVEYID			FSURVEYID,
+			T.FTYPE             FTYPE,
+			T.FCREATETIME       FCREATETIME,
+			T.FCREATEUSERID     FCREATEUSERID,
+			E.FEMPNAME          USERNAME,    
+			DEPT.FDEPTNAME 		FDEPARTNAME,
+         	CUST.FCUSTNAME	    FMEMBERNAME,
+            max(O.FQUESTION) 		FPROBLEM,
+            max(O.FSOLVE) 			FSOLUTION,
+	      	T.FCUSTID     	    MEMBERID,
+	        T.FLINKMANID   	    LINKMANID  		
+      	]]>
+	</sql>
+	
+	<!-- 回访录入查询-查询列表 -->
+	<select id="queryReturnVisit" resultMap="ReturnVisit" parameterType="com.deppon.crm.module.marketing.shared.domain.ReturnVisitQueryCondition">
+	<![CDATA[
+		SELECT 
+	]]>
+	<include refid="ReturnVisitList_column" />	
+	<![CDATA[
+		  FROM T_CUST_RETURNVISIT T
+    	  LEFT JOIN T_CUST_REVISITOPINIONDETAIL O ON T.FID = O.FPARENTID
+		  LEFT JOIN T_ORG_EMPLOYEE E ON E.FID = T.FEXECUSERID
+		  LEFT JOIN T_CUST_SCHEDULE SC ON T.FSCHEDULEID = SC.FID
+		  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST P ON SC.FPLANID = P.FID
+		  LEFT JOIN T_ORG_DEPARTMENT DEPT ON T.FEXECDEPTID = DEPT.FID
+		  LEFT JOIN T_CUST_CUSTBASEDATA CUST ON T.FCUSTID = CUST.FID	
+	]]>
+	<![CDATA[
+		WHERE 1 = 1
+	]]>
+	<if test="linkName != null and linkName != ''">
+		<![CDATA[ AND T.FLINKMANNAME LIKE #{linkName} ]]>
+	</if>
+	<if test="opinion != null and opinion != ''">
+		<![CDATA[ AND O.FNEEDTYPE = #{opinion} ]]>
+	</if>
+	<if test="way != null and way != ''">
+		<![CDATA[ AND T.FWAY = #{way} ]]>
+	</if>
+	<if test="execUserId != null and execUserId != ''">
+		<![CDATA[ AND T.FEXECUSERID = #{execUserId} ]]>
+	</if>
+	<if test="beginTime != null">
+		<![CDATA[ AND TRUNC(T.FDATE) >= #{beginTime} ]]>
+	</if>
+	<if test="endTime != null">
+		<![CDATA[ AND TRUNC(T.FDATE) <= #{endTime} ]]>
+	</if>
+	<if test="scheduleIds != null and scheduleIds != ''">
+		<![CDATA[ AND T.FSCHEDULEID IN ]]>
+		<foreach collection="scheduleIds" open="(" close=")" separator=","
+			item="scheduleId">
+		<![CDATA[	${scheduleId}  ]]>
+		</foreach>
+	</if>
+	<choose>
+		<when test="deptIds != null and deptIds != ''">
+			<![CDATA[ AND T.FEXECDEPTID IN ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+		</when>
+		<when test="deptId!=null and deptId !=''">
+			<![CDATA[AND T.FEXECDEPTID=#{deptId}]]>
+		</when>
+	</choose>
+	<if test="memberId != null and memberId != ''">
+		<![CDATA[
+			AND T.FCUSTID = ${memberId} 
+		]]>
+	</if>
+	<if test="custNumber != null and custNumber != ''">
+		<![CDATA[
+			AND CUST.fCUSTNUMBER = #{custNumber,jdbcType=VARCHAR}
+		]]>
+	</if>
+	<if test="linkManId != null and linkManId != ''">
+		<![CDATA[
+			AND T.FLINKMANID = ${linkManId} 
+		]]>
+	</if>
+	<!-- 潜客来源 -->
+	<if test="potentialCustSource != null and potentialCustSource != ''">
+		<![CDATA[
+			AND CUST.FPOTENSOURCE = #{potentialCustSource,jdbcType=VARCHAR}
+		]]>
+	</if>
+	<if test="customerType!=null and customerType!=''">
+		<![CDATA[
+			AND CUST.FCUSTGROUP = #{customerType}
+		]]>
+	</if>
+	<![CDATA[
+		AND T.FLINKMANID IS NOT NULL
+		AND TRUNC(T.FDATE) BETWEEN ADD_MONTHS(SYSDATE,-12) AND SYSDATE
+		]]>
+	<![CDATA[
+		     GROUP BY 
+		     	T.FID , T.FLINKMANNAME , T.FLINKMANMOBILE , 
+		     	T.FLINKMANPHONE  , T.FWAY , T.FDATE , 
+		     	P.FTOPIC ,P.FSURVEYID, T.FTYPE , T.FCREATETIME,
+		     	T.FCREATEUSERID  ,  E.FEMPNAME ,DEPT.FDEPTNAME,
+                CUST.FCUSTNAME,T.FCUSTID,T.FLINKMANID     
+             ORDER BY T.FID DESC
+	]]>
+	</select>
+
+
+
+	<!-- 回访录入查询-查询总数 -->
+	<select id="queryReturnVisitCount" resultType="int" parameterType="com.deppon.crm.module.marketing.shared.domain.ReturnVisitQueryCondition">
+	<![CDATA[
+		SELECT COUNT(1) FROM (
+	]]>
+	<![CDATA[
+		SELECT 
+	]]>
+	<include refid="ReturnVisitList_column" />	
+	<![CDATA[
+		  FROM T_CUST_RETURNVISIT T
+    	  LEFT JOIN T_CUST_REVISITOPINIONDETAIL O ON T.FID = O.FPARENTID
+		  LEFT JOIN T_ORG_EMPLOYEE E ON E.FID = T.FEXECUSERID
+		  LEFT JOIN T_CUST_SCHEDULE SC ON T.FSCHEDULEID = SC.FID
+		  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST P ON SC.FPLANID = P.FID
+		  LEFT JOIN T_ORG_DEPARTMENT DEPT ON T.FEXECDEPTID = DEPT.FID
+		  LEFT JOIN T_CUST_CUSTBASEDATA CUST ON T.FCUSTID = CUST.FID	
+	]]>
+	<![CDATA[
+		WHERE 1 = 1
+	]]>
+	<if test="linkName != null and linkName != ''">
+		<![CDATA[ AND T.FLINKMANNAME LIKE #{linkName} ]]>
+	</if>
+	<if test="opinion != null and opinion != ''">
+		<![CDATA[ AND O.FNEEDTYPE = #{opinion} ]]>
+	</if>
+	<if test="way != null and way != ''">
+		<![CDATA[ AND T.FWAY = #{way} ]]>
+	</if>
+	<if test="execUserId != null and execUserId != ''">
+		<![CDATA[ AND T.FEXECUSERID = #{execUserId} ]]>
+	</if>
+	<if test="beginTime != null">
+		<![CDATA[ AND TRUNC(T.FDATE) >= #{beginTime} ]]>
+	</if>
+	<if test="endTime != null">
+		<![CDATA[ AND TRUNC(T.FDATE) <= #{endTime} ]]>
+	</if>
+	<if test="scheduleIds != null and scheduleIds != ''">
+		<![CDATA[ AND T.FSCHEDULEID IN ]]>
+		<foreach collection="scheduleIds" open="(" close=")" separator=","
+			item="scheduleId">
+		<![CDATA[	${scheduleId}  ]]>
+		</foreach>
+	</if>
+	<choose>
+		<when test="deptIds != null and deptIds != ''">
+			<![CDATA[ AND T.FEXECDEPTID IN ]]>
+			<foreach collection="deptIds" open="(" close=")" separator=","
+				item="dept">
+			<![CDATA[	${dept}  ]]>
+			</foreach>
+		</when>
+		<when test="deptId!=null and deptId !=''">
+			<![CDATA[AND T.FEXECDEPTID=#{deptId}]]>
+		</when>
+	</choose>
+	<if test="memberId != null and memberId != ''">
+		<![CDATA[
+			AND T.FCUSTID = ${memberId} 
+		]]>
+	</if>
+	<if test="custNumber != null and custNumber != ''">
+		<![CDATA[
+			AND CUST.fCUSTNUMBER = #{custNumber,jdbcType=VARCHAR}
+		]]>
+	</if>
+	<if test="linkManId != null and linkManId != ''">
+		<![CDATA[
+			AND T.FLINKMANID = ${linkManId} 
+		]]>
+	</if>
+	<!-- 潜客来源 -->
+	<if test="potentialCustSource != null and potentialCustSource != ''">
+		<![CDATA[
+			AND CUST.FPOTENSOURCE = #{potentialCustSource,jdbcType=VARCHAR}
+		]]>
+	</if>
+	<if test="customerType!=null and customerType!=''">
+		<![CDATA[
+			AND CUST.FCUSTGROUP = #{customerType}
+		]]>
+	</if>
+	<![CDATA[
+		AND T.FLINKMANID IS NOT NULL
+		AND TRUNC(T.FDATE) BETWEEN ADD_MONTHS(SYSDATE,-12) AND SYSDATE
+		]]>
+	<![CDATA[
+		     GROUP BY 
+		     	T.FID , T.FLINKMANNAME , T.FLINKMANMOBILE , 
+		     	T.FLINKMANPHONE  , T.FWAY , T.FDATE , 
+		     	P.FTOPIC ,P.FSURVEYID, T.FTYPE , T.FCREATETIME,
+		     	T.FCREATEUSERID  ,  E.FEMPNAME ,DEPT.FDEPTNAME,
+                CUST.FCUSTNAME,T.FCUSTID,T.FLINKMANID     
+             ORDER BY T.FID 
+	]]>
+	<![CDATA[)]]>
+	</select>
+
+
+
+	<!-- 回访录入查询 ，  查询详情 -->
+	<select id="getReturnVisit" parameterType="int" 
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+	<![CDATA[
+		SELECT 
+	]]>
+	<include refid="ReturnVisit_column" />
+	<![CDATA[
+		 FROM T_CUST_RETURNVISIT T 
+		  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST D ON D.FID = T.FPLANID
+		  LEFT JOIN (SELECT FCODE,FCODEDESC
+						FROM T_CODE_DETAIL WHERE FCODETYPE = 'HIGHER_APPOINT') TACCORD 
+				ON T.FBASIS = TACCORD.FCODE
+		  LEFT JOIN T_CUST_CUSTBASEDATA PS
+    			ON PS.FID = T.FCUSTID
+		WHERE T.FID = #{id}
+	]]>
+	</select>
+	
+	<!-- 回访录入查询，用户意见列表 by id -->
+	<select id="getReturnVisitOpinion" parameterType="int" resultMap="ReturnVisitOpinion">
+	<![CDATA[
+		SELECT * FROM T_CUST_REVISITOPINIONDETAIL T WHERE T.FPARENTID = #{returnVisitId}
+	]]>
+	</select>
+	
+	<!-- 回访录入查询，发货潜力列表 by id -->
+	<select id="getReturnVisitVolumePotential" parameterType="int" resultMap="ReturnVisitVolumePotential">
+	<![CDATA[
+		SELECT fid,
+		       fcreatetime,
+		       fcreateuserid,
+		       flastupdatetime,
+		       flastmodifyuserid,
+		       fleacityid,
+		       farrcityid,
+		       fvolumpoten,
+		       fcoopcompany,
+		       fparentid,
+		       fremark,
+		       alreadyhaveline,
+		       fisaccord,
+		       fcooperate,
+		       faccordmark 
+       FROM T_CUST_RETURNVISITDETAIL T WHERE T.FPARENTID = #{returnVisitId}
+	]]>
+	</select>
+
+	<!-- 回访录入——主表插入 -->
+	<insert id="insertReturnVisit" parameterType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_RETURNVISIT.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CUST_RETURNVISIT(FID,
+										   FCREATETIME,
+										   FCREATEUSERID,
+										   FLASTUPDATETIME,
+										   FLASTMODIFYUSERID,
+										   FPLANID,
+										   FCUSTID,
+										   FDATE,
+										   FLINKMANID,
+										   FLINKMANNAME,
+										   FBASIS,
+										   FWAY,
+										   FLINKMANMOBILE,
+										   FLINKMANPHONE,
+										   FEXECDEPTID,
+										   FEXECUSERID,
+										   FSCHEDULEID,
+										   FTYPE) 
+			VALUES(
+		]]>			
+		<include refid="Creat_Update_columns" />
+		<![CDATA[		
+				#{planId, jdbcType=VARCHAR}, #{memberId, jdbcType=VARCHAR},
+				sysdate, #{linkManId, jdbcType=VARCHAR}, #{linkName, jdbcType=VARCHAR}, 
+				#{according, jdbcType=VARCHAR}, #{way, jdbcType=VARCHAR},#{linkManMobile, jdbcType=VARCHAR},
+				#{linkManPhone, jdbcType=VARCHAR},#{executeDeptId, jdbcType=NUMERIC}, 
+				#{executorId, jdbcType=NUMERIC}, #{scheduleId, jdbcType=NUMERIC}, #{returnVisitType, jdbcType=VARCHAR}
+			   )
+		]]>		
+	</insert>
+	
+	<!-- 回访录入——客户意见表插入 -->
+	<insert id="insertOpinion" parameterType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_REVISITOPINIONDETAIL.nextval as id FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CUST_REVISITOPINIONDETAIL
+			VALUES(
+		]]>			
+		<include refid="Creat_Update_columns" />
+		<![CDATA[		
+				#{opinionType, jdbcType=NUMERIC}, #{problem, jdbcType=NUMERIC}, 
+				#{solution, jdbcType=NUMERIC}, #{returnVisitId, jdbcType=NUMERIC}
+			   )
+		]]>		
+	</insert>
+		
+	<!-- 回访录入——走货潜力表插入 -->
+	<insert id="insertVolumePotential" parameterType="com.deppon.crm.module.marketing.shared.domain.ReturnVisitVolumePotential">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_RETURNVISITDETAIL.nextval as id FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_CUST_RETURNVISITDETAIL(FID,
+		                                      	 FCREATETIME,
+		                                      	 FCREATEUSERID,
+		                                      	 FLASTUPDATETIME,
+		                                      	 FLASTMODIFYUSERID,
+		                                      	 FLEACITYID,
+		                                      	 FARRCITYID,
+		                                      	 FVOLUMPOTEN,
+		                                      	 FCOOPCOMPANY,
+		                                      	 FPARENTID,
+		                                      	 FREMARK,
+		                                      	 ALREADYHAVELINE,
+		                                      	 FISACCORD,
+		                                      	 FCOOPERATE,
+		                                      	 FACCORDMARK)
+			VALUES(
+		]]>	
+		<include refid="Creat_Update_columns" />
+		<![CDATA[		
+				#{comeFromCity, jdbcType=VARCHAR}, #{comeToCity, jdbcType=VARCHAR}, #{volumePotential, jdbcType=VARCHAR}, 
+				#{companyId, jdbcType=VARCHAR}, #{returnVisitId, jdbcType=NUMERIC}, #{remark, jdbcType=VARCHAR},
+				#{alreadyHaveLine,jdbcType=VARCHAR},#{accord,jdbcType=VARCHAR},#{cooperate,jdbcType=CHAR},#{accordMark,jdbcType=VARCHAR}
+			   )
+		]]>		
+	</insert>
+	
+	<!-- 创建时间，更新时间 -->
+	<sql id="Creat_Update_columns">
+		<![CDATA[
+			#{id, jdbcType=VARCHAR}, sysdate, #{createUser, jdbcType=VARCHAR}, sysdate, #{modifyUser, jdbcType=VARCHAR},
+		]]>	
+		
+	</sql>
+	
+	<select id="getDevInitDataByCust"
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit"
+			parameterType="string">
+		<![CDATA[
+           SELECT 
+	           SYSDATE           EXECUTORTIME,
+	           ''         SCHEDULEID,
+	           TPS.FID     PSCUSTOMERID,
+	           TPS.FCUSTNAME     PSCUSTOMERNAME,
+	           ''         PLANID,
+	           ''      THEME,
+	           ''        WAY,
+	           ''    WAYDESC,
+	           ''     ACCORDING,
+	           '' ACCORDINGDESC,
+	           '' LINKMANID,
+	           TPS.FLINKMANNAME LINKNAME,
+	           TPS.FLINKMANMOBILE LINKMANMOBILE,
+	           TPS.FLINKMANPHONE LINKMANPHONE,
+	           '' EXECUTEDEPTID,
+	           '' EXECUTORID,
+	           '' DEPARTNAME,
+	           '' USERNAME,
+	           'dev' RETURNVISITTYPE
+           FROM T_CUST_POTENTIALSCATTER TPS
+           WHERE TPS.FID = #{id}	
+		]]>	
+	</select>
+	
+	<select id="getDevInitDataByScheId" 
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit"
+			parameterType="string">
+		<![CDATA[
+			SELECT SYSDATE           EXECUTORTIME,
+			       TSCHE.FID         SCHEDULEID,
+			       TSCHE.FCUSTID     PSCUSTOMERID,
+			       TPS.FCUSTNAME     PSCUSTOMERNAME,
+			       TPLAN.FID         PLANID,
+			       TPLAN.FTOPIC      THEME,
+			       TPLAN.FWAY        WAY,
+			       TWAY.FCODEDESC    WAYDESC,
+			       TACCORD.FCODE     ACCORDING,
+			       TACCORD.FCODEDESC ACCORDINGDESC,
+			       ''				 LINKMANID,
+			       TPS.FLINKMANNAME	 LINKNAME,
+			       TPS.FLINKMANMOBILE LINKMANMOBILE,
+			       TPS.FLINKMANPHONE LINKMANPHONE,
+			       TSCHE.FEXECDEPTID EXECUTEDEPTID,
+			       TSCHE.FEXECUSERID EXECUTORID,
+			       TDEPT.FDEPTNAME	 DEPARTNAME,
+			       T1.FEMPNAME		 USERNAME,
+			       'dev'			 RETURNVISITTYPE
+			  FROM T_CUST_SCHEDULE TSCHE
+			  LEFT JOIN T_ORG_EMPLOYEE T1 ON (TSCHE.FEXECUSERID =
+			                                                           T1.FID)
+			  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST TPLAN ON (TSCHE.FPLANID = TPLAN.FID)
+			  LEFT JOIN (SELECT * FROM T_CODE_DETAIL WHERE FCODETYPE = 'DEVELOP_WAY') TWAY ON (TWAY.FCODE =
+			                                                                                  TPLAN.FWAY)
+			  LEFT JOIN (SELECT *
+			               FROM T_CODE_DETAIL
+			              WHERE FCODETYPE = 'DEVELOP_ACCORDING') TACCORD ON (TSCHE.FPLANID > 0),
+			 T_ORG_DEPARTMENT
+			 TDEPT,
+			 T_CUST_POTENTIALSCATTER TPS
+			
+			 WHERE TSCHE.FCUSTID = TPS.FID
+			   AND TSCHE.FEXECDEPTID = TDEPT.FID
+			   AND TSCHE.FID = #{id}	
+		   ]]>			
+	</select>
+	
+	
+	<select id="getMatInitDataByCust"
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit"
+			parameterType="string">
+			<![CDATA[
+           SELECT            
+	           SYSDATE           	EXECUTORTIME,
+	           ''         			SCHEDULEID,
+	           TMEMB.FID     		MEMBERID,
+	           TMEMB.FCUSTNAME 		PSCUSTOMERNAME,
+	           ''         			PLANID,
+	           ''      				THEME,
+	           ''        			WAY,
+	           ''    				WAYDESC,
+	           ''     				ACCORDING,
+	           '' 					ACCORDINGDESC,
+	           TLM.FID 				LINKMANID,
+	           TLM.FNAME 			LINKNAME,
+	           TLM.FMOBILETEL 		LINKMANMOBILE,
+	           TLM.FOFFERTEL 		LINKMANPHONE,
+	           '' 					EXECUTEDEPTID,
+	           '' 					EXECUTORID,
+	           '' 					DEPARTNAME,
+	           '' 					USERNAME,
+	           TMEMB.FCUSTNUMBER 	custNumber
+            FROM T_CUST_CUSTLINKMAN TLM, T_CUST_CUSTBASEDATA TMEMB
+            WHERE TMEMB.FID = TLM.FCUSTID 
+            	AND TLM.FID = #{id}		
+		   ]]>			
+	</select>
+	<select id="getMatInitDataByScheId" 
+			resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit"
+			parameterType="string">
+			<![CDATA[
+				SELECT 
+				   SYSDATE           EXECUTORTIME,
+			       TSCHE.FID         SCHEDULEID,
+			       TSCHE.FCUSTID     PSCUSTOMERID,
+	           	   TMEMB.FCUSTNAME	 PSCUSTOMERNAME,
+			       TPLAN.FID         PLANID,
+			       TPLAN.FTOPIC      THEME,
+			       TPLAN.FWAY        WAY,
+			       TWAY.FCODEDESC    WAYDESC,
+			       TACCORD.FCODE     ACCORDING,
+			       TACCORD.FCODEDESC ACCORDINGDESC,
+			       TLM.FID			 LINKMANID,
+	               TLM.FNAME		 LINKNAME,
+	               TLM.FMOBILETEL	 LINKMANMOBILE,
+	               TLM.FOFFERTEL	 LINKMANPHONE,
+			       TSCHE.FEXECDEPTID EXECUTEDEPTID,
+			       TSCHE.FEXECUSERID EXECUTORID,
+			       TDEPT.FDEPTNAME	 DEPARTNAME,
+			       T1.FEMPNAME		 USERNAME,
+			       'mat'			 RETURNVISITTYPE,
+			       TMEMB.fid         memberId
+			  FROM T_CUST_SCHEDULE TSCHE
+			  LEFT JOIN T_ORG_EMPLOYEE T1 ON (TSCHE.FEXECUSERID = T1.FID)
+			  LEFT JOIN T_CUST_DEVELOPMAINTAINLIST TPLAN ON (TSCHE.FPLANID = TPLAN.FID)
+			  LEFT JOIN (SELECT * FROM T_CODE_DETAIL WHERE FCODETYPE = 'DEVELOP_WAY') TWAY ON (TWAY.FCODE =
+			                                                                                  TPLAN.FWAY)
+			  LEFT JOIN (SELECT *
+			               FROM T_CODE_DETAIL
+			              WHERE FCODETYPE = 'DEVELOP_ACCORDING') TACCORD ON (TSCHE.FPLANID > 0),
+			 T_ORG_DEPARTMENT	 TDEPT,
+			 T_CUST_CUSTLINKMAN TLM
+			  LEFT JOIN T_CUST_CUSTBASEDATA TMEMB ON ( TLM.FCUSTID = TMEMB.FID)
+			 WHERE TSCHE.FCUSTID = TMEMB.FID
+	     		AND TSCHE.FEXECDEPTID = TDEPT.FID
+	        	AND TSCHE.FCONTACTID = TLM.FID		
+			    AND TSCHE.FID = #{id}		
+		    ]]>		
+	</select>
+	
+	<select id="getReturnVisitLog">
+		<![CDATA[
+			
+	    ]]>		
+	</select>
+	<!-- 根据客户ID查询所有的营销ID -->
+	<select id="queryRvListByCustId" parameterType="Map" resultType="String">
+		<![CDATA[
+			SELECT T.FID FROM T_CUST_RETURNVISIT T
+			WHERE T.FCUSTID = #{custId,jdbcType=NUMERIC}
+				  AND T.FDATE > ADD_MONTHS(SYSDATE,-6)
+		]]>
+	</select>
+	
+	
+	<!-- 客户营销记录查询 分页查询客户意见 -->
+	<select id="queryRvOptionByMarketingIds" parameterType="list" resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisitOpinionVo">
+		<![CDATA[
+			 SELECT RETURNVISIT.FLINKMANNAME custLinkManName,
+			       CUSTOPT.FNEEDTYPE opinionType,
+			       CUSTOPT.FQUESTION problem,
+			       CUSTOPT.FSOLVE solution,
+			       DECODE(PLAN.FTOPIC, NULL, '无', PLAN.FTOPIC) topic,
+			       DECODE(PLAN.FPROJECTTYPE, NULL, '无', PLAN.FPROJECTTYPE) projectType,
+			       RETURNVISIT.FWAY marketingMethod,
+			       EMP.FEMPNAME marketingPerson,
+			       RETURNVISIT.FDATE marketingDate
+			 FROM T_CUST_REVISITOPINIONDETAIL CUSTOPT
+			 INNER JOIN T_CUST_RETURNVISIT RETURNVISIT ON CUSTOPT.FPARENTID = RETURNVISIT.FID
+			 LEFT JOIN T_CUST_DEVELOPMAINTAINLIST PLAN ON RETURNVISIT.FPLANID = PLAN.FID
+			 INNER JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = RETURNVISIT.FEXECUSERID
+			 WHERE 1 = 1
+		]]>
+		<choose>
+			<when test="list!=null">
+				<![CDATA[AND CUSTOPT.FPARENTID IN]]>
+				<foreach collection="list" open="(" close=")" item="returnVisitId" separator=",">
+					<![CDATA['${returnVisitId}']]>
+				</foreach>
+			</when>
+			<otherwise>
+				<![CDATA[AND ROWNUM < 20]]>
+			</otherwise>
+		</choose>
+		<![CDATA[ORDER BY CUSTOPT.FCREATETIME DESC]]>
+	</select>
+	
+	
+	<!-- 客户营销记录查询 分页查询货量潜力 -->
+	<select id="queryRvPotentialByMarketingIds" parameterType="list" resultType="com.deppon.crm.module.marketing.shared.domain.ReturnVisitVolumePotentialVo">
+		<![CDATA[
+			SELECT RETURNVISIT.FLINKMANNAME 	custlinkManName,
+			       VPOTENTIAL.FLEACITYID 		comeFromCity,
+			       VPOTENTIAL.FARRCITYID 		comeToCity,
+			       VPOTENTIAL.FVOLUMPOTEN 		volumePotential,
+			       VPOTENTIAL.FCOOPCOMPANY		companyId,
+			       VPOTENTIAL.FREMARK 			remark,
+			       RETURNVISIT.FWAY 			marketingMethod,
+			       EMP.FEMPNAME 				marketingPerson,
+			       RETURNVISIT.FDATE 			marketingDate,
+			       VPOTENTIAL.ALREADYHAVELINE   alreadyHaveLine,
+			       VPOTENTIAL.Fisaccord       	accord,
+       			   VPOTENTIAL.Fcooperate		cooperate
+			FROM T_CUST_RETURNVISITDETAIL VPOTENTIAL
+			     INNER JOIN T_CUST_RETURNVISIT RETURNVISIT ON VPOTENTIAL.FPARENTID = RETURNVISIT.FID
+			     LEFT JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = RETURNVISIT.FEXECUSERID
+			WHERE 1 = 1
+		]]>
+		<choose>
+			<when test="list!=null">
+				<![CDATA[AND VPOTENTIAL.FPARENTID IN]]>
+				<foreach collection="list" open="(" close=")" item="returnVisitId" separator=",">
+					<![CDATA['${returnVisitId}']]>
+				</foreach>
+			</when>
+			<otherwise>
+				<![CDATA[AND ROWNUM < 20]]>
+			</otherwise>
+		</choose>
+		<![CDATA[ORDER BY VPOTENTIAL.FCREATETIME DESC]]>
+	</select>
+	
+	<select id="countRvOptionByMarketingIds" parameterType="list" resultType="int">
+		<![CDATA[
+			 SELECT COUNT(1)
+			 FROM T_CUST_REVISITOPINIONDETAIL CUSTOPT
+			 INNER JOIN T_CUST_RETURNVISIT RETURNVISIT ON CUSTOPT.FPARENTID = RETURNVISIT.FID
+			 LEFT JOIN T_CUST_DEVELOPMAINTAINLIST PLAN ON RETURNVISIT.FPLANID = PLAN.FID
+			 INNER JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = RETURNVISIT.FEXECUSERID
+			 WHERE 1 = 1
+		]]>
+		<choose>
+			<when test="list!=null">
+				<![CDATA[AND CUSTOPT.FPARENTID IN]]>
+				<foreach collection="list" open="(" close=")" item="returnVisitId" separator=",">
+					<![CDATA['${returnVisitId}']]>
+				</foreach>
+			</when>
+			<otherwise>
+				<![CDATA[AND ROWNUM < 20]]>
+			</otherwise>
+		</choose>
+		<![CDATA[ORDER BY CUSTOPT.FCREATETIME DESC]]>
+	</select>
+	
+	<select id="countRvPotentialByMarketingIds" parameterType="list" resultType="int">
+		<![CDATA[
+			SELECT COUNT(1)
+			FROM T_CUST_RETURNVISITDETAIL VPOTENTIAL
+			     INNER JOIN T_CUST_RETURNVISIT RETURNVISIT ON VPOTENTIAL.FPARENTID = RETURNVISIT.FID
+			     LEFT JOIN T_ORG_EMPLOYEE EMP ON EMP.FID = RETURNVISIT.FEXECUSERID
+			WHERE 1 = 1
+		]]>
+		<choose>
+			<when test="list!=null">
+				<![CDATA[AND VPOTENTIAL.FPARENTID IN]]>
+				<foreach collection="list" open="(" close=")" item="returnVisitId" separator=",">
+					<![CDATA['${returnVisitId}']]>
+				</foreach>
+			</when>
+			<otherwise>
+				<![CDATA[AND ROWNUM < 20]]>
+			</otherwise>
+		</choose>
+		<![CDATA[ORDER BY VPOTENTIAL.FCREATETIME DESC]]>
+	</select>
+	<select id="synFixPlanReturnVisit" parameterType="com.deppon.crm.module.marketing.shared.domain.ReturnVisit" 
+			resultMap="Schedule">
+		<![CDATA[
+			SELECT *
+			  FROM T_CUST_SCHEDULE S
+			 WHERE S.FEXECDEPTID = #{executeDeptId}
+			   AND S.FCUSTID = #{memberId}
+			   AND S.FCONTACTID = #{linkManId}
+			   AND S.FTYPE = 'monthly'
+			   AND  S.FID <> #{scheduleId}
+			   AND S.FSTATUS < 30
+		]]>
+<!-- 		 AND S.FSTATUS = '20' -->
+	</select>
+	
+	<delete id="deleteReturnVisitById" parameterType="String">
+		<![CDATA[
+			DELETE FROM T_CUST_RETURNVISIT WHERE FID = #{id,jdbcType=NUMERIC}
+		]]>
+	</delete>
+</mapper>

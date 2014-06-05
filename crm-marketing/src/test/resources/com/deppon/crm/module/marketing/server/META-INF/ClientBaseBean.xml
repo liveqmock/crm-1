@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- dao层配置 -->
+	<bean id="clientBaseDao" class="com.deppon.crm.module.marketing.server.dao.impl.ClientBaseDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- service层配置 -->
+	<bean id="clientBaseService" class="com.deppon.crm.module.marketing.server.service.impl.ClientBaseService">
+		<property name="clientBaseDao" ref="clientBaseDao"/>
+	</bean>
+	<!-- Manager配置 -->	
+	<bean id="clientBaseManager" class="com.deppon.crm.module.marketing.server.manager.impl.ClientBaseManager">
+		<property name="clientBaseService" ref="clientBaseService"></property>
+		<property name="marketActivityManager" ref="marketActivityManager"></property> 
+		<property name="departmentService" ref="departmentService"></property>  
+	</bean>
+	
+	  <!-- action配置 -->
+     <bean id="cilentBaseAction" 
+    	class="com.deppon.crm.module.marketing.server.action.ClientBaseAction" scope="prototype">
+    	<property name="clientBaseManager" ref="clientBaseManager"></property>
+    </bean>
+</beans>

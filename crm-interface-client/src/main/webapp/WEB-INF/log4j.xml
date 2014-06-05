@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">          <!-- Console output -->
+	<appender name="FILEOUT" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="threshold" value="debug" />
+		<!--<param name="file" value="${catalina.home}/log/sync.log" />
+		${jboss.server.home.dir}-->
+		<param name="file" value="${catalina.home}/log/interface.log" />
+		<param name="append" value="true" />
+		<param name="datePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="java.sql">
+		<level value="ERROR" />
+		<appender-ref ref="FILEOUT" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	<logger name="org.apache.ibatis">
+		<level value="ERROR" />
+		<appender-ref ref="FILEOUT" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	<logger name="org.apache.cxf">
+		<level value="ERROR" />
+		<appender-ref ref="FILEOUT" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	<logger name="com.deppon">
+		<level value="ERROR" />
+		<appender-ref ref="FILEOUT" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+</log4j:configuration>

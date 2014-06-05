@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap id="todoWorkflowMap"
+		type="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		<id property="id" column="FID" />
+		<result property="workflowId" column="FWORKFLOWID" />
+		<result property="workflowName" column="FWORKFLOWNAME" />
+		<result property="applicationId" column="FAPPLICATIONID" />
+		<result property="applicationStatus" column="FAPPLICATIONSTATUS" />
+		<result property="roleId" column="FROLEID" />
+		<result property="deptId" column="FDEPTID" />
+		<result property="todoFlag" column="FTODOFLAG" />
+		<result property="createUser" column="FCREATEUSERID" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+		<result property="modifyDate" column="FLASTUPDATETIME" />
+		<result property="roleName" column="FROLENAME" />
+		<result property="deptName" column="FDEPTNAME" />
+		<result property="applicationName" column="FAPPLICATIONNAME" />
+		<result property="applicationDesc" column="FAPPLICATIONDESC" />
+		<result property="applicationStatusDesc" column="FAPPLICATIONSTATUSDESC" />
+		<result property="url" column="FURL" />
+	</resultMap>
+	<resultMap id="todoWorkflowMapMap"
+		type="com.deppon.crm.module.common.shared.domain.TodoWorkflowMap">
+		<id property="id" column="FID" />
+		<result property="fromStatus" column="FFROMSTATUS" />
+		<result property="toStatus" column="FTOSTATUS" />
+		<result property="workflowName" column="FWORKFLOWNAME" />
+		<result property="applicationStatus" column="FAPPLICATIONSTATUS" />
+		<result property="roleId" column="FROLEID" />
+		<result property="todoFlag" column="FTODOFLAG" />
+		<result property="createUser" column="FCREATEUSERID" />
+		<result property="createDate" column="FCREATETIME" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID" />
+		<result property="modifyDate" column="FLASTUPDATETIME" />
+		<result property="applicationName" column="FAPPLICATIONNAME" />
+		<result property="applicationStatusDesc" column="FAPPLICATIONSTATUSDESC" />
+		<result property="url" column="FURL" />
+	</resultMap>
+	<insert id="addTodoWorkflow"
+		parameterType="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		insert into
+		T_CRM_TodoWorkflow(FID,FWORKFLOWID,FWORKFLOWNAME,
+		FAPPLICATIONID,FAPPLICATIONSTATUS,FROLEID,FDEPTID,FTODOFLAG,
+		FROLENAME, FDEPTNAME, FAPPLICATIONNAME, FAPPLICATIONDESC,
+		FAPPLICATIONSTATUSDESC, FURL, FCREATETIME)
+		values(seq_id_todoworkflow.nextval,#{workflowId},#{workflowName,jdbcType=VARCHAR},
+		#{applicationId,jdbcType=NUMERIC},#{applicationStatus,jdbcType=VARCHAR},#{roleId,jdbcType=NUMERIC},
+		#{deptId,jdbcType=NUMERIC},#{todoFlag,jdbcType=VARCHAR},
+		#{roleName,jdbcType=VARCHAR},#{deptName,jdbcType=VARCHAR},#{applicationName,jdbcType=VARCHAR},
+		#{applicationDesc,jdbcType=VARCHAR},#{applicationStatusDesc,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},
+		sysdate)
+	</insert>
+
+	<update id="updateTodoFlagByWorkflowId"
+		parameterType="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		update T_CRM_TodoWorkflow
+		<set>
+			FTODOFLAG=#{todoFlag},FLASTUPDATETIME=sysdate
+		</set>
+		<where>
+			FWORKFLOWID=#{workflowId}
+		</where>
+	</update>
+
+	<update id="updateTodoFlagById"
+		parameterType="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		update T_CRM_TodoWorkflow
+		<set>
+			FTODOFLAG=#{todoFlag},FLASTUPDATETIME=sysdate
+		</set>
+		<where>
+			FID=#{id}
+		</where>
+	</update>
+
+	<select id="searchTodoWorkflowMap" resultMap="todoWorkflowMapMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.TodoWorkflowMap">
+		SELECT FID, FCREATEUSERID, FLASTUPDATETIME,
+		FLASTMODIFYUSERID,
+		FCREATETIME, FFROMSTATUS, FTOSTATUS, FWORKFLOWNAME,
+		FAPPLICATIONSTATUS,FROLEID, FAPPLICATIONNAME,
+		FAPPLICATIONSTATUSDESC,FURL
+		FROM
+		T_CRM_TODOWORKFLOWMAP
+		where
+		FWORKFLOWNAME= #{workflowName} AND FFROMSTATUS = #{fromStatus} AND
+		FTOSTATUS = #{toStatus}
+
+	</select>
+	<select id="getTodoWorkflowByWorkflowId" resultMap="todoWorkflowMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		SELECT FID, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID,
+		FCREATETIME, FWORKFLOWID, FWORKFLOWNAME, FAPPLICATIONID,
+		FAPPLICATIONSTATUS, FROLEID, FDEPTID, FTODOFLAG, FROLENAME, FDEPTNAME,
+		FAPPLICATIONNAME, FAPPLICATIONDESC,FAPPLICATIONSTATUSDESC, FURL
+		FROM
+		T_CRM_TODOWORKFLOW
+		<where>
+			<if test="todoFlag != null and todoFlag != ''">
+				and FTODOFLAG=#{todoFlag}
+			</if>
+			<if test="workflowName != null and workflowName != ''">
+				AND FWORKFLOWNAME = #{workflowName}
+			</if>
+			<if test="workflowId != null and workflowId != ''">
+				AND FWORKFLOWID = #{workflowId}
+			</if>
+			<if test="roleId != null and roleId != ''">
+				AND FROLEID = #{roleId}
+			</if>
+			<if test="null != deptIds ">
+				AND FDEPTID in
+				<foreach collection="deptIds" item="item" open="(" close=")"
+					separator=",">
+					#{item,jdbcType=NUMERIC}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<select id="getTodoWorkflowByWorkflowName" resultMap="todoWorkflowMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.TodoWorkflow">
+		SELECT FID, FCREATEUSERID, FLASTUPDATETIME, FLASTMODIFYUSERID,
+		FCREATETIME, FWORKFLOWID, FWORKFLOWNAME, FAPPLICATIONID,
+		FAPPLICATIONSTATUS, FROLEID, FDEPTID, FTODOFLAG, FROLENAME, FDEPTNAME,
+		FAPPLICATIONNAME, FAPPLICATIONDESC,FAPPLICATIONSTATUSDESC, FURL
+		FROM
+		T_CRM_TODOWORKFLOW
+		<where>
+			<if test="todoFlag != null and todoFlag != ''">
+				and FTODOFLAG=#{todoFlag}
+			</if>
+			<if test="workflowName != null and workflowName != ''">
+				AND FWORKFLOWNAME = #{workflowName}
+			</if>
+			<if test="roleId != null and roleId != ''">
+				AND FROLEID = #{roleId}
+			</if>
+			<if test="null != deptIds ">
+				AND FDEPTID in
+				<foreach collection="deptIds" item="item" open="(" close=")"
+					separator=",">
+					#{item,jdbcType=NUMERIC}
+				</foreach>
+			</if>
+		</where>
+	</select>
+</mapper>

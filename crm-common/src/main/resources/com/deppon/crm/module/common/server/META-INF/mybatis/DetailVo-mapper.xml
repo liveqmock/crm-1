@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.DetailVo">
+
+	<!-- 数据字典管理信息映射配置 -->
+	<resultMap id="DetailVoResultMap" type="com.deppon.crm.module.common.shared.domain.DetailVo">
+		<id property="id" column="DETAIL_ID" />
+		<result property="parentId" column="DETAIL_PARENTID" />
+		<result property="codeType" column="DETAIL_CODETYPE" />
+		<result property="code"     column="DETAIL_CODE" />
+		<result property="codeDesc" column="DETAIL_CODEDESC" />
+		<result property="status"   column="DETAIL_STATUS" javaType="java.lang.Boolean" jdbcType="VARCHAR" />
+		<result property="codeSeq"  column="DETAIL_CODESEQ" />
+		<result property="language" column="DETAIL_LANGUAGE" />
+		<result property="createUser" column="DETAIL_CREATEUSER" javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="DETAIL_CREATEDATE" javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="DETAIL_MODIFYUSER" javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="DETAIL_MODIFYDATE" javaType="Date" jdbcType="TIMESTAMP" />
+	    <result property="invaliTime" column="DETAIL_INVALITIME" javaType="Date" jdbcType="TIMESTAMP" />	
+		<result property="codeTypeDesc" column="HEAD_CODETYPEDESC" />
+		<result property="empcode" column="EMP_EMPCODE" />
+		<result property="empname" column="EMP_EMPNAME" />
+	</resultMap>
+<!-- 查询所有数据字典头与数据字典详细信息 -->
+	<select id="getHeadDetail"  parameterType="com.deppon.crm.module.common.shared.domain.DetailVo"  resultMap="DetailVoResultMap" >
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Head.head_select_param" />
+		<![CDATA[
+			,
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Detail.detail_select_param"/>
+		<![CDATA[
+			,
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Head.emp_select_param"/>
+  			FROM T_CODE_HEAD HEAD
+ 			INNER JOIN T_CODE_DETAIL DETAIL
+ 			ON HEAD.FCODETYPE = DETAIL.FCODETYPE
+ 			LEFT JOIN T_AUTH_USER AUSER 
+  			ON HEAD.FCREATEUSERID=AUSER.FID
+  			LEFT JOIN T_ORG_EMPLOYEE EMP 
+  			ON EMP.FEMPCODE = AUSER.FEMPCODE
+ 			<where>
+ 			   <if test="codeType != null and codeType != ''">
+ 			   DETAIL.FCODETYPE like '%'||#{codeType,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="codeTypeDesc != null and codeTypeDesc != ''">
+ 			   AND HEAD.FCODETYPEDESC like '%'||#{codeTypeDesc,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="code != null and code != ''">
+ 			   AND DETAIL.FCODE like '%'||#{code,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="codeDesc != null and codeDesc != ''">
+ 			   AND DETAIL.FCODEDESC like '%'||#{codeDesc,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			</where>
+ 			ORDER BY DETAIL.FCODETYPE,DETAIL.fcodeseq,DETAIL.flastupdatetime DESC
+		
+	</select>
+	<!-- 查询所有数据字典头详细总数 -->
+	<select id="getHeadDetailCount"  parameterType="com.deppon.crm.module.common.shared.domain.DetailVo"  resultType="int" >
+		<![CDATA[
+			SELECT COUNT(*)
+		]]>
+  			FROM T_CODE_HEAD HEAD
+ 			INNER JOIN T_CODE_DETAIL DETAIL
+ 			ON HEAD.FCODETYPE = DETAIL.FCODETYPE
+ 			LEFT JOIN T_AUTH_USER AUSER 
+  			ON HEAD.FCREATEUSERID=AUSER.FID
+  			LEFT JOIN T_ORG_EMPLOYEE EMP 
+  			ON EMP.FEMPCODE = AUSER.FEMPCODE
+ 			<where>
+ 			   <if test="codeType != null and codeType != ''">
+ 			   DETAIL.FCODETYPE like '%'||#{codeType,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="codeTypeDesc != null and codeTypeDesc != ''">
+ 			   AND HEAD.FCODETYPEDESC like '%'||#{codeTypeDesc,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="code != null and code != ''">
+ 			   AND DETAIL.FCODE like '%'||#{code,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="codeDesc != null and codeDesc != ''">
+ 			   AND DETAIL.FCODEDESC like '%'||#{codeDesc,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			</where>
+ 			ORDER BY DETAIL.flastupdatetime DESC
+		
+	</select>
+	
+	
+	
+	<!-- 查询所有数据字典头详细信息 -->
+	<select id="getHeadAll"  parameterType="com.deppon.crm.module.common.shared.domain.Head"  resultMap="com.deppon.crm.module.common.shared.domain.Head.headResultMap" >
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Head.head_select_param" />
+		<![CDATA[
+			,
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Head.emp_select_param"/>
+  			FROM T_CODE_HEAD HEAD 
+  			LEFT JOIN T_AUTH_USER AUSER 
+  			ON HEAD.FCREATEUSERID=AUSER.FID
+  			LEFT JOIN T_ORG_EMPLOYEE EMP 
+  			ON EMP.FEMPCODE = AUSER.FEMPCODE
+  			<where>
+ 			   <if test="codeType != null and codeType != ''">
+ 			   HEAD.FCODETYPE like '%'||#{codeType,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="codeTypeDesc != null and codeTypeDesc != ''">
+ 			   AND HEAD.FCODETYPEDESC like '%'||#{codeTypeDesc,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			</where>
+ 			ORDER BY HEAD.FCODETYPE
+	</select>
+		<!-- 查询所有数据字典头总数 -->
+	<select id="getHeadAllCount"  parameterType="com.deppon.crm.module.common.shared.domain.Head"  resultType="int" >
+		<![CDATA[
+			SELECT COUNT(*)
+		]]>
+  			FROM T_CODE_HEAD HEAD 
+  			LEFT JOIN T_AUTH_USER AUSER 
+  			ON HEAD.FCREATEUSERID=AUSER.FID
+  			LEFT JOIN T_ORG_EMPLOYEE EMP 
+  			ON EMP.FEMPCODE = AUSER.FEMPCODE
+  			<where>
+ 			   <if test="codeType != null and codeType != ''">
+ 			   HEAD.FCODETYPE like '%'||#{codeType,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			   <if test="codeTypeDesc != null and codeTypeDesc != ''">
+ 			   AND HEAD.FCODETYPEDESC like '%'||#{codeTypeDesc,jdbcType=NUMERIC}||'%'
+ 			   </if>
+ 			</where>
+ 			ORDER BY HEAD.FCODETYPE
+	</select>
+	
+		<!-- 修改数据字典头信息 -->
+	<update id="updateHead"  parameterType="com.deppon.crm.module.common.shared.domain.Head" >
+		 update T_CODE_HEAD HEAD set HEAD.FLASTUPDATETIME=SYSDATE,HEAD.FLASTMODIFYUSERID=#{modifyUser}
+ 		  <if test="codeType!=null and codeType !=''">
+             ,HEAD.FCODETYPE = #{codeType}
+          </if>
+          <if test="codeTypeDesc!=null and codeTypeDesc !=''">
+             ,HEAD.FCODETYPEDESC = #{codeTypeDesc}
+          </if>
+ 			where  HEAD.FID=#{id}
+	</update>
+	
+	<!-- 删除数据字典头信息 -->
+    <delete id="deleteHead" parameterType="com.deppon.crm.module.common.shared.domain.Head">
+		delete from T_CODE_HEAD HEAD where HEAD.FID=#{id}
+	</delete>
+	<!-- 新增数据字典头信息 -->
+	<insert id="insertHead" parameterType="com.deppon.crm.module.common.shared.domain.Head">
+	   insert into T_CODE_HEAD (FID, FCODETYPE, FCODETYPEDESC, FCREATEUSERID, FCREATETIME, 
+        FLASTMODIFYUSERID, FLASTUPDATETIME)
+        values 
+    (SEQ_ID_HEAD.nextval,#{codeType,JDBCTYPE=VARCHAR},#{codeTypeDesc,JDBCTYPE=VARCHAR},#{createUser,JDBCTYPE=VARCHAR},
+    SYSDATE,#{modifyUser,JDBCTYPE=VARCHAR},SYSDATE)
+	</insert>
+</mapper>

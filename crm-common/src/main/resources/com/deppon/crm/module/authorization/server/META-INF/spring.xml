@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- DAO层 -->
+	<!-- 授权用户角色与部门数据访问 -->
+	<bean id="authorizeDao" class="com.deppon.crm.module.authorization.server.dao.impl.AuthorizeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 功能数据访问 -->
+	<bean id="functionDao" class="com.deppon.crm.module.authorization.server.dao.impl.FunctionDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 角色数据访问 -->
+	<bean id="roleDao" class="com.deppon.crm.module.authorization.server.dao.impl.RoleDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户数据访问 -->
+	<bean id="userDao" class="com.deppon.crm.module.authorization.server.dao.impl.UserDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户授权部门和角色数据访问 -->
+	<bean id="userDeptAndRoleDao" class="com.deppon.crm.module.authorization.server.dao.impl.UserDeptAndRoleDao">
+	<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- SERVICE层 -->
+	<!-- 授权管理服务 -->
+	<bean id="authorizeService" class="com.deppon.crm.module.authorization.server.service.impl.AuthorizeService">
+		<property name="authorizeDao" ref="authorizeDao"></property>
+	</bean>
+	
+	<!-- 功能查询服务 -->
+	<bean id="functionService" class="com.deppon.crm.module.authorization.server.service.impl.FunctionService">
+		<property name="functionDao" ref="functionDao"></property>
+	</bean>
+	
+	<!-- 角色管理服务 -->
+	<bean id="roleService" class="com.deppon.crm.module.authorization.server.service.impl.RoleService">
+		<property name="roleDao" ref="roleDao"></property>
+	</bean>
+	
+	<!-- 用户管理服务 -->
+	<bean id="userService" class="com.deppon.crm.module.authorization.server.service.impl.UserService">
+		<property name="userDao" ref="userDao"></property>
+		<property name="roleDao" ref="roleDao"></property>
+		<property name="departmentDao" ref="departmentDao"></property>
+		<property name="userDeptAndRoleDao" ref="userDeptAndRoleDao"></property>
+		<property name="authorizeDao" ref="authorizeDao"></property>
+	</bean>
+	
+	<!-- ACTION层 -->
+	<!-- 授权管理WEB接入层 -->
+	<bean id="authorizeAction" class="com.deppon.crm.module.authorization.server.action.AuthorizeAction" scope="prototype">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="authorizeService" ref="authorizeService"></property>
+		<property name="departmentService" ref="departmentService"></property>
+	</bean>
+	
+	<!-- 功能管理WEB接入层 -->
+	<bean id="functionAction" class="com.deppon.crm.module.authorization.server.action.FunctionAction" scope="prototype">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="functionService" ref="functionService"></property>
+	</bean>
+	
+	<!-- 功能树管理WEB接入层 -->
+	<bean id="functionTreeAction" class="com.deppon.crm.module.authorization.server.action.FunctionTreeAction" scope="prototype">
+		<property name="functionService" ref="functionService"></property>
+	</bean>
+
+	<!-- 角色管理WEB接入层 -->
+	<bean id="roleAction" class="com.deppon.crm.module.authorization.server.action.RoleAction">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="roleService" ref="roleService"></property>
+		<property name="functionService" ref="functionService"></property>
+	</bean>
+	
+	<!-- 用户管理WEB接入层 -->
+	<bean id="userAction" class="com.deppon.crm.module.authorization.server.action.UserAction" scope="prototype">
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="employeeService" ref="employeeService"></property>
+		<property name="roleService" ref="roleService"></property>
+	</bean>
+	<!-- 树模块配置 -->
+	<bean id="treeDao" class="com.deppon.crm.module.authorization.server.dao.impl.TreeDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	<bean id="treeService" class="com.deppon.crm.module.authorization.server.service.impl.TreeService">
+		<property name="treeDao" ref="treeDao"/>
+	</bean>
+	<bean id="treeManager" class="com.deppon.crm.module.authorization.server.manager.impl.TreeManager">
+		<property name="treeService" ref="treeService"/>
+	</bean>
+	<!-- 常用菜单WEB接入层 -->
+	<bean id="usualFunctionAction" class="com.deppon.crm.module.authorization.server.action.UsualFunctionAction" scope="prototype">
+		<!--<property name="messageBundle" ref="messageBundle"></property>-->
+		<property name="treeManager" ref="treeManager"></property>
+	</bean>
+	<bean id="SpringContextUtil" class="com.deppon.crm.module.frameworkimpl.server.util.SpringContextUtil"/>
+	
+	<!-- 虚拟岗位管理beans -->
+	<bean id="virtualPositionDao" class="com.deppon.crm.module.authorization.server.dao.impl.VirtualPositionDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	</bean>
+	
+	<bean id="virtualPositionService" class="com.deppon.crm.module.authorization.server.service.impl.VirtualPositionService">
+		<property name="virtualPositionDao" ref="virtualPositionDao"/>
+	</bean>
+	
+	<bean id="virtualPositionManager" class="com.deppon.crm.module.authorization.server.manager.impl.VirtualPositionManager">
+		<property name="virtualPositionService" ref="virtualPositionService"/>
+		<property name="roleService" ref="roleService"/>
+	</bean>
+	<bean id="syncUserManager" class="com.deppon.crm.module.sync.server.manager.Imp.UserSyncManagerImp">
+		<property name="userService" ref="userService"></property>
+		<property name="employeeService" ref="employeeService"></property>
+	</bean>
+	<bean id="syncEmpManager" class="com.deppon.crm.module.sync.server.manager.Imp.EmployeeSyncManagerImp">
+		<property name="employeeService" ref="employeeService"></property>
+	</bean>
+	<bean id="syncDepManager" class="com.deppon.crm.module.sync.server.manager.Imp.DepartmentSyncManagerImp">
+		<property name="department" ref="departmentService"></property>
+	</bean>
+</beans>

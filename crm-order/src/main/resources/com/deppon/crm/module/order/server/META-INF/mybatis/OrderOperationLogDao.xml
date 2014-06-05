@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.crm.module.order.shared.domain.OrderOperationLog">
+	<!-- 映射 -->
+	<resultMap id="OrderOperationLogResultMap" type="com.deppon.crm.module.order.shared.domain.OrderOperationLog">
+		<result column="FID" property="id" jdbcType="VARCHAR" />
+		<result column="FCONTACTNAME" property="contactName" jdbcType="VARCHAR" />
+		<result column="FOPERATORTYPE" property="operatorType" jdbcType="VARCHAR" />
+		<result column="FOPERATORID" property="operatorId" jdbcType="VARCHAR" />
+		<result column="FOPERATORORGID" property="operatorOrgId" jdbcType="VARCHAR" />
+		<result column="FORDERID" property="orderId" jdbcType="VARCHAR" />
+		<result column="FOPERATORCONTENT" property="operatorContent" jdbcType="VARCHAR" />
+		<result column="FOPERATORTIME" property="operatorTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<!-- 订单操作记录表所有字段 -->
+	<sql id="orderOperationLogTableFields">
+		FID,FCONTACTNAME,FOPERATORTYPE,FOPERATORID,FOPERATORORGID,
+		FORDERID,FOPERATORCONTENT,FOPERATORTIME
+	</sql>
+
+	<!-- 订单操作记录序列 -->
+	<select id="getSeqId" resultType="int" parameterType="map">
+		<![CDATA[
+			SELECT ${seqName}.NEXTVAL ID FROM DUAL
+		]]>
+	</select>
+
+	<!-- 保存订单操作记录 -->
+	<insert id="insertOrderOperationLog" parameterType="com.deppon.crm.module.order.shared.domain.OrderOperationLog">
+		INSERT INTO
+		T_ORD_OPERATIONLOG (
+		<include refid="orderOperationLogTableFields" />
+		)values(
+		#{id,jdbcType=VARCHAR},
+		#{contactName,jdbcType=VARCHAR},
+		#{operatorType,jdbcType=VARCHAR},
+		#{operatorId,jdbcType=VARCHAR},
+		#{operatorOrgId,jdbcType=VARCHAR},
+		#{orderId,jdbcType=VARCHAR},
+		#{operatorContent,jdbcType=VARCHAR},
+		sysdate
+		)
+	</insert>
+
+	<!-- 查询订单操作记录集合_根据订单ID -->
+	<select id="selectListByOrderId" resultMap="OrderOperationLogResultMap"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderOperationLog">
+		SELECT
+		<include refid="orderOperationLogTableFields" />
+		FROM
+		T_ORD_OPERATIONLOG
+		WHERE FORDERID
+		= #{orderId,jdbcType=VARCHAR} ORDER BY FOPERATORTIME DESC
+	</select>
+	
+		<!-- 查询订单操作记录条数_根据订单ID -->
+	<select id="searchCountByOrderId" resultType="Long"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderOperationLog">
+		SELECT	COUNT(FID)	FROM T_ORD_OPERATIONLOG
+		WHERE FORDERID
+		= #{orderId,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 查询订单操作记录_根据条件 -->
+	<select id="selectListByCondion" resultMap="OrderOperationLogResultMap"
+		parameterType="com.deppon.crm.module.order.shared.domain.OrderOperationLog">
+		SELECT
+		<include refid="orderOperationLogTableFields" />
+		FROM
+		T_ORD_OPERATIONLOG
+		<where>
+			<if test="orderId!=null">
+				FORDERID = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="operatorType!=null">
+				and FOPERATORTYPE = #{operatorType,jdbcType=VARCHAR}
+			</if>
+			<if test="operatorOrgId!=null">
+				and FOPERATORORGID = #{operatorOrgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		ORDER BY FOPERATORTIME DESC
+	</select>
+
+
+</mapper>

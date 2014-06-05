@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Area">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="areaMap" type="com.deppon.crm.module.common.shared.domain.Area">
+		<id property="fid" column="FID"/>
+		<result property="id" column="FID"/>
+		<result property="name" column="FNAME"/>
+		<result property="number" column="FNUMBER"/>
+		<result property="status" column="FSTATUS"/>
+		<result property="areaID" column="FAREAID"/>
+		<result property="isCityLevel" column="FISCOUNTY"/>
+		<result property="createUser" column="FCREATEUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+			 
+		<association property="city" column="fcityid" 
+					 javaType="com.deppon.crm.module.common.shared.domain.City">
+			<id property="id" column="fcityid"/>
+			<result property="name" column="cityName"/>
+			<association property="province" column="fprovinceid" 
+					 javaType="com.deppon.crm.module.common.shared.domain.Province">
+			<id property="id" column="pid"/>
+			<result property="name" column="pname"/>
+			</association>	 
+		</association>	
+		<!-- --> 
+	</resultMap>
+	
+	<resultMap  id="baseAreaMap" type="com.deppon.crm.module.common.shared.domain.Area">
+		<id property="fid" column="FID"/>
+		<result property="name" column="FNAME"/>
+		<result property="number" column="FNUMBER"/>
+		<result property="status" column="FSTATUS"/>
+		<result property="areaID" column="FAREAID"/>
+		<result property="isCityLevel" column="FISCOUNTY"/>
+		<result property="createUser" column="FCREATEUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+			
+		<result property="lastModifyName" column="lastModifyName"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="cityName" column="cityName"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="cityId" column="cityId"  jdbcType="DECIMAL" />
+		<result property="provinceId" column="provinceId"  jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="select_Area">
+		FID, 
+		FCREATETIME, 
+		FCREATEUSERID, 
+		FLASTUPDATETIME, 
+		FLASTMODIFYUSERID,
+		FSTATUS,
+		FNAME,
+		FNUMBER,
+		FCITYID,
+		FAREAID,
+		FISCOUNTY
+	</sql>
+	<select id="queryAreaByNum" resultMap="baseAreaMap">
+  		SELECT 
+  		<include refid="select_Area"/>
+  		FROM 
+  			T_CRM_AREA AR 
+  		WHERE 
+  			FNUMBER=#{number,jdbcType=VARCHAR}
+  	</select>
+	<insert id="insertArea" parameterType="com.deppon.crm.module.common.shared.domain.Area" >
+  	 <selectKey keyProperty="fid" resultType="DECIMAL" order="BEFORE">
+			SELECT seq_id_area.nextval AS
+			fid FROM DUAL
+		</selectKey>
+    insert into T_CRM_AREA (FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+      FLASTMODIFYUSERID, FSTATUS, FNAME, FNUMBER,FCITYID,FAREAID,FISCOUNTY)
+    values (
+    #{fid,jdbcType=VARCHAR},
+    sysdate,
+    #{createUser,jdbcType=VARCHAR},
+    sysdate,
+    #{modifyUser,jdbcType=VARCHAR},
+    #{status,jdbcType=VARCHAR},
+    #{name,jdbcType=VARCHAR},
+    #{number,jdbcType=VARCHAR},
+    #{cityId,jdbcType=VARCHAR},
+    #{areaID,jdbcType=VARCHAR},
+    #{isCityLevel,jdbcType=VARCHAR}
+    )
+  </insert>
+  
+  <update id="updateArea" parameterType="com.deppon.crm.module.common.shared.domain.Area">
+	UPDATE T_CRM_AREA SET
+		<if test="createDate != null and createDate != ''">
+			FCREATETIME=#{createDate,jdbcType=VARCHAR},
+		</if>
+		<if test="createUser != null and createUser != ''">
+			FCREATEUSERID=#{createUser,jdbcType=VARCHAR},
+		</if>
+		<if test="modifyUser != null and modifyUser != ''">
+			FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null and status != ''">
+			FSTATUS=#{status,jdbcType=VARCHAR},
+		</if>
+		<if test="name != null and name != ''">
+			FNAME=#{name,jdbcType=VARCHAR},
+		</if>
+		<if test="number != null and number != ''">
+			FNUMBER=#{number,jdbcType=VARCHAR},
+		</if>
+		<if test="cityId != null and cityId != ''">
+			FCITYID=#{cityId,jdbcType=VARCHAR},
+		</if>
+		<if test="areaID != null and areaID != ''">
+			FAREAID=#{areaID,jdbcType=VARCHAR},
+		</if>
+		<if test="isCityLevel != null and isCityLevel != ''">
+			FISCOUNTY=#{isCityLevel,jdbcType=VARCHAR},
+		</if>
+		FLASTUPDATETIME=sysdate
+		WHERE FID = #{fid}
+	</update>
+  
+  <delete id="deleteArea" parameterType="com.deppon.crm.module.common.shared.domain.Area">
+		DELETE FROM T_CRM_AREA 
+        WHERE FID=#{fid}  
+	</delete>
+	
+	<select id="searchAreasByName" resultMap="baseAreaMap" parameterType="com.deppon.crm.module.common.shared.domain.AreaSearchCondition" >
+		SELECT
+			A.FID, 
+			A.FCREATETIME, 
+			A.FCREATEUSERID, 
+			A.FLASTUPDATETIME, 
+			A.FLASTMODIFYUSERID,
+			A.FSTATUS,
+			A.FNAME,
+			A.FNUMBER,
+			A.FCITYID,
+			A.FAREAID,
+			A.FISCOUNTY,
+			c.fname cityName,
+			e.fempname lastModifyName,
+			p.fid provinceId,
+			c.fid cityId
+		from t_crm_area a
+		  left join t_crm_city c
+		    on a.fcityid = c.fid 
+		  left join t_crm_province p
+		    on p.fid=c.fprovinceid
+		  left join t_org_employee e
+		     on e.fid=a.flastmodifyuserid
+		WHERE 1=1 AND A.FSTATUS = 1 
+		<if test="name != null and name != ''">
+			AND	A.FNAME like '%'||#{name,jdbcType=VARCHAR}||'%'
+		</if>
+	</select>
+	<!-- 张斌
+	2014-4-10
+	=按照名字查询区县 -->
+	<select id="searchAreaByName" resultMap="baseAreaMap" parameterType="com.deppon.crm.module.common.shared.domain.AreaSearchCondition" >
+		SELECT
+			A.FID, 
+			A.FCREATETIME, 
+			A.FCREATEUSERID, 
+			A.FLASTUPDATETIME, 
+			A.FLASTMODIFYUSERID,
+			A.FSTATUS,
+			A.FNAME,
+			A.FNUMBER,
+			A.FCITYID,
+			A.FAREAID,
+			A.FISCOUNTY
+		from t_crm_area a
+		WHERE 1=1 AND A.FSTATUS = 1 
+		<if test="name != null and name != ''">
+			AND	A.FNAME = #{name,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="searchAreasCountByName" resultType="java.lang.Integer" parameterType="com.deppon.crm.module.common.shared.domain.AreaSearchCondition" >
+		SELECT
+		count(*)
+		FROM
+		T_CRM_AREA A
+		WHERE 1=1 AND A.FSTATUS = 1 
+		<if test="name != null and name != ''">
+			AND FNAME like '%'||#{name,jdbcType=VARCHAR}||'%'
+		</if>
+	</select>
+	
+	<select id="queryAreaByID" resultMap="areaMap"
+		parameterType="com.deppon.crm.module.common.shared.domain.Area">
+		SELECT
+		<include refid="select_Area" />
+		FROM
+		T_CRM_AREA 
+		WHERE FID
+		= #{fid}
+	</select>
+	
+	<select id="queryAreaByCityId" resultMap="areaMap" parameterType="string">
+		<![CDATA[ 	select 	]]>
+		<include refid="select_Area" />
+ 		<![CDATA[
+			from  T_CRM_AREA where FCITYID=#{cityId} and fstatus = 1 
+		]]>
+	</select>
+	
+ 	<select id="getAreaByCity" parameterType="String" resultMap="areaMap">
+		select a.fid, a.fname, a.fnumber, a.fstatus, a.fcityid, c.fname cityName,p.fid pid,p.fname pname  
+		from t_crm_area a
+		inner join t_crm_city c on c.fid = a.fcityid
+		inner join t_crm_province p on p.fid = c.fprovinceid
+		where  a.fcityid = #{cityId jdbcType=VARCHAR} AND A.FSTATUS = 1 
+	</select>
+	<select id="getAreaById" parameterType="String" resultMap="areaMap">
+		select a.fid, a.fname, a.fnumber, a.fstatus, a.fcityid, c.fname cityName,p.fid pid,p.fname pname  
+		from t_crm_area a
+		inner join t_crm_city c on c.fid = a.fcityid
+		inner join t_crm_province p on p.fid = c.fprovinceid
+		where  a.fid = #{id jdbcType=VARCHAR}
+	</select>
+</mapper>

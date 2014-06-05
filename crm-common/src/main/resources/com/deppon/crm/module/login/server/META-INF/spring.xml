@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+			
+		
+	<!-- 登陆次数过多锁定配置 -->
+	<!-- 	<bean id="lockManager" class="com.deppon.crm.module.login.server.manager.impl.LoginLockManager"> -->
+	<!-- 	</bean> -->
+	<bean id="lockDao" class="com.deppon.crm.module.authorization.server.dao.impl.LoginLockDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="lockService" class="com.deppon.crm.module.login.server.service.impl.LoginLockService">
+		<property name="lockDao" ref="lockDao"></property>
+	</bean>
+	
+	<bean id="lockManager" class="com.deppon.crm.module.login.server.manager.impl.LoginLockManager" scope="prototype">
+		<property name="lockService" ref="lockService"></property>
+	</bean>
+	
+	<!-- SERVICE层 -->
+	<!-- 用户登录管理服务层 -->
+	<bean id="loginService" class="com.deppon.crm.module.login.server.service.impl.LoginService">
+		<property name="userDao" ref="userDao"></property>
+		<!-- 登陆次数逻辑操作注入 -->
+		<property name="lockManager" ref="lockManager"></property>
+	</bean>
+	
+	<!-- ACTION层 -->
+	<!-- 主页面WEB接入层 -->
+	<bean id="indexAction" class="com.deppon.crm.module.login.server.action.IndexAction" scope="prototype">
+		<property name="iCheckHardwareManager" ref="checkHardwareManager" />
+	</bean>
+	
+	<!-- 用户登录WEB接入层 -->
+	<bean id="loginAction" class="com.deppon.crm.module.login.server.action.LoginAction" scope="prototype">
+		<property name="loginService" ref="loginService"></property>
+	</bean>
+
+	<!-- 用户退出系统WEB接入层 -->
+	<bean id="logoutAction" class="com.deppon.crm.module.login.server.action.LogoutAction" scope="prototype">
+		<property name="loginService" ref="loginService"></property>
+	</bean>
+	
+	<!-- 功能菜单WEB接入层 -->
+	<bean id="menuAction" class="com.deppon.crm.module.login.server.action.MenuAction" scope="prototype">
+	</bean>
+</beans>

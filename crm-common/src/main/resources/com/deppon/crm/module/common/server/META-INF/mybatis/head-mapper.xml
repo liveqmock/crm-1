@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.Head">
+
+	<!-- 数据字典头信息映射配置 -->
+	<resultMap id="headResultMap"
+		type="com.deppon.crm.module.common.shared.domain.Head">
+		<id property="id" column="HEAD_ID" />
+		<result property="codeType" column="HEAD_CODETYPE" />
+		<result property="codeTypeDesc" column="HEAD_CODETYPEDESC" />
+		<result property="createUser" column="HEAD_CREATEUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="createDate" column="HEAD_CREATEDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="modifyUser" column="HEAD_MODIFYUSER"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="HEAD_MODIFYDATE"
+			javaType="Date" jdbcType="TIMESTAMP" />
+			<result property="empcode" column="EMP_EMPCODE" />
+			<result property="empname" column="EMP_EMPNAME" />
+	</resultMap>
+
+	<!-- 数据字典头信息 -->
+	<sql id="head_select_param">
+		HEAD.FID AS HEAD_ID,
+		HEAD.FCODETYPE AS HEAD_CODETYPE,
+		HEAD.FCODETYPEDESC AS HEAD_CODETYPEDESC,
+		HEAD.FCREATEUSERID AS HEAD_CREATEUSER,
+		HEAD.FCREATETIME AS HEAD_CREATEDATE,
+		HEAD.FLASTMODIFYUSERID AS HEAD_MODIFYUSER,
+		HEAD.FLASTUPDATETIME AS HEAD_MODIFYDATE
+	</sql>
+	<sql id="emp_select_param">
+		EMP.FEMPCODE AS EMP_EMPCODE,
+		EMP.FEMPNAME AS EMP_EMPNAME
+	</sql>
+
+	<!-- 数据字典头与数据字典详细信息结果映射配置 -->
+	<resultMap id="headDetailMap"
+		type="com.deppon.crm.module.common.shared.domain.Head">
+		<id property="id" column="HEAD_ID" />
+		<result property="codeType" column="HEAD_CODETYPE" />
+		<result property="codeTypeDesc" column="HEAD_CODETYPEDESC" />
+		<collection property="detailList" 
+			column="HEAD_CODETYPE"
+			javaType="ArrayList" 
+			ofType="com.deppon.crm.module.common.shared.domain.Detail" 
+			resultMap="com.deppon.crm.module.common.shared.domain.Detail.detailResultMap" />
+	</resultMap>
+
+	<!-- 缓存加载所有数据字典头与数据字典详细信息 -->
+	<select id="getAllHeadDetail" parameterType="String" resultMap="headDetailMap">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Head.head_select_param" />
+		<![CDATA[
+			,
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Detail.detail_select_param"/>
+  			FROM T_CODE_HEAD HEAD
+ 			INNER JOIN T_CODE_DETAIL DETAIL
+ 			ON HEAD.FCODETYPE = DETAIL.FCODETYPE 
+ 			<where>
+ 			   <if test="codeType != null and codeType != ''">
+ 			   HEAD.FCODETYPE=#{codeType}
+ 			   </if>
+ 			</where>
+ 			ORDER BY DETAIL.FCODESEQ
+		
+	</select>
+	
+	
+	<select id="getHeadDetailByCodeType" parameterType="String" resultMap="headDetailMap">
+		<![CDATA[
+			SELECT
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Head.head_select_param" />
+		<![CDATA[
+			,
+		]]>
+		<include refid="com.deppon.crm.module.common.shared.domain.Detail.detail_select_param"/>
+  			FROM T_CODE_HEAD HEAD
+ 			INNER JOIN T_CODE_DETAIL DETAIL
+ 			ON HEAD.FCODETYPE = DETAIL.FCODETYPE 
+ 			where HEAD.FCODETYPE=#{codeType}		
+	</select>
+	
+	<!-- 获取最新的修改时间 -->
+	<select id="getLastModifyTime" resultType="date">
+		<![CDATA[
+			SELECT MAX(FLASTUPDATETIME) FROM T_CODE_HEAD
+		]]>
+	</select>
+
+</mapper>

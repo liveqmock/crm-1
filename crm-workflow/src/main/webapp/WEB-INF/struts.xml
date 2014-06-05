@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="workflow" namespace="/workflow" extends="crm-default">
+		
+		        
+		
+		
+		<!-- 我要处理的工作流界面 -->
+		<action name="unApprovedWorkFlowIndex">
+			<result name="success">UnapprovedWorkFlow.html</result>
+		</action>
+		<!-- 我的工作流界面 -->
+		<action name="workFlowSearchIndex">
+			<result name="success">WorkFlowSearch.html</result>
+		</action>
+		<!-- 我已处理的工作流界面 -->
+		<action name="handledWorkFlowIndex">
+			<result name="success">HandledWorkFlow.html</result>
+		</action>
+		
+		
+			<action name="findWorkflow"  class="workflowAction" method="findWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action> 
+	       
+	     <!--未处理的工作流列表-->
+	   	<action name="findToHandleWorkflow"  class="workflowAction" method="findToHandleWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action>    
+	    
+	     <!--已处理的工作流列表-->
+	   	<action name="findHandledWorkflow"  class="workflowAction" method="findHandledWorkflow">
+	    	<result name="success" type="json"></result>
+	    </action> 
+	      <!--工作流审批记录列表-->
+	   	<action name="queryApprovalInfo"  class="workflowAction" method="queryApprovalInfo">
+	    	<result name="success" type="json"></result>
+	    </action>  
+	      <!--获得当前审批人-->
+	   	<action name="findCurrentApproval"  class="workflowAction" method="findCurrentApproval">
+	    	<result name="success" type="json"></result>
+	    </action>   
+	      <!--根据工作流号查询合同信息-->
+	   	<action name="findContractWorkflowInfoByWorkNo"  class="workflowAction" method="findContractWorkflowInfoByWorkNo">
+	    	<result name="success" type="json"></result>
+	    </action>   
+	    
+	     <!--工作流详情页面-->
+	   	<action name="showDetailWorkflow" >
+	    	<result name="success">DetailWorkflow.html</result>
+	    </action>
+	     <!--(理赔)工作流审批页面-->
+	   	<action name="doApproveWorkflow" >
+	    	<result name="success">ApproveWorkflow.html</result>
+	    </action>
+	    
+	     <!--工作流程图-->
+	   	<action name="generateWorkflowImage"  class="workflowAction" method="generateWorkflowImage">
+	    	<result name="success">workflowImage.jsp</result>
+	    </action>
+	    
+	     <!--工作流审批-->
+	   	<action name="workflowApprove"  class="workflowAction" method="workflowApprove">
+	    	<result name="success" type="json"></result>
+	    </action>
+	</package>
+</struts>

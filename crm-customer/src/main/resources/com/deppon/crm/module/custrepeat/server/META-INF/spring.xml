@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<!-- dao 层  begin -->
+	<bean id ="repeatedCustDao" class="com.deppon.crm.module.custrepeat.server.dao.impl.RepeatedCustDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- dao 层  end -->
+	
+	
+	<!-- service 层  begin -->
+	<bean id ="repeatedCustService" class="com.deppon.crm.module.custrepeat.server.service.impl.RepeatedCustServiceImpl">
+		<property name="repeatedCustDao" ref="repeatedCustDao" />
+	</bean>
+	<!-- service 层  end -->
+	
+	
+	<!-- manager 层  begin -->
+	<bean id ="repeatedCustManager" class="com.deppon.crm.module.custrepeat.server.manager.impl.RepeatedCustManagerImpl">
+		<property name="repeatedCustService" ref="repeatedCustService" />
+		<property name="departmentService" ref="departmentService"/>
+		<property name="contractService" ref="contractService"/>
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager" />
+		<property name="alterMemberService" ref="alterMemberService"/>
+		<property name="memberService" ref="memberService"/>
+	</bean>
+	<!-- manager 层  end -->
+	
+	
+	<!-- action 层  begin -->
+	<bean id ="repeatedCustAction" class="com.deppon.crm.module.custrepeat.server.action.RepeatedCustAction">
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+	</bean>
+	<!-- action 层  end -->
+</beans>

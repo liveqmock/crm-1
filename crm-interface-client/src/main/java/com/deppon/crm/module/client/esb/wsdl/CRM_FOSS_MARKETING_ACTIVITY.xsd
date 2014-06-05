@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/esb/inteface/domain/crm" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/esb/inteface/domain/crm">
+
+    <complexType name="DiscountInfo">
+    	<annotation>
+    		<documentation>价格折扣信息</documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="fid" type="decimal">
+    			<annotation>
+    				<documentation>折扣信息CrmId</documentation>
+    			</annotation>
+    	  </element>
+    		<element name="preferentialProduct" type="string">
+    			<annotation>
+    				<documentation>优惠产品
+1、运费（FRT）
+2、接货（JH）
+3、送货（SH）
+4、保价（BF）
+5、包装（BZ）
+6、代收货款（HK）
+7、综合信息服务费（ZHXX）
+</documentation>
+    			</annotation>
+    		</element>
+    		<element name="priceDiscount" type="string">
+    			<annotation>
+    				<documentation>价格折扣</documentation>
+    			</annotation>
+    	  </element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="GoodsLine">
+    	<annotation>
+    		<documentation>走货线路</documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="fid" type="decimal">
+    			<annotation>
+    				<documentation>线路信息CrmId</documentation>
+    			</annotation>
+    	  </element>
+    		<element name="startingArea" type="string">
+    			<annotation>
+    				<documentation>出发区域</documentation>
+    			</annotation>
+    		</element>
+    		<element name="arrivalArea" type="string">
+    			<annotation>
+    				<documentation>到达区域</documentation>
+    			</annotation>
+    		</element>
+    		<element name="startingOutfield" type="string">
+    			<annotation>
+    				<documentation>出发外场</documentation>
+    			</annotation></element>
+    		<element name="arrivalOutfield" type="string">
+    			<annotation>
+    				<documentation>到达外场</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+    
+     <complexType name="DevelopDeptInfos">
+    	<annotation>
+    		<documentation>开展部门信息</documentation>
+    	</annotation>
+    	<sequence>
+    		<element name="fid" type="decimal">
+    			<annotation>
+    				<documentation>开展部门CrmId</documentation>
+    			</annotation>
+    	  </element>
+    		<element name="sponsorDepts" type="string">
+    			<annotation>
+    				<documentation>开展部门编码</documentation>
+    			</annotation>
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="MarketingActivityRequest">
+        <annotation>
+        	<documentation>市场推广活动信息</documentation>
+        </annotation>
+        <sequence>
+        <element name="fid" type="decimal">
+    			<annotation>
+    				<documentation>市场活动CrmId</documentation>
+    			</annotation>
+    	  </element>
+        	<element name="activityName" type="string">
+        		<annotation>
+        			<documentation>活动名称</documentation>
+        		</annotation>
+        	</element>
+        	<element name="activityCode" type="string">
+        		<annotation>
+        			<documentation>活动编码</documentation>
+        		</annotation>
+        	</element>
+        	<element name="fstatus" type="string">
+        		<annotation>
+        			<documentation>活动状态(N 是无效 Y是有效)</documentation>
+        		</annotation>
+        	</element>
+        	<element name="discountInfos" type="tns:DiscountInfo" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>价格折扣信息</documentation>
+        		</annotation>
+        	</element>
+        	<element name="activityBeginTime" type="dateTime">
+        		<annotation>
+        			<documentation>活动开始时间</documentation>
+        		</annotation>
+        	</element>
+        	<element name="activityEndTime" type="dateTime">
+        		<annotation>
+        			<documentation>活动结束时间</documentation>
+        		</annotation>
+        	</element>
+        	<element name="firstTrades" type="string" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>客户一级行业</documentation>
+        		</annotation>
+        	</element>
+        	<element name="secondTrades" type="string" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>客户二级行业</documentation>
+        		</annotation>
+        	</element>
+        	<element name="activityCategory" type="string">
+        		<annotation>
+        			<documentation>活动类别
+LTT 零担
+EXPRESS 快递
+</documentation>
+        		</annotation>
+        	</element>
+        	<element name="activityType" type="string">
+        		<annotation>
+        			<documentation>活动类型
+NATIONWIDE 全国营销活动
+REGION 区域营销活动
+</documentation>
+        		</annotation>
+        	</element>
+        	<element name="productType" type="string" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>产品类型
+FLF 精准卡航
+FSF 精准城运
+LRF 精准汽运(长途)
+SRF 精准汽运(短途)
+PLF 汽运偏线
+FV  整车
+AF  精准空运</documentation>
+        		</annotation>
+        	</element>
+        	<element name="goodsName" type="string" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>开单品名</documentation>
+        		</annotation>
+        	</element>
+        	<element name="billMinMoney" type="string">
+        		<annotation>
+        			<documentation>开单金额开始值</documentation>
+        		</annotation>
+        	</element>
+        	<element name="billMaxMoney" type="string">
+        		<annotation>
+        			<documentation>开单金额结束值</documentation>
+            </annotation>
+         </element>
+        	<element name="goodsMinWeight" type="string">
+        		<annotation>
+        			<documentation>货物重量起始值</documentation>
+        		</annotation>
+        	</element>
+        	<element name="goodsMaxWeight" type="string">
+        		<annotation>
+        			<documentation>货物重量结束值</documentation>
+        		</annotation>
+        	</element>
+        	<element name="goodsMinVolume" type="string">
+        		<annotation>
+        			<documentation>货物体积起始值</documentation>
+        		</annotation>
+        	</element>
+        	<element name="goodsMaxVolume" type="string">
+        		<annotation>
+        			<documentation>货物体积结束值</documentation>
+        		</annotation>
+        	</element>
+        	<element name="orderResource" type="string" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>订单来源
+ONLINE	  网上营业厅
+TAOBAO	  淘宝网
+ALIBABA	  阿里巴巴网
+YOUSHANG	  金蝶友商网
+SHANGCHENG	  淘宝商城
+CALLCENTER	  呼叫中心苏州
+BUSINESS_DEPT 营业部
+ALL	        全部
+CALLCENTER-HF 呼叫中心合肥
+QQSUDI	  QQ速递
+SUNING	  苏宁易购
+WEIXIN	  微信
+CALLCENTER-HF 呼叫中心合肥
+</documentation>
+        		</annotation>
+        	</element>
+        	<element name="developDeptInfos" type="tns:DevelopDeptInfos" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>开展部门</documentation>
+        		</annotation>
+        	</element>
+        	<element name="goodsLine" type="tns:GoodsLine" minOccurs="0" maxOccurs="unbounded">
+        		<annotation>
+        			<documentation>走货线路</documentation>
+        		</annotation>
+        	</element>
+        </sequence>
+    </complexType>
+    
+    <complexType name="MarketingActivityResponse">
+    	<sequence>
+    		<element name="result" type="boolean">
+    			<annotation>
+    				<documentation>是否接收成功</documentation>
+    			</annotation>
+    		</element>
+    		<element name="errorMsg" type="string">
+    			<annotation>
+    				<documentation>异常信息</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+
+    <element name="marketingActivityRequest" type="tns:MarketingActivityRequest"></element>
+
+    <element name="marketingActivityResponse" type="tns:MarketingActivityResponse"></element>
+</schema>

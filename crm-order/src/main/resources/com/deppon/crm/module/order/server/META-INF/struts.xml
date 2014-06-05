@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+     <package name="order" namespace="/order" extends="crm-default">
+     	<!-- 订单号规则配置 -->
+     	 <action name="orderNumberRule" >
+			<result name="success">orderNumberRule.html</result>
+	    </action>
+     	<action name="allRules" class="orderNumberRuleAction" method="allRules">
+     		<result name="success" type="json"></result>
+     	</action>
+     	<action name="updateRule" class="orderNumberRuleAction" method="updateRule">
+     		<result name="success" type="json"></result>
+     	</action>
+     	<action name="changeStatus" class="orderNumberRuleAction" method="changeStatus">
+     		<result name="success" type="json"></result>
+     	</action>
+     	<action name="createRule" class="orderNumberRuleAction" method="createRule">
+     		<result name="success" type="json"></result>
+     	</action>
+     	<action name="allResources" class="orderNumberRuleAction" method="allResources">
+     		<result name="success" type="json"></result>
+     	</action>
+     	
+	    <!-- 跳转到打印面-->
+        <action name="printOrderNow" >
+			<result name="success">printOrder.html</result>
+	    </action>
+	    
+	    <!-- 跳转到创建订单页面-->
+        <action name="createOrderView" >
+			<result name="success">orderFrame.html</result>
+	    </action>
+	    <!-- 跳转到创建订单页面（400）-->
+        <action name="createOrder400View" >
+			<result name="success">orderFrame400.html</result>
+	    </action>
+	    
+	     <!-- 跳转受理与页面-->
+        <action name="processAndReturnOrder" >
+			<result name="success">processAndReturnOrder.html</result>
+	    </action>
+<!-- **********************页面****************************** -->	    
+		<!-- 约车历史 -->
+     	<action name="vehicleHistory" class="orderAction" method="vehicleHistory">
+     		<result name="success" type="json"></result>
+     	</action>
+		
+		<!-- 订单提交-->
+		<action name="createOrder" class="orderAction" method="createOrder">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 打开创建订单，获取初始化数据 -->
+		<action name="initCreatePageData" class="orderAction" method="initCreatePageData">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 根据省份查询市-->
+		<action name="searchCityByProvince" class="listOrderAction" method="searchCityByProvince">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 根据市查询区县 -->
+		<action name="searchDistrictByCity" class="listOrderAction" method="searchDistrictByCity">
+            <result name="success" type="json"></result>
+		</action>
+
+	    <!-- 根据客户名称查询客户信息列表 -->
+		<action name="searchCustomerByName" class="listOrderAction" method="searchCustomerByName">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 根据手机号查询客户信息列表 -->
+		<action name="searchCustomerByCellNum" class="listOrderAction" method="searchCustomerByCellNum">
+			<result name="success" type="json"></result>
+		</action>
+
+		<!-- 根据电话查询客户信息列表 -->
+		<action name="searchCustomerByPhone" class="listOrderAction" method="searchCustomerByPhone">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 根据网点名称查询网点信息列表 -->
+		<action name="searchPointByName" class="listOrderAction" method="searchPointByName">
+			<result name="success" type="json"></result>
+		</action>
+			
+		<!-- 初始化始发网点-->
+		<action name="initPoint" class="orderAction" method="initPoint">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询电子地图带过来的网点信息-->
+		<action name="changePointId" class="orderAction" method="changePointId">
+			<result name="success" type="json"></result>
+		</action>
+		
+		
+		<!-- 揽货失败 -->
+		<action name="failOrder" class="orderAction" method="failOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 打回订单 -->
+		<action name="returnOrder" class="orderAction" method="returnOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 受理订单 -->
+		<action name="processOrder" class="orderAction" method="processOrder">
+			<result name="success" type="json"></result>
+		</action>
+
+        <!-- 通过ID获取订单信息 -->
+		<action name="getOrderById" class="orderAction" method="getOrderById">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 修改订单 -->
+		<action name="updateOrder" class="orderAction" method="updateOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- 验证订单是否可修改 -->
+		<action name="updateOrderable" class="orderAction" method="updateOrderable">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 延时订单 -->
+		<action name="delayOrder" class="orderAction" method="delayOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		
+		 <!-- 按照条件查询 -->
+		<action name="searchOrderList" class="listOrderAction" method="searchOrderList">
+			<result name="success" type="json"></result>
+		</action>
+		 <!-- 是否可约车 -->
+		<action name="bookVehicleable" class="orderAction" method="bookVehicleable">
+			<result name="success" type="json"></result>
+		</action>
+		 <!--约车提交 -->
+		<action name="bookVehicle" class="orderAction" method="bookVehicle">
+			<result name="success" type="json"></result>
+		</action>
+		 <!--催单 -->
+		<action name="pressOrder" class="orderAction" method="pressOrder">
+			<result name="success" type="json"></result>
+		</action>
+		 <!--打印订单 -->
+		<action name="printOrder" class="orderAction" method="printOrder">
+			<result name="success" type="json"></result>
+		</action>
+		 <!--根据网点/车队部门信息 -->
+		<action name="searchBussinessDepts" class="listOrderAction" method="searchBussinessDepts">
+			<result name="success" type="json"></result>
+		</action>
+		 <!--初始化400界面始发网点 -->
+		<action name="init400Point" class="orderAction" method="init400Point">
+			<result name="success" type="json"></result>
+		</action>
+<!-- **************************************************** -->
+		<!-- 跳转到主页面-->
+        <action name="allocationOrder">
+			<result name="success">allocationOrder.html</result>
+	    </action>
+	    
+	    <!--订单分配页面订单查询-->
+		<action name="searchAssignAndRefuseOrders" class="listOrderAction" method="searchAssignAndRefuseOrders">
+			<result name="success" type="json"></result>
+		</action>
+		
+	    <!--分配订单-->
+	    <action name="assignOrder" class="orderAction" method="assignOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--拒绝订单-->
+		<action name="refuseOrder" class="orderAction" method="refuseOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--撤销订单-->
+		<action name="cancelOrder" class="orderAction" method="cancelOrder">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--根据订单号查询订单信息-->
+		<action name="orderByOrderNumber" class="orderAction" method="orderByOrderNumber">
+			<result name="success" type="json"></result>
+		</action>
+				
+		<!--根据运单号查询运单信息-->
+		<action name="waybillNum" class="orderAction" method="waybillNum">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--根据运单号查询订单信息-->
+		<action name="orderWaybillNum" class="orderAction" method="orderWaybillNum">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--定运单关联-->
+		<action name="associateOrderAndWaybill" class="orderAction" method="associateOrderAndWaybill">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--保存订单备注-->
+		<action name="saveOrderRemark" class="orderAction" method="saveOrderRemark">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--用户操作-->
+		<action name="getOrderOperationLogList" class="listOrderAction" method="getOrderOperationLogList">
+			<result name="success" type="json"></result>
+		</action>	
+		
+		<!--根据手机号查询客户信息-->
+		<action name="searchMemberInfoByPhone" class="listOrderAction" method="searchMemberInfoByPhone">
+			<result name="success" type="json"></result>
+		</action>	
+		
+		<!-- 跳转到定运单关联-->
+        <action name="associateOrderWaybill">
+			<result name="success">associateOrderWaybill.html</result>
+	    </action>
+        <action name="getMap">
+			<result name="success">http://map.deppon.com.cn:8080/dpbaidumap/</result>
+	    </action>
+	    
+	    <action name="boundContactNumIndex" >
+	    	<result name="success">BoundContactNum.html</result>
+	    </action>
+	    	<!-- 绑定联系人编码 网上信息搜索 -->
+		<action name="searchWebInfo"   class="boundContactNumAction" method="searchWebInfo">
+			<result name="success" type="json">
+				<param name="includeProperties">order,registerInfo,message</param>
+			</result>
+		</action>
+		<!-- 绑定联系人编码 联系人信息搜索 -->
+		<action name="searchContactInfo"   class="boundContactNumAction" method="searchContactInfo">
+			<result name="success" type="json">
+				<param name="includeProperties">contactInfoList</param>
+			</result>
+		</action>
+		<!-- 绑定联系人编码 发送验证短信 -->
+		<action name="sendCheckMessage"   class="boundContactNumAction" method="sendCheckMessage">
+			<result name="success" type="json">
+				<param name="includeProperties">operateSuccess</param>
+			</result>
+		</action>
+		<!-- 绑定联系人编码 绑定 -->
+		<action name="boundContactNum"   class="boundContactNumAction" method="boundContactNum">
+			<result name="success" type="json">
+				<param name="includeProperties">operateSuccess</param>
+			</result>
+		</action>
+	    
+	    <!--绑定联系人编码-查询联系人-->
+		<action name="queryContactViewByNum" class="boundContactNumAction" method="queryContactViewByNum">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--绑定联系人编码-查询用户-->
+		<action name="boundInfos" class="boundContactNumAction" method="boundInfos">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!--绑定联系人编码-解除绑定-->
+		<action name="unboundContactNumber" class="boundContactNumAction" method="unboundContactNumber">
+			<result name="success" type="json"></result>
+		</action>
+	    <!-- hbf begin -->
+	    <action name="map" >
+			<result name="success">map.html</result>
+	    </action>
+	    <!-- 根据标杆编码查询营业部门-->
+		<action name="changePointStandardcode" class="orderAction" method="changePointStandardcode">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 根据客户Id查询客户是否为合同客户 -->
+		<action name="isContractMember" class="orderAction" method="isContractMember">
+			<result name="success" type="json">
+<!-- 				<param name="root">isContractMember</param> -->
+			</result>
+		</action>
+		<!-- hbf end -->
+		
+		<action name="orderDetail">
+			<result name="success">orderDetail.html</result>
+	    </action>
+		
+	</package>
+
+</struts>

@@ -1,0 +1,10 @@
+id,fid,VARCHAR
+createDate,fcreatetime,DATE
+createUser,fcreateuserid,VARCHAR
+modifyDate,flastupdatetime,DATE
+modifyUser,flastmodifyuserid,VARCHAR
+opinion,fopinion,VARCHAR
+result,fresult,NUMERIC
+rights,frights,VARCHAR
+disposeUserId,fdisposeUserId,VARCHAR
+workFlowId,fworkFlowId,NUMERIC

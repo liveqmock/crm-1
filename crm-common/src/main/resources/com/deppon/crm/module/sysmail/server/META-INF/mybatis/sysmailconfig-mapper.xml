@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.crm.module.sysmail.shared.domain.MailAccount">
+	<resultMap id="MailAccountResultMap" type="com.deppon.crm.module.sysmail.shared.domain.MailAccount">
+		<id column="FID" property="id" jdbcType="NUMERIC" />
+		<result column="FRECEIVERNAME" property="receiverName" jdbcType="VARCHAR" />
+		<result column="FEMAILADDRESS" property="emailAddress"	jdbcType="VARCHAR" />
+		<result column="FEMPCODE" property="empCode" jdbcType="VARCHAR" />
+		<result column="FISVALID" property="isValid" jdbcType="CHAR" />
+		<result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="FCREATEUSERNAME" property="createUser" jdbcType="VARCHAR" />
+		<result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="FLASTUPDATEUSERNAME" property="modifyUser" jdbcType="VARCHAR" />
+	</resultMap>
+		
+	 <resultMap id="MailGroupResultMap" type="com.deppon.crm.module.sysmail.shared.domain.MailGroup" >
+	    <id column="FID" property="id" jdbcType="NUMERIC" />
+	    <result column="FGROUPNAME" property="groupName" jdbcType="VARCHAR" />
+	    <result column="FGROUPCODE" property="groupCode" jdbcType="VARCHAR" />
+	    <result column="FCREATEUSERNAME" property="createUser" jdbcType="VARCHAR" />
+	    <result column="FCREATETIME" property="createDate" jdbcType="TIMESTAMP" />
+	    <result column="FLASTUPDATEUSERNAME" property="modifyUser" jdbcType="VARCHAR" />
+	    <result column="FLASTUPDATETIME" property="modifyDate" jdbcType="TIMESTAMP" />
+	 </resultMap>
+	
+	<sql id="MailAccoount_Column_List">
+		FID, FRECEIVERNAME, FEMAILADDRESS, FEMPCODE, FISVALID, FCREATETIME,
+		FCREATEUSERNAME,
+		FLASTUPDATETIME, FLASTUPDATEUSERNAME
+	</sql>
+	
+	<sql id="MailGroup_Column_List" >
+    	FID, FGROUPNAME, FGROUPCODE, FCREATEUSERNAME, FCREATETIME, FLASTUPDATEUSERNAME, FLASTUPDATETIME
+  	</sql>
+  	
+  	<insert id="insertMailGroup" parameterType="com.deppon.crm.module.sysmail.shared.domain.MailGroup" >
+  	    <selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_MAIL.NEXTVAL AS ID FROM DUAL
+			]]>
+		</selectKey>
+	    insert into T_CRM_MAILGROUP (FID, FGROUPNAME, FGROUPCODE,FCREATEUSERNAME, FCREATETIME, FLASTUPDATEUSERNAME,FLASTUPDATETIME)
+	    values (#{id,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, #{groupCode,jdbcType=VARCHAR}, 
+	      #{createUser,jdbcType=VARCHAR}, sysdate, #{modifyUser,jdbcType=VARCHAR}, 
+	      sysdate)
+	</insert>
+	
+	<insert id="addAccGroRelation" parameterType="com.deppon.crm.module.sysmail.shared.domain.AccountGroup">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_MAIL.NEXTVAL AS ID FROM DUAL
+			]]>
+		</selectKey>
+		insert into T_CRM_ACCOUNTGROUP (FID, FMAILACCOUNTID, FMAILGROUPID, 
+	      FCREATEUSERNAME, FCREATETIME, FLASTUPDATEUSERNAME, 
+	      FLASTUPDATETIME)
+	    values (#{id,jdbcType=VARCHAR}, #{mailAccountId,jdbcType=VARCHAR}, #{mailGroupId,jdbcType=VARCHAR}, 
+	      #{createUser,jdbcType=VARCHAR}, sysdate, #{modifyUser,jdbcType=TIMESTAMP},sysdate)
+	</insert>
+	
+	<delete id="deleteAccGroRelation" parameterType="com.deppon.crm.module.sysmail.shared.domain.AccountGroup">
+		delete from t_crm_accountgroup ag
+		where 1=2
+		<if test="mailAccountId!=null and mailAccountId !=''">
+			or ag.fmailaccountid = #{mailAccountId,jdbcType=VARCHAR}
+		</if>
+		<if test="mailGroupId!=null and mailGroupId!=''" >
+		   or ag.fmailgroupid = #{mailGroupId,jdbcType=VARCHAR}
+		</if>
+	</delete>
+	
+	<update id="updateMailGroupById" parameterType="com.deppon.crm.module.sysmail.shared.domain.MailGroup" >
+	    update T_CRM_MAILGROUP
+	    <set >
+	      <if test="groupName != null and groupName!=''" >
+	        FGROUPNAME = #{groupName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="groupCode != null and groupCode !=''" >
+	        FGROUPCODE = #{groupCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyUser != null and modifyUser!=''" >
+	        FLASTUPDATEUSERNAME = #{modifyUser,jdbcType=VARCHAR},
+	      </if>
+	        FLASTUPDATETIME = sysdate,
+	    </set>
+	    where FID = #{id,jdbcType=NUMERIC}
+  	</update>
+  
+	<delete id="deleteMailGroupById" parameterType="Integer" >
+    	delete from T_CRM_MAILGROUP
+    	where FID = #{id,jdbcType=NUMERIC}
+  	</delete>
+  
+	<select id="getMailGroupById" resultMap="MailGroupResultMap" parameterType="Integer" >
+	   select 
+	   <include refid="MailGroup_Column_List" />
+	   from T_CRM_MAILGROUP
+	   where FID = #{id,jdbcType=NUMERIC}
+	</select>
+	
+	<select id="queryAllMailGroup" resultMap="MailGroupResultMap">
+		select
+		<include refid="MailGroup_Column_List"/>
+		from T_CRM_MAILGROUP
+		order by nlssort(fgroupname, 'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+	<select id="queryAllMailAccount" resultMap="MailAccountResultMap">
+		select
+		<include refid="MailAccoount_Column_List"/>	
+		from t_crm_mailaccount
+		order by nlssort(freceivername, 'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+	<select id="queryMailAccountByCondition" resultType="com.deppon.crm.module.sysmail.shared.domain.AccGroResultVO" parameterType="java.util.Map">
+		select ac.fid accountId,
+		       ac.freceivername receiverName,
+		       ac.femailaddress emailAddress,
+		       ac.fempcode empCode,
+		       mg.fid groupId,
+		       mg.fgroupname groupName,
+		       ag.fid relationId
+		  from t_crm_mailaccount ac 
+		  	left join t_crm_accountgroup ag
+		    	on ac.fid = ag.fmailaccountid
+		    left join t_crm_mailgroup mg 
+		    	on ag.fmailgroupid = mg.fid
+		  where 
+			1=1
+			<if test="str !=null and str !=''">
+				and (ac.fempcode = #{str,jdbcType=VARCHAR}
+   				 or ac.freceivername like '%'||#{str,jdbcType=VARCHAR}||'%')
+			</if>
+<!-- 		 order by ac.freceivername asc,ac.femailaddress asc -->
+		 order by nlssort(ac.freceivername, 'NLS_SORT=SCHINESE_PINYIN_M')
+	</select>
+	
+	
+	<select id="countMailAccountByCondition" resultType="long" parameterType="java.util.Map">
+		select count(*)
+		  from t_crm_mailaccount ac 
+		  	left join t_crm_accountgroup ag
+		    	on ac.fid = ag.fmailaccountid
+		    left join t_crm_mailgroup mg 
+		    	on ag.fmailgroupid = mg.fid
+		  where 
+			1=1
+			<if test="str !=null and str !=''">
+				and (ac.fempcode = #{str,jdbcType=VARCHAR}
+   				 or ac.freceivername like '%'||#{str,jdbcType=VARCHAR}||'%')
+			</if>
+		 order by ac.freceivername asc	
+	</select>
+	
+	
+	<select id="queryMailAccountByGroupId" resultType="com.deppon.crm.module.sysmail.shared.domain.AccGroResultVO" parameterType="String">
+		select ac.fid accountId,
+		       ac.freceivername receiverName,
+		       ac.femailaddress emailAddress,
+		       ac.fempcode empCode,
+		       mg.fid groupId,
+		       mg.fgroupname groupName,
+		       ag.fid relationId
+		  from t_crm_accountgroup ag
+		  	join t_crm_mailaccount ac
+		    	on ac.fid = ag.fmailaccountid
+		    join t_crm_mailgroup mg 
+		    	on ag.fmailgroupid = mg.fid
+		 where ag.fmailgroupid = #{groupId,jdbcType=NUMERIC}
+		 order by ac.freceivername asc
+	</select>
+	
+	<select id="countMailAccountByGroupId" resultType="long" parameterType="String">
+		select count(1)
+		  from t_crm_accountgroup ag
+		  	join t_crm_mailaccount ac
+		    	on ac.fid = ag.fmailaccountid
+		    join t_crm_mailgroup mg 
+		    	on ag.fmailgroupid = mg.fid
+		 where ag.fmailgroupid = #{groupId,jdbcType=NUMERIC}
+	</select>
+	
+	<select id="getMailAccountById" resultMap="MailAccountResultMap"
+		parameterType="Integer">
+		select
+		<include refid="MailAccoount_Column_List" />
+		from T_CRM_MAILACCOUNT
+		where FID = #{id,jdbcType=NUMERIC}
+	</select>
+	
+	<delete id="removeRelationBatch" parameterType="java.util.List">
+		delete from t_crm_accountgroup t where t.fid in
+		<foreach collection="list" open="(" close=")" item="str" index="idx" separator=",">
+			${str}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteMailAccountById" parameterType="Integer">
+		delete from T_CRM_MAILACCOUNT
+		where FID = #{fid,jdbcType=NUMERIC}
+	</delete>
+	
+	
+	<insert id="insertMailAccount" parameterType="com.deppon.crm.module.sysmail.shared.domain.MailAccount">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			<![CDATA[
+				SELECT SEQ_ID_MAIL.NEXTVAL AS ID FROM DUAL
+			]]>
+		</selectKey>
+		insert into T_CRM_MAILACCOUNT (FID, FRECEIVERNAME,
+		FEMAILADDRESS,
+		FEMPCODE, FISVALID, FCREATETIME,
+		FCREATEUSERNAME, FLASTUPDATETIME, FLASTUPDATEUSERNAME
+		)
+		values (#{id,jdbcType=VARCHAR}, #{receiverName,jdbcType=VARCHAR},
+		#{emailAddress,jdbcType=VARCHAR},
+		#{empCode,jdbcType=VARCHAR}, #{isValid,jdbcType=CHAR},sysdate,
+		#{createUser,jdbcType=VARCHAR},
+		sysdate,
+		#{modifyUser,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateMailAccountById" parameterType="com.deppon.crm.module.sysmail.shared.domain.MailAccount" >
+	       update T_CRM_MAILACCOUNT
+		    <set >
+<!-- 		      <if test="receiverName != null and receiverName!=''" > -->
+		        FRECEIVERNAME = #{receiverName,jdbcType=VARCHAR},
+<!-- 		      </if> -->
+<!-- 		      <if test="emailAddress != null and emailAddress!=''" > -->
+		        FEMAILADDRESS = #{emailAddress,jdbcType=VARCHAR},
+<!-- 		      </if> -->
+<!-- 		      <if test="empCode != null and empCode !=''" > -->
+		        FEMPCODE = #{empCode,jdbcType=VARCHAR},
+<!-- 		      </if> -->
+<!-- 		      <if test="isValid != null" > -->
+		        FISVALID = #{isValid,jdbcType=CHAR},
+<!-- 		      </if> -->
+		       FLASTUPDATETIME = sysdate,
+		      <if test="modifyUser != null and modifyUser!=''" >
+		        FLASTUPDATEUSERNAME = #{modifyUser,jdbcType=VARCHAR},
+		      </if>
+		    </set>
+		    where FID = #{id,jdbcType=DECIMAL}
+  	</update>
+  	
+  	<select id="queryMailAccountByGroupCode" resultMap="MailAccountResultMap" parameterType="String">
+		select distinct 
+			ma.fid FID,
+			ma.FRECEIVERNAME FRECEIVERNAME,
+			ma.FEMAILADDRESS FEMAILADDRESS,
+			ma.FEMPCODE	FEMPCODE,
+			ma.FISVALID	 FISVALID,
+			ma.FCREATETIME FCREATETIME,
+			ma.FCREATEUSERNAME FCREATEUSERNAME,
+			ma.FLASTUPDATETIME FLASTUPDATETIME,
+			ma.FLASTUPDATEUSERNAME FLASTUPDATEUSERNAME
+		  from t_crm_mailaccount ma
+		  join t_crm_accountgroup ag
+		    on ag.fmailaccountid = ma.fid
+		  join t_crm_mailgroup mg on ag.fmailgroupid = mg.fid
+		where mg.fgroupcode = #{groupCode,jdbcType=VARCHAR}
+  	</select>	
+  	
+  	<insert id="saveSendLog" parameterType="String">
+  	    <selectKey keyProperty="id" order="BEFORE" resultType="int">
+			<![CDATA[
+				SELECT SEQ_ID_MAIL.NEXTVAL AS id FROM DUAL
+			]]>
+		</selectKey>
+  		insert into T_CRM_MAILLOG (FID,FADDRESS,FSENDTIME)
+    	values 
+    	(#{id,jdbcType=NUMERIC},#{address,jdbcType=VARCHAR},sysdate)
+  	</insert>
+</mapper>

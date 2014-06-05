@@ -1,0 +1,6 @@
+<workflows>
+	<workflow name="memberModify" type="resource" location="memberModify.xml" />
+	<workflow name="createSpecialMember" type="resource" location="createSpecialMember.xml"/>
+	<workflow name="contactVary" type="resource" location="contactVary.xml"/>
+	<workflow name="recompense" type="resource" location="recompense.xml"/>
+</workflows>

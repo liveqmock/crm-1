@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.CustCredit">
+	<resultMap id="custCreditMap"
+		type="com.deppon.crm.module.customer.shared.domain.CustCredit">
+		<result property="id" column="CREDIT_FID" />
+		
+		<result property="custId" column="CREDIT_FCUSTID" />   <!-- 客户id -->
+		<result property="custName" column="CREDIT_FCUSTNAME" />   <!-- 客户名称 -->
+		<result property="custNumber" column="CREDIT_FCUSTNUMBER" />   <!-- 客户编码 -->
+		<result property="managementDeptId" column="CREDIT_FMANAGEMENTDEPTID" />   <!-- 经营本部id -->
+		<result property="managementDeptName" column="CREDIT_FMANAGEMENTDEPTNAME" />   <!-- 经营本部名称 -->
+		
+		<result property="busDeptId" column="CREDIT_FBUSDEPTID" />   <!-- 事业部id -->
+		<result property="busDeptName" column="CREDIT_FBUSDEPTNAME" />   <!-- 事业部名称 -->
+		<result property="bigAreaDeptId" column="CREDIT_FBIGAREADEPTID" />   <!-- 零担大区id -->
+		<result property="bigAreaDeptName" column="CREDIT_FBIGAREADEPTNAME" />   <!-- 零担大区名称 -->
+		<result property="areaDeptId" column="CREDIT_FAREADEPTID" />   <!-- 所属营业区id -->
+		
+		<result property="areaDeptName" column="CREDIT_FAREADEPTNAME" />   <!-- 所属营业部名称 -->
+		<result property="attributionDeptId" column="CREDIT_FATTRIBUTIONDEPTID" />   <!-- 归属部门id -->
+		<result property="attributionDeptName" column="CREDIT_FATTRIBUTIONDEPTNAME" />   <!-- 归属部门名称 -->
+		<result property="responsibilityDeptId" column="CREDIT_FRESPONSIBILITYDEPTID" />   <!-- 责任部门id -->
+		<result property="responsibilityDeptName" column="CREDIT_FRESPONSIBILITYDEPTNAME" />   <!-- 责任部门名称 -->
+		
+		<result property="isMonthlyCust" column="CREDIT_FISMONTHLYCUST" />   <!-- 是否月结(1-是,0-否) -->
+		<result property="payway" column="CREDIT_FPAYWAY" />   <!-- 零担结款方式 -->
+		<result property="exPayWay" column="CREDIT_FEXPAYWAY" />   <!-- 快递结款方式 -->
+		<result property="norepaymentType" column="CREDIT_FNOREPAYMENTTYPE" />   <!-- 未还款类型 -->
+		
+		<result property="norepaymentTypeOne" column="norepaymentTypeOne" />   <!-- 未还款类型1 -->
+		<result property="norepaymentTypeTwo" column="norepaymentTypeTwo" />   <!-- 未还款类型2 -->
+		<result property="norepaymentTypeThree" column="norepaymentTypeThree" />   <!-- 未还款类型3 -->
+		<result property="norepaymentTypeFour" column="norepaymentTypeFour" />   <!-- 未还款类型4 -->
+		<result property="norepaymentTypeFive" column="norepaymentTypeFive" />   <!-- 未还款类型5 -->
+		
+		<result property="norepaymentTypeName" column="CREDIT_FNOREPAYMENTTYPENAME" />   <!-- 未还款类型名称-->
+		<result property="repaymentDate" column="CREDIT_FREPAYMENTDATE" />   <!-- 合同结款日期  -->
+		
+		<result property="overdraftCreditAmount" column="CREDIT_FOVERDRAFTCREDITAMOUNT" />   <!-- 临欠信用额度 -->
+		<result property="monthCreditAmount" column="CREDIT_FMONTHCREDITAMOUNT" />   <!-- 月结信用额度 -->
+		<result property="overdraftCreditBalanceAmount" column="CREDIT_FOVERDRAFTCREDITBALANCE" />   <!-- 临欠信用额度余额 -->
+		<result property="monthCreditBalanceAmount" column="CREDIT_FMONTHCREDITBALANCE" />   <!-- 月结信用额度余额 -->
+		<result property="overdrftRecivableAmount" column="CREDIT_FOVERDRFTRECIVABLE" />   <!-- 临欠当期应收金额 -->
+		
+		<result property="lttRecivableAmount" column="CREDIT_FLTTRECIVABLEAMOUNT" />   <!-- 月结当期应收金额 -->
+		<result property="tdreceivableAmount" column="CREDIT_FTDRECEIVABLEAMOUNT" />   <!-- 临欠应收总额 -->
+		<result property="monReceivableAmount" column="CREDIT_FMONRECEIVABLEAMOUNT" />   <!-- 月结应收总额 -->
+		<result property="overdraftCreditUserate" column="CREDIT_FOVERDRAFTCREDITUSERATE" />   <!-- 临欠信用额度使用率 -->
+		<result property="monthCreditUserate" column="CREDIT_FMONTHCREDITUSERATE" />   <!-- 月结信用额度使用率 -->
+		
+		<result property="totalReceivableAmount" column="CREDIT_FTOTALRECEIVABLEAMOUNT" />   <!-- 应收总额 -->
+		<result property="deptCredit" column="CREDIT_FDEPTCREDIT" />   <!-- 部门临欠额度 -->
+		<result property="receivableAmount" column="CREDIT_FRECEIVABLEAMOUNT" />   <!-- 部门应收总额 -->
+		<result property="deptCurdebtReceivableAmount" column="CREDIT_FDEPTCURDEBTRECEIVABLE" />   <!-- 部门当期临欠应收总额 -->
+		<result property="creditTimes" column="CREDIT_FCREDITTIMES" />   <!-- 信用预警次数 -->
+		
+		<result property="lastWarnTime" column="CREDIT_FLASTWARNTIME" />   <!-- 最后一次预警时间 -->
+		<result property="isPoorCredit" column="CREDIT_FISPOORCREDIT" />   <!-- 是否信用较差客户(1-是    0-否) -->
+		<result property="temporarydebitDate" column="CREDIT_FTEMPORARYDEBITDATE" />   <!-- 最早一笔未还临欠开单时间 -->
+		<result property="nomonthlyDate" column="CREDIT_FNOMONTHLYDATE" />   <!-- 最早一笔未还月结开单时间 -->
+		<result property="createTime" column="CREDIT_FCREATETIME" />   <!-- 创建时间 -->
+		
+		<result property="createUserId" column="CREDIT_FCREATEUSERID" />   <!-- 创建人 -->
+		<result property="lastUpdateTime" column="CREDIT_FLASTUPDATETIME" />   <!-- 最后一次修改时间 -->
+		<result property="lastUpdateUserId" column="CREDIT_FLASTUPDATEUSERID" />   <!-- 最后一次修改人 -->
+		<result property="debtdays" column="CREDIT_FDEBTDAYS" />   <!-- 月结天数 -->
+		
+		
+	</resultMap>
+	
+	<resultMap id="custCreditConfigMap"
+		type="com.deppon.crm.module.customer.shared.domain.CustCreditConfig">
+		<result property="id" column="FID" />
+		
+		<result property="maxOverdraftDay" column="CC_FMAXOVERDRAFTDAY" />
+		<result property="monthEndOvertake" column="CC_FMONTHENDOVERTAKE" />
+		<result property="overdueMonth" column="CC_FOVERDUEMONTH" />
+		<result property="earliestDay" column="CC_FEARLIESTDAY" />
+		
+		<result property="beforePaymentdateDay" column="CC_FBEFOREPAYMENTDATEDAY" />
+		<result property="beforeMonthPaymentDay" column="CC_FBEFOREMONTHPAYMENTDAY" />
+		<result property="usedcreditrate" column="CC_FUSEDCREDITRATE" />
+		<result property="deptUsedrate" column="CC_FDEPTUSEDRATE" />
+	</resultMap>
+
+	<!-- 定时恢复散客、固客的临欠额度 -->
+	<select id="getDeliverMoneyByCondtion" statementType="CALLABLE">
+		<![CDATA[
+      		{call SP_UPDATE_PROCREDIT(#{beginDate,mode=IN,jdbcType=DATE},#{endDate,mode=IN,jdbcType=DATE})}
+		]]>
+	</select>
+	
+	
+	<!-- 根据客户id，查询客户信用信息 -->
+	<select id="getCustCreditByCustId" parameterType="string" 
+			resultMap="custCreditMap">
+		<!-- column: 客户id, 临欠信用额度, 月结信用额度, 应收总额, 临欠当期应收金额 , 月结当期应收金额, 
+				月结应收总额, 临欠信用额度余额, 月结信用额度余额, 信用预警次数, 最后一次预警时间, 是否信用较差客户 -->
+		select  
+			t1.fid CREDIT_FCUSTID, 
+			nvl(t1.fprocredit, 0) CREDIT_FOVERDRAFTCREDITAMOUNT, 
+			nvl(t2.farrearamount, 0) CREDIT_FMONTHCREDITAMOUNT, 
+			nvl(t3.Ftotalreceivable, 0) CREDIT_FTOTALRECEIVABLEAMOUNT, 
+			sum(nvl(t3.Foverdrftrecivable, 0)) CREDIT_FOVERDRFTRECIVABLE, 
+			nvl(t3.Flttrecivable, 0) CREDIT_FLTTRECIVABLEAMOUNT, 
+			nvl(t3.Fmonreceivableamount, 0) CREDIT_FMONRECEIVABLEAMOUNT, 
+			nvl(t1.fprocredit, 0)-sum(nvl(t3.Foverdrftrecivable, 0)) CREDIT_FOVERDRAFTCREDITBALANCE, 
+			nvl(t2.farrearamount, 0)-nvl(t3.Fmonreceivableamount, 0) CREDIT_FMONTHCREDITBALANCE, 
+			t4.Fcredittimes CREDIT_FCREDITTIMES, 
+			t4.Flastwarntime CREDIT_FLASTWARNTIME, 
+			t4.Fispoorcredit CREDIT_FISPOORCREDIT  
+		from t_cust_custbasedata t1 
+		left join T_CUST_CONTRACT t2 on t1.fid = t2.fcustid and t2.fcontractstatus = 1
+		left join T_CRM_CUSTCREDIT t3 on t1.fcustnumber = t3.FCUSTNUMBER 
+		left join T_CUST_CUSTBASEDATA_EXTEND t4 on t1.fid = t4.fcustid 
+		where t1.fid = #{custId} 
+		group by t1.fid, t1.fprocredit, t2.farrearamount, t3.Ftotalreceivable, 
+		t3.Flttrecivable, t3.Fmonreceivableamount, t4.Fcredittimes, t4.Flastwarntime, t4.Fispoorcredit
+	</select>
+	
+	<!-- 更新信用较差客户配置信息 -->
+	<update id="updateCustCreditConfig" 
+			parameterType="com.deppon.crm.module.customer.shared.domain.CustCreditConfig">
+		<![CDATA[
+			update T_CUST_CREDITCONFIG 
+			set 
+				FMAXOVERDRAFTDAY = #{maxOverdraftDay,jdbcType=VARCHAR},
+				FMONTHENDOVERTAKE = #{monthEndOvertake,jdbcType=VARCHAR},
+				FOVERDUEMONTH = #{overdueMonth,jdbcType=VARCHAR},
+				FEARLIESTDAY = #{earliestDay,jdbcType=VARCHAR},
+				FBEFOREPAYMENTDATEDAY = #{beforePaymentdateDay,jdbcType=VARCHAR},
+				FBEFOREMONTHPAYMENTDAY = #{beforeMonthPaymentDay,jdbcType=VARCHAR},
+				FUSEDCREDITRATE = #{usedcreditrate,jdbcType=VARCHAR},
+				FDEPTUSEDRATE = #{deptUsedrate,jdbcType=VARCHAR},
+				FLASTUPDATETIME = sysdate,
+				FLASTMODIFYUSERID = #{modifyUser,jdbcType=VARCHAR} 
+			where fid = 1
+		]]>
+	</update>
+	
+	<sql id="CustCreditConfig_column">
+		<![CDATA[
+			CC.FMAXOVERDRAFTDAY CC_FMAXOVERDRAFTDAY,
+			CC.FMONTHENDOVERTAKE CC_FMONTHENDOVERTAKE,
+			CC.FOVERDUEMONTH CC_FOVERDUEMONTH,
+			CC.FEARLIESTDAY CC_FEARLIESTDAY,
+			CC.FBEFOREPAYMENTDATEDAY CC_FBEFOREPAYMENTDATEDAY,
+			CC.FBEFOREMONTHPAYMENTDAY CC_FBEFOREMONTHPAYMENTDAY,
+			CC.FUSEDCREDITRATE CC_FUSEDCREDITRATE,
+			CC.FDEPTUSEDRATE CC_FDEPTUSEDRATE
+		]]>
+	</sql>
+	
+	<!-- 查询信用较差客户配置信息 -->
+	<select id="getCustCreditConfig" 
+			resultMap="custCreditConfigMap">
+		<![CDATA[
+				SELECT 
+		]]>
+		<include refid="CustCreditConfig_column" />
+		<![CDATA[
+				FROM 
+					T_CUST_CREDITCONFIG CC 
+				WHERE 
+					CC.fid = 1
+		]]>
+	</select>
+	
+	<!-- 查询客户未还款信息 -->
+	<select id="getCustBadCreditList" resultMap="custCreditMap">
+		<!-- column: 客户id, 最早一笔未还临欠开单时间, 最早一笔未还月结开单时间, 合同结款日期 -->
+		<![CDATA[
+			SELECT 
+        		t3.fid CREDIT_FCUSTID, 
+        		t1.ftemporarydebitDate CREDIT_FTEMPORARYDEBITDATE, 
+        		t1.fnomonthlyDate CREDIT_FNOMONTHLYDATE, 
+        		nvl(t2.FRESULTDATE, 0) CREDIT_FREPAYMENTDATE 
+      		from T_CRM_CUSTCREDIT t1 
+      		left join t_cust_custbasedata t3 on t1.fcustnumber = t3.fcustnumber 
+      		left join T_CUST_CONTRACT t2 on t3.fid = t2.fcustid and t2.fcontractstatus = 1 
+      		where t3.FCUSTSTATUS in ('0', '1')
+		]]>
+	</select>
+	
+	<!-- 标记信用较差客户 -->
+	<update id="updateCustCredit">
+        update T_CUST_CUSTBASEDATA_EXTEND 
+        set FISPOORCREDIT = 0
+	</update>
+	<update id="updateCustBadCredit" parameterType="List">
+        update T_CUST_CUSTBASEDATA_EXTEND 
+        set FISPOORCREDIT = 1 
+        where FCUSTID in   
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">  
+			#{item.custId} 
+		</foreach>  
+	</update>
+	
+	<!-- 生成信用较差客户列表 -->
+	<select id="getCustBadCreditExcelList" resultMap="custCreditMap" fetchSize="1000">
+		<!-- column: 责任部门id, 责任部门名称, 客户id, 客户编码, 客户名称, 
+		归属部门id, 归属部门名称, 零担结款方式, 快递结款方式, 合同结款日期, 
+		临欠信用额度, 月结信用额度, 临欠当期应收金额, 月结当期应收金额 ,临欠应收总额, 
+		月结应收总额, 部门临欠额度, 部门应收总额, 最早一笔未还临欠开单时间, 最早一笔未还月结开单时间, 
+		部门当期临欠应收总额, 月结天数  -->
+		select 
+      		t3.fid CREDIT_FRESPONSIBILITYDEPTID, 
+      		t3.fdeptname CREDIT_FRESPONSIBILITYDEPTNAME,
+      		t2.fid CREDIT_FCUSTID,
+      		t2.Fcustnumber CREDIT_FCUSTNUMBER, 
+      		t2.Fcustname CREDIT_FCUSTNAME,  
+      		t2.Fdeptid CREDIT_FATTRIBUTIONDEPTID,
+      		t4.Fdeptname CREDIT_FATTRIBUTIONDEPTNAME, 
+      		t5.Fpayway CREDIT_FPAYWAY,
+      		t5.FEXPAYWAY CREDIT_FEXPAYWAY, 
+      		t5.FRESULTDATE CREDIT_FREPAYMENTDATE,
+      		t2.FPROCREDIT CREDIT_FOVERDRAFTCREDITAMOUNT,
+      		t5.FUSEABLEARREARAMOUNT CREDIT_FMONTHCREDITAMOUNT,
+      		t1.FOVERDRFTRECIVABLE CREDIT_FOVERDRFTRECIVABLE,
+      		t1.FLTTRECIVABLE CREDIT_FLTTRECIVABLEAMOUNT,
+      		t1.FTDRECEIVABLEAMOUNT CREDIT_FTDRECEIVABLEAMOUNT,
+      		t1.FMONRECEIVABLEAMOUNT CREDIT_FMONRECEIVABLEAMOUNT,
+      		t6.FMONTHCREDIT CREDIT_FDEPTCREDIT,
+      		t6.FRECEIVABLE CREDIT_FRECEIVABLEAMOUNT,
+      		t1.FtemporarydebitDate CREDIT_FTEMPORARYDEBITDATE, 
+      		t1.FnomonthlyDate CREDIT_FNOMONTHLYDATE ,
+      		t6.Fdeptcurdebtreceivable CREDIT_FDEPTCURDEBTRECEIVABLE, 
+      		t5.FDEBTDAYS CREDIT_FDEBTDAYS 
+    	from T_CRM_CUSTCREDIT t1 
+    	left join T_CUST_CUSTBASEDATA t2 on t1.fcustnumber = t2.fcustnumber 
+    	left join t_org_department t3 on t1.FDEPTCODE = t3.fstandardcode  
+    	left join t_org_department t4 on t2.fdeptid = t4.fid 
+    	left join T_CUST_CONTRACT t5 on t2.fid = t5.fcustid and t5.fcontractstatus = 1 
+    	left join T_CRM_DEPTCREDIT t6 on t1.FDEPTCODE = t6.FDEPTCODE  
+    	where t2.FCUSTSTATUS in ('0', '1') 
+    	and t1.fcustnumber is not null 
+    	and t2.fcustnumber is not null 
+    	and t3.fstatus = 1 
+      	and t3.fstandardcode is not null 
+      	and t4.fstatus = 1 
+      	and t4.fstandardcode is not null
+	</select>
+	
+	<!-- T_CUST_CREDITREPORT -->
+	<sql id="insert_param">
+		FID,  
+		FMANAGEMENTDEPTID,  
+		FMANAGEMENTDEPTNAME,  
+		FBUSDEPTID,  
+		FBUSDEPTNAME,  
+		FBIGAREADEPTID,  
+		FBIGAREADEPTNAME,  
+		FAREADEPTID,  
+		FAREADEPTNAME,  
+		FATTRIBUTIONDEPTID,  
+		 
+		FATTRIBUTIONDEPTNAME,  
+		FRESPONSIBILITYDEPTID,  
+		FRESPONSIBILITYNAME,  
+		FCUSTID, 
+		FCUSTNAME,  
+		FCUSTNUMBER,  
+		FISMONTHLYCUST,  
+		FNOREPAYMENTTYPE,  
+		FNOREPAYMENTTYPENAME,  
+		FREPAYMENTDATE,  
+		FOVERDRAFTCREDIT,  
+		FMONTHCREDIT, 
+		 
+		FOVERDRAFTCREDITBALANCE,  
+		FMONTHCREDITBALANCE,  
+		FOVERDRFTRECIVABLE,  
+		FLTTRECIVABLE,  
+		FTDRECEIVABLEAMOUNT,  
+		FMONRECEIVABLEAMOUNT,  
+		FDEPTCREDIT,  
+		FOVERDRAFTCREDITUSERATE,  
+		FMONTHCREDITUSERATE,  
+		FRECEIVABLE,  
+		
+		FDEPTCURDEBTRECEIVABLE,  
+		FTEMPORARYDEBITDATE,  
+		FNOMONTHLYDATE,  
+		FCREATETIME,  
+		FCREATEUSER                           
+	</sql>
+	
+	<sql id="select_param">
+		FID                                  CREDIT_FID, 
+		FMANAGEMENTDEPTID                    CREDIT_FMANAGEMENTDEPTID, 
+		FMANAGEMENTDEPTNAME                  CREDIT_FMANAGEMENTDEPTNAME, 
+		FBUSDEPTID                           CREDIT_FBUSDEPTID, 
+		FBUSDEPTNAME                         CREDIT_FBUSDEPTNAME, 
+		FBIGAREADEPTID                       CREDIT_FBIGAREADEPTID, 
+		FBIGAREADEPTNAME                     CREDIT_FBIGAREADEPTNAME, 
+		FAREADEPTID                          CREDIT_FAREADEPTID, 
+		FAREADEPTNAME                        CREDIT_FAREADEPTNAME, 
+		FATTRIBUTIONDEPTID                   CREDIT_FATTRIBUTIONDEPTID, 
+		 
+		FATTRIBUTIONDEPTNAME                 CREDIT_FATTRIBUTIONDEPTNAME, 
+		FRESPONSIBILITYDEPTID                CREDIT_FRESPONSIBILITYDEPTID, 
+		FRESPONSIBILITYNAME                  CREDIT_FRESPONSIBILITYDEPTNAME, 
+		FCUSTID                              CREDIT_FCUSTID,
+		FCUSTNAME                            CREDIT_FCUSTNAME, 
+		FCUSTNUMBER                          CREDIT_FCUSTNUMBER, 
+		FISMONTHLYCUST                       CREDIT_FISMONTHLYCUST, 
+		FNOREPAYMENTTYPE                     CREDIT_FNOREPAYMENTTYPE, 
+		FNOREPAYMENTTYPENAME                 CREDIT_FNOREPAYMENTTYPENAME, 
+		FREPAYMENTDATE                       CREDIT_FREPAYMENTDATE, 
+		FOVERDRAFTCREDIT                     CREDIT_FOVERDRAFTCREDITAMOUNT, 
+		FMONTHCREDIT                         CREDIT_FMONTHCREDITAMOUNT,
+		 
+		FOVERDRAFTCREDITBALANCE              CREDIT_FOVERDRAFTCREDITBALANCE, 
+		FMONTHCREDITBALANCE                  CREDIT_FMONTHCREDITBALANCE, 
+		FOVERDRFTRECIVABLE                   CREDIT_FOVERDRFTRECIVABLE, 
+		FLTTRECIVABLE                        CREDIT_FLTTRECIVABLEAMOUNT, 
+		FTDRECEIVABLEAMOUNT                  CREDIT_FTDRECEIVABLEAMOUNT, 
+		FMONRECEIVABLEAMOUNT                 CREDIT_FMONRECEIVABLEAMOUNT, 
+		FDEPTCREDIT                          CREDIT_FDEPTCREDIT, 
+		FOVERDRAFTCREDITUSERATE              CREDIT_FOVERDRAFTCREDITUSERATE, 
+		FMONTHCREDITUSERATE                  CREDIT_FMONTHCREDITUSERATE, 
+		FRECEIVABLE                          CREDIT_FRECEIVABLEAMOUNT, 
+		
+		FDEPTCURDEBTRECEIVABLE               CREDIT_FDEPTCURDEBTRECEIVABLE, 
+		FTEMPORARYDEBITDATE                  CREDIT_FTEMPORARYDEBITDATE, 
+		FNOMONTHLYDATE                       CREDIT_FNOMONTHLYDATE, 
+		FCREATETIME                          CREDIT_FCREATETIME, 
+		FCREATEUSER                          CREDIT_FCREATEUSERID 
+	</sql>
+	
+	<!-- 记录信用较差客户列表 -->
+	<insert id="insertCustBadCreditReport" 
+			parameterType="com.deppon.crm.module.customer.shared.domain.CustCredit">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_POORCREDIT.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		<![CDATA[
+			insert into T_CUST_CREDITREPORT (
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) values ( 
+				#{id, jdbcType=NUMERIC}, 
+				#{managementDeptId, jdbcType=VARCHAR}, 
+				#{managementDeptName, jdbcType=VARCHAR}, 
+				#{busDeptId, jdbcType=VARCHAR}, 
+				#{busDeptName, jdbcType=VARCHAR}, 
+				#{bigAreaDeptId, jdbcType=VARCHAR}, 
+				#{bigAreaDeptName, jdbcType=VARCHAR}, 
+				#{areaDeptId, jdbcType=VARCHAR}, 
+				#{areaDeptName, jdbcType=VARCHAR}, 
+				#{attributionDeptId, jdbcType=VARCHAR}, 
+				
+				#{attributionDeptName, jdbcType=VARCHAR}, 
+				#{responsibilityDeptId, jdbcType=VARCHAR}, 
+				#{responsibilityDeptName, jdbcType=VARCHAR}, 
+				#{custId, jdbcType=VARCHAR}, 
+				#{custName, jdbcType=VARCHAR}, 
+				#{custNumber, jdbcType=VARCHAR}, 
+				#{isMonthlyCust, jdbcType=VARCHAR}, 
+				#{norepaymentType, jdbcType=VARCHAR}, 
+				#{norepaymentTypeName, jdbcType=VARCHAR}, 
+				#{repaymentDate, jdbcType=VARCHAR}, 
+				#{overdraftCreditAmount, jdbcType=VARCHAR}, 
+				#{monthCreditAmount, jdbcType=VARCHAR}, 
+				
+				#{overdraftCreditBalanceAmount, jdbcType=VARCHAR}, 
+				#{monthCreditBalanceAmount, jdbcType=VARCHAR}, 
+				#{overdrftRecivableAmount, jdbcType=VARCHAR}, 
+				#{lttRecivableAmount, jdbcType=VARCHAR}, 
+				#{tdreceivableAmount, jdbcType=VARCHAR}, 
+				#{monReceivableAmount, jdbcType=VARCHAR}, 
+				#{deptCredit, jdbcType=VARCHAR}, 
+				#{overdraftCreditUserate, jdbcType=VARCHAR}, 
+				#{monthCreditUserate, jdbcType=VARCHAR}, 
+				#{receivableAmount, jdbcType=VARCHAR}, 
+				
+				#{deptCurdebtReceivableAmount, jdbcType=VARCHAR}, 
+				#{temporarydebitDate, jdbcType=DATE}, 
+				#{nomonthlyDate, jdbcType=DATE}, 
+				sysdate, 
+				'1'
+			)
+		]]>
+	</insert>
+	
+	<!-- 更新信用预警信息（信用预警次数、最后一次信用预警时间） -->
+	<update id="updateEarlyWarnInfo" 
+			parameterType="string">
+		<![CDATA[
+			update T_CUST_CUSTBASEDATA_EXTEND t 
+			set t.FCREDITTIMES = t.FCREDITTIMES + 1, 
+				t.FLASTWARNTIME = (select max(FCREATETIME) from T_CUST_CREDITREPORT where fcustid = #{custId}) 
+			where t.fcustid = #{custId}
+		]]>
+	</update>
+	
+	<!-- 根据条件查询信用较差客户信息列表 -->
+	<select id="getCustCreditListByCondition" 
+			parameterType="com.deppon.crm.module.customer.shared.domain.CustCredit" 
+			resultMap="custCreditMap">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			 from T_CUST_CREDITREPORT t 
+		]]>
+		<where>
+			<if test="null != beginDate and '' != beginDate and null != endDate and '' != endDate">
+				to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+				and to_char(t.fcreatetime, 'yyyy-MM-dd') &lt;= #{endDate}
+			</if>
+			<if test="null != managementDeptId and '' != managementDeptId">
+				and fmanagementDeptId = #{managementDeptId} 
+			</if>
+			<if test="null != busDeptId and '' != busDeptId">
+				and fbusDeptId = #{busDeptId} 
+			</if>
+			<if test="null != bigAreaDeptId and '' != bigAreaDeptId">
+				and fbigAreaDeptId = #{bigAreaDeptId} 
+			</if>
+			<if test="null != areaDeptId and '' != areaDeptId">
+				and fareaDeptId = #{areaDeptId} 
+			</if>
+			<if test="null != responsibilityDeptId and '' != responsibilityDeptId">
+				and fresponsibilityDeptId = #{responsibilityDeptId} 
+			</if>
+			<if test="null != attributionDeptId and '' != attributionDeptId">
+				and fattributionDeptId = #{attributionDeptId} 
+			</if>
+		</where>
+	</select>
+	
+	<!-- 经营本部 -->
+	<select id="getManagementDeptList" resultType="map">
+		select distinct t1.fmanagementDeptId, t2.fdeptname, t2.fdeptcode from T_CUST_CREDITREPORT t1 
+		left join t_org_department t2 on t1.fmanagementdeptid = t2.fid 
+		where t2.fdeptcode is not null 
+		and t2.fstandardcode is not null 
+		and t2.fstatus = 1
+	</select>
+	
+	<!-- 事业部 -->
+	<select id="getBusDeptList" resultType="map">
+		select distinct t.fbusDeptId, t.fbusdeptname from T_CUST_CREDITREPORT t
+	</select>
+	
+	<!-- 大区 -->
+	<select id="getBigAreaDeptList" resultType="map">
+		select distinct t.fbigAreaDeptId, t.fbigareadeptname from T_CUST_CREDITREPORT t 
+	</select>
+	
+	<!-- 小区 -->
+	<select id="getAreaDeptList" resultType="map">
+		select distinct t.fareaDeptId, t.fareadeptname from T_CUST_CREDITREPORT t
+	</select>
+	
+	<!-- 营业部 -->
+	<select id="getResponsibilityDeptList" resultType="map">
+		select distinct t.fresponsibilityDeptId, t.fresponsibilityname, 
+		t.fattributionDeptId, t.fattributiondeptname from T_CUST_CREDITREPORT t
+	</select>
+	
+	<!-- 查询信用较差客户报表 -->
+	<select id="getCustCreditListByConditions" resultMap="custCreditMap" parameterType="map">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			, 
+			case when instr(fnorepaymenttype, '1') > 0  then '√' end norepaymentTypeOne, 
+  			case when instr(fnorepaymenttype, '2') > 0  then '√' end norepaymentTypeTwo, 
+    		case when instr(fnorepaymenttype, '3') > 0  then '√' end norepaymentTypeThree, 
+    		case when instr(fnorepaymenttype, '4') > 0  then '√' end norepaymentTypeFour, 
+    		case when instr(fnorepaymenttype, '5') > 0  then '√' end norepaymentTypeFive  
+			from T_CUST_CREDITREPORT t 
+		]]>
+		<where>
+			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+				to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+				and to_char(t.fcreatetime, 'yyyy-MM-dd') &lt;= #{endDate}
+		 	</if>
+			<if test="deptId != null and deptId != ''">
+				and (t.Fmanagementdeptid = #{deptId} or t.Fbusdeptid = #{deptId} or t.Fbigareadeptid = #{deptId} or t.Fareadeptid = #{deptId} or t.Fresponsibilitydeptid = #{deptId}) 
+		 	</if>
+		</where>
+	</select>
+	
+	<select id="getCustCreditCountByConditions" resultType="int" parameterType="map">
+		<![CDATA[
+			select count(*) from T_CUST_CREDITREPORT t 
+		]]>
+		<where>
+			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+				to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+				and to_char(t.fcreatetime, 'yyyy-MM-dd') &lt;= #{endDate}
+		 	</if>
+			<if test="deptId != null and deptId != ''">
+				and (t.Fmanagementdeptid = #{deptId} or t.Fbusdeptid = #{deptId} or t.Fbigareadeptid = #{deptId} or t.Fareadeptid = #{deptId} or t.Fresponsibilitydeptid = #{deptId}) 
+		 	</if>
+		</where>
+	</select>
+	
+	<!-- 查询部门为 “快递分部”或者“快递大区” -->
+	<select id="getCustCreditListByOtherConditions" resultMap="custCreditMap" parameterType="map">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			, 
+			case when instr(fnorepaymenttype, '1') > 0  then '√' end norepaymentTypeOne, 
+  			case when instr(fnorepaymenttype, '2') > 0  then '√' end norepaymentTypeTwo, 
+    		case when instr(fnorepaymenttype, '3') > 0  then '√' end norepaymentTypeThree, 
+    		case when instr(fnorepaymenttype, '4') > 0  then '√' end norepaymentTypeFour, 
+    		case when instr(fnorepaymenttype, '5') > 0  then '√' end norepaymentTypeFive  
+			from T_CUST_CREDITREPORT t 
+		 	right join (
+				select fid fdeptid from t_org_department t3 
+				right join (
+					select t2.fbusinessdeptcode, t2.fbusinessdeptname from (
+						select * from (
+							select * FROM T_ORG_DEPARTMENT MASTER 
+	      					CONNECT BY PRIOR MASTER.FID = MASTER.FPARENTID 
+	      					START WITH MASTER.FID = #{deptId} 
+						) where fdeptname like '%点部'
+					) t1 left join t_crm_expresspointbusinessdept t2 on t1.fstandardcode = t2.FEXPRESSPOINTCODE 
+				) t4 on t3.fstandardcode = t4.fbusinessdeptcode 
+				where t3.fid is not null and t3.fstatus = 1
+			) t5 on t.Fresponsibilitydeptid = t5.fdeptid  
+			where to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+			and to_char(t.fcreatetime, 'yyyy-MM-dd') <= #{endDate} 
+		]]>
+	</select>
+	
+	<!-- 查询部门为 “快递点部” -->
+	<select id="getCustCreditListByMinistryConditions" resultMap="custCreditMap" parameterType="map">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			, 
+			case when instr(fnorepaymenttype, '1') > 0  then '√' end norepaymentTypeOne, 
+  			case when instr(fnorepaymenttype, '2') > 0  then '√' end norepaymentTypeTwo, 
+    		case when instr(fnorepaymenttype, '3') > 0  then '√' end norepaymentTypeThree, 
+    		case when instr(fnorepaymenttype, '4') > 0  then '√' end norepaymentTypeFour, 
+    		case when instr(fnorepaymenttype, '5') > 0  then '√' end norepaymentTypeFive  
+			from T_CUST_CREDITREPORT t 
+		 	right join (
+				select fid fdeptid from t_org_department t3 
+				right join (
+					select t2.fbusinessdeptcode, t2.fbusinessdeptname from T_ORG_DEPARTMENT t1 
+          			left join t_crm_expresspointbusinessdept t2 on t1.fstandardcode = t2.FEXPRESSPOINTCODE 
+          			where t1.fid = #{deptId} 
+				) t4 on t3.fstandardcode = t4.fbusinessdeptcode 
+				where t3.fid is not null and t3.fstatus = 1
+			) t5 on t.Fresponsibilitydeptid = t5.fdeptid  
+			where to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+			and to_char(t.fcreatetime, 'yyyy-MM-dd') <= #{endDate} 
+		]]>
+	</select>
+	
+	<!-- 查询部门为 “快递分部”或者“快递大区” 总数量 -->
+	<select id="getCustCreditCountByOtherConditions" resultType="int" parameterType="map">
+		<![CDATA[
+			select count(*) 
+			from T_CUST_CREDITREPORT t 
+		 	right join (
+				select fid fdeptid from t_org_department t3 
+				right join (
+					select t2.fbusinessdeptcode, t2.fbusinessdeptname from (
+						select * from (
+							select * FROM T_ORG_DEPARTMENT MASTER 
+	      					CONNECT BY PRIOR MASTER.FID = MASTER.FPARENTID 
+	      					START WITH MASTER.FID = #{deptId} 
+						) where fdeptname like '%点部'
+					) t1 left join t_crm_expresspointbusinessdept t2 on t1.fstandardcode = t2.FEXPRESSPOINTCODE 
+				) t4 on t3.fstandardcode = t4.fbusinessdeptcode 
+				where t3.fid is not null and t3.fstatus = 1
+			) t5 on t.Fresponsibilitydeptid = t5.fdeptid  
+			where to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+			and to_char(t.fcreatetime, 'yyyy-MM-dd') <= #{endDate}
+		]]>
+	</select>
+	
+	<!-- 查询部门为“点部” 总数量 -->
+	<select id="getCustCreditCountByMinistryConditions" resultType="int" parameterType="map">
+		<![CDATA[
+			select count(*) 
+			from T_CUST_CREDITREPORT t 
+		 	right join (
+				select fid fdeptid from t_org_department t3 
+				right join (
+					select t2.fbusinessdeptcode, t2.fbusinessdeptname from T_ORG_DEPARTMENT t1 
+          			left join t_crm_expresspointbusinessdept t2 on t1.fstandardcode = t2.FEXPRESSPOINTCODE 
+          			where t1.fid = #{deptId} 
+				) t4 on t3.fstandardcode = t4.fbusinessdeptcode 
+				where t3.fid is not null and t3.fstatus = 1
+			) t5 on t.Fresponsibilitydeptid = t5.fdeptid  
+			where to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+			and to_char(t.fcreatetime, 'yyyy-MM-dd') <= #{endDate}
+		]]>
+	</select>
+	
+	<!-- 根据快递分部查询信用较差客户列表 -->
+	<select id="getCustCreditListByBranch" resultMap="custCreditMap" parameterType="map">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			, 
+			case when instr(fnorepaymenttype, '1') > 0  then '√' end norepaymentTypeOne, 
+  			case when instr(fnorepaymenttype, '2') > 0  then '√' end norepaymentTypeTwo, 
+    		case when instr(fnorepaymenttype, '3') > 0  then '√' end norepaymentTypeThree, 
+    		case when instr(fnorepaymenttype, '4') > 0  then '√' end norepaymentTypeFour, 
+    		case when instr(fnorepaymenttype, '5') > 0  then '√' end norepaymentTypeFive  
+			from T_CUST_CREDITREPORT t 
+		 	join (
+				select fid fdeptid from t_org_department t3 
+				right join (
+					select t2.fbusinessdeptcode, t2.fbusinessdeptname from (
+						select * from (
+							select * FROM T_ORG_DEPARTMENT MASTER 
+	      					CONNECT BY PRIOR MASTER.FID = MASTER.FPARENTID 
+	      					START WITH MASTER.FID = #{deptId} 
+						) where fdeptname like '%点部'
+					) t1 left join t_crm_expresspointbusinessdept t2 on t1.fstandardcode = t2.FEXPRESSPOINTCODE 
+				) t4 on t3.fstandardcode = t4.fbusinessdeptcode 
+				where t3.fid is not null and t3.fstatus = 1
+			) t5 on t.Fresponsibilitydeptid = t5.fdeptid 
+			where to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+			and to_char(t.fcreatetime, 'yyyy-MM-dd') <= #{endDate}
+		]]>
+	</select>
+	
+	<!-- 根据快递点部查询信用较差客户列表 -->
+	<select id="getCustCreditListByMinistry" resultMap="custCreditMap" parameterType="map">
+		<![CDATA[
+			select 
+		]]>
+		<include refid="select_param" />
+		<![CDATA[
+			, 
+			case when instr(fnorepaymenttype, '1') > 0  then '√' end norepaymentTypeOne, 
+  			case when instr(fnorepaymenttype, '2') > 0  then '√' end norepaymentTypeTwo, 
+    		case when instr(fnorepaymenttype, '3') > 0  then '√' end norepaymentTypeThree, 
+    		case when instr(fnorepaymenttype, '4') > 0  then '√' end norepaymentTypeFour, 
+    		case when instr(fnorepaymenttype, '5') > 0  then '√' end norepaymentTypeFive  
+			from T_CUST_CREDITREPORT t 
+		 	join (
+				select fid fdeptid from t_org_department t3 
+				right join (
+					select t2.fbusinessdeptcode, t2.fbusinessdeptname from T_ORG_DEPARTMENT t1 
+          			left join t_crm_expresspointbusinessdept t2 on t1.fstandardcode = t2.FEXPRESSPOINTCODE 
+          			where t1.fid = #{deptId} 
+				) t4 on t3.fstandardcode = t4.fbusinessdeptcode 
+				where t3.fid is not null and t3.fstatus = 1
+			) t5 on t.Fresponsibilitydeptid = t5.fdeptid 
+			where to_char(t.fcreatetime, 'yyyy-MM-dd') >= #{beginDate} 
+			and to_char(t.fcreatetime, 'yyyy-MM-dd') <= #{endDate}
+		]]>
+	</select>
+	
+	<!-- 记录信用较差客户列表(存储过程) -->
+	<select id="insertCustBadCreditReportProc" statementType="CALLABLE">
+		{call SP_GET_CUSTBADCREDIT}
+	</select>
+	
+	<!-- 生成信用较差客户待办 (存储过程) -->
+	<select id="generationCustCreditToDo" statementType="CALLABLE">
+		{call SP_GET_CUSTBADCREDITTODO}
+	</select>
+	
+	<!-- 标记信用较差客户（存储过程） -->
+	<select id="updateCustBadCreditProc" statementType="CALLABLE">
+		{call SP_UPDATE_CUSTBADCREDIT}
+	</select>
+	
+	<!-- 查询权限校验：XX快递点部数据对应权限为XX快递点部经理 -->
+	<select id="checkIsViewByexpressMinistry" resultType="int" parameterType="map">
+		<![CDATA[
+			select count(*) from t_crm_expresspointbusinessdept busdept 
+			left join t_org_department dept on busdept.fbusinessdeptcode = dept.fstandardcode 
+			where busdept.fexpresspointcode = #{currDeptCode} 
+			and dept.fid = #{deptId} 
+			and dept.fstatus = 1 
+			and dept.fstandardcode is not null
+		]]>
+	</select>
+	
+	<!-- 查询权限校验：XX快递分部数据对应权限为XX分部高级经理、XX分部统计组  -->
+	<select id="checkIsViewByexpressBranch" resultType="int" parameterType="map">
+		<![CDATA[
+			select count(*) from T_CRM_EXPRESSPOINTBUSINESSDEPT busDept 
+ 			join T_ORG_DEPARTMENT dept on busDept.FBUSINESSDEPTCODE = dept.fstandardcode 
+ 			join (
+ 				SELECT FSTANDARDCODE FROM (
+					SELECt * FROM T_ORG_DEPARTMENT MASTER
+   					CONNECT BY PRIOR MASTER.FID = MASTER.FPARENTID
+					START WITH MASTER.FSTANDARDCODE = #{currDeptCode} 
+  				) T 
+  				WHERE T.FDEPTNAME LIKE '%点部' 
+  				AND T.FSTATUS = 1 
+  				AND T.FSTANDARDCODE IS NOT NULL
+  			) TDEPT on busDept.FEXPRESSPOINTCODE = TDEPT.FSTANDARDCODE
+			where dept.fid = #{deptId} 
+			AND DEPT.FSTATUS = 1 
+			AND DEPT.FSTANDARDCODE IS NOT NULL
+		]]>
+	</select>
+	
+</mapper>	
+	

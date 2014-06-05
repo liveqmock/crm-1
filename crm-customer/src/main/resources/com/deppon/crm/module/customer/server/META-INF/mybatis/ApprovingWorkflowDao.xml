@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper 	namespace="com.deppon.crm.module.customer.shared.domain.ApprovingWorkflowData">
+
+	<!-- 新增 -->
+	<insert id="insertContactWorkflowData"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ApprovingWorkflowData">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			SELECT SEQ_ID_APPROVINGWORKFLOWDATA.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_CUST_APPROVINGWORKFLOWDATA(
+		FID,FCREATETIME,FCREATEUSERID,
+		FCONTACTMOBILE,FCONTACTNUM,
+		FCONTACTNAME,FCONTACTTEL,FCONTACTIDCARD, FSTATUS,
+		FCONTACTID,FWORKFLOWID,FTAXREGNUMBER,FCREDENTIALSTYPE )
+		VALUES(
+		#{id},sysdate,#{createUser,jdbcType=VARCHAR},
+		#{contactMobile,jdbcType=VARCHAR},#{contactNum,jdbcType=VARCHAR},
+		#{contactName,jdbcType=VARCHAR},#{contactTel,jdbcType=VARCHAR},
+		#{idCardNo,jdbcType=NUMERIC},#{status,jdbcType=VARCHAR},
+		#{contactId.id,jdbcType=VARCHAR},#{workflowId,jdbcType=VARCHAR},
+		#{taxregNumber,jdbcType=VARCHAR},#{credentialsType,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 查询字段 -->
+	<sql id="ContactWorkflowData_column">
+		FID,FCREATETIME,FCREATEUSERID,FLASTUPDATETIME,FLASTMODIFYUSERID, 
+		FCONTACTNUM,FCONTACTMOBILE,FCONTACTNAME,FCONTACTTEL,
+		FCONTACTIDCARD, FSTATUS,FCONTACTID,FWORKFLOWID,FTAXREGNUMBER,FCREDENTIALSTYPE
+	</sql>
+	
+	<!-- 返回 映射 -->
+	<resultMap id="ContactWorkflowDataRM"
+		type="com.deppon.crm.module.customer.shared.domain.ApprovingWorkflowData">
+		<id property="id" column="FID" jdbcType="VARCHAR" />
+		<result property="createDate" column="FCREATETIME" jdbcType="DATE" />
+		<result property="createUser" column="FCREATEUSERID" jdbcType="VARCHAR" />
+		<result property="modifyDate" column="FLASTUPDATETIME"
+			jdbcType="DATE" />
+		<result property="modifyUser" column="FLASTMODIFYUSERID"
+			jdbcType="VARCHAR" />
+		<result property="contactMobile" column="FCONTACTMOBILE"
+			jdbcType="VARCHAR" />
+		<result property="contactName" column="FCONTACTNAME" jdbcType="VARCHAR" />
+		<result property="contactTel" column="FCONTACTTEL" jdbcType="VARCHAR" />
+		<result property="idCardNo" column="FCONTACTIDCARD" jdbcType="VARCHAR" />
+		<result property="status" column="FSTATUS" jdbcType="VARCHAR" />
+		<result property="contactNum" column="FCONTACTNUM" jdbcType="VARCHAR" />
+		<result property="workflowId" column="FWORKFLOWID" jdbcType="VARCHAR" />
+		<result property="taxregNumber" column="FTAXREGNUMBER" jdbcType="VARCHAR" />
+		<result property="credentialsType" column="FCREDENTIALSTYPE" jdbcType="VARCHAR" />
+		<association property="contactId" javaType="com.deppon.crm.module.customer.shared.domain.Contact">
+			<result property="id" column="FCONTACTID" />
+		</association>
+	</resultMap>
+
+	<select id="getContactWorkflowDataById" parameterType="string" resultMap="ContactWorkflowDataRM">
+		SELECT
+		<include refid="ContactWorkflowData_column" />
+		FROM T_CUST_APPROVINGWORKFLOWDATA
+		WHERE FID = #{id}
+	</select>
+
+	<!-- 根据条件查询审批中的联系人信息 -->
+	<select id="queryWorkflowContactByCondition" resultMap="ContactWorkflowDataRM" 
+			parameterType="com.deppon.crm.module.customer.shared.domain.ApprovingWorkflowData">
+		SELECT 
+		<include refid="ContactWorkflowData_column"/>
+		<include refid="ContactWorkflowDataCondition"/>
+	</select>
+
+	<!-- 查询总条数 -->
+	<select id="countContactWorkflowData"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ApprovingWorkflowData"
+		resultType="long">
+		SELECT
+		count(*)
+		<include refid="ContactWorkflowDataCondition" />
+	</select>
+
+	<!-- 工作流状态的联系人信息查询条件 -->
+	<sql id="ContactWorkflowDataCondition">
+		FROM T_CUST_APPROVINGWORKFLOWDATA
+		<where>
+			<if test=" id != null  and id != ''  ">
+		<![CDATA[and FID=#{id,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" createDate != null  and createDate != ''  ">
+		<![CDATA[and FCREATETIME=#{createDate,jdbcType=DATE}]]>
+			</if>
+			<if test=" createUser != null  and createUser != ''  ">
+		<![CDATA[and FCREATEUSERID=#{createUser,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" modifyDate != null  and modifyDate != ''  ">
+		<![CDATA[and FLASTUPDATETIME=#{modifyDate,jdbcType=DATE}]]>
+			</if>
+			<if test=" modifyUser != null  and modifyUser != ''  ">
+					<![CDATA[and FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactMobile != null  and contactMobile != ''  ">
+					<![CDATA[and FCONTACTMOBILE = #{contactMobile,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactName != null  and contactName != ''  ">
+					<![CDATA[and FCONTACTNAME=#{contactName,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactTel != null  and contactTel != ''  ">
+					<![CDATA[and FCONTACTTEL=#{contactTel,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" idCardNo != null  and idCardNo != ''  ">
+					<![CDATA[and FCONTACTIDCARD=#{idCardNo,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" status != null  and status != ''  ">
+					<![CDATA[and FSTATUS=#{status,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" contactId != null  and contactId.id!=null and contactId.id!= ''  ">
+				<![CDATA[and FCONTACTID=#{contactId.id,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" contactNum != null and contactNum != ''  ">
+				<![CDATA[and FCONTACTNUM=#{contactNum,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" taxregNumber != null and taxregNumber != ''  ">
+				<![CDATA[and FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" workflowId != null  and workflowId != ''  ">
+				<![CDATA[and FCONTACTID=#{workflowId,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" credentialsType != null  and credentialsType != ''  ">
+				<![CDATA[and FCREDENTIALSTYPE=#{credentialsType,jdbcType=VARCHAR}]]>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 更新工作流状态的联系人信息 -->
+	<update id="updateContactWorkflowData"
+		parameterType="com.deppon.crm.module.customer.shared.domain.ApprovingWorkflowData">
+		UPDATE T_CUST_APPROVINGWORKFLOWDATA
+		SET
+		 FLASTUPDATETIME = sysdate,
+		 FLASTMODIFYUSERID=#{modifyUser,jdbcType=VARCHAR}
+			<if test=" contactMobile != null  and contactMobile != ''  ">
+					<![CDATA[,FCONTACTMOBILE = #{contactMobile,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactName != null  and contactName != ''  ">
+					<![CDATA[,FCONTACTNAME=#{contactName,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" contactTel != null  and contactTel != ''  ">
+					<![CDATA[,FCONTACTTEL=#{contactTel,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" idCardNo != null  and idCardNo != ''  ">
+					<![CDATA[,FCONTACTIDCARD=#{idCardNo,jdbcType=VARCHAR}]]>
+			</if>
+			<if test=" status != null  and status != ''  ">
+					<![CDATA[,FSTATUS=#{status,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" contactId != null  and contactId.id!=null and contactId.id!= ''  ">
+				<![CDATA[ ,FCONTACTID=#{contactId.id,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" contactNum != null  and contactNum!= ''  ">
+				<![CDATA[ ,FCONTACTNUM=#{contactNum,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" workflowId != null  and workflowId != ''  ">
+				<![CDATA[ ,FWORKFLOWID=#{workflowId,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" taxregNumber != null  and taxregNumber != ''  ">
+				<![CDATA[ ,FTAXREGNUMBER=#{taxregNumber,jdbcType=VARCHAR}]]>
+			</if>
+			<if	test=" credentialsType != null  and credentialsType != ''  ">
+				<![CDATA[ ,FCREDENTIALSTYPE=#{credentialsType,jdbcType=VARCHAR}]]>
+			</if>
+		WHERE FID = #{id}
+	</update>
+	
+	<!-- 删除工作流状态的联系人信息 -->
+	<delete id="deleteContactWorkflowData" parameterType="String">
+		DELETE
+		T_CUST_APPROVINGWORKFLOWDATA WHERE
+		FID = #{id}
+	</delete>
+	<!-- 根据工作流号更改状态 -->
+	<update id="updateByWorkflowId" parameterType="map">
+		UPDATE T_CUST_APPROVINGWORKFLOWDATA
+		 SET FSTATUS =#{status,jdbcType=VARCHAR}
+		WHERE FWORKFLOWID=#{workflowId,jdbcType=VARCHAR}
+	</update>
+</mapper>

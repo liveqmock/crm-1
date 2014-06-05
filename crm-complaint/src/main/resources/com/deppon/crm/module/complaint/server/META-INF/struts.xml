@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="complaint" namespace="/complaint" extends="crm-default">
+		<!--界面跳转获得工单详情页面 -->
+		<action name="complaintDetailIndex" class="listComplaintAction">
+			<result name="success">ComplaintBaseInfo.html</result>
+			<result name="error">ComplaintBaseInfo.html</result>
+		</action>
+		 
+		<!--界面跳转获得工单上报主界面 -->
+		<action name="complaintReportIndex" class="listComplaintAction" method="complaintReportIndex">
+			<result name="success">ComplaintReport.html</result>
+			<result name="error">ComplaintReportError.html</result>
+		</action>
+		
+		<!--界面跳转获得工单上报主界面 -->
+		<action name="complaintReportIndexCrm" class="listComplaintAction">
+			<result name="success">ComplaintReport.html</result>
+			<result name="error">ComplaintReport.html</result>
+		</action>
+		  
+		<!-- 处理结果基础资料页面--> 
+        <action name="processBaseInfo" >
+			<result name="success">BaseInfo.html</result>
+	    </action>
+		<!-- 保存业务范围设置-->
+		<action name="saveBasciLevel" class="complaintAction" method="saveBasciLevel">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 保存处理结果-->
+		<action name="saveFoundation" class="complaintAction" method="saveFoundation">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询投诉-->
+		<action name="searchComplaintBasciLevel" class="listComplaintAction" method="searchComplaintBasciLevel">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询异常-->
+		<action name="searchExceptionBasciLevel" class="listComplaintAction" method="searchExceptionBasciLevel">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询、修改业务类型-->
+		<action name="searchFoundationData" class="listComplaintAction" method="searchFoundationData">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 查询业务范围-->
+		<action name="searchBasciLevel" class="listComplaintAction" method="searchBasciLevel">
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 搜索最新工单上报集合 -->
+		<action name="searchReportedComplaints" class="listComplaintAction" method="searchReportedComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,totalCount</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!-- 输入订单号或运单号带出客户信息-->
+		<action name="searchMembersByOWNum" class="listComplaintAction" method="searchMembersByOWNum">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,receiverMember,shipperMember,businessModel</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!-- 输入手机号带出客户信息-->
+		<action name="getContractByPhone" class="listComplaintAction" method="searchContractByPhone">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,receiverMember,shipperMember</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!--获得重复投拆码-->
+		<action name="getRepeatedCode" class="listComplaintAction" method="searchRepeatedCode">
+			<result name="success" type="json" >
+				<param name="includeProperties">repeatCode</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!--提交工单上报 Complaint -->
+		<action name="submitComplaint" class="complaintAction"
+			method="submitComplaint">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaint</param>
+			</result>
+		</action>
+		
+		<!--上报退回提交-->
+		<action name="submitReturnComplaint" class="complaintAction"
+			method="submitReturnComplaint">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaint</param>
+			</result>
+		</action>
+		
+		
+		<!--hpf 界面跳转获得工单查询主界面 -->
+		<action name="complaintSearchIndex">
+			<result name="success">ComplaintSearch.html</result>
+		</action> 
+		<!--hpf 客户工单 查询集合 -->
+		<action name="searchComplaintList" class="listComplaintAction"
+			method="searchCustomerComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,totalCount</param>
+			</result>
+		</action>
+		<!--hpf 工单处理查询集合 -->
+		<action name="searchProcessComplaintList" class="listComplaintAction"
+			method="searchProcessComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,totalCount</param>
+			</result>
+		</action>
+		<!--hpf 客户工单 重复工单查询集合 -->
+		<action name="searchRepeatComplaintListByRecomcode" class="listComplaintAction"
+			method="searchRepeatComplaintListByRecomcode">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,totalCount</param>
+			</result>
+		</action>
+		
+		<!--客户工单 查询详情(byId)  Complaint -->
+		<action name="searchComplaintAndOther" class="complaintAction"
+			method="searchComplaintAndOtherById">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaint,otherComplint</param>
+			</result>
+		</action>
+		
+		<!--hpf 客户工单 查询详情(byId)  Complaint -->
+		<action name="searchComplaintBasic" class="complaintAction"
+			method="searchComplaintBasicById">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaint</param>
+			</result>
+		</action>
+		<!--hpf 工单处理 - 单条工单锁定(byId)  Complaint -->
+		<action name="compProcess_lockById" class="complaintAction" method="compProcess_lockById">
+			<result name="success" type="json"></result>
+		</action>
+		<!--hpf 界面跳转获得  工单处理  主界面 -->
+		<action name="complaintProcessIndex">
+			<result name="success">ComplaintProcess.html</result>
+		</action>
+		<!--hpf 界面跳转获得  待办工单  主界面 -->
+		<action name="complaintWorkbenchIndex">
+			<result name="success">ComplaintWorkbench.html</result>
+		</action>
+		
+		<!-- 进入上报退回处理页面 -->
+		<action name="reportReturnProcessIndex" class="listComplaintAction">
+			<result name="success">ReportReturnProcess.html</result>
+		</action>
+		 
+		<!-- 搜索上报退回处理集合 -->
+		<action name="searchReturnedComplaints" class="listComplaintAction" method="searchReturnedComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,totalCount</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		
+		<!-- 投诉-异常 查询工单处理前三条数据 -->
+		<action name="searchComplaints3ByReportType" class="listComplaintAction" method="searchComplaints3ByReportType">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList</param>
+			</result>
+		</action>
+		
+		<!-- hpf 工单处理之退回上报人-->
+		<action name="returnReportor" class="complaintAction" method="returnReportor">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		<!-- 进入部门工单管理页面 -->
+		<action name="complaintTaskIndex" class="listComplaintAction">
+			<result name="success">ComplaintTask.html</result>
+		</action>
+		
+		<!-- 搜索部门工单管理集合 -->
+		<action name="searchTaskComplaints" class="listComplaintAction" method="searchTaskComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">taskResultList,totalCount</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		
+		<!--部门工单管理->退回处理人-->
+		<action name="returnToProcess" class="complaintAction" method="returnToProcess">
+			<result name="success" type="json" >
+			</result>
+			<result name="error"></result>
+		</action>
+		<!--部门工单管理->反馈登记-->
+		<action name="passFeedback" class="complaintAction" method="passFeedback">
+			<result name="success" type="json" >
+			</result>
+			<result name="error"></result>
+		</action>
+		<!--部门工单管理->延时申请-->
+		<action name="delayApplication" class="complaintAction" method="delayApplication">
+			<result name="success" type="json" >
+			</result>
+			<result name="error"></result>
+		</action>
+		
+		
+		<!-- 工单处理- 查询 业务范围集合 -->
+		<action name="searchBusinessScopeList" class="listComplaintAction" method="searchBusinessScopeList">
+			<result name="success" type="json" >
+				<param name="includeProperties">basciLevelList</param>
+			</result>
+		</action>
+		<!-- 查询- 基础资料处理结果根据层级编号 -->
+		<action name="searchProcresultsByLevelId" class="listComplaintAction" method="searchProcresultsByLevelId">
+			<result name="success" type="json" >
+				<param name="includeProperties">procResultList</param>
+			</result>
+		</action>
+		<!-- hpf 工单处理- 查询 业务类型集合 -->
+		<action name="searchBusinessTypeList" class="listComplaintAction" method="searchBusinessTypeList">
+			<result name="success" type="json" >
+				<param name="includeProperties">basciLevelList</param>
+			</result>
+		</action>
+		<!-- hpf 工单- 查询 调查建议集合 -->
+		<action name="searchSurveySuggestList" class="listComplaintAction" method="searchSurveySuggestList">
+			<result name="success" type="json" >
+				<param name="includeProperties">workOrderList</param>
+			</result>
+		</action>
+		
+		<!-- hpf 工单处理- 查询集合  count-->
+		<action name="count_pendingComplaint" class="listComplaintAction" method="count_pendingComplaint">
+			<result name="success" type="json" >
+				<param name="includeProperties">searchResultMap</param>
+			</result>
+		</action>
+		<!-- hpf 工单处理- 部门集合 -->
+		<action name="searchDepartmentList" class="listComplaintAction" method="searchDepartmentList">
+			<result name="success" type="json" >
+				<param name="includeProperties">departmentList</param>
+			</result>
+		</action>
+		<!-- hpf 查询- 通知对象集合 -->
+		<action name="searchBulletinListByCompId" class="listComplaintAction" method="searchBulletinListByCompId">
+			<result name="success" type="json" >
+				<param name="includeProperties">bulletinList</param>
+			</result>
+		</action>
+		<action name="searchBulletinListToProByCompId" class="listComplaintAction" method="searchBulletinListToProByCompId">
+			<result name="success" type="json" >
+				<param name="includeProperties">bulletinList</param>
+			</result>
+		</action>
+		<!-- hpf 查询- 处理结果集合 -->
+		<action name="searchProcessResultListByCompId" class="listComplaintAction" method="searchProcessResultListByCompId">
+			<result name="success" type="json" >
+				<param name="includeProperties">searchResultList</param>
+			</result>
+		</action>
+		
+		<!-- hpf 查询- 处理结果集合 (被部门退回的处理结果)-->
+		<action name="searchReturnResultListByCompId" class="listComplaintAction" method="searchReturnResultListByCompId">
+			<result name="success" type="json" >
+				<param name="includeProperties">searchResultList</param>
+			</result>
+		</action>
+		<!-- hpf 查询- 退回记录集合 -->
+		<action name="searchReturnedRecordListByCompId" class="listComplaintAction" method="searchReturnedRecordListByCompId">
+			<result name="success" type="json" >
+				<param name="includeProperties">searchResultList</param>
+			</result>
+		</action>
+		<!-- hpf 工单处理- 对象集合通过部门编号-->
+		<action name="searchEmployeeListByDeptId" class="listComplaintAction" method="searchEmployeeListByDeptId">
+			<result name="success" type="json" >
+				<param name="includeProperties">employeeList</param>
+			</result>
+		</action>
+		
+		<!-- hpf 工单处理之 提交审批-->
+		<action name="complaint_submitApproval" class="complaintAction" method="submitApproval">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		<!-- hpf 待办工单之 退回状态-->
+		<action name="returnedFinishComplaintProcess" class="complaintAction" method="returnedFinishComplaintProcess">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		<!-- hpf 工单处理之 投诉升级-->
+		<action name="complaint_upgrade" class="complaintAction" method="complaintUpgrade">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		<!-- hpf 工单处理之 完成处理--> 
+		<action name="complaint_finishProcess" class="complaintAction" method="finishComplaintProcess">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		
+		<!--  工单处理之 完成处理 待审批--> 
+		<action name="finishProcessWithApprove" class="complaintAction" method="finishProcessWithApprove">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		
+		<!--  工单处理之 完成处理  已升级--> 
+		<action name="finishProcessWithUpgraded" class="complaintAction" method="finishProcessWithUpgraded">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		
+		
+		<!-- 进入工单回访管理页面 -->
+		<action name="complaintVerifyTaskIndex" class="listComplaintAction">
+			<result name="success">ComplaintVerifyTask.html</result>
+		</action>
+		
+		<!-- 搜索工单回访管理集合 -->
+		<action name="searchVerifyComplaints" class="listComplaintAction" method="searchVerifyComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaintList,totalCount</param>
+			</result>
+			<result name="error"></result>
+		</action>
+		<!--回访登记-->
+		<action name="submitVerfiyComplaint" class="complaintAction" method="submitVerfiyComplaint">
+			<result name="success" type="json" >
+			</result>
+			<result name="error"></result>
+		</action>
+		
+		<!-- 根据投诉工单ID查询退单原因-->
+		<action name="searchFeedbackReasonByComplaintId" class="listComplaintAction"
+			method="searchFeedbackReasonByComplaintId">
+			<result name="success" type="json" >
+				<param name="includeProperties">feedbackList</param>
+			</result>
+		</action>
+		
+		<!-- 投诉单退回提交人-->
+		<action name="returnSubmitor" class="complaintAction" method="returnSubmitor">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>		
+		
+		<!--查询延时申请  -->
+		<action name="searchPostponeResult" class="complaintAction"
+			method="searchPostponeResult">
+			<result name="success" type="json" >
+				<param name="includeProperties">postponeResultList</param>
+			</result>
+		</action>		
+	
+		<!-- 投诉单延时申请同意-->
+		<action name="agreeWithPostponeRequests" class="complaintAction" method="agreeWithPostponeRequests">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>	
+
+		<!-- 投诉单延时申请拒绝-->
+		<action name="refusePostponeRequests" class="complaintAction" method="refusePostponeRequests">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		<!-- 批量删除业务类型-->
+		<action name="basciLevelTypeDelelteList" class="complaintAction" method="basciLevelTypeDelelteList">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		<!-- 删除业务范围-->
+		<action name="basciLevelScopeDelelte" class="complaintAction" method="basciLevelScopeDelelte">
+			<result name="success" type="json" />
+			<result name="error"></result>
+		</action>
+		
+		<!-- 搜索待办投诉工单 -->
+		<action name="searchWaitComplaints" class="listComplaintAction"
+			method="searchWaitComplaints">
+			<result name="success" type="json" >
+				<param name="includeProperties">waitComplaints,totalCount</param>
+			</result>
+		</action>		
+		
+		<!-- 搜索处理结果 -->
+		<action name="inquireResultById" class="listComplaintAction"
+			method="inquireResultById">
+			<result name="success" type="json" >
+				<param name="includeProperties">result</param>
+			</result> 
+		</action>		
+		
+		<!--根据条件查询Member对象-->
+		<action name="inquireMemberByCondition" class="listComplaintAction"
+			method="inquireMemberByCondition">
+			<result name="success" type="json" >
+				<param name="includeProperties">member</param>
+			</result>
+		</action>	
+		
+		<!--待办工单页面判断“延时审批”按钮是否需要-->
+		<action name="isPostponeAppButtonEnable" class="complaintAction"
+			method="isPostponeAppButtonEnable">
+			<result name="success" type="json" >
+				<param name="includeProperties">postponeButtonFlag</param>
+			</result>
+		</action>			
+
+		<!--待办工单页面判断“完成处理”按钮是否需要-->
+		<action name="isProcessCompleteButtonEnable" class="complaintAction"
+			method="isProcessCompleteButtonEnable">
+			<result name="success" type="json" >
+				<param name="includeProperties">processCompleteBttnFlag</param>
+			</result>
+		</action>
+
+		<!--校验工单接入是否过期-->
+		<action name="validateComplaintAccessExpired" class="listComplaintAction"
+			method="validateComplaintAccessExpired">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--校验反馈登记是否过期-->
+		<action name="validateFeedbackOverTime" class="listComplaintAction"
+			method="validateFeedbackOverTime">
+			<result name="success" type="json" />
+		</action>
+		<!--新处理结果基础资料：查询主界面，返回基础资料查询结果列表-->
+		<action name="searchBasicInfo" class="listComplaintAction" method="searchBasicInfo">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--业务项设置界面：点击提交按钮，向数据库中新增投诉和异常的业务项-->
+		<action name="addBusinessItems" class="complaintAction" method="addBusinessItems">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--处理结果基础资料设置界面：选中一条基础资料，单击基础资料设置后，加载出此条业务范围下所有的业务类型到列表中-->
+		<action name="loadBasicInfo" class="complaintAction" method="loadBasicInfo">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--处理结果基础资料设置界面：新基础资料之业务项修改,业务范围新增与修改,业务类型新增修改删除-->
+		<action name="operateBasicBusInfo" class="complaintAction" method="operateBasicBusInfo">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--处理结果基础资料设置界面：选定投诉或异常的类型后，加载出相应的业务项信息到下拉列表中-->
+		<action name="loadBusinessItems" class="complaintAction" method="loadBusinessItems">
+			<result name="success" type="json" />
+		</action>	
+		
+		<!--业务项设置页面：初始化业务项列表-->
+		<action name="showBusItemByType" class="listComplaintAction" method="showBusItemByType">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--业务项设置页面：删除业务项-->
+		<action name="deleteBusItemByIds" class="complaintAction" method="deleteBusItemByIds">
+			<result name="success" type="json" />
+		</action>	
+		
+		<!--基础资料查询主界面：点击删除按钮，删除选中的基础资料-->
+		<action name="deleteBasicInfo" class="complaintAction" method="deleteBasicInfo">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--新基础资料：删除业务类型在操作基础资料页面中使用-->
+		<action name="deleteBusTypeByIdsInBusScopeVO" class="complaintAction" method="deleteBusTypeByIdsInBusScopeVO">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--工单处理界面：根据业务范围id，查询业务类型列表-->
+		<action name="searchBusTypeByBusScope" class="listComplaintAction" method="searchBusTypeByBusScope">
+			<result name="success" type="json" />
+		</action>
+		<!--修改来自官网的工单业务类型-->
+		<action name="changeBusinessModel" class="listComplaintAction" method="changeBusinessModel">
+			<result name="success" type="json" />
+		</action>
+		
+		<!--工单基础资料树菜单 -->
+		<action name="loadTree" class="baseInfoAction" method="loadTree">
+			 <result name="success" type="jsontree">
+         		 <param name="include">nodes</param>
+         	 </result>
+		</action>
+		
+		<!--工单基础资料列表 -->
+		<action name="findBaseInfoList" class="baseInfoAction" method="findBaseInfoList">
+			 <result name="success" type="json" />
+		</action>
+		
+		<!--添加基础资料 -->
+		<action name="addBaseInfo" class="baseInfoAction" method="addBaseInfo">
+			 <result name="success" type="json" />
+		</action>
+		
+		<!--修改基础资料 -->
+		<action name="updateBaseInfo" class="baseInfoAction" method="updateBaseInfo">
+			 <result name="success" type="json" />
+		</action>
+		
+		<!--删除基础资料 -->
+		<action name="deleteBaseInfo" class="baseInfoAction" method="deleteBaseInfo">
+			 <result name="success" type="json" />
+		</action>
+		
+		<!--基础资料五级联动-->
+		<action name="findBaseInfoLevelList" class="baseInfoAction" method="findBaseInfoLevelList">
+			 <result name="success" type="json" />
+		</action>
+		
+		
+		<!--工单详情页-->
+		<action name="complaintDetails">
+			<result name="success">ComplaintDetails.html</result>
+		</action>
+		<!--查询工单详情-->
+		<action name="searchComplaint" class="complaintAction"
+			method="searchComplaint">
+			<result name="success" type="json" >
+				<param name="includeProperties">complaint</param>
+			</result>
+		</action>
+	</package>
+</struts>

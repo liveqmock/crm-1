@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://www.deppon.com/crm/interface/CallcenterToCrmService"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	name="CCToCrmService" targetNamespace="http://www.deppon.com/crm/interface/CallcenterToCrmService"
+	xmlns:tns_domain="http://www.deppon.com/crm/inteface/cc/domain"
+	xmlns:tns_header="http://www.deppon.com/esb/header"
+	xmlns:tns_exception="http://www.deppon.com/esb/exception">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://www.deppon.com/crm/inteface/cc/domain">
+			<xsd:include schemaLocation="CC_CRM_BUSINESSOPPORTUNITYCHECK.xsd"></xsd:include>
+			<xsd:include schemaLocation="CC_CRM_MARKETINGINFOADD.xsd"></xsd:include>
+			<xsd:include schemaLocation="CC_CRM_MARKETINGINFOQUERY.xsd"></xsd:include>
+			<xsd:include schemaLocation="CC_CRM_MARKETINGINFOQUERYDETAIL.xsd"></xsd:include>
+			<xsd:include schemaLocation="CC_CRM_RECALLPLAN.xsd"></xsd:include>
+			<xsd:include schemaLocation="CC_CRM_UPDATECUSTOMER.xsd"></xsd:include>
+			<xsd:include schemaLocation="CC_CRM_CREATECUSTOMER.xsd"></xsd:include>
+		</xsd:schema>
+		<xsd:schema targetNamespace="http://www.deppon.com/esb/header">
+			<xsd:include schemaLocation="ESBHeader.xsd" />
+		</xsd:schema>
+		<xsd:schema targetNamespace="http://www.deppon.com/esb/exception">
+			<xsd:include schemaLocation="CommonException.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="validateBusinessOpportunityRequest">
+		<wsdl:part element="tns_header:esbHeader" name="esbHeader" />
+		<wsdl:part name="request"
+			element="tns_domain:businessOpportunityIfexistRequest">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="validateBusinessOpportunityResponse">
+		<wsdl:part element="tns_header:esbHeader" name="esbHeader" />
+		<wsdl:part name="response"
+			element="tns_domain:businessOpportunityIfexistResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="CommException">
+		<wsdl:part name="CommException" element="tns_exception:commonExceptionInfo" />
+	</wsdl:message>
+	<wsdl:message name="sendRecallPlanRequest">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="request" element="tns_domain:recallPlanRequest">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="sendRecallPlanResponse">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="response" element="tns_domain:recallPlanResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="sendMarketingInfoRequest">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="request" element="tns_domain:marketingInfoAddRequest">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="sendMarketingInfoResponse">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="response" element="tns_domain:marketingInfoAddResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="queryMarketingInfoRequest">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="request" element="tns_domain:marketingInfoQueryRequest">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="queryMarketingInfoResponse">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="response" element="tns_domain:marketingInfoQueryResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="queryMarketingDetailInfoRequest">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="request" element="tns_domain:marketingInfoQueryDetailRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="queryMarketingDetailInfoResponse">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="response"
+			element="tns_domain:marketingInfoQueryDetailResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateCustomerInfoRequest">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="request" element="tns_domain:updateCallCenterCustomerRequest">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateCustomerInfoResponse">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="response"
+			element="tns_domain:updateCallCenterCustomerResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="createCustomerInfoRequest">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="request"
+			element="tns_domain:createCallCenterCustomerRequest">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="createCustomerInfoResponse">
+		<wsdl:part name="esbHeader" element="tns_header:esbHeader"></wsdl:part>
+		<wsdl:part name="response"
+			element="tns_domain:createCallCenterCustomerResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="ICallcenterToCrmService">
+		<wsdl:operation name="validateBusinessOpportunity">
+			<wsdl:input message="tns:validateBusinessOpportunityRequest" />
+			<wsdl:output message="tns:validateBusinessOpportunityResponse" />
+			<wsdl:fault name="commException" message="tns:CommException" />
+		</wsdl:operation>
+		<wsdl:operation name="sendRecallPlan">
+			<wsdl:input message="tns:sendRecallPlanRequest"></wsdl:input>
+			<wsdl:output message="tns:sendRecallPlanResponse"></wsdl:output>
+			<wsdl:fault name="commException" message="tns:CommException"></wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="sendMarketingInfo">
+			<wsdl:input message="tns:sendMarketingInfoRequest"></wsdl:input>
+			<wsdl:output message="tns:sendMarketingInfoResponse"></wsdl:output>
+			<wsdl:fault name="commException" message="tns:CommException"></wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="queryMarketingInfo">
+			<wsdl:input message="tns:queryMarketingInfoRequest"></wsdl:input>
+			<wsdl:output message="tns:queryMarketingInfoResponse"></wsdl:output>
+			<wsdl:fault name="commException" message="tns:CommException"></wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="queryMarketingDetailInfo">
+			<wsdl:input message="tns:queryMarketingDetailInfoRequest"></wsdl:input>
+			<wsdl:output message="tns:queryMarketingDetailInfoResponse"></wsdl:output>
+			<wsdl:fault name="commException" message="tns:CommException"></wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="updateCustomerInfo">
+			<wsdl:input message="tns:updateCustomerInfoRequest"></wsdl:input>
+			<wsdl:output message="tns:updateCustomerInfoResponse"></wsdl:output>
+			<wsdl:fault name="commException" message="tns:CommException"></wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="createCustomerInfo">
+			<wsdl:input message="tns:createCustomerInfoRequest"></wsdl:input>
+			<wsdl:output message="tns:createCustomerInfoResponse"></wsdl:output>
+            <wsdl:fault name="commException" message="tns:CommException"></wsdl:fault>
+        </wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="CCToCrmServiceSOAP" type="tns:ICallcenterToCrmService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="validateBusinessOpportunity">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/validateBusinessOpportunity" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:validateBusinessOpportunityRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:validateBusinessOpportunityResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="sendRecallPlan">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/sendRecallPlan" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:sendRecallPlanRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:sendRecallPlanResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="sendMarketingInfo">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/sendMarketingInfo" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:sendMarketingInfoRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:sendMarketingInfoResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryMarketingInfo">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/queryMarketingInfo" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:queryMarketingInfoRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:queryMarketingInfoResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="queryMarketingDetailInfo">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/queryMarketingDetailInfo" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:queryMarketingDetailInfoRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:queryMarketingDetailInfoResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateCustomerInfo">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/updateCustomerInfo" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:updateCustomerInfoRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:updateCustomerInfoResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createCustomerInfo">
+			<soap:operation
+				soapAction="http://www.deppon.com/crm/interface/CCToCrmService/createCustomerInfo" />
+			<wsdl:input>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:createCustomerInfoRequest"></soap:header>
+				<soap:body use="literal" parts="request" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" part="esbHeader"
+					message="tns:createCustomerInfoResponse"></soap:header>
+				<soap:body use="literal" parts="response" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CCToCrmService">
+		<wsdl:port binding="tns:CCToCrmServiceSOAP" name="CCToCrmServiceSOAP">
+			<soap:address location="http://www.example.org/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

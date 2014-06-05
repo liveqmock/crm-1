@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- service层配置 -->
+	<bean id ="baseDataService" class="com.deppon.crm.module.customer.server.service.impl.BaseDataService">
+		<property name="baseDataDao" ref="baseDataDao"></property>
+	</bean>
+		<bean id ="prefrentialDealService" class="com.deppon.crm.module.customer.server.service.impl.PrefrentialDealService">
+		<property name="prefrentialDealDao" ref="prefrentialDealDao"></property>
+		<property name="contractDao" ref="contractDao"></property>
+	</bean>
+	<bean id ="waybillIntegralService" class="com.deppon.crm.module.customer.server.service.impl.WaybillIntegralService">
+		<property name="waybillIntegralDao" ref="waybillIntegralDao"></property>
+	</bean>
+
+	<bean id ="contactIntegralService" class="com.deppon.crm.module.customer.server.service.impl.ContactIntegralService">
+		<property name="contactIntegralDao" ref="contactIntegralDao"></property>
+	</bean>
+	
+	<bean id ="contactVaryService" class="com.deppon.crm.module.customer.server.service.impl.ContactVaryService">
+		<property name="contactVaryDao" ref="contactVaryDao"></property>
+	</bean>
+	
+	<bean id="memberIntegralService"
+		class="com.deppon.crm.module.customer.server.service.impl.MemberIntegralService">
+		<property name="memberIntegralDao" ref="memberIntegralDao"></property>
+	</bean>
+	<bean id="integralService" class="com.deppon.crm.module.customer.server.service.impl.IntegralService">
+		<property name="integralDao" ref="integralDao"></property>
+		<property name="memberIntegralDao" ref="memberIntegralDao"></property>
+		<property name="contactIntegralDao" ref="contactIntegralDao"></property>
+	</bean>
+	<bean id="workFLowService"
+		class="com.deppon.crm.module.customer.server.service.impl.WorkFLowService">
+		<property name="workFlowDao" ref="workFlowDao"></property>
+	</bean>
+
+	<bean id="examineRecordService"
+		class="com.deppon.crm.module.customer.server.service.impl.ExamineRecordService">
+		<property name="examineRecordDao" ref="examineRecordDao"></property>
+		<property name="messageBundle" ref="messageBundle"></property>
+	</bean>
+
+	<bean id="contactService"
+		class="com.deppon.crm.module.customer.server.service.impl.ContactService">
+		<property name="contactDao" ref="contactDao"></property>
+	</bean>
+
+	<bean id="memberService"
+		class="com.deppon.crm.module.customer.server.service.impl.MemberService">
+		<property name="memberDao" ref="memberDao"></property>
+		<property name="alterMemberDao" ref="alterMemberDao"></property>
+		<property name="contactIntegralDao" ref="contactIntegralDao"></property>
+		<property name="memberIntegralDao" ref="memberIntegralDao"></property>
+	</bean>
+	<bean id="alterMemberService"
+		class="com.deppon.crm.module.customer.server.service.impl.AlterMemberService">
+		<property name="alterMemberDao" ref="alterMemberDao"></property>
+		<property name="memberDao" ref="memberDao"></property>
+		<property name="customerOperate" ref="customerOperate"></property>
+		<property name="contactDao" ref="contactDao"></property>
+		<property name="repeatedCustDao" ref="repeatedCustDao"></property>
+	</bean>
+
+	<bean id="contractService"
+		class="com.deppon.crm.module.customer.server.service.impl.ContractService">
+		<property name="contractDao" ref="contractDao"></property>
+		<property name="alterMemberDao" ref="alterMemberDao"></property>
+	</bean>
+
+	<bean id="integRuleService"
+		class="com.deppon.crm.module.customer.server.service.impl.IntegRuleService">
+		<property name="integRuleDao" ref="integRuleDao"></property>
+		<property name="rewardIntegRuleDao" ref="rewardIntegRuleDao"></property>
+		<property name="giftDao" ref="giftDao"></property>
+	</bean>
+	
+	<bean id ="changeMemberDeptService" class="com.deppon.crm.module.customer.server.service.impl.ChangeMemberDeptService">
+		<property name="changeMemberDeptDao" ref="changeMemberDeptDao"></property>
+	</bean>
+	<bean id="custLabelService" class="com.deppon.crm.module.customer.server.service.impl.CustLabelService">
+		<property name="custLabelDao" ref="custLabelDao"></property>
+	</bean>
+	
+	<!-- Validator配置 -->
+	<bean id="customerValidator"
+		class="com.deppon.crm.module.customer.server.manager.CustomerValidator">
+	</bean>
+	<!-- 客户标签validator -->
+	<bean id="custLabelValidator"
+		class="com.deppon.crm.module.customer.server.manager.CustLabelValidator">
+	</bean>
+	<!-- Manager配置 -->
+	<bean id ="baseDataManager" class="com.deppon.crm.module.customer.server.manager.impl.BaseDataManager">
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="employeeService" ref="employeeService"></property>
+		<property name="baseDataService" ref="baseDataService"></property>
+		<property name="authorizeService" ref="authorizeService"></property>
+		<property name="departmentManager" ref="ladingstationDepartmentManager"></property>
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+	</bean>
+	<!-- 客户标签manager -->
+	<bean id="custLabelManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.CustLabelManager">
+		<property name="custLabelService" ref="custLabelService"></property>
+		<property name="custLabelValidator" ref="custLabelValidator"></property>
+	</bean>
+	<bean id="custLabelIndexAction"
+		class="com.deppon.crm.module.customer.server.action.CustLabelIndexAction">
+		<property name="custLabelManager" ref="custLabelManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+	</bean>
+	
+	<!-- 月发月送新优惠方案 -->
+	<bean id ="prefrentialDealManager" class="com.deppon.crm.module.customer.server.manager.impl.PrefrentialDealManager">
+		<property name="prefrentialValidator" ref="prefrentialValidator"></property>
+		<property name="prefrentialDealService" ref="prefrentialDealService"></property>
+	</bean>
+	<bean id ="changeMemberDeptManager" class="com.deppon.crm.module.customer.server.manager.impl.ChangeMemberDeptManager">
+		<property name="changeMemberDeptService" ref="changeMemberDeptService"></property>
+	</bean>
+	<bean id="prefrentialValidator" 
+		class="com.deppon.crm.module.customer.server.manager.PrefrentialValidator">
+		<property name="prefrentialDealManager" ref="prefrentialDealManager"></property>
+	</bean>
+	<!-- 已积分运单 -->
+	<bean id ="waybillIntegralManager" class="com.deppon.crm.module.customer.server.manager.impl.WaybillIntegralManager">
+		<property name="waybillIntegralService" ref="waybillIntegralService"></property>
+		<property name="memberIntegralService" ref="memberIntegralService"></property>
+		<property name="contactIntegralService" ref="contactIntegralService"></property>
+	</bean>
+	<!-- 积分规则 -->
+	<bean id ="integralManager" class="com.deppon.crm.module.customer.server.manager.impl.IntegralManager">
+		<property name="contactManager" ref="contactManager"></property>
+		<property name="integralService" ref="integralService"></property>
+		<property name="memberIntegralService" ref="memberIntegralService"></property>
+		<property name="examineRecordService" ref="examineRecordService"></property>
+		<property name="memberWorkFlowManager" ref="memberWorkFlowManager"></property>
+		<property name="memberService" ref="memberService"></property>
+		<property name="contactVaryService" ref="contactVaryService"></property>
+		<property name="contactIntegralService" ref="contactIntegralService"></property>
+		<property name="waybillIntegralService" ref="waybillIntegralService"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="integRuleManager" ref="integRuleManager"></property>
+		<property name="giftApplyOperate" ref="giftApplyOperate"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+		<property name="alterMemberService" ref="alterMemberService"></property>
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+	</bean>
+
+	<bean id="integRuleManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.IntegRuleManager">
+		<property name="integRuleService" ref="integRuleService"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+	</bean>
+	<bean id="workFLowManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.WorkFLowManager">
+		<property name="workFLowService" ref="workFLowService"></property>
+	</bean>
+
+	<bean id="workflowManage"
+		class="com.deppon.crm.module.common.server.workflow.WorkflowManager">
+		<property name="workflow" ref="basicWorkflow"></property>
+	</bean>
+
+	<bean id="memberWorkFlowManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.MemberWorkFlowManager">
+		<property name="workflowManage" ref="workflowManage"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+	</bean>
+
+
+	<bean id="alterMemberManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.AlterMemberManager">
+		<property name="alterMemberService" ref="alterMemberService"></property>
+		<property name="memberWorkFlowManager" ref="memberWorkFlowManager"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="approvingWokflowDataService" ref="approvingWokflowDataService"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="contractService" ref="contractService"></property>
+		<property name="contactVaryService" ref="contactVaryService"></property>
+		<property name="custLabelManager" ref="custLabelManager"></property>
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+		<property name="userService" ref="userService" />
+	</bean>
+	<bean id="memberManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.MemberManager">
+		<property name="memberService" ref="memberService"></property>
+		<property name="examineRecordService" ref="examineRecordService"></property>
+		<property name="alterMemberService" ref="alterMemberService"></property>
+		<property name="contactService" ref="contactService"></property>
+		<property name="memberWorkFlowManager" ref="memberWorkFlowManager"></property>
+		<property name="contractManager" ref= "contractManager"></property>
+		<property name="waybillOperate" ref="waybillOperate"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+		<property name="changeMemberDeptManager" ref="changeMemberDeptManager"></property>
+		<property name="approvingWokflowDataService" ref="approvingWokflowDataService"></property>
+		<property name="custLabelManager" ref="custLabelManager"></property>
+		<property name="departmentManager" ref="ladingstationDepartmentManager"></property>
+		<property name="customerOperate" ref="customerOperate"></property>
+		<property name="messageBundle" ref="messageBundle"></property>
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+		<property name="contactManager" ref="contactManager"></property>
+	</bean>
+	
+	<bean id="contractOperate" class="com.deppon.crm.module.customer.bpsworkflow.ContractApplyOperate">
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager"/>
+		<property name="contractApplyOperate" ref="contractApplyOperate"/>
+	</bean>
+	
+	<bean id="contractApproveOperate" class="com.deppon.crm.module.customer.bpsworkflow.ContractApproveOperate">
+		<property name="contractManager" ref="contractManager"/>
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager"/>
+	</bean>
+	
+	<bean id ="contractManager" class="com.deppon.crm.module.customer.server.manager.impl.ContractManager">
+		<property name="contractService" ref="contractService"></property>
+		<property name="contractApplyOperate" ref="contractOperate"></property>
+		<property name="prefrentialDealManager" ref="prefrentialDealManager"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+		<property name="alterMemberService" ref="alterMemberService"></property>
+		<property name="examineRecordService" ref="examineRecordService"></property>
+		<property name="messageManager" ref="messageManager"/>
+		<property name="bpsWorkflowManager" ref="bpsWorkflowManager"/>
+		<property name="contractWorkflowService" ref="contractWorkflowService"/>
+		<property name="repeatedCustManager" ref="repeatedCustManager" />
+	</bean>
+	
+	<bean id="contractValidator" class="com.deppon.crm.module.customer.server.manager.ContractValidator">
+	</bean>
+	
+	
+	<bean id="contactManager"
+		class="com.deppon.crm.module.customer.server.manager.impl.ContactManager">
+		<property name="contactService" ref="contactService"></property>
+		<property name="iSmssender" ref="smsInfoSender"></property>
+		<property name="customerOperate" ref="customerOperate"></property>
+	</bean>
+
+
+	<!-- Action配置 -->
+	<!-- 数据权限Action -->
+	<bean id ="dataAuthAction" scope="prototype" class="com.deppon.crm.module.customer.server.action.DataAuthAction">
+		<property name="baseDataManager" ref="baseDataManager"></property>
+	</bean>
+	<!-- 散客升级 Action -->
+	<bean id="scatterUpgradeManageAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.ScatterUpgradeManageAction">
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+		<property name="baseDataMemberManager" ref="baseDataManager"></property>
+	</bean>
+	<!-- 潜客 Action -->
+	<bean id="potentialCustomerAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.PotentialCustomerAction">
+		<property name="memberManager" ref="memberManager" />
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="messageBundle" ref="messageBundle"></property>
+	</bean>
+	<!-- 会员升级 Action -->
+	<bean id="memberUpgradeManageAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.MemberUpgradeManageAction">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	<!-- 会员降级Action -->
+	<bean id="memberDownGradeManageAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.MemberDownGradeManageAction">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	<!-- 合同管理 Action -->
+	<bean id="contractManageAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.ContractManageAction">
+		<property name="contractManager" ref="contractManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+	</bean>
+	<!-- 会员管理 Action -->
+	<bean id="memberManageAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.MemberManageAction">
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+	</bean>
+	<!-- 实时创建会员 Action -->
+	<bean id="realTimeMemberCreateAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.RealTimeMemberCreateAction">
+		<property name="memberManager" ref="memberManager"></property>
+	</bean>
+	<!-- 创建特殊会员Action -->
+	<bean id="specialMemberCreateAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.SpecialMemberCreateAction">
+	</bean>
+	<!-- 我的工作流管理Action -->
+	<bean id="workFlowManagerAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.WorkFlowManagerAction">
+		<property name="workFLowManager" ref="workFLowManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="integralManager" ref="integralManager"></property>
+		<property name="contractManager" ref= "contractManager"></property>
+	</bean>
+	<!-- F7弹出框查询会员 Action -->
+	<bean id="searchMemberAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.SearchMemberAction">
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+		<property name="baseDataManager" ref="baseDataManager"></property>
+	</bean>
+	<!-- 我要处理的工作流管理Action -->
+	<bean id="myWorkFlowDealManagerAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.MyWorkFlowDealManagerAction">
+		<property name="alterMemberManager" ref="alterMemberManager"></property>
+		<property name="memberWorkFlowManager" ref="memberWorkFlowManager"></property>
+		<property name="memberManager" ref="memberManager"></property>
+		<property name="integralManager" ref="integralManager"></property>
+		<property name="contractManager" ref= "contractManager"></property>
+	</bean>
+	<!-- 积分 查询Action -->
+	<bean id="integralRecordAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.IntegralRecordAction">
+		<property name="contactManager" ref="contactManager"></property>
+		<property name="integralManager" ref="integralManager"></property>
+	</bean>
+	<!-- 积分规则管理Action -->
+	<bean id="integralRuleAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.IntegralRuleAction">
+		<property name="integRuleManager" ref="integRuleManager"></property>
+	</bean>
+	<!-- 礼品管理Action -->
+	<bean id="giftManageAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.GiftManageAction">
+		<property name="integralManager" ref="integralManager"></property>
+		<property name="integRuleManager" ref="integRuleManager"></property>
+	</bean>
+
+	<!-- 积分 奖励规则管理Action -->
+	<bean id="rewardRuleManagerAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.RewardRuleManagerAction">
+		<property name="integRuleManager" ref="integRuleManager"></property>
+	</bean>
+	<!-- 积分 奖励规则管理Action -->
+	<bean id="manualRewardIntegralManagerAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.ManualRewardIntegralManagerAction">
+		<property name="integralManager" ref="integralManager"></property>
+		<property name="contactManager" ref="contactManager"></property>
+	</bean>
+	<!-- 积分 奖励规则管理Action -->
+	<bean id="recordExchangeRuleManagerAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.RecordExchangeRuleManagerAction">
+		<property name="integRuleManager" ref="integRuleManager"></property>
+	</bean>
+	<!-- 积分 变更联系人挂靠关系Action -->
+	<bean id="changeContactAffiliatedRelationAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.ChangeContactAffiliatedRelationAction">
+		<property name="integralManager" ref="integralManager"></property>
+	</bean>
+
+	<!-- 合同下载Action -->
+	<bean id="excelDownloadAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.ExcelDownloadAction">
+		<property name="contractManager" ref="contractManager"></property>
+		
+	</bean>
+	<bean id="approvingWokflowDataService" class="com.deppon.crm.module.customer.server.service.impl.ApprovingWokflowDataService">
+		<property name="approvingWokflowDataDao" ref="approvingWorkflowDataDao"/>
+	</bean>
+	<bean id="prefrentialDealAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.PrefrentialDealAction">
+		<property name="prefrentialDealManager" ref="prefrentialDealManager"/>
+	</bean>
+	<bean id="dictionaryManager" class="com.deppon.crm.module.customer.server.manager.impl.DictionaryManager">
+	  <property name="detailManager" ref="detailManager" />
+	</bean>
+	
+	<bean id="dictionaryAction" scope="prototype"
+		class="com.deppon.crm.module.customer.server.action.DictionaryAction">
+		<property name="dictionaryManager" ref="dictionaryManager" />
+	</bean>
+	
+	<bean id="contractWorkflowService"
+		class="com.deppon.crm.module.customer.server.service.impl.ContractWorkflowService">
+		<property name="ContractWorkflowDao" ref="ContractWorkflowDao"></property>
+	</bean>
+	<bean id="contractWorkflowManager" scope="singleton" class="com.deppon.crm.module.customer.server.manager.impl.ContractWorkflowManager">
+		<property name="contractService" ref="contractService"/>
+		<property name="userService" ref="userService"/>
+		<property name="employeeService" ref="employeeService"/>
+		<property name="contractWorkflowService" ref="contractWorkflowService"/>
+	</bean>
+	<bean id="goodTradeMappingService" scope="prototype" class="com.deppon.crm.module.customer.server.service.impl.GoodTradeMappingService">
+		<property name="goodTradeMappingDao" ref="goodTradeMappingDao" />
+	</bean>
+	<bean id="goodTradeMappingManager" scope="prototype" class="com.deppon.crm.module.customer.server.manager.impl.GoodTradeMappingManager">
+		<property name="goodTradeMappingService" ref="goodTradeMappingService" />
+		<property name="keyCustomerService" ref="keyCustomerService" />
+	</bean>
+	<bean id="goodTradeMappingAction" scope="prototype" class="com.deppon.crm.module.customer.server.action.GoodTradeMappingAction">
+		<property name="goodTradeMappingManager" ref="goodTradeMappingManager" />
+	</bean>
+	<!-- 客户信用管理Action -->
+	<bean id="custCreditManageAction" scope="prototype" class="com.deppon.crm.module.customer.server.action.CustCreditManageAction">
+		<property name="custCreditManager" ref="custCreditManager" />
+	</bean>
+	
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">
+			<props>
+				<prop key="resource.loader">class</prop>
+				<prop key="class.resource.loader.class">
+					org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+				</prop>
+				<prop key="velocimacro.library"></prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 客户信用service -->
+	<bean id="custCreditService" 
+		class="com.deppon.crm.module.customer.server.service.impl.CustCreditServiceImpl">
+		<property name="custCreditDao" ref="custCreditDao"></property>
+	</bean>
+	
+	<!-- 客户信用manager -->
+	<bean id="custCreditManager" 
+		class="com.deppon.crm.module.customer.server.manager.impl.CustCreditManagerImpl">
+		<property name="custCreditService" ref="custCreditService"></property>
+		<property name="departmentService" ref="departmentService"></property>
+		<property name="employeeService" ref="employeeService"></property>
+		<property name="fileManager" ref="fileManager"></property>
+		<property name="velocityEngine" ref="velocityEngine"></property>
+		<property name="mailSenderService" ref="mailSenderService"></property>
+		<property name="sysMailSendService" ref="sysMailSendService"></property>
+		<property name="messageManager" ref="messageManager"></property>
+		<property name="userService" ref="userService"></property>
+	</bean>
+
+</beans>

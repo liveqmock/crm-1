@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="vpositionToRole" namespace="/authorityDeploy" extends="crm-default">
+		<!--岗位角色管理页面-->
+       <action name="vpositionToRole" >
+           <result name="success">/WEB-INF/pages/vpositionToRole/vpositionToRole.html</result>
+       </action>
+       
+       	<!--查询虚拟岗位与对应角色列表-->
+	    <action name="searchVirtualPositionToRoleList" class="vpositonToRoleAction" method="searchVirtualPositionToRoleList">
+	        <result name="success" type="json"></result>
+	    </action>
+	    
+	    <!--根据条件查询待选角色列表-->
+	    <action name="searchRoleInfoList" class="vpositonToRoleAction" method="searchRoleInfoList">
+	        <result name="success" type="json"></result>
+	    </action>
+	    
+	    <!--保存虚拟职位与角色对应关系映射-->
+	    <action name="saveVPositionAndRoleRelationship" class="vpositonToRoleAction" method="saveVPositionAndRoleRelationship">
+	        <result name="success" type="json"></result>
+	    </action>
+	    
+	    <!--删除虚拟职位与角色对应关系映射-->
+	    <action name="deleteVPositionAndRoleRelationship" class="vpositonToRoleAction" method="deleteVPositionAndRoleRelationship">
+	        <result name="success" type="json"></result>
+	    </action>
+	   
+	    <!--新增虚拟职位与角色映射关系时查询未被映射过的虚拟职位-->
+	    <action name="searchUnmappedVPositionList" class="vpositonToRoleAction" method="searchUnmappedVPositionList">
+	        <result name="success" type="json"></result>
+	    </action>
+	    
+	    <!--刷新虚拟岗位所对应下面的所有用户的用户角色-->
+	    <action name="refreshUserRole" class="vpositonToRoleAction" method="refreshUserRole">
+	        <result name="success" type="json"></result>
+	    </action>
+	</package>
+</struts>

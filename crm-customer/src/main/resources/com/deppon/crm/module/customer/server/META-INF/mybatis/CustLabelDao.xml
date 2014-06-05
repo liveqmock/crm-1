@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.customer.shared.domain.CustLabel">
+	<!-- 通过部门ID查询标签 -->
+	<select id="queryLabelByDeptId" parameterType="string"
+		resultType="com.deppon.crm.module.customer.shared.domain.Label">
+		SELECT
+		<include refid="queryLabel_sql"/>
+		FROM T_CUST_LABEL
+		WHERE FDEPTID = #{deptId}
+	</select>
+	<select id="queryLabelById" parameterType="string"
+		resultType="com.deppon.crm.module.customer.shared.domain.Label">
+		SELECT
+		<include refid="queryLabel_sql"/>
+		FROM T_CUST_LABEL
+		WHERE FID = #{labelId}
+	</select>
+	<sql id="queryLabel_sql">
+		FID id,
+		FCREATETIME createDate,
+		FCREATEUSERID createUser,
+		FLASTUPDATETIME modifyDate,
+		FLASTMODIFYUSERID modifyUser,
+		FLABELNAME labelName,
+		FDEPTID deptId
+	</sql>
+	<delete id="deleteLabelById" parameterType="string">
+		DELETE FROM T_CUST_LABEL WHERE FID = #{labelId}
+	</delete>
+	<update id="updateLabelById" parameterType="com.deppon.crm.module.customer.shared.domain.Label">
+		UPDATE 
+			T_CUST_LABEL
+		SET FLASTUPDATETIME = #{modifyDate,jdbcType=TIMESTAMP},
+			FLASTMODIFYUSERID = #{modifyUser,jdbcType=NUMERIC},
+			FLABELNAME = #{labelName,jdbcType=VARCHAR}
+		WHERE
+			FID = #{id,jdbcType=NUMERIC} 
+	</update>
+	<delete id="deleteCustLabelByLabelId" parameterType="string">
+		DELETE FROM T_CUST_CUSTLABEL WHERE FLABELID = #{labelId}
+	</delete>
+	<!-- 保存标签 -->
+	<insert id="saveLabel" parameterType="com.deppon.crm.module.customer.shared.domain.Label">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select SEQ_ID_LABEL.nextval as id from dual
+		</selectKey>
+		INSERT INTO T_CUST_LABEL(
+			FID,FCREATETIME,FCREATEUSERID,
+			FLASTUPDATETIME,FLASTMODIFYUSERID,
+			FLABELNAME,FDEPTID)
+			VALUES(
+			#{id,jdbcType=NUMERIC},
+			#{createDate,jdbcType=TIMESTAMP},
+			#{createUser,jdbcType=NUMERIC},
+			#{modifyDate,jdbcType=TIMESTAMP},
+			#{modifyUser,jdbcType=NUMERIC},
+			#{labelName,jdbcType=VARCHAR},
+			#{deptId,jdbcType=NUMERIC}
+			)
+	</insert>
+		<!-- 客户标签保存 -->
+	<insert id="saveCustLabel" parameterType="com.deppon.crm.module.customer.shared.domain.CustLabel">
+		<selectKey keyProperty="id" order="BEFORE" resultType="String">
+			select SEQ_ID_CUSTLABEL.nextval as id from dual
+		</selectKey>
+		INSERT INTO T_CUST_CUSTLABEL(
+			FID,FCREATETIME,FCREATEUSERID,
+			FLASTUPDATETIME,FLASTMODIFYUSERID,
+			FLABELID,FCUSTID,FCUSTTYPE,FDEPTID)
+			VALUES(
+			#{id,jdbcType=NUMERIC},
+			#{createDate,jdbcType=TIMESTAMP},
+			#{createUser,jdbcType=NUMERIC},
+			#{modifyDate,jdbcType=TIMESTAMP},
+			#{modifyUser,jdbcType=NUMERIC},
+			#{label.id,jdbcType=NUMERIC},
+			#{custId,jdbcType=NUMERIC},
+			#{custType,jdbcType=VARCHAR},
+			#{label.deptId,jdbcType=VARCHAR}
+			)	
+	</insert>
+	<!-- 客户标签删除 -->
+	<delete id="deleteCustLabel" parameterType="map">
+		DELETE FROM T_CUST_CUSTLABEL 
+		WHERE 
+		FCUSTID = #{custId,jdbcType=NUMERIC}
+		AND
+		FCUSTTYPE = #{custType,jdbcType=VARCHAR}
+	</delete>
+	<!-- 查询固定客户CUSTLABEL标签 -->
+	<select id="searchMemberCustLabel" parameterType="string"
+		resultMap="CustLabel">
+		SELECT 
+		<include refid="CustLabel_Column"/>
+		<include refid="Label_Column"/>
+		FROM T_CUST_CUSTLABEL CL
+		JOIN
+			T_CUST_LABEL LA
+		ON
+			CL.FLABELID = LA.FID
+		WHERE 
+			CL.FCUSTTYPE = 'MEMBER'
+		AND
+			CL.FCUSTID = #{_parameter,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据客户ID和客户类型查询CustLabel标签 -->
+	<select id="queryCustLabel" parameterType="map"
+		resultMap="CustLabel">
+		SELECT 
+		<include refid="CustLabel_Column"/>
+		<include refid="Label_Column"/>
+		FROM T_CUST_CUSTLABEL CL
+		JOIN
+			T_CUST_LABEL LA
+		ON
+			CL.FLABELID = LA.FID
+		WHERE 
+			CL.FCUSTTYPE = #{custType,jdbcType=VARCHAR}
+		AND
+			CL.FCUSTID = #{custId,jdbcType=VARCHAR}
+	</select>
+	<!-- 客户CUSTLABEL标签字段 -->
+	<sql id="CustLabel_Column">
+		<![CDATA[
+			CL.FID CL_ID,
+			CL.FCUSTID CL_CUSTID,
+			CL.FCUSTTYPE CL_CUSTTYPE,
+			CL.FCREATETIME CL_CREATEDATE,
+			CL.FCREATEUSERID CL_CREATEUSER,
+			CL.FLASTMODIFYUSERID CL_MODIFYUSER,
+			CL.FLASTUPDATETIME CL_MODIFYDATE,
+		]]>
+	</sql>
+	<!-- 客户LABEL标签字段 -->
+	<sql id="Label_Column">
+		<![CDATA[
+			LA.FID LA_ID,
+			LA.FDEPTID LA_DEPTID,
+			LA.FLABELNAME LA_LABELNAME,
+			LA.FCREATETIME LA_CREATEDATE,
+			LA.FCREATEUSERID LA_CREATEUSER,
+			LA.FLASTMODIFYUSERID LA_MODIFYUSER,
+			LA.FLASTUPDATETIME LA_MODIFYDATE
+		]]>
+	</sql>
+	<!-- 客户CUSTLABEL标签 -->
+	<resultMap type="com.deppon.crm.module.customer.shared.domain.CustLabel" 
+		id="CustLabel">
+		<result  property="id" column="CL_ID" />
+		<result  property="custType" column="CL_CUSTTYPE" />
+		<result  property="custId" column="CL_CUSTID" />
+		<result  property="createDate" column="CL_CREATEDATE" />
+		<result  property="createUser" column="CL_CREATEUSER" />
+		<result  property="modifyDate" column="CL_MODIFYDATE" />
+		<result  property="modifyUser" column="CL_MODIFYUSER" />
+		<collection  property="label" resultMap="Label" />
+	</resultMap>
+	<!-- 客户LABEL标签 -->
+	<resultMap type="com.deppon.crm.module.customer.shared.domain.Label" 
+		id="Label">
+		<result  property="id" column="LA_ID" />
+		<result  property="labelName" column="LA_LABELNAME" />
+		<result  property="deptId" column="LA_DEPTID" />
+		<result  property="createDate" column="LA_CREATEDATE" />
+		<result  property="createUser" column="LA_CREATEUSER" />
+		<result  property="modifyDate" column="LA_MODIFYDATE" />
+		<result  property="modifyUser" column="LA_MODIFYUSER" />
+	</resultMap>
+</mapper>

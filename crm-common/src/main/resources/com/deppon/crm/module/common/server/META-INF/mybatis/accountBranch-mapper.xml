@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.common.shared.domain.AccountBranch">
+	<!-- 数据字典详细信息结果映射配置 -->
+	<resultMap  id="accountBranchMap" type="com.deppon.crm.module.common.shared.domain.AccountBranch">
+		<id property="fId" column="FID" javaType="int" jdbcType="INTEGER"/>
+		<result property="name" column="FNAME" jdbcType="VARCHAR" javaType="String"/>
+		<result property="code" column="FCODE" jdbcType="VARCHAR" javaType="String"/>
+		<result property="createTime" column="FCREATETIME"
+			jdbcType="TIMESTAMP" javaType="Date"/>
+		<result property="lastUpdateTime" column="FLASTUPDATETIME"
+			javaType="Date" jdbcType="TIMESTAMP" />
+		<result property="lastModifyUserId" column="FLASTMODIFYUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="createUserId" column="FCREATEUSERID"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="provinceId" column="FPROVINCEID"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="cityId" column="FCITYID"
+			javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+ 	<select id="getAcountBranch" parameterType="String" resultMap="accountBranchMap">
+		select fid, fcreatetime, fcreateuserid, flastupdatetime, flastmodifyuserid, fbankid, fcode, fname, fprovinceid, fcityid from t_crm_accountbranch
+		</select>
+	
+	<insert id="addAcountBank" parameterType="com.deppon.crm.module.common.shared.domain.AccountBank" >
+		insert into t_crm_accountbranch
+	  		(fid, fcreatetime, fcreateuserid, flastupdatetime, flastmodifyuserid, fbankid, fcode, fname, fprovinceid, fcityid)
+		values
+	  		(seq_id_accountbank.nextval, #{createTime}, #{createUserId}, #{lastUpdateTime}, #{lastModifyUserId}, #{bankId}, #{code}, #{name}, #{provinceId}, #{cityId})
+   </insert>
+   <!-- 页面结果 -->
+   <resultMap  id="bankInfoMap" type="com.deppon.crm.module.common.shared.domain.BankView">
+		<result property="province" column="p.fname" jdbcType="VARCHAR" javaType="String"/>
+		<result property="city" column="c.fname" jdbcType="VARCHAR" javaType="String"/>
+		<result property="provinceId" column="p.fid" jdbcType="VARCHAR" javaType="String"/>
+		<result property="cityId" column="c.fid" jdbcType="VARCHAR" javaType="String"/>
+		<result property="accountBranch" column="abh.fname" jdbcType="VARCHAR" javaType="String"/>
+		<result property="accountBank" column="abk.fname" jdbcType="VARCHAR" javaType="String"/>
+				<result property="accountBranchId" column="abh.fid" jdbcType="VARCHAR" javaType="String"/>
+		<result property="accountBankID" column="abk.fid" jdbcType="VARCHAR" javaType="String"/>
+   </resultMap>
+	
+   <select id="getBankInfo" parameterType="com.deppon.crm.module.common.shared.domain.BankView" resultMap="bankInfoMap">
+		select p.fname province, p.fid provinceId,c.fname city,
+			   c.fid cityId,abh.fname accountBranch, abk.fname accountBank,
+			   abk.fid accountBankID,abh.fid accountBranchId
+  				from t_crm_accountbranch abh,
+				<!-- 改成 银行省市表查询  -->
+				t_crm_bankcity   c,
+       			t_crm_bankprovince p,
+       			t_crm_accountbank abk
+		 where abh.fcityid = to_char(c.fid) and abh.fprovinceid = to_char(p.fid) and
+		 abh.fbankid = to_char(abk.fid)
+		 and abh.fcancel=0
+		 and c.fcancel=0
+		 and p.fcancel=0
+		 and abk.fcancel=0
+	    <if test="provinceId != null and provinceId !='' ">
+	    	and p.fid=trim(#{provinceId})
+	    </if>
+	    <if test="cityId != null and cityId != '' ">
+	    	and c.fid=trim(#{cityId})
+	    </if>
+	    <if test="accountBranch != null and accountBranch != '' ">
+	    	and abh.fname like '%'||trim(#{accountBranch})||'%'
+	    </if>
+	    <if test="accountBank != null and accountBank !='' ">
+	    	and abk.fname like '%'||trim(#{accountBank})||'%'
+	    </if>
+	     <if test="accountBranchId != null and accountBranchId != '' ">
+	    	and abh.fid like '%'||trim(#{accountBranchId})||'%'
+	    </if>
+	    <if test="accountBankId != null and accountBankId !='' ">
+	    	and abk.fid like '%'||trim(#{accountBankId})||'%'
+	    </if>
+  </select>
+  
+  <select id="getAccountBranchById" parameterType="int" resultMap="accountBranchMap">
+	SELECT FID, FCREATETIME, FCREATEUSERID, FLASTUPDATETIME,
+	      FLASTMODIFYUSERID, FBANKID, FCODE, FNAME, FPROVINCEID, FCITYID 
+	FROM T_CRM_ACCOUNTBRANCH
+	   where FID=#{id}
+  </select>
+</mapper>
