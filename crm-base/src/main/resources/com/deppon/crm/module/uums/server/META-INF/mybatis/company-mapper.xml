@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.uums.shared.domain.CompanyInfo">
+    <!-- function表返回的结果集，多表联查，查询其父节点 -->
+	<resultMap id="companyInfo" type="com.deppon.crm.module.uums.shared.domain.CompanyInfo">
+		<id property="theMainId" column="ID" />
+	    <result column="COMPANYNAME" property="companyName" jdbcType="VARCHAR" />
+	    <result column="SHORTNAME" property="shortName" jdbcType="VARCHAR" />
+	    <result column="COMPANYCODE" property="theMainCode" jdbcType="VARCHAR" />
+	    <result column="ISHASACCOUNT" property="isHasAccount" jdbcType="DECIMAL" />
+	    <result column="LINKMAN1" property="linkMan1" jdbcType="VARCHAR" />
+	    <result column="FAX1" property="fax1" jdbcType="VARCHAR" />
+	    <result column="PHONE1" property="phone1" jdbcType="VARCHAR" />
+	    <result column="ZIPCODE" property="zipCode" jdbcType="VARCHAR" />
+	    <result column="POSTADDR" property="postAddress" jdbcType="VARCHAR" />
+	    <result column="SALEADDR" property="saleAddress" jdbcType="VARCHAR" />
+	    <result column="BRIEFINTRO" property="briefintro" jdbcType="VARCHAR" />
+	    <result column="OWNERSHARERATE" property="ownerShareRate" jdbcType="DECIMAL" />
+	    <result column="ISWORKINGUNIT" property="isWorkingUnit" jdbcType="DECIMAL" />
+	    <result column="ISSEAL" property="isSeal" jdbcType="DECIMAL" />
+	    <result column="MODIFYDATE" property="changeDate" jdbcType="TIMESTAMP" />
+	    <result column="COMPANYSTANDCODE" property="companyStandCode" jdbcType="VARCHAR" />
+	</resultMap>
+    <!-- company表返回查询字段 ，单表-->
+	<sql id="insert_param">
+		ID,
+		COMPANYNAME,
+		SHORTNAME,
+		COMPANYCODE,
+		ISHASACCOUNT,
+		LINKMAN1,
+		FAX1,
+		PHONE1,
+		ZIPCODE,
+		POSTADDR,
+		SALEADDR,
+		BRIEFINTRO,
+		OWNERSHARERATE,
+		ISWORKINGUNIT,
+		ISSEAL,
+		MODIFYDATE,
+		COMPANYSTANDCODE
+	</sql>
+    <insert id="insert" parameterType="com.deppon.crm.module.uums.shared.domain.CompanyInfo" >
+         <!-- 自增长，回去一个新的ID-->
+   		 <selectKey keyProperty="theMainId" order="BEFORE" resultType="String">
+			SELECT COMPANY_UUMS_SEQ.NEXTVAL AS
+			id  FROM DUAL
+		</selectKey>
+  		 <![CDATA[
+			INSERT INTO T_ORG_COMPANY(
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) VALUES (
+		]]>
+      #{theMainId,jdbcType=VARCHAR},
+      #{companyName,jdbcType=VARCHAR}, 
+      #{shortName,jdbcType=VARCHAR}, 
+      #{theMainCode,jdbcType=VARCHAR}, 
+      #{isHasAccount,jdbcType=VARCHAR},
+      #{linkMan1,jdbcType=VARCHAR}, 
+      #{fax1,jdbcType=VARCHAR},  
+      #{phone1,jdbcType=VARCHAR}, 
+      #{zipCode,jdbcType=VARCHAR}, 
+      #{postAddress,jdbcType=VARCHAR}, 
+      #{saleAddress,jdbcType=VARCHAR}, 
+      #{briefintro,jdbcType=VARCHAR}, 
+      #{ownerShareRate,jdbcType=DECIMAL}, 
+      #{isWorkingUnit,jdbcType=DECIMAL}, 
+      #{isSeal,jdbcType=DECIMAL}, 
+      #{changeDate,jdbcType=TIMESTAMP}, 
+      #{companyStandCode,jdbcType=VARCHAR})
+  </insert>
+<update id="UpdateByCode" parameterType="com.deppon.crm.module.uums.shared.domain.CompanyInfo">
+	<![CDATA[
+			UPDATE T_ORG_COMPANY
+	]]>
+	<set>
+		COMPANYNAME=#{companyName,jdbcType=VARCHAR}, 
+		SHORTNAME=#{shortName,jdbcType=VARCHAR}, 
+		ISHASACCOUNT=#{isHasAccount,jdbcType=DECIMAL},
+		LINKMAN1=	  #{linkMan1,jdbcType=VARCHAR}, 
+		FAX1=	      #{fax1,jdbcType=VARCHAR},  
+		PHONE1=	      #{phone1,jdbcType=VARCHAR}, 
+		COMPANYCODE=#{theMainCode,jdbcType=VARCHAR},
+		ZIPCODE=	     #{zipCode,jdbcType=VARCHAR}, 
+		POSTADDR=	     #{postAddress,jdbcType=VARCHAR}, 
+		SALEADDR=	     #{saleAddress,jdbcType=VARCHAR}, 
+		BRIEFINTRO=	     #{briefintro,jdbcType=VARCHAR}, 
+		OWNERSHARERATE=	 #{ownerShareRate,jdbcType=DECIMAL}, 
+		ISWORKINGUNIT=	 #{isWorkingUnit,jdbcType=DECIMAL}, 
+		ISSEAL=	      #{isSeal,jdbcType=DECIMAL}, 
+		MODIFYDATE=	      #{changeDate,jdbcType=TIMESTAMP}
+	</set>
+	<where>
+	COMPANYSTANDCODE=#{companyStandCode,jdbcType=VARCHAR}
+	</where>
+</update>
+
+<update id="UpdateById" parameterType="com.deppon.crm.module.uums.shared.domain.CompanyInfo">
+	<![CDATA[
+			UPDATE T_ORG_COMPANY
+	]]>
+	<set>
+		COMPANYNAME=#{companyName,jdbcType=VARCHAR}, 
+		SHORTNAME=#{shortName,jdbcType=VARCHAR}, 
+		ISHASACCOUNT=#{isHasAccount,jdbcType=DECIMAL},
+		LINKMAN1=	      #{linkMan1,jdbcType=VARCHAR}, 
+		FAX1=	       #{fax1,jdbcType=VARCHAR},  
+		PHONE1=	      #{phone1,jdbcType=VARCHAR}, 
+		COMPANYCODE=#{theMainCode,jdbcType=VARCHAR},
+		ZIPCODE=	       #{zipCode,jdbcType=VARCHAR}, 
+		POSTADDR=	      #{postAddress,jdbcType=VARCHAR}, 
+		SALEADDR=	      #{saleAddress,jdbcType=VARCHAR}, 
+		BRIEFINTRO=	      #{briefintro,jdbcType=VARCHAR}, 
+		OWNERSHARERATE=	      #{ownerShareRate,jdbcType=DECIMAL}, 
+		ISWORKINGUNIT=	      #{isWorkingUnit,jdbcType=DECIMAL}, 
+		ISSEAL=	      #{isSeal,jdbcType=DECIMAL}, 
+		MODIFYDATE=	      #{changeDate,jdbcType=TIMESTAMP}
+	</set>
+	<where>
+	ID=#{theMainId,jdbcType=VARCHAR}
+	</where>
+</update>
+	<delete id="DeleteByCode" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_ORG_COMPANY
+		]]>
+		<where>
+			COMPANYSTANDCODE=#{companyCode,jdbcType=VARCHAR}
+		</where>
+	</delete>
+	
+	<delete id="DeleteById" parameterType="string">
+		<![CDATA[
+			DELETE FROM T_ORG_COMPANY
+		]]>
+		<where>
+			Id=#{companyId,jdbcType=VARCHAR}
+		</where>
+	</delete>
+	<select id="selectCompanyByCode" resultMap="companyInfo"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			FROM T_ORG_COMPANY WHERE COMPANYSTANDCODE=#{companyCode,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<select id="selectCompanyByName" resultMap="companyInfo"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			FROM T_ORG_COMPANY WHERE COMPANYNAME=#{companyCode,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<select id="selectCompanyById" resultMap="companyInfo"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			FROM T_ORG_COMPANY WHERE ID=#{companyId,jdbcType=VARCHAR}
+		]]>
+	</select>
+</mapper>

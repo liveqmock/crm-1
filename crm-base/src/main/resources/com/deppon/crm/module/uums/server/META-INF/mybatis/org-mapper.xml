@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.crm.module.uums.shared.domain.Org">
+	<resultMap id="OrgInfo" type="com.deppon.crm.module.uums.shared.domain.OrgInfo" >
+	    <result column="ID" property="theMainId" jdbcType="VARCHAR" />
+	    <result column="DEPTCODE" property="theMainCode" jdbcType="VARCHAR" />
+	    <result column="DEPTNAME" property="orgName" jdbcType="VARCHAR" />
+	    <result column="PRINCIPAL" property="orgManager" jdbcType="VARCHAR" />
+	    <result column="PHONE" property="orgPhone" jdbcType="VARCHAR" />
+	    <result column="FAX" property="orgFax" jdbcType="VARCHAR" />
+	    <result column="PARENTID" property="parentOrgId" jdbcType="DECIMAL" />
+	    <result column="COMPANYNAME" property="subCompName" jdbcType="VARCHAR" />
+	    <result column="ZIPCODE" property="orgZipCode" jdbcType="VARCHAR" />
+	    <result column="ADDRESS" property="orgAddress" jdbcType="VARCHAR" />
+	    <result column="STATUS" property="orgStatus" jdbcType="DECIMAL" />
+	    <result column="VALIDDATE" property="validDate" jdbcType="TIMESTAMP" />
+	    <result column="INVALIDDATE" property="invalidDate" jdbcType="TIMESTAMP" />
+	    <result column="DISPLAYORDER" property="displayOrder" jdbcType="DECIMAL" />
+	    <result column="DEPTLEVEL" property="orgLevel" jdbcType="DECIMAL" />
+	    <result column="DEPTDESC" property="orgDesc" jdbcType="VARCHAR" />
+	    <result column="DEPTSEQ" property="orgSeq" jdbcType="VARCHAR" />
+	    <result column="MODIFYDATE" property="changeDate" jdbcType="TIMESTAMP" />
+	    <result column="LEAF" property="isLeaf" jdbcType="DECIMAL" />
+	    <result column="DEPTSHORTNAME" property="deptShortName" jdbcType="VARCHAR" />
+	    <result column="DEPTSTANDCODE" property="orgBenchmarkCode" jdbcType="VARCHAR" />
+	    <result column="DEPTATTRIBUTE" property="deptAttribute" jdbcType="VARCHAR" />
+	    <result column="FINDEPTNAME" property="costCenterName" jdbcType="VARCHAR" />
+	    <result column="FINDEPTCODE" property="costCenterCode" jdbcType="VARCHAR" />
+	    <result column="AREACODE" property="areaCode" jdbcType="VARCHAR" />
+	    <result column="DEPTPROVINCE" property="orgProvince" jdbcType="VARCHAR" />
+	    <result column="DEPTCITY" property="orgCity" jdbcType="VARCHAR" />
+	    <result column="DEPTCOUNTRY" property="orgCountry" jdbcType="VARCHAR" />
+	    <result column="DEPTEMAIL" property="orgEmail" jdbcType="VARCHAR" />
+	    <result column="CANCELEDSYSTEMS" property="canceledSystems" jdbcType="VARCHAR" />
+	    <result column="EHRDEPTCODE" property="ehrDeptCode" jdbcType="VARCHAR" />
+	    <result column="ISCAREERDEPT" property="isCareerDept" jdbcType="DECIMAL" />
+	    <result column="ISBIGAREA" property="isBigArea" jdbcType="DECIMAL" />
+	    <result column="ISSMALLAREA" property="isSmallArea" jdbcType="DECIMAL" />
+  </resultMap>
+    <!-- 组织表返回查询字段 ，单表-->
+	<sql id="insert_param">
+		  ID, 
+		  DEPTCODE, 
+		  DEPTNAME, 
+	      PRINCIPAL, 
+	      PHONE, 
+	      FAX, 
+	      PARENTID, 
+	      COMPANYNAME, 
+	      ZIPCODE, 
+	      ADDRESS, 
+	      STATUS, 
+	      VALIDDATE, 
+	      INVALIDDATE, 
+	      DISPLAYORDER, 
+	      DEPTLEVEL, 
+	      DEPTDESC, 
+	      DEPTSEQ, 
+	      LEAF, 
+	      DEPTSHORTNAME, 
+	      DEPTSTANDCODE, 
+	      DEPTATTRIBUTE, 
+	      FINDEPTNAME, 
+	      FINDEPTCODE, 
+	      AREACODE, 
+	      DEPTPROVINCE, 
+	      DEPTCITY, 
+	      DEPTCOUNTRY, 
+	      DEPTEMAIL, 
+	      CANCELEDSYSTEMS, 
+	      EHRDEPTCODE, 
+	      ISCAREERDEPT, 
+	      ISBIGAREA, 
+	      ISSMALLAREA
+	</sql>
+	<!-- 数据插入 -->
+	<insert id="insert" parameterType="com.deppon.crm.module.uums.shared.domain.OrgInfo" >
+	<![CDATA[
+			INSERT INTO T_ORG_DEPARTMENT_SYNC(CREATEDATE,MODIFYDATE,
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) VALUES (
+		]]>
+	  #{changeDate,jdbcType=TIMESTAMP },
+	  #{changeDate,jdbcType=TIMESTAMP},
+	  #{theMainId,jdbcType=VARCHAR}, 
+      #{theMainCode,jdbcType=VARCHAR}, 
+      #{orgName,jdbcType=VARCHAR}, 
+      #{orgManager,jdbcType=VARCHAR}, 
+      #{orgPhone,jdbcType=VARCHAR}, 
+      #{orgFax,jdbcType=VARCHAR}, 
+      #{parentOrgId,jdbcType=DECIMAL}, 
+      #{subCompName,jdbcType=VARCHAR}, 
+      #{orgZipCode,jdbcType=VARCHAR}, 
+      #{orgAddress,jdbcType=VARCHAR}, 
+      #{orgStatus,jdbcType=DECIMAL}, 
+      #{validDate,jdbcType=DATE}, 
+      #{invalidDate,jdbcType=TIMESTAMP}, 
+      #{displayOrder,jdbcType=DECIMAL}, 
+      #{orgLevel,jdbcType=DECIMAL}, 
+      #{orgDesc,jdbcType=VARCHAR}, 
+      #{orgSeq,jdbcType=VARCHAR}, 
+      #{isLeaf,jdbcType=DECIMAL}, 
+      #{deptShortName,jdbcType=VARCHAR},
+      #{orgBenchmarkCode,jdbcType=VARCHAR}, 
+      #{deptAttribute,jdbcType=VARCHAR}, 
+      #{costCenterName,jdbcType=VARCHAR}, 
+      #{costCenterCode,jdbcType=VARCHAR},
+      #{areaCode,jdbcType=VARCHAR}, 
+      #{orgProvince,jdbcType=VARCHAR}, 
+      #{orgCity,jdbcType=VARCHAR}, 
+      #{orgCountry,jdbcType=VARCHAR}, 
+      #{orgEmail,jdbcType=VARCHAR}, 
+      #{canceledSystems,jdbcType=VARCHAR}, 
+      #{ehrDeptCode,jdbcType=VARCHAR}, 
+      #{isCareerDept,jdbcType=DECIMAL}, 
+      #{isBigArea,jdbcType=DECIMAL},
+      #{isSmallArea,jdbcType=DECIMAL})
+  </insert>
+     <!-- 修改指定的一条数据-->
+	<update id="UpdateById" parameterType="com.deppon.crm.module.uums.shared.domain.OrgInfo">
+		<![CDATA[
+			UPDATE T_ORG_DEPARTMENT_SYNC
+		]]>
+		<set>
+			DEPTNAME =	#{orgName, jdbcType=VARCHAR} ,
+			PRINCIPAL =	#{orgManager, jdbcType=VARCHAR} ,
+			PHONE =	#{orgPhone ,jdbcType=VARCHAR} ,
+			FAX =	#{orgFax ,jdbcType=VARCHAR} ,
+			PARENTID =	#{parentOrgId ,jdbcType=DECIMAL} ,
+			COMPANYNAME =	#{subCompName, jdbcType=VARCHAR}, 
+			ZIPCODE =	#{orgZipCode, jdbcType=VARCHAR} ,
+			ADDRESS =	#{orgAddress,jdbcType=VARCHAR} ,
+			STATUS =	#{orgStatus, jdbcType=DECIMAL} ,
+			VALIDDATE =	#{validDate,jdbcType=TIMESTAMP} ,
+			INVALIDDATE =	#{invalidDate,jdbcType=TIMESTAMP} ,
+			DISPLAYORDER =	#{displayOrder, jdbcType=DECIMAL} ,
+			DEPTLEVEL =	#{orgLevel, jdbcType=DECIMAL} ,
+			DEPTDESC =	#{orgDesc, jdbcType=VARCHAR} ,
+			DEPTSEQ =	#{orgSeq, jdbcType=VARCHAR} ,
+			MODIFYDATE =	#{changeDate,jdbcType=TIMESTAMP} ,
+			LEAF =	#{isLeaf, jdbcType=DECIMAL} ,
+			DEPTSHORTNAME =	#{deptShortName, jdbcType=VARCHAR},
+			DEPTSTANDCODE =	#{orgBenchmarkCode, jdbcType=VARCHAR} ,
+			DEPTATTRIBUTE =	#{deptAttribute, jdbcType=VARCHAR} ,
+			FINDEPTNAME =	#{costCenterName, jdbcType=VARCHAR} ,
+			FINDEPTCODE =	#{costCenterCode, jdbcType=VARCHAR},
+			AREACODE =	#{areaCode, jdbcType=VARCHAR} ,
+			DEPTPROVINCE =	#{orgProvince, jdbcType=VARCHAR} ,
+			DEPTCITY =	#{orgCity, jdbcType=VARCHAR} ,
+			DEPTCOUNTRY =	#{orgCountry, jdbcType=VARCHAR} ,
+			DEPTEMAIL =	#{orgEmail, jdbcType=VARCHAR} ,
+			CANCELEDSYSTEMS =	#{canceledSystems, jdbcType=VARCHAR} ,
+			EHRDEPTCODE =	#{ehrDeptCode, jdbcType=VARCHAR} ,
+			ISCAREERDEPT =	#{isCareerDept, jdbcType=DECIMAL} ,
+			ISBIGAREA 	=#{isBigArea, jdbcType=DECIMAL},
+			ISSMALLAREA	=#{isSmallArea, jdbcType=DECIMAL}
+		</set>
+		WHERE ID = #{theMainId jdbcType=VARCHAR}
+	</update>
+	
+	<update id="UpdateByCode" parameterType="com.deppon.crm.module.uums.shared.domain.OrgInfo">
+		<![CDATA[
+			UPDATE T_ORG_DEPARTMENT_SYNC
+		]]>
+		<set>
+			DEPTNAME =	#{orgName, jdbcType=VARCHAR} ,
+			PRINCIPAL =	#{orgManager, jdbcType=VARCHAR} ,
+			PHONE =	#{orgPhone ,jdbcType=VARCHAR} ,
+			FAX =	#{orgFax ,jdbcType=VARCHAR} ,
+			PARENTID =	#{parentOrgId ,jdbcType=DECIMAL} ,
+			COMPANYNAME =	#{subCompName, jdbcType=VARCHAR}, 
+			ZIPCODE =	#{orgZipCode, jdbcType=VARCHAR} ,
+			ADDRESS =	#{orgAddress,jdbcType=VARCHAR} ,
+			STATUS =	#{orgStatus, jdbcType=DECIMAL} ,
+			VALIDDATE =	#{validDate,jdbcType=TIMESTAMP} ,
+			INVALIDDATE =	#{invalidDate,jdbcType=TIMESTAMP} ,
+			DISPLAYORDER =	#{displayOrder, jdbcType=DECIMAL} ,
+			DEPTLEVEL =	#{orgLevel, jdbcType=DECIMAL} ,
+			DEPTDESC =	#{orgDesc, jdbcType=VARCHAR} ,
+			DEPTSEQ =	#{orgSeq, jdbcType=VARCHAR} ,
+			MODIFYDATE =	#{changeDate,jdbcType=TIMESTAMP} ,
+			LEAF =	#{isLeaf, jdbcType=DECIMAL} ,
+			DEPTSHORTNAME =	#{deptShortName, jdbcType=VARCHAR},
+			DEPTATTRIBUTE =	#{deptAttribute, jdbcType=VARCHAR} ,
+			FINDEPTNAME =	#{costCenterName, jdbcType=VARCHAR} ,
+			FINDEPTCODE =	#{costCenterCode, jdbcType=VARCHAR},
+			AREACODE =	#{areaCode, jdbcType=VARCHAR} ,
+			DEPTPROVINCE =	#{orgProvince, jdbcType=VARCHAR} ,
+			DEPTCITY =	#{orgCity, jdbcType=VARCHAR} ,
+			DEPTCOUNTRY =	#{orgCountry, jdbcType=VARCHAR} ,
+			DEPTEMAIL =	#{orgEmail, jdbcType=VARCHAR} ,
+			CANCELEDSYSTEMS =	#{canceledSystems, jdbcType=VARCHAR} ,
+			EHRDEPTCODE =	#{ehrDeptCode, jdbcType=VARCHAR} ,
+			ISCAREERDEPT =	#{isCareerDept, jdbcType=DECIMAL} ,
+			ISBIGAREA 	=#{isBigArea, jdbcType=DECIMAL},
+			ISSMALLAREA=	#{isSmallArea, jdbcType=DECIMAL}
+		</set>
+		WHERE DEPTSTANDCODE = #{theMainCode, jdbcType=VARCHAR}
+	</update>
+	<!-- 删除记录-->
+	 <update id="DeleteById" parameterType="string">
+			<![CDATA[
+				UPDATE T_ORG_DEPARTMENT_SYNC 
+			]]>
+			<set>STATUS=3,MODIFYDATE=sysdate</set>
+			<where>
+			    ID=#{orgId, jdbcType=VARCHAR}
+			</where>
+	</update>
+	<update id="DeleteByCode" parameterType="string">
+			<![CDATA[
+				UPDATE T_ORG_DEPARTMENT_SYNC 
+			]]>
+			<set>STATUS=3,MODIFYDATE=sysdate</set>
+			<where>
+			    DEPTSTANDCODE=#{orgCode, jdbcType=VARCHAR}
+			</where>
+	</update>
+	<!-- 查询对象 -->
+	<select id="selectById" resultMap="OrgInfo" parameterType="string">
+			<![CDATA[
+				select 
+			]]>
+			<include refid="insert_param" />
+			<![CDATA[
+				 FROM T_ORG_DEPARTMENT_SYNC 
+			]]>
+			<where>
+			     ID=#{orgId, jdbcType=VARCHAR} 
+			</where>
+	</select>
+	<select id="selectByCode" resultMap="OrgInfo"  parameterType="string">
+			<![CDATA[
+				select 
+			]]>
+			<include refid="insert_param" />
+			<![CDATA[
+				 FROM T_ORG_DEPARTMENT_SYNC 
+			]]>
+			<where>
+			 DEPTSTANDCODE=#{orgCode, jdbcType=VARCHAR} 
+			</where>
+	</select>
+</mapper>

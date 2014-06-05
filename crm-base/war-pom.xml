@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.deppon.crm</groupId>
+		<artifactId>crm-parent</artifactId>
+		<version>3.1.1-SNAPSHOT</version>
+		<relativePath>../crm-parent</relativePath>
+	</parent>
+	<artifactId>crm-base</artifactId>
+	<version>3.1.1-SNAPSHOT</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-config</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.crm</groupId>
+			<artifactId>crm-common</artifactId>
+			<version>3.1.1-SNAPSHOT</version>
+		</dependency>
+		<!-- servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- DPAP -->
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.dpap</groupId>
+			<artifactId>framework-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.dpap</groupId>
+			<artifactId>framework-sso</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.cas</groupId>
+			<artifactId>casclient</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+		<!-- workflow -->
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>osworkflow</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>osuser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh</artifactId>
+		</dependency>
+
+		<!-- test tools -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>oracle-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>1.0.0.M4</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<path>/crm-base</path>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>foss.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
+
+	<packaging>war</packaging>
+</project>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.uums.shared.domain.Employee">
+    <!-- function表返回的结果集，多表联查，查询其父节点 -->
+	<resultMap id="employeeInfo" type="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		<id property="theMainId" column="id" />
+	<result column="DEPTID" property="deptCode" jdbcType="DECIMAL" />
+    <result column="EMPCODE" property="theMainCode" jdbcType="VARCHAR" />
+    <result column="EMPNAME" property="employeeName" jdbcType="VARCHAR" />
+    <result column="GENDER" property="gender" jdbcType="DECIMAL" />
+    <result column="POSITION" property="position" jdbcType="VARCHAR" />
+    <result column="BIRTHDATE" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="OTEL" property="officeTel" jdbcType="VARCHAR" />
+    <result column="OADDRESS" property="officeAddress" jdbcType="VARCHAR" />
+    <result column="OZIPCODE" property="officeZipCode" jdbcType="VARCHAR" />
+    <result column="OEMAIL" property="officeEmail" jdbcType="VARCHAR" />
+    <result column="MOBILENO" property="mobile" jdbcType="VARCHAR" />
+    <result column="HTEL" property="homeTel" jdbcType="VARCHAR" />
+    <result column="HADDRESS" property="homeAddress" jdbcType="VARCHAR" />
+    <result column="HZIPCODE" property="homeZipCode" jdbcType="VARCHAR" />
+    <result column="PEMAIL" property="personalEmail" jdbcType="VARCHAR" />
+    <result column="WORKEXP" property="workexp" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="MODIFYDATE" property="changeDate" jdbcType="TIMESTAMP" />
+    <result column="DEPTSTANDCODE" property="deptBenchmarkCode" jdbcType="VARCHAR" />
+    <result column="DEPTNAME" property="deptName" jdbcType="VARCHAR" />
+    <result column="DOCTYPE" property="docType" jdbcType="VARCHAR" />
+    <result column="DOCNUMBER" property="docNumber" jdbcType="VARCHAR" />
+    <result column="WITHCODE" property="withCode" jdbcType="DECIMAL" />
+    <result column="WAISTCODE" property="waistCode" jdbcType="DECIMAL" />
+    <result column="HEIGHT" property="height" jdbcType="DECIMAL" />
+    <result column="POSITIONGRADE" property="degree" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="DECIMAL" />
+	</resultMap>
+     <!-- function表返回查询字段 -->
+	<sql id="insert_param">
+		ID,
+		DEPTID,
+		EMPCODE,
+		EMPNAME,
+		GENDER,
+		POSITION,
+		BIRTHDATE,
+		STATUS,
+		OTEL,
+		OADDRESS,
+		OZIPCODE,
+		OEMAIL,
+		MOBILENO,
+		HTEL,
+		HADDRESS,
+		HZIPCODE,
+		PEMAIL,
+		WORKEXP,
+		REMARK,
+		DEPTSTANDCODE,
+		DEPTNAME,
+		DOCTYPE,
+		DOCNUMBER,
+		WITHCODE,
+		WAISTCODE,
+		HEIGHT,
+		POSITIONGRADE,
+		WEIGHT
+	</sql>
+    <!--插入一条数据-->
+	<insert id="insert"
+		parameterType="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		 <selectKey keyProperty="theMainId" order="BEFORE" resultType="String">
+			SELECT EMPLOYEE_UUMS_SEQ.NEXTVAL AS
+			id  FROM DUAL
+		</selectKey>
+		<![CDATA[
+			INSERT INTO T_ORG_EMPLOYEE_SYNC(CREATEDATE,MODIFYDATE,
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			) VALUES (
+		]]>
+			  #{changeDate,jdbcType=TIMESTAMP},
+			  #{changeDate,jdbcType=TIMESTAMP},
+			  #{theMainId,jdbcType=VARCHAR}, 
+			  #{deptCode,jdbcType=DECIMAL},
+			  #{theMainCode,jdbcType=VARCHAR}, 
+		      #{employeeName,jdbcType=VARCHAR},
+		      #{gender,jdbcType=DECIMAL}, 
+		      #{position,jdbcType=VARCHAR}, 
+		      #{birthday,jdbcType=DATE}, 
+		      #{status,jdbcType=VARCHAR}, 
+		      #{officeTel,jdbcType=VARCHAR}, 
+		      #{officeAddress,jdbcType=VARCHAR}, 
+		      #{officeZipCode,jdbcType=VARCHAR},
+		      #{officeEmail,jdbcType=VARCHAR}, 
+		      #{mobile,jdbcType=VARCHAR}, 
+		      #{homeTel,jdbcType=VARCHAR},
+		      #{homeAddress,jdbcType=VARCHAR},
+		      #{homeZipCode,jdbcType=VARCHAR}, 
+		      #{personalEmail,jdbcType=VARCHAR}, 
+		      #{workexp,jdbcType=VARCHAR},
+		      #{remark,jdbcType=VARCHAR}, 
+		      #{deptBenchmarkCode,jdbcType=VARCHAR}, 
+		      #{deptName,jdbcType=VARCHAR}, 
+		      #{docType,jdbcType=VARCHAR}, 
+		      #{docNumber,jdbcType=VARCHAR}, 
+		      #{withCode,jdbcType=DECIMAL}, 
+		      #{waistCode,jdbcType=DECIMAL}, 
+		      #{height,jdbcType=DECIMAL}, 
+		      #{degree,jdbcType=VARCHAR},
+		      #{weight,jdbcType=DECIMAL}
+     		 )
+	</insert>
+
+     <!-- 修改指定的一条数据-->
+	<update id="UpdateByCode" parameterType="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		<![CDATA[
+			UPDATE T_ORG_EMPLOYEE_SYNC
+		]]>
+		<set>
+			MODIFYDATE =#{changeDate,jdbcType=TIMESTAMP},
+			DEPTID=	#{deptCode, jdbcType=DECIMAL},
+			EMPCODE=#{theMainCode,  jdbcType=VARCHAR},
+			EMPNAME=#{employeeName,  jdbcType=VARCHAR},
+			GENDER=#{gender,  jdbcType=DECIMAL},
+			POSITION=#{position, jdbcType=VARCHAR},
+			BIRTHDATE=#{birthday,jdbcType=TIMESTAMP},
+			STATUS=	#{status,jdbcType=VARCHAR}, 
+			OTEL=#{officeTel, jdbcType=VARCHAR},
+			OADDRESS=#{officeAddress, jdbcType=VARCHAR},
+			OZIPCODE=#{officeZipCode, jdbcType=VARCHAR},
+			OEMAIL=#{officeEmail, jdbcType=VARCHAR},
+			MOBILENO=#{mobile, jdbcType=VARCHAR},
+			HTEL=#{homeTel, jdbcType=VARCHAR},
+			HADDRESS=#{homeAddress, jdbcType=VARCHAR},
+			HZIPCODE=#{homeZipCode, jdbcType=VARCHAR},
+			PEMAIL=#{personalEmail, jdbcType=VARCHAR},
+			WORKEXP=#{workexp, jdbcType=VARCHAR},
+			REMARK=#{remark jdbcType=VARCHAR},
+			DEPTSTANDCODE=#{deptBenchmarkCode jdbcType=VARCHAR},
+			DEPTNAME=#{deptName, jdbcType=VARCHAR},
+			DOCTYPE=#{docType, jdbcType=VARCHAR},
+			DOCNUMBER=#{docNumber, jdbcType=VARCHAR},
+			WITHCODE=#{withCode, jdbcType=DECIMAL},
+			WAISTCODE=#{waistCode, jdbcType=DECIMAL},
+			HEIGHT=#{height, jdbcType=DECIMAL},
+			POSITIONGRADE=#{degree, jdbcType=VARCHAR},
+			WEIGHT=	#{weight, jdbcType=DECIMAL}
+		</set>
+		<where>
+			EMPCODE = #{theMainCode,jdbcType=VARCHAR}
+		</where> 
+	</update>
+	<update id="UpdateById" parameterType="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		<![CDATA[
+			UPDATE T_ORG_EMPLOYEE_SYNC
+		]]>
+		<set>
+		    MODIFYDATE =#{changeDate,jdbcType=TIMESTAMP},
+			ID=	#{theMainId,  jdbcType=DECIMAL},
+			DEPTID=	#{deptCode, jdbcType=DECIMAL},
+			EMPCODE=#{theMainCode,  jdbcType=VARCHAR},
+			EMPNAME=#{employeeName,  jdbcType=VARCHAR},
+			GENDER=#{gender,  jdbcType=DECIMAL},
+			POSITION=#{position, jdbcType=VARCHAR},
+			BIRTHDATE=#{birthday,jdbcType=TIMESTAMP},
+			STATUS=	#{status, jdbcType=VARCHAR},
+			OTEL=#{officeTel, jdbcType=VARCHAR},
+			OADDRESS=#{officeAddress, jdbcType=VARCHAR},
+			OZIPCODE=#{officeZipCode, jdbcType=VARCHAR},
+			OEMAIL=#{officeEmail, jdbcType=VARCHAR},
+			MOBILENO=#{mobile, jdbcType=VARCHAR},
+			HTEL=#{homeTel, jdbcType=VARCHAR},
+			HADDRESS=#{homeAddress, jdbcType=VARCHAR},
+			HZIPCODE=#{homeZipCode, jdbcType=VARCHAR},
+			PEMAIL=#{personalEmail, jdbcType=VARCHAR},
+			WORKEXP=#{workexp, jdbcType=VARCHAR},
+			REMARK=#{remark jdbcType=VARCHAR},
+			DEPTSTANDCODE=#{deptBenchmarkCode jdbcType=VARCHAR},
+			DEPTNAME=#{deptName, jdbcType=VARCHAR},
+			DOCTYPE=#{docType, jdbcType=VARCHAR},
+			DOCNUMBER=#{docNumber, jdbcType=VARCHAR},
+			WITHCODE=#{withCode, jdbcType=DECIMAL},
+			WAISTCODE=#{waistCode, jdbcType=DECIMAL},
+			HEIGHT=#{height, jdbcType=DECIMAL},
+			POSITIONGRADE=#{degree, jdbcType=VARCHAR},
+			WEIGHT=	#{weight, jdbcType=DECIMAL}
+		</set>
+		<where>
+			ID = #{theMainId,jdbcType=VARCHAR}
+		</where> 
+	</update>
+	<update id="updateBeforDept" parameterType="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		<![CDATA[
+			UPDATE T_ORG_EMPLOYEE_SYNC
+		]]>
+		<set>
+			BEFOREDEPTSTANDCODE=#{depetStandardCode,jdbcType=VARCHAR},MODIFYDATE =#{changeDate}
+		</set>
+		<where>
+			EMPCODE = #{theMainCode,jdbcType=VARCHAR}
+		</where>
+	</update>
+	<update id="updateBeforPosition" parameterType="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		<![CDATA[
+			UPDATE T_ORG_EMPLOYEE_SYNC
+		]]>
+		<set>
+			BEFOREPKBASPOSITION=#{depetStandardCode,jdbcType=VARCHAR},
+			MODIFYDATE =sysdate
+		</set>
+		<where>
+			EMPCODE = #{theMainCode,jdbcType=VARCHAR}
+		</where>
+	</update>
+	<!-- 返聘 -->
+	<update id="ReturnById" parameterType="string">
+		<![CDATA[ UPDATE T_ORG_EMPLOYEE_SYNC]]>
+		<set>STATUS=1,MODIFYDATE =sysdate</set>
+	<where>
+		ID = #{employeeId,jdbcType=VARCHAR}
+	</where>
+	</update>
+	<!-- 返聘 -->
+	<update id="ReturnByCode" parameterType="com.deppon.crm.module.uums.shared.domain.EmployeeInfo">
+		<![CDATA[
+			UPDATE T_ORG_EMPLOYEE_SYNC
+		]]>
+		<set>
+			MODIFYDATE =#{changeDate,jdbcType=TIMESTAMP},
+			DEPTID=	#{deptCode, jdbcType=DECIMAL},
+			EMPCODE=#{theMainCode,  jdbcType=VARCHAR},
+			EMPNAME=#{employeeName,  jdbcType=VARCHAR},
+			GENDER=#{gender,  jdbcType=DECIMAL},
+			POSITION=#{position, jdbcType=VARCHAR},
+			BIRTHDATE=#{birthday,jdbcType=TIMESTAMP},
+			STATUS=	#{status, jdbcType=VARCHAR},
+			OTEL=#{officeTel, jdbcType=VARCHAR},
+			OADDRESS=#{officeAddress, jdbcType=VARCHAR},
+			OZIPCODE=#{officeZipCode, jdbcType=VARCHAR},
+			OEMAIL=#{officeEmail, jdbcType=VARCHAR},
+			MOBILENO=#{mobile, jdbcType=VARCHAR},
+			HTEL=#{homeTel, jdbcType=VARCHAR},
+			HADDRESS=#{homeAddress, jdbcType=VARCHAR},
+			HZIPCODE=#{homeZipCode, jdbcType=VARCHAR},
+			PEMAIL=#{personalEmail, jdbcType=VARCHAR},
+			WORKEXP=#{workexp, jdbcType=VARCHAR},
+			REMARK=#{remark jdbcType=VARCHAR},
+			DEPTSTANDCODE=#{deptBenchmarkCode jdbcType=VARCHAR},
+			DEPTNAME=#{deptName, jdbcType=VARCHAR},
+			DOCTYPE=#{docType, jdbcType=VARCHAR},
+			DOCNUMBER=#{docNumber, jdbcType=VARCHAR},
+			WITHCODE=#{withCode, jdbcType=DECIMAL},
+			WAISTCODE=#{waistCode, jdbcType=DECIMAL},
+			HEIGHT=#{height, jdbcType=DECIMAL},
+			POSITIONGRADE=#{degree, jdbcType=VARCHAR},
+			WEIGHT=	#{weight, jdbcType=DECIMAL}
+		</set>
+		<where>
+			EMPCODE = #{theMainCode,jdbcType=VARCHAR}
+		</where> 
+	</update>
+	<!-- 根据编码删除 -->
+	<update id="DeleteByCode" parameterType="map">
+		<![CDATA[ UPDATE T_ORG_EMPLOYEE_SYNC]]>
+		  <set>STATUS=#{status,jdbcType=VARCHAR},MODIFYDATE =sysdate</set>
+	<where>
+		EMPCODE = #{employeeCode,jdbcType=VARCHAR}
+	</where>
+	</update>
+	<!-- 根据ID删除 -->
+	<update id="DeleteById" parameterType="string">
+		<![CDATA[ UPDATE T_ORG_EMPLOYEE_SYNC]]>
+		<set>STATUS=2,MODIFYDATE =sysdate</set>
+	<where>
+		ID = #{employeeId,jdbcType=VARCHAR}
+	</where>
+	</update>
+     <!-- 通过functionCode递归获取该节点的所有子节点-->
+	<select id="selectEmployeeByCode" resultMap="employeeInfo"
+		parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			FROM T_ORG_EMPLOYEE_SYNC WHERE EMPCODE = #{employeeCode,jdbcType=VARCHAR}
+		]]>
+	</select>
+	<select id="selectEmployeeById" resultMap="employeeInfo" parameterType="string">
+		<![CDATA[
+			SELECT 
+		]]>
+		<include refid="insert_param" />
+		<![CDATA[
+			FROM T_ORG_EMPLOYEE_SYNC WHERE ID = #{employeeId,jdbcType=VARCHAR}
+		]]>
+	</select>
+</mapper>

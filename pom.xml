@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.deppon.crm</groupId>
+		<artifactId>crm-parent</artifactId>
+		<version>3.1.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>crm</artifactId>
+	<packaging>pom</packaging>
+	<profiles>
+		<profile>
+			<!--开发环境-->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<id>dev</id>
+			<properties>
+				<environment>dev</environment>
+			</properties>
+		</profile>	
+			<profile>
+			<!-- 生产环境 -->
+			<id>sit</id>
+			<properties>
+				<environment>sit</environment>
+			</properties>
+		</profile>
+			<profile>
+			<!-- 生产环境 -->
+			<id>uat</id>
+			<properties>
+				<environment>uat</environment>
+			</properties>
+		</profile>	
+		<profile>
+			<!-- 生产环境 -->
+			<id>prd</id>
+			<properties>
+				<environment>prd</environment>
+			</properties>
+		</profile>
+	</profiles>
+	<modules>
+		<module>crm-base</module>
+		<module>crm-bps</module>
+		<module>crm-config</module>
+		<module>crm-common</module>
+		<module>crm-complaint</module>
+		<module>crm-coupon</module>
+		<module>crm-customer</module>
+		<module>crm-custview</module>
+		<module>crm-gis</module>
+		<module>crm-interface-client</module>
+		<module>crm-interface-thirdlib</module>
+		<module>crm-logmoniting</module>
+		<module>crm-marketing</module>
+	    <module>crm-order</module>
+	    <module>crm-recompense</module>
+	    <module>crm-report</module>
+    	<module>crm-workflow</module>
+		 <module>crm-scheduler-base</module>
+		<module>crm-interface</module>
+		<module>crm-interface-datasender</module>
+    	<module>crm-webscheduler</module>
+    	<module>crm-web</module>
+    	<module>crm-reportScheduler</module>
+	</modules>
+</project>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.deppon.crm.module.uumms.shared.domain.User">
+
+    <!-- function表返回的结果集，多表联查，查询其父节点 -->
+<resultMap id="UserInfo" type="com.deppon.crm.module.uums.shared.domain.UserInfo" >
+    <id column="PK_SYSUSER" property="theMainId" jdbcType="VARCHAR" />
+    <result column="SYSTEMNAME" property="sysName" jdbcType="VARCHAR" />
+    <result column="EMPCODE" property="theMainCode" jdbcType="VARCHAR" />
+    <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+    <result column="LOGINNAME" property="userName" jdbcType="VARCHAR" />
+    <result column="MD5PASSWORD" property="desPassword" jdbcType="VARCHAR" />
+    <result column="DEPTNAME" property="orgName" jdbcType="VARCHAR" />
+    <result column="DEPTSTANDCODE" property="orgBenchmarkCode" jdbcType="VARCHAR" />
+    <result column="POSITION" property="position" jdbcType="VARCHAR" />
+    <result column="VALIDDATE" property="validDate" jdbcType="TIMESTAMP" />
+    <result column="INVALIDDATE" property="invalidDate" jdbcType="TIMESTAMP" />
+    <result column="ISTEMP" property="isTemp" jdbcType="DECIMAL" />
+    <result column="ISACTIVE" property="isActive" jdbcType="DECIMAL" />
+    <result column="MODIFYDATE" property="changeDate" jdbcType="TIMESTAMP" />
+    <result column="EMPNAME" property="empName" jdbcType="VARCHAR" />
+  </resultMap>  
+    <!-- 单表查询 -->
+	<sql id="select_simple_param">
+		      PK_SYSUSER ,  
+			  SYSTEMNAME ,
+			  EMPCODE ,
+			  GENDER,
+			  LOGINNAME ,
+			  MD5PASSWORD ,
+			  DEPTNAME   ,
+			  DEPTSTANDCODE ,
+			  POSITION ,
+			  VALIDDATE ,
+			  INVALIDDATE ,
+			  ISTEMP    ,
+			  ISACTIVE  ,
+			  EMPNAME
+	</sql>
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="com.deppon.crm.module.uums.shared.domain.PostionInfo" >
+		 <selectKey keyProperty="theMainId" order="BEFORE" resultType="String">
+			SELECT USER_UUMS_SEQ.NEXTVAL AS
+			id  FROM DUAL
+		</selectKey>
+		   <![CDATA[insert into T_UUMS_SYSUSER (CREATEDATE,MODIFYDATE,STATUS,]]>
+		   <include refid="select_simple_param"/>
+		   <![CDATA[ ) VALUES ( ]]>
+		      #{changeDate,jdbcType=TIMESTAMP},
+	  		  #{changeDate,jdbcType=TIMESTAMP},
+	  		   #{isActive,jdbcType=DECIMAL}, 
+		      #{theMainId,jdbcType=VARCHAR}, 
+		      #{sysName,jdbcType=VARCHAR}, 
+		      #{theMainCode,jdbcType=VARCHAR}, 
+		      #{gender,jdbcType=VARCHAR}, 
+		      #{userName,jdbcType=VARCHAR}, 
+		      #{desPassword,jdbcType=VARCHAR}, 
+		      #{orgName,jdbcType=VARCHAR}, 
+		      #{orgBenchmarkCode,jdbcType=VARCHAR},
+		      #{position,jdbcType=VARCHAR}, 
+		      #{validDate,jdbcType=TIMESTAMP}, 
+		      #{invalidDate,jdbcType=TIMESTAMP}, 
+		      #{isTemp,jdbcType=DECIMAL}, 
+		      #{isActive,jdbcType=DECIMAL}, 
+		      #{empName,jdbcType=VARCHAR})
+  </insert>
+     <!-- 修改指定的一条数据-->
+	<update id="UpdateByCode" parameterType="com.deppon.crm.module.uums.shared.domain.UserInfo">
+		<![CDATA[
+			UPDATE T_UUMS_SYSUSER
+		]]>
+		<set>
+		      MODIFYDATE=#{changeDate,jdbcType=DATE},
+			  SYSTEMNAME =#{sysName,jdbcType=VARCHAR},
+			  GENDER=	#{gender,jdbcType=VARCHAR},
+			  LOGINNAME= #{userName,jdbcType=VARCHAR},
+			  MD5PASSWORD =	#{desPassword,jdbcType=VARCHAR} ,
+			  DEPTNAME   =	#{orgName,jdbcType=VARCHAR},
+			  DEPTSTANDCODE =#{orgBenchmarkCode,jdbcType=VARCHAR},
+			  POSITION =	#{position,jdbcType=VARCHAR},
+			  VALIDDATE=	#{validDate,jdbcType=TIMESTAMP},
+			  INVALIDDATE =	 #{invalidDate,jdbcType=DATE},
+			  ISTEMP  =	      #{isTemp,jdbcType=DECIMAL},
+			  ISACTIVE =	 #{isActive,jdbcType=DECIMAL},
+			  EMPNAME   =	 #{empName,jdbcType=VARCHAR},
+			  STATUS= #{isActive,jdbcType=DECIMAL}
+		</set>
+		WHERE EMPCODE =  #{theMainCode,jdbcType=VARCHAR}
+	</update>
+	<update id="UpdateById" parameterType="com.deppon.crm.module.uums.shared.domain.UserInfo">
+		<![CDATA[
+			UPDATE T_UUMS_SYSUSER
+		]]>
+		<set>
+			  MODIFYDATE=#{changeDate,jdbcType=TIMESTAMP},
+			  SYSTEMNAME =#{sysName,jdbcType=VARCHAR},
+			  GENDER=	#{gender,jdbcType=VARCHAR},
+			  LOGINNAME= #{userName,jdbcType=VARCHAR},
+			  MD5PASSWORD =	#{desPassword,jdbcType=VARCHAR} ,
+			  DEPTNAME   =	#{orgName,jdbcType=VARCHAR},
+			  DEPTSTANDCODE =#{orgBenchmarkCode,jdbcType=VARCHAR},
+			  POSITION =	#{position,jdbcType=VARCHAR},
+			  VALIDDATE=	#{validDate,jdbcType=TIMESTAMP},
+			  INVALIDDATE =	 #{invalidDate,jdbcType=TIMESTAMP},
+			  ISTEMP  =	      #{isTemp,jdbcType=DECIMAL},
+			  ISACTIVE =	 #{isActive,jdbcType=DECIMAL},
+			  EMPNAME   =	 #{empName,jdbcType=VARCHAR},
+			  STATUS= #{isActive,jdbcType=DECIMAL}
+		</set>
+		WHERE PK_SYSUSER =  #{theMainId,jdbcType=VARCHAR}
+	</update>
+	<!-- 记录删除 -->
+		<update id="DeleteById" parameterType="string">
+			<![CDATA[
+				UPDATE T_UUMS_SYSUSER
+			]]>
+			<set>STATUS=0,MODIFYDATE=sysdate</set>
+				WHERE PK_SYSUSER =  #{userId,jdbcType=VARCHAR}
+		</update>
+		<update id="DeleteByCode" parameterType="map">
+			<![CDATA[
+				UPDATE T_UUMS_SYSUSER
+			]]>
+			<set>STATUS=#{status,jdbcType=VARCHAR},MODIFYDATE=sysdate</set>
+				WHERE EMPCODE =  #{userCode,jdbcType=VARCHAR}
+		</update>
+		<!-- 返聘 -->
+		<update id="ReturnById" parameterType="string">
+			<![CDATA[
+				UPDATE T_UUMS_SYSUSER
+			]]>
+			<set>STATUS=0,ISRETURN=1,MODIFYDATE=sysdate</set>
+				WHERE PK_SYSUSER =  #{userId,jdbcType=VARCHAR}
+		</update>
+	<update id="ReturnByCode" parameterType="com.deppon.crm.module.uums.shared.domain.UserInfo">
+		<![CDATA[
+			UPDATE T_UUMS_SYSUSER
+		]]>
+		<set>
+		      MODIFYDATE=#{changeDate,jdbcType=DATE},
+			  SYSTEMNAME =#{sysName,jdbcType=VARCHAR},
+			  GENDER=	#{gender,jdbcType=VARCHAR},
+			  LOGINNAME= #{userName,jdbcType=VARCHAR},
+			  MD5PASSWORD =	#{desPassword,jdbcType=VARCHAR} ,
+			  DEPTNAME   =	#{orgName,jdbcType=VARCHAR},
+			  DEPTSTANDCODE =#{orgBenchmarkCode,jdbcType=VARCHAR},
+			  POSITION =	#{position,jdbcType=VARCHAR},
+			  VALIDDATE=	#{validDate,jdbcType=TIMESTAMP},
+			  INVALIDDATE =	 #{invalidDate,jdbcType=DATE},
+			  ISTEMP  =	      #{isTemp,jdbcType=DECIMAL},
+			  ISACTIVE =	 #{isActive,jdbcType=DECIMAL},
+			  EMPNAME   =	 #{empName,jdbcType=VARCHAR},
+			  STATUS= #{isActive,jdbcType=DECIMAL},
+			  ISRETURN=1
+		</set>
+		WHERE EMPCODE =  #{theMainCode,jdbcType=VARCHAR}
+	</update>
+	<!-- 查询 记录-->
+	<select id="selectById" resultMap="UserInfo" parameterType="string">
+		<![CDATA[
+			 SELECT 
+		]]>
+		<include refid="select_simple_param"/>
+		<![CDATA[
+		 	 FROM T_UUMS_SYSUSER
+		]]>
+		<where>
+			PK_SYSUSER =  #{userId,jdbcType=VARCHAR}
+		</where>
+	</select>
+	<select id="selectByCode" resultMap="UserInfo" parameterType="string">
+		<![CDATA[
+			 SELECT 
+		]]>
+		<include refid="select_simple_param"/>
+		<![CDATA[
+		 	 FROM T_UUMS_SYSUSER
+		]]>
+		<where>
+			EMPCODE =  #{userCode,jdbcType=VARCHAR}
+		</where>
+	</select>
+</mapper>
